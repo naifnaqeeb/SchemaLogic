@@ -1,0 +1,263 @@
+{
+  "scheme_id": "PM-KISAN",
+  "model": "openai/gpt-oss-120b",
+  "run_timestamp": "2026-08-18T01:48:50.551131",
+  "draft_source_run": "data\\extraction_runs\\PM-KISAN_gpt-oss-120b_ontology_20260818T005207.json",
+  "source_document": "data/raw_documents/PM-KISAN.md",
+  "gold_reference": "data/gold/PM-KISAN.json",
+  "judge_passes": [
+    {
+      "pass": 1,
+      "findings": [
+        {
+          "category": "preambular_implied_fact",
+          "description": "Eligibility requires the applicant family to match the defined \"farmer family\" composition of husband, wife, and minor children as stated in the Definition of \"Family\" section.",
+          "source_quote": "A \"farmer family\" is defined as husband, wife, and minor children who collectively own cultivable land as per the official land records of their respective State or Union Territory.",
+          "confidence": 0.94,
+          "proposed_predicate": {
+            "location": "inclusion",
+            "cat": "other",
+            "field": "is_farm_family_husband_wife_minor_children",
+            "op": "==",
+            "value": true,
+            "quantifier": "self",
+            "ontology_proposed": true,
+            "except": null
+          },
+          "proposed_supersedes": null
+        },
+        {
+          "category": "temporal_supersession",
+          "description": "The original eligibility restriction limiting benefit to families with combined landholding up to 2 hectares was removed effective 1 June 2019, but the draft does not record this amendment in temporal_validity.supersedes.",
+          "source_quote": "The scheme was originally launched in February 2019 restricted to small and marginal farmer families owning combined landholding up to 2 hectares. Effective 1 June 2019, this restriction was removed: the scheme now covers all landholding farmers' families...",
+          "confidence": 0.96,
+          "proposed_predicate": null,
+          "proposed_supersedes": {
+            "retired_field": "family_agricultural_land_acres",
+            "retired_op": "<=",
+            "retired_value": 2,
+            "amendment_source_quote": "Effective 1 June 2019, this restriction was removed: the scheme now covers all landholding farmers' families...",
+            "rule_version_label": "prior_version",
+            "new_valid_from": "2019-06-01"
+          }
+        }
+      ]
+    },
+    {
+      "pass": 2,
+      "findings": [
+        {
+          "category": "preambular_implied_fact",
+          "description": "Only one member of an eligible family can receive the benefit — not both husband and wife.",
+          "source_quote": "Only one member of an eligible family can receive the benefit — not both husband and wife.",
+          "confidence": 0.95,
+          "proposed_predicate": {
+            "location": "exclusion",
+            "cat": "other",
+            "field": "beneficiary_count_per_family",
+            "op": ">",
+            "value": 1,
+            "quantifier": "self",
+            "ontology_proposed": true,
+            "except": null
+          },
+          "proposed_supersedes": null
+        }
+      ]
+    }
+  ],
+  "repair_log": [
+    {
+      "pass": 1,
+      "applied": [
+        {
+          "category": "preambular_implied_fact",
+          "description": "Eligibility requires the applicant family to match the defined \"farmer family\" composition of husband, wife, and minor children as stated in the Definition of \"Family\" section.",
+          "confidence": 0.94,
+          "applied": true,
+          "type": "predicate",
+          "location": "inclusion",
+          "field": "is_farm_family_husband_wife_minor_children"
+        },
+        {
+          "category": "temporal_supersession",
+          "description": "The original eligibility restriction limiting benefit to families with combined landholding up to 2 hectares was removed effective 1 June 2019, but the draft does not record this amendment in temporal_validity.supersedes.",
+          "confidence": 0.96,
+          "applied": true,
+          "type": "supersedes",
+          "field": "family_agricultural_land_acres"
+        }
+      ]
+    },
+    {
+      "pass": 2,
+      "applied": [
+        {
+          "category": "preambular_implied_fact",
+          "description": "Only one member of an eligible family can receive the benefit — not both husband and wife.",
+          "confidence": 0.95,
+          "applied": true,
+          "type": "predicate",
+          "location": "exclusion",
+          "field": "beneficiary_count_per_family"
+        }
+      ]
+    }
+  ],
+  "repaired_scheme": {
+    "scheme_id": "PM-KISAN",
+    "unit_of_eligibility": "family",
+    "inclusion": {
+      "and": [
+        {
+          "field": "owns_cultivable_land_in_records",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false,
+          "cat": "occupation"
+        },
+        {
+          "field": "is_farm_family_husband_wife_minor_children",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": true,
+          "cat": "other"
+        }
+      ]
+    },
+    "exclusions": [
+      {
+        "field": "is_institutional_landholder",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "institutional",
+        "quantifier": "self",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "holds_constitutional_or_political_post",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "political",
+        "quantifier": "some_family_member",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "holds_elected_or_nominated_govt_post",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "political",
+        "quantifier": "some_family_member",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "is_serving_or_retired_govt_employee",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "occupation",
+        "quantifier": "some_family_member",
+        "except": {
+          "field": "is_group_d_class_iv_or_mts",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false
+        },
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "monthly_pension_inr",
+        "op": ">=",
+        "value": 10000,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "some_family_member",
+        "except": {
+          "field": "is_group_d_class_iv_or_mts",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false
+        },
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "paid_income_tax_last_assessment_year",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "some_family_member",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "is_practicing_registered_professional",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "professional",
+        "quantifier": "some_family_member",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "is_nri_per_income_tax_act_1961",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "citizenship",
+        "quantifier": "some_family_member",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "beneficiary_count_per_family",
+        "op": ">",
+        "value": 1,
+        "ontology_proposed": true,
+        "cat": "other",
+        "quantifier": "self",
+        "except": null,
+        "count_op": null,
+        "count": null
+      }
+    ],
+    "temporal_validity": {
+      "valid_from": "2019-06-01",
+      "valid_to": null,
+      "extracted_at": "2026-08-18",
+      "supersedes": {
+        "rule_version": "prior_version",
+        "retired_predicate": {
+          "field": "family_agricultural_land_acres",
+          "op": "<=",
+          "value": 2
+        },
+        "amendment_source": "Effective 1 June 2019, this restriction was removed: the scheme now covers all landholding farmers' families..."
+      }
+    },
+    "operational_requirements": [
+      "Aadhaar-seeded bank account required",
+      "e-KYC completion required"
+    ],
+    "extraction_metadata": {
+      "confidence": 0.95,
+      "source_clause": "Exclusion Categories section",
+      "flagged_for_review": false
+    }
+  }
+}

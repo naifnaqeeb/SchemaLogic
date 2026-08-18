@@ -1,0 +1,14 @@
+{
+  "case_a_PM-KISAN": {
+    "failure": "api_error"
+  },
+  "case_a_MH-LADKI-BAHIN": {
+    "failure": "api_error"
+  },
+  "case_b_without_retrieval": {
+    "failure": "api_error"
+  },
+  "case_b_with_retrieval": {
+    "failure": "api_error"
+  }
+}

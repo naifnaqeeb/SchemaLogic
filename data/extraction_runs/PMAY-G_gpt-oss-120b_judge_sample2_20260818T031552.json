@@ -1,0 +1,54 @@
+{
+  "scheme_id": "PMAY-G",
+  "note": "Second INDEPENDENT judge sample on the same original pre-repair draft, for the calibration gate's self-consistency signal.",
+  "draft_source_run": "data\\extraction_runs\\PMAY-G_gpt-oss-120b_ontology_20260818T031252.json",
+  "findings": [
+    {
+      "category": "preambular_implied_fact",
+      "description": "Eligibility includes households living in dilapidated houses, which is stated in the Objective but not captured in the inclusion predicates.",
+      "source_quote": "PMAY-G aims to provide pucca (permanent) houses with basic amenities to all rural houseless households and households living in kutcha or dilapidated houses, using Socio-Economic Caste Census (SECC) 2011 data and the Awaas+ (2018) survey, verified by Gram Sabhas.",
+      "confidence": 0.95,
+      "proposed_predicate": {
+        "location": "inclusion",
+        "cat": "economic",
+        "field": "lives_in_dilapidated_house",
+        "op": "==",
+        "value": true,
+        "quantifier": "self",
+        "ontology_proposed": true,
+        "except": null
+      },
+      "proposed_supersedes": null
+    },
+    {
+      "category": "temporal_supersession",
+      "description": "The September 2024 revision removed the exclusion based on ownership of a fishing boat.",
+      "source_quote": "ownership of a fishing boat or a motorised two-wheeler no longer excludes a household",
+      "confidence": 0.9,
+      "proposed_predicate": null,
+      "proposed_supersedes": {
+        "retired_field": "owns_fishing_boat",
+        "retired_op": "==",
+        "retired_value": true,
+        "amendment_source_quote": "ownership of a fishing boat or a motorised two-wheeler no longer excludes a household",
+        "rule_version_label": "prior_version",
+        "new_valid_from": "2024-09-01"
+      }
+    },
+    {
+      "category": "temporal_supersession",
+      "description": "The September 2024 revision removed the exclusion based on ownership of a motorised two-wheeler.",
+      "source_quote": "ownership of a fishing boat or a motorised two-wheeler no longer excludes a household",
+      "confidence": 0.9,
+      "proposed_predicate": null,
+      "proposed_supersedes": {
+        "retired_field": "owns_motorised_two_wheeler",
+        "retired_op": "==",
+        "retired_value": true,
+        "amendment_source_quote": "ownership of a fishing boat or a motorised two-wheeler no longer excludes a household",
+        "rule_version_label": "prior_version",
+        "new_valid_from": "2024-09-01"
+      }
+    }
+  ]
+}

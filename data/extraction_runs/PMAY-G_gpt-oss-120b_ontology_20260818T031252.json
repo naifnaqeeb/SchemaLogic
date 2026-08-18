@@ -1,0 +1,225 @@
+{
+  "scheme_id": "PMAY-G",
+  "model": "openai/gpt-oss-120b",
+  "run_timestamp": "2026-08-18T03:12:52.072261",
+  "note": "Ontology-constrained extraction run (schema/field_ontology.py).",
+  "source_document": "data/raw_documents/PMAY-G.md",
+  "gold_reference": "data/gold/PMAY-G.json",
+  "draft_extraction": {
+    "scheme_id": "PMAY-G",
+    "unit_of_eligibility": "family",
+    "inclusion": {
+      "or": [
+        {
+          "field": "is_houseless",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false,
+          "cat": "economic"
+        },
+        {
+          "field": "lives_in_kutcha_house",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false,
+          "cat": "economic"
+        },
+        {
+          "field": "is_secc_automatically_included",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false,
+          "cat": "economic"
+        }
+      ]
+    },
+    "exclusions": [
+      {
+        "field": "kisan_credit_card_limit_inr",
+        "op": ">=",
+        "value": 50000,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "is_govt_employee",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "occupation",
+        "quantifier": "self",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "owns_non_agricultural_enterprise_registered_with_govt",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "monthly_income_inr",
+        "op": ">",
+        "value": 15000,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "paid_income_tax_last_assessment_year",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "some_family_member",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "owns_refrigerator",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "owns_landline_phone",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "owns_gt_2_5_acres_irrigated_land",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "owns_motorised_three_or_four_wheeler",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "owns_mechanized_agricultural_equipment_3_or_4_wheeler",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "owns_pucca_house",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "count_op": null,
+        "count": null
+      }
+    ],
+    "temporal_validity": {
+      "valid_from": "2024-09-10",
+      "valid_to": null,
+      "extracted_at": "2026-08-18",
+      "supersedes": null
+    },
+    "operational_requirements": [
+      "Beneficiary identification is through the Awaas+ survey entry, verified by Gram Sabhas.",
+      "Payments are made electronically to Aadhaar-seeded bank or post office accounts."
+    ],
+    "extraction_metadata": {
+      "confidence": 0.95,
+      "source_clause": "Eligibility Criteria and Exclusion Criteria sections",
+      "flagged_for_review": false
+    }
+  },
+  "exact_field_matches": [
+    "is_govt_employee",
+    "is_houseless",
+    "is_secc_automatically_included",
+    "kisan_credit_card_limit_inr",
+    "lives_in_kutcha_house",
+    "monthly_income_inr",
+    "owns_gt_2_5_acres_irrigated_land",
+    "owns_landline_phone",
+    "owns_mechanized_agricultural_equipment_3_or_4_wheeler",
+    "owns_motorised_three_or_four_wheeler",
+    "owns_non_agricultural_enterprise_registered_with_govt",
+    "owns_pucca_house",
+    "owns_refrigerator",
+    "paid_income_tax_last_assessment_year"
+  ],
+  "gold_fields": [
+    "is_govt_employee",
+    "is_houseless",
+    "is_secc_automatically_included",
+    "kisan_credit_card_limit_inr",
+    "lives_in_kutcha_house",
+    "monthly_income_inr",
+    "owns_gt_2_5_acres_irrigated_land",
+    "owns_landline_phone",
+    "owns_mechanized_agricultural_equipment_3_or_4_wheeler",
+    "owns_motorised_three_or_four_wheeler",
+    "owns_non_agricultural_enterprise_registered_with_govt",
+    "owns_pucca_house",
+    "owns_refrigerator",
+    "paid_income_tax_last_assessment_year"
+  ],
+  "draft_fields": [
+    "is_govt_employee",
+    "is_houseless",
+    "is_secc_automatically_included",
+    "kisan_credit_card_limit_inr",
+    "lives_in_kutcha_house",
+    "monthly_income_inr",
+    "owns_gt_2_5_acres_irrigated_land",
+    "owns_landline_phone",
+    "owns_mechanized_agricultural_equipment_3_or_4_wheeler",
+    "owns_motorised_three_or_four_wheeler",
+    "owns_non_agricultural_enterprise_registered_with_govt",
+    "owns_pucca_house",
+    "owns_refrigerator",
+    "paid_income_tax_last_assessment_year"
+  ],
+  "ontology_proposed_predicates": [],
+  "unflagged_out_of_ontology_fields": []
+}

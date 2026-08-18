@@ -1,0 +1,82 @@
+{
+  "scheme_id": "IGNOAPS",
+  "unit_of_eligibility": "individual",
+  "inclusion": {
+    "and": [
+      {
+        "field": "age",
+        "op": ">=",
+        "value": 60,
+        "ontology_proposed": false,
+        "cat": "demographic"
+      },
+      {
+        "field": "is_bpl_household",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic"
+      }
+    ]
+  },
+  "exclusions": [
+    {
+      "field": "has_regular_family_financial_support",
+      "op": "==",
+      "value": true,
+      "ontology_proposed": false,
+      "cat": "economic",
+      "quantifier": "self",
+      "except": null,
+      "count_op": null,
+      "count": null
+    },
+    {
+      "field": "is_govt_employee",
+      "op": "==",
+      "value": true,
+      "ontology_proposed": false,
+      "cat": "occupation",
+      "quantifier": "self",
+      "except": null,
+      "count_op": null,
+      "count": null
+    },
+    {
+      "field": "family_agricultural_land_acres",
+      "op": ">=",
+      "value": 5,
+      "ontology_proposed": false,
+      "cat": "economic",
+      "quantifier": "self",
+      "except": null,
+      "count_op": null,
+      "count": null
+    },
+    {
+      "field": "owns_four_wheeler",
+      "op": "==",
+      "value": true,
+      "ontology_proposed": false,
+      "cat": "economic",
+      "quantifier": "self",
+      "except": null,
+      "count_op": null,
+      "count": null
+    }
+  ],
+  "temporal_validity": {
+    "valid_from": "2007-01-01",
+    "valid_to": null,
+    "extracted_at": "2026-08-18",
+    "supersedes": null
+  },
+  "operational_requirements": [
+    "bank_or_post_office_account"
+  ],
+  "extraction_metadata": {
+    "confidence": 0.85,
+    "source_clause": "VERIFIED against NSAP Programme Guidelines. age>=60 and is_bpl_household directly quoted from Chapter II Section 2.3 ('The eligible age for IGNOAPS is 60 years'; 'assistance under the sub-schemes of NSAP are applicable for persons belonging to Below Poverty Line (BPL) category'). valid_from=2007 directly quoted from Chapter I Para 1.2.4 ('From the year 2007, the scheme was expanded to cover all eligible persons Below Poverty Line (BPL). The scheme for old aged persons was renamed as Indira Gandhi National Old Age Pension Scheme (IGNOAPS)') — exact month/day not given in the source, so 01-01 is a placeholder for 'year 2007', not a literal date. CAVEAT: has_regular_family_financial_support is an interpretive elevation, not a literal Section 2.3 line item — it's built from Para 1.1.1's programme-wide 'destitute' definition ('any person who has little or no regular means of subsistence from his/her own source of income or through financial support from family members or other sources'), which reads as philosophical/preambular framing for NSAP as a whole rather than a numbered IGNOAPS-specific operative test, and may already be substantively subsumed by the BPL determination itself rather than an independent test. is_govt_employee / family_agricultural_land_acres>=5 / owns_four_wheeler (self, added 2026-08-18): Para 2.4.3's aside on AIDS-widow prioritization — 'widows suffering from AIDS who will be considered if they are not attracted by any of the exclusion criteria of having a job in government, owning five acres of land or more or owning a four wheeler for own use' — was initially read as an elliptical reference to a separate BPL/SECC determination methodology and left out of this gold file. Cross-checking against an independent ontology-constrained LLM extraction run on the same source text (see data/extraction_runs/IGNOAPS_gpt-oss-120b_ontology_*.json) surfaced the same three criteria as live IGNOAPS exclusions; re-reading the clause, the phrase names 'the exclusion criteria' as an existing, already-applicable standard (measured even against the special-case AIDS-widow carve-out), which is a more defensible reading than treating it as out-of-scope. Corrected here — an example of the draft-extraction catching a real annotation gap, consistent with the draft-then-verify workflow (Section 6.5). NOT modeled: the pre-2007 NOAPS restriction that the 2007 BPL expansion superseded — Para 1.2.4 confirms an expansion happened but doesn't state the prior restriction's specific numeric criterion, so no supersedes.retired_predicate could be constructed without guessing. NOT modeled: Para 2.4.3 also implies an alternate inclusion path for AIDS-affected widows ('except widows suffering from AIDS who will be considered if they are not attracted by any of the exclusion criteria...') that may bypass the BPL requirement specifically, but it's ambiguous whether this is a real alternate eligibility branch or just a processing-priority note (the section header is 'Priority to particularly vulnerable individuals'), and what exactly it bypasses. Flagged as a known gap rather than guessed at.",
+    "flagged_for_review": false
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "scheme_id": "PM-KISAN",
+  "note": "Second INDEPENDENT judge sample on the same original pre-repair draft, for the calibration gate's self-consistency signal.",
+  "draft_source_run": "data\\extraction_runs\\PM-KISAN_gpt-oss-120b_ontology_20260818T005207.json",
+  "findings": [
+    {
+      "category": "preambular_implied_fact",
+      "description": "The introductory definition states that only one member of an eligible family can receive the benefit, a restriction not captured in the extracted predicates.",
+      "source_quote": "Only one member of an eligible family can receive the benefit — not both husband and wife.",
+      "confidence": 0.95,
+      "proposed_predicate": {
+        "location": "inclusion",
+        "cat": "family_unit",
+        "field": "max_beneficiaries_per_family",
+        "op": "<=",
+        "value": 1,
+        "quantifier": "self",
+        "ontology_proposed": true,
+        "except": null
+      },
+      "proposed_supersedes": null
+    },
+    {
+      "category": "temporal_supersession",
+      "description": "The document notes that the original land‑holding size restriction (up to 2 hectares) was removed effective 1 June 2019, but the supersedes field is null.",
+      "source_quote": "Effective 1 June 2019, this restriction was removed: the scheme now covers all landholding farmers' families, subject to the exclusion categories below, irrespective of the size of their landholding.",
+      "confidence": 0.96,
+      "proposed_predicate": null,
+      "proposed_supersedes": {
+        "retired_field": "family_agricultural_land_acres",
+        "retired_op": "<=",
+        "retired_value": 2,
+        "amendment_source_quote": "Effective 1 June 2019, this restriction was removed: the scheme now covers all landholding farmers' families, subject to the exclusion categories below, irrespective of the size of their landholding.",
+        "rule_version_label": "prior_version",
+        "new_valid_from": "2019-06-01"
+      }
+    }
+  ]
+}

@@ -1,0 +1,208 @@
+{
+  "scheme_id": "PMAY-G",
+  "run_timestamp": "2026-08-18T03:18:17.215210",
+  "note": "Phase 3 first-scheme check-in: structural F1 + outcome-equivalence of gold vs the GATE-APPROVED final pipeline output (extraction -> judge -> gate; gate deferred the one bad temporal_supersession finding, so gated == original ontology-constrained draft here).",
+  "gated_source_run": "data\\extraction_runs\\PMAY-G_gpt-oss-120b_gated_20260818T031713.json",
+  "structural_f1": {
+    "scheme_id": "PMAY-G",
+    "inclusion_diff": {
+      "exact_matches": [
+        {
+          "field": "is_houseless"
+        },
+        {
+          "field": "lives_in_kutcha_house"
+        },
+        {
+          "field": "is_secc_automatically_included"
+        }
+      ],
+      "present_but_wrong": [],
+      "missing": [],
+      "hallucinated": []
+    },
+    "exclusion_diff": {
+      "exact_matches": [
+        {
+          "field": "owns_non_agricultural_enterprise_registered_with_govt"
+        },
+        {
+          "field": "kisan_credit_card_limit_inr"
+        },
+        {
+          "field": "paid_income_tax_last_assessment_year"
+        },
+        {
+          "field": "owns_refrigerator"
+        },
+        {
+          "field": "owns_landline_phone"
+        },
+        {
+          "field": "owns_gt_2_5_acres_irrigated_land"
+        },
+        {
+          "field": "owns_motorised_three_or_four_wheeler"
+        },
+        {
+          "field": "owns_mechanized_agricultural_equipment_3_or_4_wheeler"
+        },
+        {
+          "field": "owns_pucca_house"
+        }
+      ],
+      "present_but_wrong": [
+        {
+          "field": "is_govt_employee",
+          "gold": {
+            "field": "is_govt_employee",
+            "cat": "occupation",
+            "op": "==",
+            "value": true,
+            "quantifier": "some_family_member",
+            "has_except": false
+          },
+          "draft": {
+            "field": "is_govt_employee",
+            "cat": "occupation",
+            "op": "==",
+            "value": true,
+            "quantifier": "self",
+            "has_except": false
+          }
+        },
+        {
+          "field": "monthly_income_inr",
+          "gold": {
+            "field": "monthly_income_inr",
+            "cat": "economic",
+            "op": ">",
+            "value": 15000,
+            "quantifier": "some_family_member",
+            "has_except": false
+          },
+          "draft": {
+            "field": "monthly_income_inr",
+            "cat": "economic",
+            "op": ">",
+            "value": 15000,
+            "quantifier": "self",
+            "has_except": false
+          }
+        }
+      ],
+      "missing": [],
+      "hallucinated": []
+    },
+    "category_metrics": {
+      "economic": {
+        "category": "economic",
+        "tp": 12,
+        "fp": 1,
+        "fn": 1,
+        "precision": 0.9231,
+        "recall": 0.9231,
+        "f1": 0.9231
+      },
+      "occupation": {
+        "category": "occupation",
+        "tp": 0,
+        "fp": 1,
+        "fn": 1,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      }
+    },
+    "overall": {
+      "category": "__overall__",
+      "tp": 12,
+      "fp": 2,
+      "fn": 2,
+      "precision": 0.8571,
+      "recall": 0.8571,
+      "f1": 0.8571
+    },
+    "category_tag_mismatches": []
+  },
+  "outcome_equivalence": {
+    "scheme_id": "PMAY-G",
+    "n_profiles": 10,
+    "agreement_rate": 0.9,
+    "false_positive_eligible_rate": 0.1,
+    "false_negative_eligible_rate": 0.0,
+    "other_mismatch_rate": 0.0,
+    "comparisons": [
+      {
+        "profile_id": "eligible_baseline",
+        "gold_verdict": "eligible",
+        "draft_verdict": "eligible",
+        "agree": true,
+        "disagreement_type": null
+      },
+      {
+        "profile_id": "income_over_ceiling",
+        "gold_verdict": "ineligible",
+        "draft_verdict": "eligible",
+        "agree": false,
+        "disagreement_type": "false_positive_eligible"
+      },
+      {
+        "profile_id": "missing_housing_status_undetermined",
+        "gold_verdict": "undetermined_missing_facts",
+        "draft_verdict": "undetermined_missing_facts",
+        "agree": true,
+        "disagreement_type": null
+      },
+      {
+        "profile_id": "secc_automatically_included_regardless_of_housing",
+        "gold_verdict": "eligible",
+        "draft_verdict": "eligible",
+        "agree": true,
+        "disagreement_type": null
+      },
+      {
+        "profile_id": "refrigerator",
+        "gold_verdict": "ineligible",
+        "draft_verdict": "ineligible",
+        "agree": true,
+        "disagreement_type": null
+      },
+      {
+        "profile_id": "landline_phone",
+        "gold_verdict": "ineligible",
+        "draft_verdict": "ineligible",
+        "agree": true,
+        "disagreement_type": null
+      },
+      {
+        "profile_id": "irrigated_land_over_threshold",
+        "gold_verdict": "ineligible",
+        "draft_verdict": "ineligible",
+        "agree": true,
+        "disagreement_type": null
+      },
+      {
+        "profile_id": "mechanized_agri_equipment",
+        "gold_verdict": "ineligible",
+        "draft_verdict": "ineligible",
+        "agree": true,
+        "disagreement_type": null
+      },
+      {
+        "profile_id": "non_agricultural_enterprise",
+        "gold_verdict": "ineligible",
+        "draft_verdict": "ineligible",
+        "agree": true,
+        "disagreement_type": null
+      },
+      {
+        "profile_id": "income_tax_family_member",
+        "gold_verdict": "ineligible",
+        "draft_verdict": "ineligible",
+        "agree": true,
+        "disagreement_type": null
+      }
+    ]
+  }
+}

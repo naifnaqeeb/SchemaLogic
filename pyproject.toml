@@ -1,0 +1,15 @@
+[project]
+name = "schemelogic"
+version = "0.0.1"
+description = "Neuro-symbolic eligibility-logic pipeline for Indian welfare schemes"
+requires-python = ">=3.11"
+dependencies = [
+    "pydantic>=2",
+    "pypdf>=4",
+]
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -1,0 +1,175 @@
+{
+  "scheme_id": "PMAY-G",
+  "unit_of_eligibility": "family",
+  "inclusion": {
+    "or": [
+      {
+        "field": "is_houseless",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic"
+      },
+      {
+        "field": "lives_in_kutcha_house",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic"
+      },
+      {
+        "field": "is_secc_automatically_included",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic"
+      }
+    ]
+  },
+  "exclusions": [
+    {
+      "field": "is_govt_employee",
+      "op": "==",
+      "value": true,
+      "ontology_proposed": false,
+      "cat": "occupation",
+      "quantifier": "some_family_member",
+      "except": null,
+      "count_op": null,
+      "count": null
+    },
+    {
+      "field": "owns_non_agricultural_enterprise_registered_with_govt",
+      "op": "==",
+      "value": true,
+      "ontology_proposed": false,
+      "cat": "economic",
+      "quantifier": "self",
+      "except": null,
+      "count_op": null,
+      "count": null
+    },
+    {
+      "field": "kisan_credit_card_limit_inr",
+      "op": ">=",
+      "value": 50000,
+      "ontology_proposed": false,
+      "cat": "economic",
+      "quantifier": "self",
+      "except": null,
+      "count_op": null,
+      "count": null
+    },
+    {
+      "field": "monthly_income_inr",
+      "op": ">",
+      "value": 15000,
+      "ontology_proposed": false,
+      "cat": "economic",
+      "quantifier": "some_family_member",
+      "except": null,
+      "count_op": null,
+      "count": null
+    },
+    {
+      "field": "paid_income_tax_last_assessment_year",
+      "op": "==",
+      "value": true,
+      "ontology_proposed": false,
+      "cat": "economic",
+      "quantifier": "some_family_member",
+      "except": null,
+      "count_op": null,
+      "count": null
+    },
+    {
+      "field": "owns_refrigerator",
+      "op": "==",
+      "value": true,
+      "ontology_proposed": false,
+      "cat": "economic",
+      "quantifier": "self",
+      "except": null,
+      "count_op": null,
+      "count": null
+    },
+    {
+      "field": "owns_landline_phone",
+      "op": "==",
+      "value": true,
+      "ontology_proposed": false,
+      "cat": "economic",
+      "quantifier": "self",
+      "except": null,
+      "count_op": null,
+      "count": null
+    },
+    {
+      "field": "owns_gt_2_5_acres_irrigated_land",
+      "op": "==",
+      "value": true,
+      "ontology_proposed": false,
+      "cat": "economic",
+      "quantifier": "self",
+      "except": null,
+      "count_op": null,
+      "count": null
+    },
+    {
+      "field": "owns_motorised_three_or_four_wheeler",
+      "op": "==",
+      "value": true,
+      "ontology_proposed": false,
+      "cat": "economic",
+      "quantifier": "self",
+      "except": null,
+      "count_op": null,
+      "count": null
+    },
+    {
+      "field": "owns_mechanized_agricultural_equipment_3_or_4_wheeler",
+      "op": "==",
+      "value": true,
+      "ontology_proposed": false,
+      "cat": "economic",
+      "quantifier": "self",
+      "except": null,
+      "count_op": null,
+      "count": null
+    },
+    {
+      "field": "owns_pucca_house",
+      "op": "==",
+      "value": true,
+      "ontology_proposed": false,
+      "cat": "economic",
+      "quantifier": "self",
+      "except": null,
+      "count_op": null,
+      "count": null
+    }
+  ],
+  "temporal_validity": {
+    "valid_from": "2024-09-11",
+    "valid_to": null,
+    "extracted_at": "2026-08-18",
+    "supersedes": {
+      "rule_version": "v1_pre_2024_amendment",
+      "retired_predicate": {
+        "field": "monthly_income_inr",
+        "op": ">",
+        "value": 10000
+      },
+      "amendment_source": "Sept-2024 exclusion-criteria relaxation (announced 10-11 Sep 2024, per BusinessToday and the PIB Nov-2024 backgrounder): income ceiling raised from Rs.10,000 to Rs.15,000/month, and exclusion criteria reduced from 13 to 10 (fishing-boat and motorised-two-wheeler ownership no longer excluded — a second retired fact this schema's single supersedes.retired_predicate slot can't also capture; same schema-expressiveness limitation flagged elsewhere in this project, e.g. AB-PMJAY's unmodeled 70+/CGHS election rule)."
+    }
+  },
+  "operational_requirements": [
+    "awaas_plus_survey_entry",
+    "aadhaar_seeded_bank_account"
+  ],
+  "extraction_metadata": {
+    "confidence": 0.75,
+    "source_clause": "VERIFIED against a PIB Research Unit backgrounder (19 Nov 2024) and corroborating contemporaneous news coverage (see file header) — a real improvement over the prior hand-authored-from-secondary-sources draft, but NOT to AB-PMJAY's confidence level: the actual verbatim numbered MoRD/Cabinet exclusion notification could not be retrieved (pib.gov.in blocks direct fetch), so this is reconstructed from an official PR summary rather than the primary notification text itself. Inclusion: is_houseless and lives_in_kutcha_house directly quoted ('Houseless Households: All households without any shelter'; 'Households with Kuccha Houses: ... kuccha walls and kuccha roofs or houses with zero, one, or two rooms as per SECC 2011'). is_secc_automatically_included reused from AB-PMJAY's ontology entry — PMAY-G's own 'Compulsory Inclusion Criteria' list (destitute/alms, manual scavengers, primitive tribal groups, legally released bonded laborers) is the same underlying SECC automatic-inclusion parameter set minus the shelterless case, which is separately covered here by is_houseless. NOT modeled: the deprivation-score PRIORITY/ranking parameters (no adult 16-59, female-headed no adult male, no literate adult >25, disabled member no able-bodied adult, landless manual-labour household) — these rank among the already-eligible pool for scarce allocation, not a binary eligibility gate, so out of scope for this project's eligible/ineligible schema, same shape as AB-PMJAY's and MH-LADKI-BAHIN's other unmodeled selection/priority rules. Exclusions: kisan_credit_card_limit_inr op='>=' (PIB's own wording is 'credit limit of Rs.50,000 or above' — note this is op='>=' here, UNLIKE AB-PMJAY's same field where the source wording 'over Rs.50,000' meant strict '>'; the two schemes' primary wording genuinely differs on this operator, don't assume they match). monthly_income_inr reclassified from a self-scoped monthly_household_income_inr field to the shared, some_family_member-scoped monthly_income_inr field (see ontology docstring). owns_gt_2_5_acres_irrigated_land is a new, deliberately SEPARATE (simpler, no irrigation-equipment qualifier) field from AB-PMJAY's compound version — flagged uncertainty, see its ontology docstring.",
+    "flagged_for_review": true
+  }
+}

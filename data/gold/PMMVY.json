@@ -1,0 +1,151 @@
+{
+  "scheme_id": "PMMVY",
+  "unit_of_eligibility": "individual",
+  "inclusion": {
+    "and": [
+      {
+        "field": "age",
+        "op": ">=",
+        "value": 18,
+        "ontology_proposed": false,
+        "cat": "demographic"
+      },
+      {
+        "field": "age",
+        "op": "<=",
+        "value": 55,
+        "ontology_proposed": false,
+        "cat": "demographic"
+      },
+      {
+        "or": [
+          {
+            "field": "is_sc_st",
+            "op": "==",
+            "value": true,
+            "ontology_proposed": false,
+            "cat": "demographic"
+          },
+          {
+            "field": "has_40_percent_or_more_disability",
+            "op": "==",
+            "value": true,
+            "ontology_proposed": false,
+            "cat": "demographic"
+          },
+          {
+            "field": "is_bpl_household",
+            "op": "==",
+            "value": true,
+            "ontology_proposed": false,
+            "cat": "economic"
+          },
+          {
+            "field": "is_ab_pmjay_beneficiary",
+            "op": "==",
+            "value": true,
+            "ontology_proposed": false,
+            "cat": "cross_scheme"
+          },
+          {
+            "field": "is_e_shram_registered",
+            "op": "==",
+            "value": true,
+            "ontology_proposed": false,
+            "cat": "economic"
+          },
+          {
+            "field": "is_pm_kisan_beneficiary",
+            "op": "==",
+            "value": true,
+            "ontology_proposed": false,
+            "cat": "cross_scheme"
+          },
+          {
+            "field": "has_active_mgnrega_job_card",
+            "op": "==",
+            "value": true,
+            "ontology_proposed": false,
+            "cat": "economic"
+          },
+          {
+            "field": "family_annual_income_inr",
+            "op": "<",
+            "value": 800000,
+            "ontology_proposed": false,
+            "cat": "economic"
+          },
+          {
+            "field": "is_frontline_worker",
+            "op": "==",
+            "value": true,
+            "ontology_proposed": false,
+            "cat": "occupation"
+          },
+          {
+            "field": "is_nfsa_ration_card_holder",
+            "op": "==",
+            "value": true,
+            "ontology_proposed": false,
+            "cat": "economic"
+          }
+        ]
+      },
+      {
+        "or": [
+          {
+            "field": "pregnancy_child_order",
+            "op": "==",
+            "value": 1,
+            "ontology_proposed": false,
+            "cat": "demographic"
+          },
+          {
+            "and": [
+              {
+                "field": "pregnancy_child_order",
+                "op": "==",
+                "value": 2,
+                "ontology_proposed": false,
+                "cat": "demographic"
+              },
+              {
+                "field": "child_is_girl",
+                "op": "==",
+                "value": true,
+                "ontology_proposed": false,
+                "cat": "demographic"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "exclusions": [],
+  "temporal_validity": {
+    "valid_from": "2022-04-01",
+    "valid_to": null,
+    "extracted_at": "2026-08-18",
+    "supersedes": {
+      "rule_version": "PMMVY_1.0_pre_2022",
+      "retired_predicate": {
+        "field": "pregnancy_child_order",
+        "op": "==",
+        "value": 1
+      },
+      "amendment_source": "PMMVY 2.0 (effective 1 April 2022, per PIB backgrounder's before/after table): prior rule covered the first living child ONLY; extended to also cover the second living child if it is a girl, to promote positive attitudes towards girls and improve the Sex Ratio at Birth."
+    }
+  },
+  "operational_requirements": [
+    "mcp_card",
+    "aadhaar_authentication",
+    "dbt_aadhaar_seeded_account",
+    "pmmvysoft_registration_within_270_days_of_childbirth"
+  ],
+  "extraction_metadata": {
+    "confidence": 0.85,
+    "source_clause": "VERIFIED against a PIB Backgrounder (24 Aug 2025) with an explicit PMMVY-vs-2.0 before/after comparison table (temporal/amendment facts) and an 'Eligibility Criteria & Exclusions' section (age, category table) — age criterion independently corroborated verbatim by a second official source (Savitribai Phule National Institute of Women & Child Development FAQ). Means-tested (not universal) nature cross-checked against an independent policy-institute summary. NOT independently checked against the actual MWCD scheme guidelines/notification PDF (not retrievable — same pib.gov.in fetch-blocking issue as every other Phase 3 scheme). 'Other vulnerable groups as notified by Central Government' (10th inclusion category) intentionally unmodeled — open-ended, not a concrete predicate. A government-employment/other-maternity-benefit exclusion appearing in one low-confidence secondary source only was deliberately NOT included (see file header) rather than guessed.",
+    "flagged_for_review": true
+  }
+}

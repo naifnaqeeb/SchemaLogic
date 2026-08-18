@@ -1,0 +1,39 @@
+{
+  "scheme_id": "MH-LADKI-BAHIN",
+  "note": "Second INDEPENDENT judge sample on the same original pre-repair draft, for the calibration gate's self-consistency signal.",
+  "draft_source_run": "data\\extraction_runs\\MH-LADKI-BAHIN_gpt-oss-120b_ontology_20260818T013129.json",
+  "findings": [
+    {
+      "category": "preambular_implied_fact",
+      "description": "Eligibility requires the beneficiary's bank account to be Aadhaar-linked, mentioned in the Benefit section but not captured as a separate predicate.",
+      "source_quote": "credited via Direct Benefit Transfer to each eligible woman's own Aadhaar-linked bank account.",
+      "confidence": 0.95,
+      "proposed_predicate": {
+        "location": "inclusion",
+        "cat": "economic",
+        "field": "has_aadhaar_linked_bank_account",
+        "op": "==",
+        "value": true,
+        "quantifier": "self",
+        "ontology_proposed": false,
+        "except": null
+      },
+      "proposed_supersedes": null
+    },
+    {
+      "category": "temporal_supersession",
+      "description": "Amendment removed the disqualification condition based on families holding more than five acres of agricultural land.",
+      "source_quote": "Note: the disqualification condition originally at item 7 of the 28 June 2024 order (families whose members jointly hold more than five acres of agricultural land) was removed by the 3 July 2024 amendment order and no longer applies.",
+      "confidence": 0.98,
+      "proposed_predicate": null,
+      "proposed_supersedes": {
+        "retired_field": "family_agricultural_land_acres",
+        "retired_op": ">",
+        "retired_value": 5,
+        "amendment_source_quote": "Note: the disqualification condition originally at item 7 of the 28 June 2024 order (families whose members jointly hold more than five acres of agricultural land) was removed by the 3 July 2024 amendment order and no longer applies.",
+        "rule_version_label": "prior_version",
+        "new_valid_from": null
+      }
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "scheme_id": "IGNOAPS",
+  "model": "openai/gpt-oss-120b",
+  "run_timestamp": "2026-08-18T01:54:48.002096",
+  "note": "POST-REPAIR outcome-equivalence (Phase 2 judge+repair validation).",
+  "repaired_source_run": "data\\extraction_runs\\IGNOAPS_gpt-oss-120b_judge_repair_20260818T015010.json",
+  "profiles_source": "data/profiles/IGNOAPS.json",
+  "report": {
+    "scheme_id": "IGNOAPS",
+    "n_profiles": 8,
+    "agreement_rate": 0.625,
+    "false_positive_eligible_rate": 0.0,
+    "false_negative_eligible_rate": 0.0,
+    "other_mismatch_rate": 0.375,
+    "comparisons": [
+      {
+        "profile_id": "eligible_baseline",
+        "gold_verdict": "eligible",
+        "draft_verdict": "undetermined_missing_facts",
+        "agree": false,
+        "disagreement_type": "other_mismatch"
+      },
+      {
+        "profile_id": "under_60",
+        "gold_verdict": "ineligible",
+        "draft_verdict": "ineligible",
+        "agree": true,
+        "disagreement_type": null
+      },
+      {
+        "profile_id": "not_bpl",
+        "gold_verdict": "ineligible",
+        "draft_verdict": "undetermined_missing_facts",
+        "agree": false,
+        "disagreement_type": "other_mismatch"
+      },
+      {
+        "profile_id": "has_family_support",
+        "gold_verdict": "ineligible",
+        "draft_verdict": "undetermined_missing_facts",
+        "agree": false,
+        "disagreement_type": "other_mismatch"
+      },
+      {
+        "profile_id": "govt_employee",
+        "gold_verdict": "ineligible",
+        "draft_verdict": "ineligible",
+        "agree": true,
+        "disagreement_type": null
+      },
+      {
+        "profile_id": "five_acres_land",
+        "gold_verdict": "ineligible",
+        "draft_verdict": "ineligible",
+        "agree": true,
+        "disagreement_type": null
+      },
+      {
+        "profile_id": "owns_four_wheeler",
+        "gold_verdict": "ineligible",
+        "draft_verdict": "ineligible",
+        "agree": true,
+        "disagreement_type": null
+      },
+      {
+        "profile_id": "missing_support_data",
+        "gold_verdict": "undetermined_missing_facts",
+        "draft_verdict": "undetermined_missing_facts",
+        "agree": true,
+        "disagreement_type": null
+      }
+    ]
+  }
+}

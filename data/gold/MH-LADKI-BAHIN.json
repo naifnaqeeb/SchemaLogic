@@ -1,0 +1,147 @@
+{
+  "scheme_id": "MH-LADKI-BAHIN",
+  "unit_of_eligibility": "family",
+  "inclusion": {
+    "and": [
+      {
+        "field": "is_woman",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "demographic"
+      },
+      {
+        "field": "is_maharashtra_resident",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "demographic"
+      },
+      {
+        "field": "age",
+        "op": ">=",
+        "value": 21,
+        "ontology_proposed": false,
+        "cat": "demographic"
+      },
+      {
+        "field": "age",
+        "op": "<=",
+        "value": 65,
+        "ontology_proposed": false,
+        "cat": "demographic"
+      },
+      {
+        "field": "has_bank_account",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic"
+      },
+      {
+        "field": "family_annual_income_inr",
+        "op": "<=",
+        "value": 250000,
+        "ontology_proposed": false,
+        "cat": "economic"
+      }
+    ]
+  },
+  "exclusions": [
+    {
+      "field": "paid_income_tax_last_assessment_year",
+      "op": "==",
+      "value": true,
+      "ontology_proposed": false,
+      "cat": "economic",
+      "quantifier": "some_family_member",
+      "except": null,
+      "count_op": null,
+      "count": null
+    },
+    {
+      "field": "is_regular_govt_employee_or_pensioner",
+      "op": "==",
+      "value": true,
+      "ontology_proposed": false,
+      "cat": "occupation",
+      "quantifier": "some_family_member",
+      "except": null,
+      "count_op": null,
+      "count": null
+    },
+    {
+      "field": "other_govt_scheme_monthly_benefit_inr",
+      "op": ">=",
+      "value": 1500,
+      "ontology_proposed": false,
+      "cat": "economic",
+      "quantifier": "self",
+      "except": null,
+      "count_op": null,
+      "count": null
+    },
+    {
+      "field": "holds_constitutional_or_political_post",
+      "op": "==",
+      "value": true,
+      "ontology_proposed": false,
+      "cat": "political",
+      "quantifier": "some_family_member",
+      "except": null,
+      "count_op": null,
+      "count": null
+    },
+    {
+      "field": "holds_govt_board_or_corporation_post",
+      "op": "==",
+      "value": true,
+      "ontology_proposed": false,
+      "cat": "political",
+      "quantifier": "some_family_member",
+      "except": null,
+      "count_op": null,
+      "count": null
+    },
+    {
+      "field": "owns_four_wheeler",
+      "op": "==",
+      "value": true,
+      "ontology_proposed": false,
+      "cat": "economic",
+      "quantifier": "some_family_member",
+      "except": {
+        "field": "owned_vehicle_is_farm_tractor_only",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false
+      },
+      "count_op": null,
+      "count": null
+    }
+  ],
+  "temporal_validity": {
+    "valid_from": "2024-07-01",
+    "valid_to": null,
+    "extracted_at": "2026-08-18",
+    "supersedes": {
+      "rule_version": "v1_pre_20240703",
+      "retired_predicate": {
+        "field": "family_agricultural_land_acres",
+        "op": ">",
+        "value": 5
+      },
+      "amendment_source": "GR मबावि 2024/प्र.क्र.96/कार्य-2, दि.03.07.2024, item 6 of the amendment table: 'अ.क्र.(७) येथिल अपात्रतेची अट वगळण्यात येत आहे' (the disqualification condition at original item 7 — family jointly holds more than 5 acres of farmland — is hereby removed). Directly quoted and verified against the primary PDF."
+    }
+  },
+  "operational_requirements": [
+    "aadhaar_card",
+    "domicile_certificate_or_alternate_proof",
+    "family_income_certificate_or_ration_card_exemption"
+  ],
+  "extraction_metadata": {
+    "confidence": 0.9,
+    "source_clause": "VERIFIED against primary GRs (see file header). Inclusion: is_woman/age 21-65 (item 4(3), post-03.07.2024 amendment)/family_annual_income_inr<=250000 (item 4(5)) directly quoted. is_maharashtra_resident directly quoted (item 4(1)). has_bank_account matches item 4(4)'s literal 'must have a bank account' — Aadhaar-linkage is a disbursement-mechanism detail (section 2), not a stated eligibility criterion, so it's listed under operational_requirements instead, not folded into this predicate. Exclusions: income tax (item 5(2)), govt employee/pensioner (item 5(3), amended to exclude only regular/permanent — contractual/outsourced/voluntary workers with income <=2.5L are explicitly eligible per the amendment, already covered by the inclusion-side income cap so no separate except-clause was added), other-govt-scheme monthly benefit >=1500 (item 5(4), amended wording, self-quantified since the clause says 'the said beneficiary WOMAN', not 'family member'), MP/MLA (item 5(5), reuses PM-KISAN's holds_constitutional_or_political_post canonical field — same real-world concept), govt board/corporation post (item 5(6), a distinct appointed-post concept, new field), four-wheeler except tractor (item 5(8), directly quoted). NOT modeled: the 'only one unmarried woman per family' rule (03.07.2024 amendment) — see file header note on why. NOT modeled: item 5(1) (family income >2.5L) since it's redundant with the inclusion-side income cap, not a separate fact.",
+    "flagged_for_review": false
+  }
+}

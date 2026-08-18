@@ -1,0 +1,207 @@
+{
+  "scheme_id": "PM-UJJWALA-2.0",
+  "model": "openai/gpt-oss-120b",
+  "run_timestamp": "2026-08-18T03:34:50.896688",
+  "draft_source_run": "data\\extraction_runs\\PM-UJJWALA-2.0_gpt-oss-120b_ontology_20260818T033301.json",
+  "source_document": "data/raw_documents/PM-UJJWALA-2.0.md",
+  "gold_reference": "data/gold/PM-UJJWALA-2.0.json",
+  "judge_passes": [
+    {
+      "pass": 1,
+      "findings": [
+        {
+          "category": "preambular_implied_fact",
+          "description": "Eligibility requires the applicant to be an adult woman, but the extraction lacks a predicate capturing the gender (and adult status) requirement.",
+          "source_quote": "The applicant must be an adult woman belonging to a poor household that does not already have an LPG connection.",
+          "confidence": 0.95,
+          "proposed_predicate": {
+            "location": "inclusion",
+            "cat": "demographic",
+            "field": "is_woman",
+            "op": "==",
+            "value": true,
+            "quantifier": "self",
+            "ontology_proposed": false,
+            "except": null
+          },
+          "proposed_supersedes": null
+        }
+      ]
+    },
+    {
+      "pass": 2,
+      "findings": [
+        {
+          "category": "preambular_implied_fact",
+          "description": "Eligibility requires the applicant to be an adult woman; the draft captures gender but omits the adult age requirement implied in the eligibility statement.",
+          "source_quote": "The applicant must be an adult woman belonging to a poor household that does not already have an LPG connection.",
+          "confidence": 0.9,
+          "proposed_predicate": {
+            "location": "inclusion",
+            "cat": "demographic",
+            "field": "age",
+            "op": ">=",
+            "value": 18,
+            "quantifier": "self",
+            "ontology_proposed": true,
+            "except": null
+          },
+          "proposed_supersedes": null
+        }
+      ]
+    }
+  ],
+  "repair_log": [
+    {
+      "pass": 1,
+      "applied": [
+        {
+          "category": "preambular_implied_fact",
+          "description": "Eligibility requires the applicant to be an adult woman, but the extraction lacks a predicate capturing the gender (and adult status) requirement.",
+          "confidence": 0.95,
+          "applied": true,
+          "type": "predicate",
+          "location": "inclusion",
+          "field": "is_woman"
+        }
+      ]
+    },
+    {
+      "pass": 2,
+      "applied": [
+        {
+          "category": "preambular_implied_fact",
+          "description": "Eligibility requires the applicant to be an adult woman; the draft captures gender but omits the adult age requirement implied in the eligibility statement.",
+          "confidence": 0.9,
+          "applied": true,
+          "type": "predicate",
+          "location": "inclusion",
+          "field": "age"
+        }
+      ]
+    }
+  ],
+  "repaired_scheme": {
+    "scheme_id": "PM-UJJWALA-2.0",
+    "unit_of_eligibility": "family",
+    "inclusion": {
+      "and": [
+        {
+          "or": [
+            {
+              "field": "is_in_secc_2011_list",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": false,
+              "cat": "demographic"
+            },
+            {
+              "field": "is_bpl_household",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": false,
+              "cat": "economic"
+            },
+            {
+              "field": "is_sc_st",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": false,
+              "cat": "demographic"
+            },
+            {
+              "field": "is_pmay_g_beneficiary",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": false,
+              "cat": "demographic"
+            },
+            {
+              "field": "is_aay_beneficiary",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": true,
+              "cat": "economic"
+            },
+            {
+              "field": "is_forest_dweller",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": false,
+              "cat": "demographic"
+            },
+            {
+              "field": "is_most_backward_class",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": false,
+              "cat": "demographic"
+            },
+            {
+              "field": "is_tea_garden_tribe",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": false,
+              "cat": "demographic"
+            },
+            {
+              "field": "lives_on_river_island",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": false,
+              "cat": "demographic"
+            },
+            {
+              "field": "meets_14_point_self_declaration",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": false,
+              "cat": "economic"
+            }
+          ]
+        },
+        {
+          "field": "is_woman",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false,
+          "cat": "demographic"
+        },
+        {
+          "field": "age",
+          "op": ">=",
+          "value": 18,
+          "ontology_proposed": true,
+          "cat": "demographic"
+        }
+      ]
+    },
+    "exclusions": [
+      {
+        "field": "household_has_existing_lpg_connection",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "other",
+        "quantifier": "self",
+        "except": null,
+        "count_op": null,
+        "count": null
+      }
+    ],
+    "temporal_validity": {
+      "valid_from": "2021-08-10",
+      "valid_to": null,
+      "extracted_at": "2026-08-18",
+      "supersedes": null
+    },
+    "operational_requirements": [
+      "Aadhaar-based KYC required"
+    ],
+    "extraction_metadata": {
+      "confidence": 0.95,
+      "source_clause": "Eligibility",
+      "flagged_for_review": false
+    }
+  }
+}

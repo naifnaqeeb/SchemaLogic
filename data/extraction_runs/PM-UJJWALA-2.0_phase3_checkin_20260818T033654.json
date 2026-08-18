@@ -1,0 +1,197 @@
+{
+  "scheme_id": "PM-UJJWALA-2.0",
+  "run_timestamp": "2026-08-18T03:36:54.813834",
+  "note": "Phase 3 first-scheme check-in: structural F1 + outcome-equivalence of gold vs the GATE-APPROVED final pipeline output (extraction -> judge -> gate; gate deferred the one bad temporal_supersession finding, so gated == original ontology-constrained draft here).",
+  "gated_source_run": "data\\extraction_runs\\PM-UJJWALA-2.0_gpt-oss-120b_gated_20260818T033601.json",
+  "structural_f1": {
+    "scheme_id": "PM-UJJWALA-2.0",
+    "inclusion_diff": {
+      "exact_matches": [
+        {
+          "field": "is_woman"
+        },
+        {
+          "field": "age"
+        },
+        {
+          "field": "is_bpl_household"
+        },
+        {
+          "field": "is_in_secc_2011_list"
+        },
+        {
+          "field": "is_sc_st"
+        },
+        {
+          "field": "is_pmay_g_beneficiary"
+        },
+        {
+          "field": "is_aay_beneficiary"
+        },
+        {
+          "field": "is_forest_dweller"
+        },
+        {
+          "field": "is_most_backward_class"
+        },
+        {
+          "field": "is_tea_garden_tribe"
+        },
+        {
+          "field": "lives_on_river_island"
+        },
+        {
+          "field": "meets_14_point_self_declaration"
+        }
+      ],
+      "present_but_wrong": [],
+      "missing": [
+        {
+          "field": "is_indian_citizen",
+          "cat": "citizenship",
+          "op": "==",
+          "value": true
+        }
+      ],
+      "hallucinated": []
+    },
+    "exclusion_diff": {
+      "exact_matches": [
+        {
+          "field": "household_has_existing_lpg_connection"
+        }
+      ],
+      "present_but_wrong": [],
+      "missing": [],
+      "hallucinated": []
+    },
+    "category_metrics": {
+      "demographic": {
+        "category": "demographic",
+        "tp": 8,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0
+      },
+      "citizenship": {
+        "category": "citizenship",
+        "tp": 0,
+        "fp": 0,
+        "fn": 1,
+        "precision": 1.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "economic": {
+        "category": "economic",
+        "tp": 4,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0
+      },
+      "other": {
+        "category": "other",
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0
+      }
+    },
+    "overall": {
+      "category": "__overall__",
+      "tp": 13,
+      "fp": 0,
+      "fn": 1,
+      "precision": 1.0,
+      "recall": 0.9286,
+      "f1": 0.963
+    },
+    "category_tag_mismatches": [
+      {
+        "location": "inclusion",
+        "field": "is_in_secc_2011_list",
+        "gold_cat": "economic",
+        "draft_cat": "demographic"
+      }
+    ]
+  },
+  "outcome_equivalence": {
+    "scheme_id": "PM-UJJWALA-2.0",
+    "n_profiles": 9,
+    "agreement_rate": 0.8888888888888888,
+    "false_positive_eligible_rate": 0.1111111111111111,
+    "false_negative_eligible_rate": 0.0,
+    "other_mismatch_rate": 0.0,
+    "comparisons": [
+      {
+        "profile_id": "eligible_baseline",
+        "gold_verdict": "eligible",
+        "draft_verdict": "eligible",
+        "agree": true,
+        "disagreement_type": null
+      },
+      {
+        "profile_id": "already_has_lpg_connection",
+        "gold_verdict": "ineligible",
+        "draft_verdict": "ineligible",
+        "agree": true,
+        "disagreement_type": null
+      },
+      {
+        "profile_id": "no_category_membership_undetermined",
+        "gold_verdict": "undetermined_missing_facts",
+        "draft_verdict": "undetermined_missing_facts",
+        "agree": true,
+        "disagreement_type": null
+      },
+      {
+        "profile_id": "sc_st_alone",
+        "gold_verdict": "eligible",
+        "draft_verdict": "eligible",
+        "agree": true,
+        "disagreement_type": null
+      },
+      {
+        "profile_id": "pmay_g_beneficiary_alone",
+        "gold_verdict": "eligible",
+        "draft_verdict": "eligible",
+        "agree": true,
+        "disagreement_type": null
+      },
+      {
+        "profile_id": "self_declaration_fallback",
+        "gold_verdict": "eligible",
+        "draft_verdict": "eligible",
+        "agree": true,
+        "disagreement_type": null
+      },
+      {
+        "profile_id": "not_a_woman_ineligible",
+        "gold_verdict": "ineligible",
+        "draft_verdict": "ineligible",
+        "agree": true,
+        "disagreement_type": null
+      },
+      {
+        "profile_id": "minor_ineligible",
+        "gold_verdict": "ineligible",
+        "draft_verdict": "ineligible",
+        "agree": true,
+        "disagreement_type": null
+      },
+      {
+        "profile_id": "non_citizen_ineligible",
+        "gold_verdict": "ineligible",
+        "draft_verdict": "eligible",
+        "agree": false,
+        "disagreement_type": "false_positive_eligible"
+      }
+    ]
+  }
+}

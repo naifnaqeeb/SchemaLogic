@@ -1,0 +1,181 @@
+{
+  "scheme_id": "PM-KISAN",
+  "model": "openai/gpt-oss-120b",
+  "run_timestamp": "2026-08-18T00:52:07.885673",
+  "note": "Re-run with ontology-constrained extractor prompt (schema/field_ontology.py).",
+  "source_document": "data/raw_documents/PM-KISAN.md",
+  "gold_reference": "data/gold/PM-KISAN.json",
+  "draft_extraction": {
+    "scheme_id": "PM-KISAN",
+    "unit_of_eligibility": "family",
+    "inclusion": {
+      "field": "owns_cultivable_land_in_records",
+      "op": "==",
+      "value": true,
+      "ontology_proposed": false,
+      "cat": "occupation"
+    },
+    "exclusions": [
+      {
+        "field": "is_institutional_landholder",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "institutional",
+        "quantifier": "self",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "holds_constitutional_or_political_post",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "political",
+        "quantifier": "some_family_member",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "holds_elected_or_nominated_govt_post",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "political",
+        "quantifier": "some_family_member",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "is_serving_or_retired_govt_employee",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "occupation",
+        "quantifier": "some_family_member",
+        "except": {
+          "field": "is_group_d_class_iv_or_mts",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false
+        },
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "monthly_pension_inr",
+        "op": ">=",
+        "value": 10000,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "some_family_member",
+        "except": {
+          "field": "is_group_d_class_iv_or_mts",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false
+        },
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "paid_income_tax_last_assessment_year",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "some_family_member",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "is_practicing_registered_professional",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "professional",
+        "quantifier": "some_family_member",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "is_nri_per_income_tax_act_1961",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "citizenship",
+        "quantifier": "some_family_member",
+        "except": null,
+        "count_op": null,
+        "count": null
+      }
+    ],
+    "temporal_validity": {
+      "valid_from": "2019-06-01",
+      "valid_to": null,
+      "extracted_at": "2026-08-18",
+      "supersedes": null
+    },
+    "operational_requirements": [
+      "Aadhaar-seeded bank account required",
+      "e-KYC completion required"
+    ],
+    "extraction_metadata": {
+      "confidence": 0.95,
+      "source_clause": "Exclusion Categories section",
+      "flagged_for_review": false
+    }
+  },
+  "exact_field_matches": [
+    "holds_constitutional_or_political_post",
+    "is_institutional_landholder",
+    "is_nri_per_income_tax_act_1961",
+    "is_practicing_registered_professional",
+    "is_serving_or_retired_govt_employee",
+    "monthly_pension_inr",
+    "owns_cultivable_land_in_records",
+    "paid_income_tax_last_assessment_year"
+  ],
+  "gold_fields": [
+    "holds_constitutional_or_political_post",
+    "is_indian_citizen",
+    "is_institutional_landholder",
+    "is_nri_per_income_tax_act_1961",
+    "is_practicing_registered_professional",
+    "is_serving_or_retired_govt_employee",
+    "monthly_pension_inr",
+    "owns_cultivable_land_in_records",
+    "paid_income_tax_last_assessment_year"
+  ],
+  "draft_fields": [
+    "holds_constitutional_or_political_post",
+    "holds_elected_or_nominated_govt_post",
+    "is_institutional_landholder",
+    "is_nri_per_income_tax_act_1961",
+    "is_practicing_registered_professional",
+    "is_serving_or_retired_govt_employee",
+    "monthly_pension_inr",
+    "owns_cultivable_land_in_records",
+    "paid_income_tax_last_assessment_year"
+  ],
+  "ontology_proposed_predicates": [],
+  "unflagged_out_of_ontology_fields": [
+    {
+      "index": 2,
+      "cat": "political",
+      "field": "holds_elected_or_nominated_govt_post",
+      "op": "==",
+      "value": true,
+      "quantifier": "some_family_member",
+      "ontology_proposed": false,
+      "except": null,
+      "count_op": null,
+      "count": null
+    }
+  ]
+}

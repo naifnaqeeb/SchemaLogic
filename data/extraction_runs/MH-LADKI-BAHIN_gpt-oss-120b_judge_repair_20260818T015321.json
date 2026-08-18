@@ -1,0 +1,297 @@
+{
+  "scheme_id": "MH-LADKI-BAHIN",
+  "model": "openai/gpt-oss-120b",
+  "run_timestamp": "2026-08-18T01:53:21.697860",
+  "draft_source_run": "data\\extraction_runs\\MH-LADKI-BAHIN_gpt-oss-120b_ontology_20260818T013129.json",
+  "source_document": "data/raw_documents/MH-LADKI-BAHIN.md",
+  "gold_reference": "data/gold/MH-LADKI-BAHIN.json",
+  "judge_passes": [
+    {
+      "pass": 1,
+      "findings": [
+        {
+          "category": "preambular_implied_fact",
+          "description": "Eligibility requires the beneficiary to be a woman, but the extraction lacks an explicit gender predicate.",
+          "source_quote": "Married, widowed, divorced, abandoned, and destitute women of Maharashtra State in the age group 21 to 65 years, as well as only one unmarried woman from that family.",
+          "confidence": 0.96,
+          "proposed_predicate": {
+            "location": "inclusion",
+            "cat": "demographic",
+            "field": "is_woman",
+            "op": "==",
+            "value": true,
+            "quantifier": "self",
+            "ontology_proposed": false,
+            "except": null
+          },
+          "proposed_supersedes": null
+        },
+        {
+          "category": "temporal_supersession",
+          "description": "An earlier disqualification based on agricultural land holdings (>5 acres) was removed by the 3 July 2024 amendment, but the supersedes metadata is missing.",
+          "source_quote": "Note: the disqualification condition originally at item 7 of the 28 June 2024 order (families whose members jointly hold more than five acres of agricultural land) was removed by the 3 July 2024 amendment order and no longer applies.",
+          "confidence": 0.94,
+          "proposed_predicate": null,
+          "proposed_supersedes": {
+            "retired_field": "family_agricultural_land_acres",
+            "retired_op": ">",
+            "retired_value": 5,
+            "amendment_source_quote": "Note: the disqualification condition originally at item 7 of the 28 June 2024 order (families whose members jointly hold more than five acres of agricultural land) was removed by the 3 July 2024 amendment order and no longer applies.",
+            "rule_version_label": "amendment_2024-07-03",
+            "new_valid_from": "2024-07-03"
+          }
+        }
+      ]
+    },
+    {
+      "pass": 2,
+      "findings": [
+        {
+          "category": "preambular_implied_fact",
+          "description": "Eligibility requires the beneficiary to have an Aadhaar-linked bank account, implied by the benefit description but not captured as a separate predicate.",
+          "source_quote": "Rs. 1,500 per month is credited via Direct Benefit Transfer to each eligible woman's own Aadhaar-linked bank account.",
+          "confidence": 0.92,
+          "proposed_predicate": {
+            "location": "inclusion",
+            "cat": "economic",
+            "field": "has_aadhaar_linked_bank_account",
+            "op": "==",
+            "value": true,
+            "quantifier": "self",
+            "ontology_proposed": false,
+            "except": null
+          },
+          "proposed_supersedes": null
+        }
+      ]
+    }
+  ],
+  "repair_log": [
+    {
+      "pass": 1,
+      "applied": [
+        {
+          "category": "preambular_implied_fact",
+          "description": "Eligibility requires the beneficiary to be a woman, but the extraction lacks an explicit gender predicate.",
+          "confidence": 0.96,
+          "applied": true,
+          "type": "predicate",
+          "location": "inclusion",
+          "field": "is_woman"
+        },
+        {
+          "category": "temporal_supersession",
+          "description": "An earlier disqualification based on agricultural land holdings (>5 acres) was removed by the 3 July 2024 amendment, but the supersedes metadata is missing.",
+          "confidence": 0.94,
+          "applied": true,
+          "type": "supersedes",
+          "field": "family_agricultural_land_acres"
+        }
+      ]
+    },
+    {
+      "pass": 2,
+      "applied": [
+        {
+          "category": "preambular_implied_fact",
+          "description": "Eligibility requires the beneficiary to have an Aadhaar-linked bank account, implied by the benefit description but not captured as a separate predicate.",
+          "confidence": 0.92,
+          "applied": true,
+          "type": "predicate",
+          "location": "inclusion",
+          "field": "has_aadhaar_linked_bank_account"
+        }
+      ]
+    }
+  ],
+  "repaired_scheme": {
+    "scheme_id": "MH-LADKI-BAHIN",
+    "unit_of_eligibility": "individual",
+    "inclusion": {
+      "and": [
+        {
+          "field": "is_maharashtra_resident",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false,
+          "cat": "demographic"
+        },
+        {
+          "field": "age",
+          "op": ">=",
+          "value": 21,
+          "ontology_proposed": false,
+          "cat": "demographic"
+        },
+        {
+          "field": "age",
+          "op": "<=",
+          "value": 65,
+          "ontology_proposed": false,
+          "cat": "demographic"
+        },
+        {
+          "field": "has_bank_account",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false,
+          "cat": "economic"
+        },
+        {
+          "field": "family_annual_income_inr",
+          "op": "<=",
+          "value": 250000,
+          "ontology_proposed": false,
+          "cat": "economic"
+        },
+        {
+          "field": "marital_status",
+          "op": "in",
+          "value": [
+            "married",
+            "widowed",
+            "divorced",
+            "abandoned",
+            "destitute",
+            "unmarried"
+          ],
+          "ontology_proposed": true,
+          "cat": "demographic"
+        },
+        {
+          "field": "is_woman",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false,
+          "cat": "demographic"
+        },
+        {
+          "field": "has_aadhaar_linked_bank_account",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false,
+          "cat": "economic"
+        }
+      ]
+    },
+    "exclusions": [
+      {
+        "field": "family_annual_income_inr",
+        "op": ">",
+        "value": 250000,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "paid_income_tax_last_assessment_year",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "some_family_member",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "is_regular_govt_employee_or_pensioner",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "occupation",
+        "quantifier": "some_family_member",
+        "except": {
+          "field": "employment_type",
+          "op": "in",
+          "value": [
+            "outsourced",
+            "voluntary",
+            "contractual"
+          ],
+          "ontology_proposed": true
+        },
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "other_govt_scheme_monthly_benefit_inr",
+        "op": ">=",
+        "value": 1500,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "holds_constitutional_or_political_post",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "political",
+        "quantifier": "some_family_member",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "holds_govt_board_or_corporation_post",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "political",
+        "quantifier": "some_family_member",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "owns_four_wheeler",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "some_family_member",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "marital_status",
+        "op": "==",
+        "value": "unmarried",
+        "ontology_proposed": false,
+        "cat": "demographic",
+        "quantifier": "count_family_members",
+        "except": null,
+        "count_op": ">",
+        "count": 1
+      }
+    ],
+    "temporal_validity": {
+      "valid_from": "2024-07-03",
+      "valid_to": null,
+      "extracted_at": "2026-08-18",
+      "supersedes": {
+        "rule_version": "amendment_2024-07-03",
+        "retired_predicate": {
+          "field": "family_agricultural_land_acres",
+          "op": ">",
+          "value": 5
+        },
+        "amendment_source": "Note: the disqualification condition originally at item 7 of the 28 June 2024 order (families whose members jointly hold more than five acres of agricultural land) was removed by the 3 July 2024 amendment order and no longer applies."
+      }
+    },
+    "operational_requirements": [],
+    "extraction_metadata": {
+      "confidence": 0.97,
+      "source_clause": "Eligibility (Para 4, as amended) and Disqualification / Exclusions (Para 5, as amended)",
+      "flagged_for_review": false
+    }
+  }
+}

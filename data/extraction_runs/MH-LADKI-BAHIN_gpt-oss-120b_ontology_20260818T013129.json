@@ -1,0 +1,245 @@
+{
+  "scheme_id": "MH-LADKI-BAHIN",
+  "model": "openai/gpt-oss-120b",
+  "run_timestamp": "2026-08-18T01:31:29.704542",
+  "note": "Ontology-constrained extraction run (schema/field_ontology.py).",
+  "source_document": "data/raw_documents/MH-LADKI-BAHIN.md",
+  "gold_reference": "data/gold/MH-LADKI-BAHIN.json",
+  "draft_extraction": {
+    "scheme_id": "MH-LADKI-BAHIN",
+    "unit_of_eligibility": "individual",
+    "inclusion": {
+      "and": [
+        {
+          "field": "is_maharashtra_resident",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false,
+          "cat": "demographic"
+        },
+        {
+          "field": "age",
+          "op": ">=",
+          "value": 21,
+          "ontology_proposed": false,
+          "cat": "demographic"
+        },
+        {
+          "field": "age",
+          "op": "<=",
+          "value": 65,
+          "ontology_proposed": false,
+          "cat": "demographic"
+        },
+        {
+          "field": "has_bank_account",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false,
+          "cat": "economic"
+        },
+        {
+          "field": "family_annual_income_inr",
+          "op": "<=",
+          "value": 250000,
+          "ontology_proposed": false,
+          "cat": "economic"
+        },
+        {
+          "field": "marital_status",
+          "op": "in",
+          "value": [
+            "married",
+            "widowed",
+            "divorced",
+            "abandoned",
+            "destitute",
+            "unmarried"
+          ],
+          "ontology_proposed": true,
+          "cat": "demographic"
+        }
+      ]
+    },
+    "exclusions": [
+      {
+        "field": "family_annual_income_inr",
+        "op": ">",
+        "value": 250000,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "paid_income_tax_last_assessment_year",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "some_family_member",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "is_regular_govt_employee_or_pensioner",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "occupation",
+        "quantifier": "some_family_member",
+        "except": {
+          "field": "employment_type",
+          "op": "in",
+          "value": [
+            "outsourced",
+            "voluntary",
+            "contractual"
+          ],
+          "ontology_proposed": true
+        },
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "other_govt_scheme_monthly_benefit_inr",
+        "op": ">=",
+        "value": 1500,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "holds_constitutional_or_political_post",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "political",
+        "quantifier": "some_family_member",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "holds_govt_board_or_corporation_post",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "political",
+        "quantifier": "some_family_member",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "owns_four_wheeler",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "some_family_member",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "marital_status",
+        "op": "==",
+        "value": "unmarried",
+        "ontology_proposed": false,
+        "cat": "demographic",
+        "quantifier": "count_family_members",
+        "except": null,
+        "count_op": ">",
+        "count": 1
+      }
+    ],
+    "temporal_validity": {
+      "valid_from": "2024-07-01",
+      "valid_to": null,
+      "extracted_at": "2026-08-18",
+      "supersedes": null
+    },
+    "operational_requirements": [],
+    "extraction_metadata": {
+      "confidence": 0.97,
+      "source_clause": "Eligibility (Para 4, as amended) and Disqualification / Exclusions (Para 5, as amended)",
+      "flagged_for_review": false
+    }
+  },
+  "exact_field_matches": [
+    "age",
+    "family_annual_income_inr",
+    "has_bank_account",
+    "holds_constitutional_or_political_post",
+    "holds_govt_board_or_corporation_post",
+    "is_maharashtra_resident",
+    "is_regular_govt_employee_or_pensioner",
+    "other_govt_scheme_monthly_benefit_inr",
+    "owns_four_wheeler",
+    "paid_income_tax_last_assessment_year"
+  ],
+  "gold_fields": [
+    "age",
+    "family_annual_income_inr",
+    "has_bank_account",
+    "holds_constitutional_or_political_post",
+    "holds_govt_board_or_corporation_post",
+    "is_maharashtra_resident",
+    "is_regular_govt_employee_or_pensioner",
+    "is_woman",
+    "other_govt_scheme_monthly_benefit_inr",
+    "owns_four_wheeler",
+    "paid_income_tax_last_assessment_year"
+  ],
+  "draft_fields": [
+    "age",
+    "family_annual_income_inr",
+    "has_bank_account",
+    "holds_constitutional_or_political_post",
+    "holds_govt_board_or_corporation_post",
+    "is_maharashtra_resident",
+    "is_regular_govt_employee_or_pensioner",
+    "marital_status",
+    "other_govt_scheme_monthly_benefit_inr",
+    "owns_four_wheeler",
+    "paid_income_tax_last_assessment_year"
+  ],
+  "ontology_proposed_predicates": [
+    {
+      "path": "inclusion.and[5]",
+      "cat": "demographic",
+      "field": "marital_status",
+      "op": "in",
+      "value": [
+        "married",
+        "widowed",
+        "divorced",
+        "abandoned",
+        "destitute",
+        "unmarried"
+      ],
+      "ontology_proposed": true
+    }
+  ],
+  "unflagged_out_of_ontology_fields": [
+    {
+      "index": 7,
+      "cat": "demographic",
+      "field": "marital_status",
+      "op": "==",
+      "value": "unmarried",
+      "quantifier": "count_family_members",
+      "ontology_proposed": false,
+      "except": null,
+      "count_op": ">",
+      "count": 1
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "scheme_id": "PM-UJJWALA-2.0",
+  "note": "Second INDEPENDENT judge sample on the same original pre-repair draft, for the calibration gate's self-consistency signal.",
+  "draft_source_run": "data\\extraction_runs\\PM-UJJWALA-2.0_gpt-oss-120b_ontology_20260818T033301.json",
+  "findings": [
+    {
+      "category": "preambular_implied_fact",
+      "description": "Eligibility requires the applicant to be a woman.",
+      "source_quote": "The applicant must be an adult woman belonging to a poor household that does not already have an LPG connection.",
+      "confidence": 1.0,
+      "proposed_predicate": {
+        "location": "inclusion",
+        "cat": "demographic",
+        "field": "is_woman",
+        "op": "==",
+        "value": true,
+        "quantifier": "self",
+        "ontology_proposed": false,
+        "except": null
+      },
+      "proposed_supersedes": null
+    },
+    {
+      "category": "preambular_implied_fact",
+      "description": "Eligibility requires the applicant to be an adult (age 18 or older).",
+      "source_quote": "The applicant must be an adult woman belonging to a poor household that does not already have an LPG connection.",
+      "confidence": 1.0,
+      "proposed_predicate": {
+        "location": "inclusion",
+        "cat": "demographic",
+        "field": "age",
+        "op": ">=",
+        "value": 18,
+        "quantifier": "self",
+        "ontology_proposed": false,
+        "except": null
+      },
+      "proposed_supersedes": null
+    }
+  ]
+}

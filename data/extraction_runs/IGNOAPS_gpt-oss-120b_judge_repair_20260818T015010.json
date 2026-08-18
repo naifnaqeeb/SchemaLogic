@@ -1,0 +1,197 @@
+{
+  "scheme_id": "IGNOAPS",
+  "model": "openai/gpt-oss-120b",
+  "run_timestamp": "2026-08-18T01:50:10.723420",
+  "draft_source_run": "data\\extraction_runs\\IGNOAPS_gpt-oss-120b_ontology_20260818T012625.json",
+  "source_document": "data/raw_documents/IGNOAPS.md",
+  "gold_reference": "data/gold/IGNOAPS.json",
+  "judge_passes": [
+    {
+      "pass": 1,
+      "findings": [
+        {
+          "category": "preambular_implied_fact",
+          "description": "The introductory definition of destitutes implies that eligibility requires the applicant to have little or no regular means of subsistence, which is not captured in the extraction.",
+          "source_quote": "The scheme was introduced ... targeting the destitutes, defined as any person who has little or no regular means of subsistence from his / her own source of income or through financial support from family members or other sources, to be identified by the States and UTs, with the objective of providing a basic level of financial support.",
+          "confidence": 0.9,
+          "proposed_predicate": {
+            "location": "inclusion",
+            "cat": "economic",
+            "field": "has_little_regular_means_of_subsistence",
+            "op": "==",
+            "value": true,
+            "quantifier": "self",
+            "ontology_proposed": true,
+            "except": null
+          },
+          "proposed_supersedes": null
+        }
+      ]
+    },
+    {
+      "pass": 2,
+      "findings": [
+        {
+          "category": "temporal_supersession",
+          "description": "Eligibility was expanded in 2007 to require beneficiaries to belong to the Below Poverty Line (BPL) category, superseding the earlier rule that did not impose a BPL condition.",
+          "source_quote": "From the year 2007, the scheme was expanded to cover all eligible persons Below Poverty Line (BPL).",
+          "confidence": 0.95,
+          "proposed_predicate": null,
+          "proposed_supersedes": {
+            "retired_field": "is_bpl_household",
+            "retired_op": "==",
+            "retired_value": false,
+            "amendment_source_quote": "From the year 2007, the scheme was expanded to cover all eligible persons Below Poverty Line (BPL).",
+            "rule_version_label": "prior_version",
+            "new_valid_from": "2007-01-01"
+          }
+        }
+      ]
+    }
+  ],
+  "repair_log": [
+    {
+      "pass": 1,
+      "applied": [
+        {
+          "category": "preambular_implied_fact",
+          "description": "The introductory definition of destitutes implies that eligibility requires the applicant to have little or no regular means of subsistence, which is not captured in the extraction.",
+          "confidence": 0.9,
+          "applied": true,
+          "type": "predicate",
+          "location": "inclusion",
+          "field": "has_little_regular_means_of_subsistence"
+        }
+      ]
+    },
+    {
+      "pass": 2,
+      "applied": [
+        {
+          "category": "temporal_supersession",
+          "description": "Eligibility was expanded in 2007 to require beneficiaries to belong to the Below Poverty Line (BPL) category, superseding the earlier rule that did not impose a BPL condition.",
+          "confidence": 0.95,
+          "applied": true,
+          "type": "supersedes",
+          "field": "is_bpl_household"
+        }
+      ]
+    }
+  ],
+  "repaired_scheme": {
+    "scheme_id": "IGNOAPS",
+    "unit_of_eligibility": "individual",
+    "inclusion": {
+      "and": [
+        {
+          "field": "age",
+          "op": ">=",
+          "value": 60,
+          "ontology_proposed": false,
+          "cat": "demographic"
+        },
+        {
+          "or": [
+            {
+              "field": "is_bpl_household",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": false,
+              "cat": "economic"
+            },
+            {
+              "and": [
+                {
+                  "field": "is_woman",
+                  "op": "==",
+                  "value": true,
+                  "ontology_proposed": false,
+                  "cat": "demographic"
+                },
+                {
+                  "field": "is_widow",
+                  "op": "==",
+                  "value": true,
+                  "ontology_proposed": true,
+                  "cat": "other"
+                },
+                {
+                  "field": "has_aids",
+                  "op": "==",
+                  "value": true,
+                  "ontology_proposed": true,
+                  "cat": "other"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "field": "has_little_regular_means_of_subsistence",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": true,
+          "cat": "economic"
+        }
+      ]
+    },
+    "exclusions": [
+      {
+        "field": "is_govt_employee",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "occupation",
+        "quantifier": "self",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "family_agricultural_land_acres",
+        "op": ">=",
+        "value": 5,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "owns_four_wheeler",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "count_op": null,
+        "count": null
+      }
+    ],
+    "temporal_validity": {
+      "valid_from": "2007-01-01",
+      "valid_to": null,
+      "extracted_at": "2026-08-18",
+      "supersedes": {
+        "rule_version": "prior_version",
+        "retired_predicate": {
+          "field": "is_bpl_household",
+          "op": "==",
+          "value": false
+        },
+        "amendment_source": "From the year 2007, the scheme was expanded to cover all eligible persons Below Poverty Line (BPL)."
+      }
+    },
+    "operational_requirements": [
+      "Beneficiary must have a bank account or post office savings account",
+      "Beneficiary must have an Aadhaar number"
+    ],
+    "extraction_metadata": {
+      "confidence": 0.95,
+      "source_clause": "Chapter II 2.3, 2.4.3",
+      "flagged_for_review": false
+    }
+  }
+}

@@ -1,0 +1,480 @@
+{
+  "scheme_id": "PM-KISAN",
+  "model": "openai/gpt-oss-120b",
+  "rediff_timestamp": "2026-08-18T00:04:41.170478",
+  "note": "Re-diff of the SAME draft extraction (no new LLM call) against the corrected/verified gold (added Para 4.1(c) NRI exclusion).",
+  "original_run": "data\\extraction_runs\\PM-KISAN_gpt-oss-120b_20260817T233841.json",
+  "gold_reference": "data/gold/PM-KISAN.json",
+  "diff": {
+    "inclusion": {
+      "exact_matches": [],
+      "present_but_wrong": [],
+      "missing": [
+        {
+          "path": "inclusion.and[0]",
+          "cat": "citizenship",
+          "field": "is_indian_citizen",
+          "op": "==",
+          "value": true
+        },
+        {
+          "path": "inclusion.and[1]",
+          "cat": "occupation",
+          "field": "owns_cultivable_land_in_records",
+          "op": "==",
+          "value": true
+        }
+      ],
+      "hallucinated": [
+        {
+          "path": "inclusion.and[0]",
+          "cat": "family_unit",
+          "field": "family_type",
+          "op": "==",
+          "value": "farmer"
+        },
+        {
+          "path": "inclusion.and[1]",
+          "cat": "other",
+          "field": "land_records_verified",
+          "op": "==",
+          "value": true
+        }
+      ]
+    },
+    "exclusions": {
+      "exact_matches": [],
+      "present_but_wrong": [],
+      "missing": [
+        {
+          "index": 0,
+          "cat": "economic",
+          "field": "paid_income_tax_last_assessment_year",
+          "op": "==",
+          "value": true,
+          "quantifier": "some_family_member",
+          "except": null,
+          "count_op": null,
+          "count": null
+        },
+        {
+          "index": 1,
+          "cat": "occupation",
+          "field": "is_serving_or_retired_govt_employee",
+          "op": "==",
+          "value": true,
+          "quantifier": "some_family_member",
+          "except": {
+            "field": "is_group_d_class_iv_or_mts",
+            "op": "==",
+            "value": true
+          },
+          "count_op": null,
+          "count": null
+        },
+        {
+          "index": 2,
+          "cat": "economic",
+          "field": "monthly_pension_inr",
+          "op": ">=",
+          "value": 10000,
+          "quantifier": "some_family_member",
+          "except": {
+            "field": "is_group_d_class_iv_or_mts",
+            "op": "==",
+            "value": true
+          },
+          "count_op": null,
+          "count": null
+        },
+        {
+          "index": 3,
+          "cat": "political",
+          "field": "holds_constitutional_or_political_post",
+          "op": "==",
+          "value": true,
+          "quantifier": "some_family_member",
+          "except": null,
+          "count_op": null,
+          "count": null
+        },
+        {
+          "index": 4,
+          "cat": "professional",
+          "field": "is_practicing_registered_professional",
+          "op": "==",
+          "value": true,
+          "quantifier": "some_family_member",
+          "except": null,
+          "count_op": null,
+          "count": null
+        },
+        {
+          "index": 5,
+          "cat": "institutional",
+          "field": "is_institutional_landholder",
+          "op": "==",
+          "value": true,
+          "quantifier": "self",
+          "except": null,
+          "count_op": null,
+          "count": null
+        },
+        {
+          "index": 6,
+          "cat": "citizenship",
+          "field": "is_nri_per_income_tax_act_1961",
+          "op": "==",
+          "value": true,
+          "quantifier": "some_family_member",
+          "except": null,
+          "count_op": null,
+          "count": null
+        }
+      ],
+      "hallucinated": [
+        {
+          "index": 0,
+          "cat": "institutional",
+          "field": "institutional_landholder",
+          "op": "==",
+          "value": true,
+          "quantifier": "self",
+          "except": null,
+          "count_op": null,
+          "count": null
+        },
+        {
+          "index": 1,
+          "cat": "political",
+          "field": "holds_constitutional_post",
+          "op": "==",
+          "value": true,
+          "quantifier": "some_family_member",
+          "except": null,
+          "count_op": null,
+          "count": null
+        },
+        {
+          "index": 2,
+          "cat": "political",
+          "field": "holds_political_office",
+          "op": "==",
+          "value": true,
+          "quantifier": "some_family_member",
+          "except": null,
+          "count_op": null,
+          "count": null
+        },
+        {
+          "index": 3,
+          "cat": "occupation",
+          "field": "government_employee",
+          "op": "==",
+          "value": true,
+          "quantifier": "some_family_member",
+          "except": {
+            "field": "employee_group",
+            "op": "in",
+            "value": [
+              "MTS",
+              "Class IV",
+              "Group D"
+            ]
+          },
+          "count_op": null,
+          "count": null
+        },
+        {
+          "index": 4,
+          "cat": "economic",
+          "field": "monthly_pension",
+          "op": ">=",
+          "value": 10000,
+          "quantifier": "some_family_member",
+          "except": {
+            "field": "employee_group",
+            "op": "in",
+            "value": [
+              "MTS",
+              "Class IV",
+              "Group D"
+            ]
+          },
+          "count_op": null,
+          "count": null
+        },
+        {
+          "index": 5,
+          "cat": "economic",
+          "field": "paid_income_tax_last_year",
+          "op": "==",
+          "value": true,
+          "quantifier": "some_family_member",
+          "except": null,
+          "count_op": null,
+          "count": null
+        },
+        {
+          "index": 6,
+          "cat": "professional",
+          "field": "profession",
+          "op": "in",
+          "value": [
+            "Doctor",
+            "Engineer",
+            "Lawyer",
+            "Chartered Accountant",
+            "Architect"
+          ],
+          "quantifier": "some_family_member",
+          "except": null,
+          "count_op": null,
+          "count": null
+        },
+        {
+          "index": 7,
+          "cat": "citizenship",
+          "field": "citizenship_status",
+          "op": "==",
+          "value": "NRI",
+          "quantifier": "some_family_member",
+          "except": null,
+          "count_op": null,
+          "count": null
+        }
+      ]
+    },
+    "gold_inclusion_flat": [
+      {
+        "path": "inclusion.and[0]",
+        "cat": "citizenship",
+        "field": "is_indian_citizen",
+        "op": "==",
+        "value": true
+      },
+      {
+        "path": "inclusion.and[1]",
+        "cat": "occupation",
+        "field": "owns_cultivable_land_in_records",
+        "op": "==",
+        "value": true
+      }
+    ],
+    "draft_inclusion_flat": [
+      {
+        "path": "inclusion.and[0]",
+        "cat": "family_unit",
+        "field": "family_type",
+        "op": "==",
+        "value": "farmer"
+      },
+      {
+        "path": "inclusion.and[1]",
+        "cat": "other",
+        "field": "land_records_verified",
+        "op": "==",
+        "value": true
+      }
+    ],
+    "gold_exclusions_flat": [
+      {
+        "index": 0,
+        "cat": "economic",
+        "field": "paid_income_tax_last_assessment_year",
+        "op": "==",
+        "value": true,
+        "quantifier": "some_family_member",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "index": 1,
+        "cat": "occupation",
+        "field": "is_serving_or_retired_govt_employee",
+        "op": "==",
+        "value": true,
+        "quantifier": "some_family_member",
+        "except": {
+          "field": "is_group_d_class_iv_or_mts",
+          "op": "==",
+          "value": true
+        },
+        "count_op": null,
+        "count": null
+      },
+      {
+        "index": 2,
+        "cat": "economic",
+        "field": "monthly_pension_inr",
+        "op": ">=",
+        "value": 10000,
+        "quantifier": "some_family_member",
+        "except": {
+          "field": "is_group_d_class_iv_or_mts",
+          "op": "==",
+          "value": true
+        },
+        "count_op": null,
+        "count": null
+      },
+      {
+        "index": 3,
+        "cat": "political",
+        "field": "holds_constitutional_or_political_post",
+        "op": "==",
+        "value": true,
+        "quantifier": "some_family_member",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "index": 4,
+        "cat": "professional",
+        "field": "is_practicing_registered_professional",
+        "op": "==",
+        "value": true,
+        "quantifier": "some_family_member",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "index": 5,
+        "cat": "institutional",
+        "field": "is_institutional_landholder",
+        "op": "==",
+        "value": true,
+        "quantifier": "self",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "index": 6,
+        "cat": "citizenship",
+        "field": "is_nri_per_income_tax_act_1961",
+        "op": "==",
+        "value": true,
+        "quantifier": "some_family_member",
+        "except": null,
+        "count_op": null,
+        "count": null
+      }
+    ],
+    "draft_exclusions_flat": [
+      {
+        "index": 0,
+        "cat": "institutional",
+        "field": "institutional_landholder",
+        "op": "==",
+        "value": true,
+        "quantifier": "self",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "index": 1,
+        "cat": "political",
+        "field": "holds_constitutional_post",
+        "op": "==",
+        "value": true,
+        "quantifier": "some_family_member",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "index": 2,
+        "cat": "political",
+        "field": "holds_political_office",
+        "op": "==",
+        "value": true,
+        "quantifier": "some_family_member",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "index": 3,
+        "cat": "occupation",
+        "field": "government_employee",
+        "op": "==",
+        "value": true,
+        "quantifier": "some_family_member",
+        "except": {
+          "field": "employee_group",
+          "op": "in",
+          "value": [
+            "MTS",
+            "Class IV",
+            "Group D"
+          ]
+        },
+        "count_op": null,
+        "count": null
+      },
+      {
+        "index": 4,
+        "cat": "economic",
+        "field": "monthly_pension",
+        "op": ">=",
+        "value": 10000,
+        "quantifier": "some_family_member",
+        "except": {
+          "field": "employee_group",
+          "op": "in",
+          "value": [
+            "MTS",
+            "Class IV",
+            "Group D"
+          ]
+        },
+        "count_op": null,
+        "count": null
+      },
+      {
+        "index": 5,
+        "cat": "economic",
+        "field": "paid_income_tax_last_year",
+        "op": "==",
+        "value": true,
+        "quantifier": "some_family_member",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "index": 6,
+        "cat": "professional",
+        "field": "profession",
+        "op": "in",
+        "value": [
+          "Doctor",
+          "Engineer",
+          "Lawyer",
+          "Chartered Accountant",
+          "Architect"
+        ],
+        "quantifier": "some_family_member",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "index": 7,
+        "cat": "citizenship",
+        "field": "citizenship_status",
+        "op": "==",
+        "value": "NRI",
+        "quantifier": "some_family_member",
+        "except": null,
+        "count_op": null,
+        "count": null
+      }
+    ]
+  }
+}

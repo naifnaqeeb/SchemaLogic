@@ -1,0 +1,233 @@
+{
+  "scheme_id": "AB-PMJAY",
+  "model": "openai/gpt-oss-120b",
+  "run_timestamp": "2026-08-18T02:52:05.367483",
+  "draft_source_run": "data\\extraction_runs\\AB-PMJAY_gpt-oss-120b_ontology_20260818T025049.json",
+  "source_document": "data/raw_documents/AB-PMJAY.md",
+  "gold_reference": "data/gold/AB-PMJAY.json",
+  "judge_passes": [
+    {
+      "pass": 1,
+      "failure": {
+        "reason": "api_error",
+        "detail": "Error code: 400 - {'error': {'message': \"Failed to validate JSON. Please adjust your prompt. See 'failed_generation' for more details.\", 'type': 'invalid_request_error', 'code': 'json_validate_failed', 'failed_generation': ''}}"
+      }
+    }
+  ],
+  "repair_log": [],
+  "repaired_scheme": {
+    "scheme_id": "AB-PMJAY",
+    "unit_of_eligibility": "family",
+    "inclusion": {
+      "or": [
+        {
+          "field": "is_secc_deprived_household",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false,
+          "cat": "economic"
+        },
+        {
+          "field": "is_secc_automatically_included",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false,
+          "cat": "economic"
+        },
+        {
+          "field": "is_valid_rsby_beneficiary",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false,
+          "cat": "economic"
+        },
+        {
+          "field": "is_urban_informal_worker",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": true,
+          "cat": "other"
+        },
+        {
+          "field": "has_family_member_aged_70_or_above",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false,
+          "cat": "demographic"
+        }
+      ]
+    },
+    "exclusions": [
+      {
+        "field": "household_owns_motorised_vehicle_or_fishing_boat",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "owns_mechanized_agricultural_equipment_3_or_4_wheeler",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "kisan_credit_card_limit_inr",
+        "op": ">",
+        "value": 50000,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "is_govt_employee",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "occupation",
+        "quantifier": "some_family_member",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "owns_non_agricultural_enterprise_registered_with_govt",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "monthly_income_inr",
+        "op": ">",
+        "value": 10000,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "some_family_member",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "paid_income_tax_last_assessment_year",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "some_family_member",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "paid_professional_tax",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "some_family_member",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "house_has_3_or_more_pucca_rooms",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "owns_refrigerator",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "owns_landline_phone",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "owns_gt_2_5_acres_irrigated_land_with_irrigation_equipment",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "owns_5_or_more_acres_irrigated_land_two_or_more_crop_seasons",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "owns_7_5_or_more_acres_land_with_irrigation_equipment",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "count_op": null,
+        "count": null
+      }
+    ],
+    "temporal_validity": {
+      "valid_from": "2018-09-23",
+      "valid_to": null,
+      "extracted_at": "2026-08-18",
+      "supersedes": null
+    },
+    "operational_requirements": [
+      "Aadhaar (or alternative government ID if Aadhaar unavailable) required for beneficiary identification and e-card issuance",
+      "Ration Card (or alternative family ID) required",
+      "Aadhaar-based e-KYC mandatory for senior citizens (70+) enrollment"
+    ],
+    "extraction_metadata": {
+      "confidence": 0.95,
+      "source_clause": "Eligibility (Inclusion)",
+      "flagged_for_review": false
+    }
+  }
+}

@@ -1,0 +1,227 @@
+{
+  "_note": "Synthetic citizen profiles for PM-KISAN outcome-equivalence testing (plan Section 6, 'profile test suites'). SINGLE-VOCABULARY as of 2026-08-18: uses gold's canonical field names only (schema/field_ontology.py). The earlier version of this file dual-authored every fact under both gold's and a specific draft run's field names to work around vocabulary drift between independent extractions -- that workaround is retired now that the extractor prompt is ontology-constrained and the re-run PM-KISAN draft matches gold's field names on 8/9 fields. If a future draft run still doesn't share a field name with gold for some predicate, that predicate will just show up as undetermined for that side here rather than being silently worked around -- which is the correct, honest behavior now that vocabulary drift is a real signal again, not an authoring artifact.",
+
+  "eligible_baseline": {
+    "self": {
+      "is_indian_citizen": true, "owns_cultivable_land_in_records": true,
+      "is_institutional_landholder": false,
+      "paid_income_tax_last_assessment_year": false,
+      "is_serving_or_retired_govt_employee": false, "is_group_d_class_iv_or_mts": false,
+      "monthly_pension_inr": 0,
+      "holds_constitutional_or_political_post": false, "holds_elected_or_nominated_govt_post": false,
+      "is_practicing_registered_professional": false,
+      "is_nri_per_income_tax_act_1961": false
+    },
+    "family_members": [
+      {"paid_income_tax_last_assessment_year": false,
+       "is_serving_or_retired_govt_employee": false, "is_group_d_class_iv_or_mts": false,
+       "monthly_pension_inr": 0,
+       "holds_constitutional_or_political_post": false, "holds_elected_or_nominated_govt_post": false,
+       "is_practicing_registered_professional": false,
+       "is_nri_per_income_tax_act_1961": false},
+      {"paid_income_tax_last_assessment_year": false,
+       "is_serving_or_retired_govt_employee": false, "is_group_d_class_iv_or_mts": false,
+       "monthly_pension_inr": 0,
+       "holds_constitutional_or_political_post": false, "holds_elected_or_nominated_govt_post": false,
+       "is_practicing_registered_professional": false,
+       "is_nri_per_income_tax_act_1961": false}
+    ]
+  },
+
+  "income_tax_family_member": {
+    "self": {
+      "is_indian_citizen": true, "owns_cultivable_land_in_records": true,
+      "is_institutional_landholder": false,
+      "paid_income_tax_last_assessment_year": false,
+      "is_serving_or_retired_govt_employee": false, "is_group_d_class_iv_or_mts": false,
+      "monthly_pension_inr": 0,
+      "holds_constitutional_or_political_post": false, "holds_elected_or_nominated_govt_post": false,
+      "is_practicing_registered_professional": false,
+      "is_nri_per_income_tax_act_1961": false
+    },
+    "family_members": [
+      {"paid_income_tax_last_assessment_year": true,
+       "is_serving_or_retired_govt_employee": false, "is_group_d_class_iv_or_mts": false,
+       "monthly_pension_inr": 0,
+       "holds_constitutional_or_political_post": false, "holds_elected_or_nominated_govt_post": false,
+       "is_practicing_registered_professional": false,
+       "is_nri_per_income_tax_act_1961": false}
+    ]
+  },
+
+  "govt_employee_no_exception": {
+    "self": {
+      "is_indian_citizen": true, "owns_cultivable_land_in_records": true,
+      "is_institutional_landholder": false,
+      "paid_income_tax_last_assessment_year": false,
+      "is_serving_or_retired_govt_employee": true, "is_group_d_class_iv_or_mts": false,
+      "monthly_pension_inr": 0,
+      "holds_constitutional_or_political_post": false, "holds_elected_or_nominated_govt_post": false,
+      "is_practicing_registered_professional": false,
+      "is_nri_per_income_tax_act_1961": false
+    },
+    "family_members": []
+  },
+
+  "govt_employee_group_d_exception": {
+    "self": {
+      "is_indian_citizen": true, "owns_cultivable_land_in_records": true,
+      "is_institutional_landholder": false,
+      "paid_income_tax_last_assessment_year": false,
+      "is_serving_or_retired_govt_employee": true, "is_group_d_class_iv_or_mts": true,
+      "monthly_pension_inr": 0,
+      "holds_constitutional_or_political_post": false, "holds_elected_or_nominated_govt_post": false,
+      "is_practicing_registered_professional": false,
+      "is_nri_per_income_tax_act_1961": false
+    },
+    "family_members": []
+  },
+
+  "pension_exclusion_no_exception": {
+    "self": {
+      "is_indian_citizen": true, "owns_cultivable_land_in_records": true,
+      "is_institutional_landholder": false,
+      "paid_income_tax_last_assessment_year": false,
+      "is_serving_or_retired_govt_employee": false, "is_group_d_class_iv_or_mts": false,
+      "monthly_pension_inr": 0,
+      "holds_constitutional_or_political_post": false, "holds_elected_or_nominated_govt_post": false,
+      "is_practicing_registered_professional": false,
+      "is_nri_per_income_tax_act_1961": false
+    },
+    "family_members": [
+      {"paid_income_tax_last_assessment_year": false,
+       "is_serving_or_retired_govt_employee": false, "is_group_d_class_iv_or_mts": false,
+       "monthly_pension_inr": 15000,
+       "holds_constitutional_or_political_post": false, "holds_elected_or_nominated_govt_post": false,
+       "is_practicing_registered_professional": false,
+       "is_nri_per_income_tax_act_1961": false}
+    ]
+  },
+
+  "pension_group_d_exception": {
+    "self": {
+      "is_indian_citizen": true, "owns_cultivable_land_in_records": true,
+      "is_institutional_landholder": false,
+      "paid_income_tax_last_assessment_year": false,
+      "is_serving_or_retired_govt_employee": false, "is_group_d_class_iv_or_mts": false,
+      "monthly_pension_inr": 0,
+      "holds_constitutional_or_political_post": false, "holds_elected_or_nominated_govt_post": false,
+      "is_practicing_registered_professional": false,
+      "is_nri_per_income_tax_act_1961": false
+    },
+    "family_members": [
+      {"paid_income_tax_last_assessment_year": false,
+       "is_serving_or_retired_govt_employee": false, "is_group_d_class_iv_or_mts": true,
+       "monthly_pension_inr": 15000,
+       "holds_constitutional_or_political_post": false, "holds_elected_or_nominated_govt_post": false,
+       "is_practicing_registered_professional": false,
+       "is_nri_per_income_tax_act_1961": false}
+    ]
+  },
+
+  "professional_family_member": {
+    "self": {
+      "is_indian_citizen": true, "owns_cultivable_land_in_records": true,
+      "is_institutional_landholder": false,
+      "paid_income_tax_last_assessment_year": false,
+      "is_serving_or_retired_govt_employee": false, "is_group_d_class_iv_or_mts": false,
+      "monthly_pension_inr": 0,
+      "holds_constitutional_or_political_post": false, "holds_elected_or_nominated_govt_post": false,
+      "is_practicing_registered_professional": false,
+      "is_nri_per_income_tax_act_1961": false
+    },
+    "family_members": [
+      {"paid_income_tax_last_assessment_year": false,
+       "is_serving_or_retired_govt_employee": false, "is_group_d_class_iv_or_mts": false,
+       "monthly_pension_inr": 0,
+       "holds_constitutional_or_political_post": false, "holds_elected_or_nominated_govt_post": false,
+       "is_practicing_registered_professional": true,
+       "is_nri_per_income_tax_act_1961": false}
+    ]
+  },
+
+  "institutional_landholder": {
+    "self": {
+      "is_indian_citizen": true, "owns_cultivable_land_in_records": true,
+      "is_institutional_landholder": true,
+      "paid_income_tax_last_assessment_year": false,
+      "is_serving_or_retired_govt_employee": false, "is_group_d_class_iv_or_mts": false,
+      "monthly_pension_inr": 0,
+      "holds_constitutional_or_political_post": false, "holds_elected_or_nominated_govt_post": false,
+      "is_practicing_registered_professional": false,
+      "is_nri_per_income_tax_act_1961": false
+    },
+    "family_members": []
+  },
+
+  "political_post_family_member": {
+    "self": {
+      "is_indian_citizen": true, "owns_cultivable_land_in_records": true,
+      "is_institutional_landholder": false,
+      "paid_income_tax_last_assessment_year": false,
+      "is_serving_or_retired_govt_employee": false, "is_group_d_class_iv_or_mts": false,
+      "monthly_pension_inr": 0,
+      "holds_constitutional_or_political_post": false, "holds_elected_or_nominated_govt_post": false,
+      "is_practicing_registered_professional": false,
+      "is_nri_per_income_tax_act_1961": false
+    },
+    "family_members": [
+      {"paid_income_tax_last_assessment_year": false,
+       "is_serving_or_retired_govt_employee": false, "is_group_d_class_iv_or_mts": false,
+       "monthly_pension_inr": 0,
+       "holds_constitutional_or_political_post": true, "holds_elected_or_nominated_govt_post": true,
+       "is_practicing_registered_professional": false,
+       "is_nri_per_income_tax_act_1961": false}
+    ]
+  },
+
+  "nri_family_member": {
+    "self": {
+      "is_indian_citizen": true, "owns_cultivable_land_in_records": true,
+      "is_institutional_landholder": false,
+      "paid_income_tax_last_assessment_year": false,
+      "is_serving_or_retired_govt_employee": false, "is_group_d_class_iv_or_mts": false,
+      "monthly_pension_inr": 0,
+      "holds_constitutional_or_political_post": false, "holds_elected_or_nominated_govt_post": false,
+      "is_practicing_registered_professional": false,
+      "is_nri_per_income_tax_act_1961": false
+    },
+    "family_members": [
+      {"paid_income_tax_last_assessment_year": false,
+       "is_serving_or_retired_govt_employee": false, "is_group_d_class_iv_or_mts": false,
+       "monthly_pension_inr": 0,
+       "holds_constitutional_or_political_post": false, "holds_elected_or_nominated_govt_post": false,
+       "is_practicing_registered_professional": false,
+       "is_nri_per_income_tax_act_1961": true}
+    ]
+  },
+
+  "missing_data_both_undetermined": {
+    "self": {
+      "is_indian_citizen": true,
+      "is_institutional_landholder": false,
+      "paid_income_tax_last_assessment_year": false,
+      "is_serving_or_retired_govt_employee": false, "is_group_d_class_iv_or_mts": false,
+      "monthly_pension_inr": 0,
+      "holds_constitutional_or_political_post": false, "holds_elected_or_nominated_govt_post": false,
+      "is_practicing_registered_professional": false,
+      "is_nri_per_income_tax_act_1961": false
+    },
+    "family_members": []
+  },
+
+  "citizenship_gap_false_positive": {
+    "_comment": "Gold's inclusion checks is_indian_citizen explicitly; the ontology-constrained draft still never extracts a citizenship-check predicate (it's not a missed-vocabulary problem -- the field is right there in the ontology list -- the primary source just doesn't state it as a standalone clause, same root cause as before). A non-citizen who isn't flagged as NRI slips through the draft as eligible while gold correctly says ineligible.",
+    "self": {
+      "is_indian_citizen": false, "owns_cultivable_land_in_records": true,
+      "is_institutional_landholder": false,
+      "paid_income_tax_last_assessment_year": false,
+      "is_serving_or_retired_govt_employee": false, "is_group_d_class_iv_or_mts": false,
+      "monthly_pension_inr": 0,
+      "holds_constitutional_or_political_post": false, "holds_elected_or_nominated_govt_post": false,
+      "is_practicing_registered_professional": false,
+      "is_nri_per_income_tax_act_1961": false
+    },
+    "family_members": []
+  }
+}

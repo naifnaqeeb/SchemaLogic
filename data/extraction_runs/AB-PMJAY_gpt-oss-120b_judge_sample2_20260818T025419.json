@@ -1,0 +1,24 @@
+{
+  "scheme_id": "AB-PMJAY",
+  "note": "Second INDEPENDENT judge sample on the same original pre-repair draft, for the calibration gate's self-consistency signal.",
+  "draft_source_run": "data\\extraction_runs\\AB-PMJAY_gpt-oss-120b_ontology_20260818T025049.json",
+  "findings": [
+    {
+      "category": "preambular_implied_fact",
+      "description": "Eligibility is limited to rural households for the deprivation criteria, but the draft lacks a predicate capturing rural residency.",
+      "source_quote": "AB PM-JAY targets rural deprived families and identified occupational categories of urban workers, identified using the Socio-Economic Caste Census (SECC) 2011 data.",
+      "confidence": 0.9,
+      "proposed_predicate": {
+        "location": "inclusion",
+        "cat": "demographic",
+        "field": "is_rural_resident",
+        "op": "==",
+        "value": true,
+        "quantifier": "self",
+        "ontology_proposed": true,
+        "except": null
+      },
+      "proposed_supersedes": null
+    }
+  ]
+}

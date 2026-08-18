@@ -1,0 +1,20 @@
+doc_id: PM-KISAN_amendment_reference
+scheme_id: PM-KISAN
+effective_date: 2019-06-01
+title: PM-KISAN landholding-restriction removal (secondary/corroborating reference only)
+citation: Well-corroborated contemporaneous PIB/news coverage of the Union Cabinet decision,
+1 June 2019 -- NOTE (carried over honestly from this project's own gold-annotation record,
+tests/fixtures.py's PM-KISAN supersedes.amendment_source note): the primary Cabinet decision
+document itself was never located or fetched during gold annotation. It is not present in the
+PM-KISAN Operational Guidelines PDF already on hand (data/raw_documents/PM-KISAN_primary.pdf),
+which only presents the already-amended rule with no historical/amendment section. This document
+is therefore NOT a primary source, unlike the three MH-LADKI-BAHIN GR PDFs -- it exists in this
+retrieval corpus only because it is the best amendment-referencing text this project actually has
+for PM-KISAN, and is indexed/cited as such (source_type: secondary), not misrepresented as primary.
+
+Union Cabinet decision, 1 June 2019: PM-KISAN, originally launched February 2019 restricted to
+small and marginal farmer families with combined landholding up to 2 hectares, was extended with
+effect from 1 June 2019 to cover all landholding farmers' families, removing the 2-hectare
+combined-landholding restriction as an eligibility gate. The scheme's other exclusion criteria
+(institutional landholders, holders of constitutional/political posts, government employees and
+pensioners above a threshold, income-tax payers, professionals) were unaffected by this amendment.

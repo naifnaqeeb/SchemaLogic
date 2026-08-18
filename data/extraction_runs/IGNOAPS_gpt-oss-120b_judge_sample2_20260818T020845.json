@@ -1,0 +1,39 @@
+{
+  "scheme_id": "IGNOAPS",
+  "note": "Second INDEPENDENT judge sample on the same original pre-repair draft, for the calibration gate's self-consistency signal.",
+  "draft_source_run": "data\\extraction_runs\\IGNOAPS_gpt-oss-120b_ontology_20260818T012625.json",
+  "findings": [
+    {
+      "category": "preambular_implied_fact",
+      "description": "The introductory definition of \"destitutes\" implies that eligible persons must have little or no regular means of subsistence, i.e., they do not have regular family financial support. This condition is not captured in the current inclusion predicates.",
+      "source_quote": "destitutes, defined as any person who has little or no regular means of subsistence from his / her own source of income or through financial support from family members or other sources",
+      "confidence": 0.9,
+      "proposed_predicate": {
+        "location": "inclusion",
+        "cat": "economic",
+        "field": "has_regular_family_financial_support",
+        "op": "==",
+        "value": false,
+        "quantifier": "self",
+        "ontology_proposed": false,
+        "except": null
+      },
+      "proposed_supersedes": null
+    },
+    {
+      "category": "temporal_supersession",
+      "description": "The document notes that from the year 2007 the scheme was expanded to cover all eligible persons Below Poverty Line (BPL). This amendment to eligibility is not reflected in the draft's temporal_validity.supersedes field.",
+      "source_quote": "From the year 2007, the scheme was expanded to cover all eligible persons Below Poverty Line (BPL).",
+      "confidence": 0.8,
+      "proposed_predicate": null,
+      "proposed_supersedes": {
+        "retired_field": "is_bpl_household",
+        "retired_op": "==",
+        "retired_value": false,
+        "amendment_source_quote": "From the year 2007, the scheme was expanded to cover all eligible persons Below Poverty Line (BPL).",
+        "rule_version_label": "prior_version",
+        "new_valid_from": "2007-01-01"
+      }
+    }
+  ]
+}

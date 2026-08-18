@@ -1,0 +1,134 @@
+{
+  "_note": "Single-vocabulary (gold field names only) outcome-equivalence profiles for MH-LADKI-BAHIN, per the established post-ontology methodology (see data/profiles/PM-KISAN.json).",
+
+  "eligible_baseline": {
+    "self": {
+      "is_woman": true, "is_maharashtra_resident": true, "age": 30, "has_bank_account": true,
+      "family_annual_income_inr": 200000, "paid_income_tax_last_assessment_year": false,
+      "is_regular_govt_employee_or_pensioner": false, "other_govt_scheme_monthly_benefit_inr": 0,
+      "holds_constitutional_or_political_post": false, "holds_govt_board_or_corporation_post": false,
+      "owns_four_wheeler": false, "owned_vehicle_is_farm_tractor_only": false
+    },
+    "family_members": [
+      {"paid_income_tax_last_assessment_year": false, "is_regular_govt_employee_or_pensioner": false,
+       "holds_constitutional_or_political_post": false, "holds_govt_board_or_corporation_post": false,
+       "owns_four_wheeler": false, "owned_vehicle_is_farm_tractor_only": false}
+    ]
+  },
+
+  "over_age_65": {
+    "self": {
+      "is_woman": true, "is_maharashtra_resident": true, "age": 70, "has_bank_account": true,
+      "family_annual_income_inr": 200000, "paid_income_tax_last_assessment_year": false,
+      "is_regular_govt_employee_or_pensioner": false, "other_govt_scheme_monthly_benefit_inr": 0,
+      "holds_constitutional_or_political_post": false, "holds_govt_board_or_corporation_post": false,
+      "owns_four_wheeler": false, "owned_vehicle_is_farm_tractor_only": false
+    },
+    "family_members": []
+  },
+
+  "four_wheeler_no_exception": {
+    "self": {
+      "is_woman": true, "is_maharashtra_resident": true, "age": 30, "has_bank_account": true,
+      "family_annual_income_inr": 200000, "paid_income_tax_last_assessment_year": false,
+      "is_regular_govt_employee_or_pensioner": false, "other_govt_scheme_monthly_benefit_inr": 0,
+      "holds_constitutional_or_political_post": false, "holds_govt_board_or_corporation_post": false,
+      "owns_four_wheeler": true, "owned_vehicle_is_farm_tractor_only": false
+    },
+    "family_members": []
+  },
+
+  "four_wheeler_tractor_exception": {
+    "_comment": "Gold exempts tractors via except. Checking whether the draft (which dropped the except this run) still gets this right.",
+    "self": {
+      "is_woman": true, "is_maharashtra_resident": true, "age": 30, "has_bank_account": true,
+      "family_annual_income_inr": 200000, "paid_income_tax_last_assessment_year": false,
+      "is_regular_govt_employee_or_pensioner": false, "other_govt_scheme_monthly_benefit_inr": 0,
+      "holds_constitutional_or_political_post": false, "holds_govt_board_or_corporation_post": false,
+      "owns_four_wheeler": true, "owned_vehicle_is_farm_tractor_only": true
+    },
+    "family_members": []
+  },
+
+  "income_tax_family_member": {
+    "self": {
+      "is_woman": true, "is_maharashtra_resident": true, "age": 30, "has_bank_account": true,
+      "family_annual_income_inr": 200000, "paid_income_tax_last_assessment_year": false,
+      "is_regular_govt_employee_or_pensioner": false, "other_govt_scheme_monthly_benefit_inr": 0,
+      "holds_constitutional_or_political_post": false, "holds_govt_board_or_corporation_post": false,
+      "owns_four_wheeler": false, "owned_vehicle_is_farm_tractor_only": false
+    },
+    "family_members": [
+      {"paid_income_tax_last_assessment_year": true, "is_regular_govt_employee_or_pensioner": false,
+       "holds_constitutional_or_political_post": false, "holds_govt_board_or_corporation_post": false,
+       "owns_four_wheeler": false, "owned_vehicle_is_farm_tractor_only": false}
+    ]
+  },
+
+  "govt_employee_family_member": {
+    "self": {
+      "is_woman": true, "is_maharashtra_resident": true, "age": 30, "has_bank_account": true,
+      "family_annual_income_inr": 200000, "paid_income_tax_last_assessment_year": false,
+      "is_regular_govt_employee_or_pensioner": false, "other_govt_scheme_monthly_benefit_inr": 0,
+      "holds_constitutional_or_political_post": false, "holds_govt_board_or_corporation_post": false,
+      "owns_four_wheeler": false, "owned_vehicle_is_farm_tractor_only": false
+    },
+    "family_members": [
+      {"paid_income_tax_last_assessment_year": false, "is_regular_govt_employee_or_pensioner": true,
+       "holds_constitutional_or_political_post": false, "holds_govt_board_or_corporation_post": false,
+       "owns_four_wheeler": false, "owned_vehicle_is_farm_tractor_only": false}
+    ]
+  },
+
+  "other_govt_scheme_benefit_at_threshold": {
+    "self": {
+      "is_woman": true, "is_maharashtra_resident": true, "age": 30, "has_bank_account": true,
+      "family_annual_income_inr": 200000, "paid_income_tax_last_assessment_year": false,
+      "is_regular_govt_employee_or_pensioner": false, "other_govt_scheme_monthly_benefit_inr": 1500,
+      "holds_constitutional_or_political_post": false, "holds_govt_board_or_corporation_post": false,
+      "owns_four_wheeler": false, "owned_vehicle_is_farm_tractor_only": false
+    },
+    "family_members": []
+  },
+
+  "mp_mla_family_member": {
+    "self": {
+      "is_woman": true, "is_maharashtra_resident": true, "age": 30, "has_bank_account": true,
+      "family_annual_income_inr": 200000, "paid_income_tax_last_assessment_year": false,
+      "is_regular_govt_employee_or_pensioner": false, "other_govt_scheme_monthly_benefit_inr": 0,
+      "holds_constitutional_or_political_post": false, "holds_govt_board_or_corporation_post": false,
+      "owns_four_wheeler": false, "owned_vehicle_is_farm_tractor_only": false
+    },
+    "family_members": [
+      {"paid_income_tax_last_assessment_year": false, "is_regular_govt_employee_or_pensioner": false,
+       "holds_constitutional_or_political_post": true, "holds_govt_board_or_corporation_post": false,
+       "owns_four_wheeler": false, "owned_vehicle_is_farm_tractor_only": false}
+    ]
+  },
+
+  "govt_board_post_family_member": {
+    "self": {
+      "is_woman": true, "is_maharashtra_resident": true, "age": 30, "has_bank_account": true,
+      "family_annual_income_inr": 200000, "paid_income_tax_last_assessment_year": false,
+      "is_regular_govt_employee_or_pensioner": false, "other_govt_scheme_monthly_benefit_inr": 0,
+      "holds_constitutional_or_political_post": false, "holds_govt_board_or_corporation_post": false,
+      "owns_four_wheeler": false, "owned_vehicle_is_farm_tractor_only": false
+    },
+    "family_members": [
+      {"paid_income_tax_last_assessment_year": false, "is_regular_govt_employee_or_pensioner": false,
+       "holds_constitutional_or_political_post": false, "holds_govt_board_or_corporation_post": true,
+       "owns_four_wheeler": false, "owned_vehicle_is_farm_tractor_only": false}
+    ]
+  },
+
+  "missing_income_data": {
+    "self": {
+      "is_woman": true, "is_maharashtra_resident": true, "age": 30, "has_bank_account": true,
+      "paid_income_tax_last_assessment_year": false,
+      "is_regular_govt_employee_or_pensioner": false, "other_govt_scheme_monthly_benefit_inr": 0,
+      "holds_constitutional_or_political_post": false, "holds_govt_board_or_corporation_post": false,
+      "owns_four_wheeler": false, "owned_vehicle_is_farm_tractor_only": false
+    },
+    "family_members": []
+  }
+}

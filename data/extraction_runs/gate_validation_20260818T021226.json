@@ -1,0 +1,160 @@
+{
+  "run_timestamp": "2026-08-18T02:12:26.434866",
+  "rows": [
+    {
+      "scheme": "PM-KISAN",
+      "pass": 1,
+      "category": "preambular_implied_fact",
+      "target_field": "is_farm_family_husband_wife_minor_children",
+      "human_label": "partial",
+      "gate_decision": "auto_accept",
+      "confidence": 0.94,
+      "signals": {
+        "quote_verbatim_in_source": true,
+        "self_consistent_across_samples": false,
+        "confidence": 0.94,
+        "threshold_used": 0.8
+      },
+      "reasons": [
+        "an independent re-sample of the judge did not reproduce this specific finding — raises the acceptance bar but does not block on its own (see module docstring)"
+      ]
+    },
+    {
+      "scheme": "PM-KISAN",
+      "pass": 1,
+      "category": "temporal_supersession",
+      "target_field": "family_agricultural_land_acres",
+      "human_label": "good",
+      "gate_decision": "defer_to_review",
+      "confidence": 0.96,
+      "signals": {
+        "quote_verbatim_in_source": false,
+        "retired_value_literally_grounded": true,
+        "self_consistent_across_samples": true,
+        "confidence": 0.96,
+        "threshold_used": 0.9
+      },
+      "reasons": [
+        "source_quote is not found verbatim in the document — possible fabricated citation"
+      ]
+    },
+    {
+      "scheme": "PM-KISAN",
+      "pass": 2,
+      "category": "preambular_implied_fact",
+      "target_field": "beneficiary_count_per_family",
+      "human_label": "bad",
+      "gate_decision": "auto_accept",
+      "confidence": 0.95,
+      "signals": {
+        "quote_verbatim_in_source": true,
+        "self_consistent_across_samples": false,
+        "confidence": 0.95,
+        "threshold_used": 0.8
+      },
+      "reasons": [
+        "an independent re-sample of the judge did not reproduce this specific finding — raises the acceptance bar but does not block on its own (see module docstring)"
+      ]
+    },
+    {
+      "scheme": "IGNOAPS",
+      "pass": 1,
+      "category": "preambular_implied_fact",
+      "target_field": "has_little_regular_means_of_subsistence",
+      "human_label": "partial",
+      "gate_decision": "defer_to_review",
+      "confidence": 0.9,
+      "signals": {
+        "quote_verbatim_in_source": false,
+        "self_consistent_across_samples": false,
+        "confidence": 0.9,
+        "threshold_used": 0.8
+      },
+      "reasons": [
+        "source_quote is not found verbatim in the document — possible fabricated citation",
+        "an independent re-sample of the judge did not reproduce this specific finding — raises the acceptance bar but does not block on its own (see module docstring)"
+      ]
+    },
+    {
+      "scheme": "IGNOAPS",
+      "pass": 2,
+      "category": "temporal_supersession",
+      "target_field": "is_bpl_household",
+      "human_label": "bad",
+      "gate_decision": "defer_to_review",
+      "confidence": 0.95,
+      "signals": {
+        "quote_verbatim_in_source": true,
+        "retired_value_literally_grounded": false,
+        "self_consistent_across_samples": true,
+        "confidence": 0.95,
+        "threshold_used": 0.9
+      },
+      "reasons": [
+        "temporal claim's retired_value=False does not appear literally in the source — the document may establish that something changed without stating what the prior value was; this is exactly IGNOAPS's fabrication pattern"
+      ]
+    },
+    {
+      "scheme": "MH-LADKI-BAHIN",
+      "pass": 1,
+      "category": "preambular_implied_fact",
+      "target_field": "is_woman",
+      "human_label": "good",
+      "gate_decision": "auto_accept",
+      "confidence": 0.96,
+      "signals": {
+        "quote_verbatim_in_source": true,
+        "self_consistent_across_samples": false,
+        "confidence": 0.96,
+        "threshold_used": 0.8
+      },
+      "reasons": [
+        "an independent re-sample of the judge did not reproduce this specific finding — raises the acceptance bar but does not block on its own (see module docstring)"
+      ]
+    },
+    {
+      "scheme": "MH-LADKI-BAHIN",
+      "pass": 1,
+      "category": "temporal_supersession",
+      "target_field": "family_agricultural_land_acres",
+      "human_label": "good",
+      "gate_decision": "auto_accept",
+      "confidence": 0.94,
+      "signals": {
+        "quote_verbatim_in_source": true,
+        "retired_value_literally_grounded": true,
+        "self_consistent_across_samples": true,
+        "confidence": 0.94,
+        "threshold_used": 0.9
+      },
+      "reasons": [
+        "source quote verbatim, confidence above threshold, no contradicting signals"
+      ]
+    },
+    {
+      "scheme": "MH-LADKI-BAHIN",
+      "pass": 2,
+      "category": "preambular_implied_fact",
+      "target_field": "has_aadhaar_linked_bank_account",
+      "human_label": "bad",
+      "gate_decision": "auto_accept",
+      "confidence": 0.92,
+      "signals": {
+        "quote_verbatim_in_source": true,
+        "self_consistent_across_samples": true,
+        "confidence": 0.92,
+        "threshold_used": 0.7
+      },
+      "reasons": [
+        "source quote verbatim, confidence above threshold, no contradicting signals"
+      ]
+    }
+  ],
+  "summary": {
+    "n_good": 3,
+    "n_bad": 3,
+    "n_partial": 2,
+    "false_defer": 1,
+    "false_accept": 2
+  }
+}

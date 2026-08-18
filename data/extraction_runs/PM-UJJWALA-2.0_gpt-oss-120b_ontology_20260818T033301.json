@@ -1,0 +1,166 @@
+{
+  "scheme_id": "PM-UJJWALA-2.0",
+  "model": "openai/gpt-oss-120b",
+  "run_timestamp": "2026-08-18T03:33:01.865599",
+  "note": "Ontology-constrained extraction run (schema/field_ontology.py).",
+  "source_document": "data/raw_documents/PM-UJJWALA-2.0.md",
+  "gold_reference": "data/gold/PM-UJJWALA-2.0.json",
+  "draft_extraction": {
+    "scheme_id": "PM-UJJWALA-2.0",
+    "unit_of_eligibility": "family",
+    "inclusion": {
+      "or": [
+        {
+          "field": "is_in_secc_2011_list",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false,
+          "cat": "demographic"
+        },
+        {
+          "field": "is_bpl_household",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false,
+          "cat": "economic"
+        },
+        {
+          "field": "is_sc_st",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false,
+          "cat": "demographic"
+        },
+        {
+          "field": "is_pmay_g_beneficiary",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false,
+          "cat": "demographic"
+        },
+        {
+          "field": "is_aay_beneficiary",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": true,
+          "cat": "economic"
+        },
+        {
+          "field": "is_forest_dweller",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false,
+          "cat": "demographic"
+        },
+        {
+          "field": "is_most_backward_class",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false,
+          "cat": "demographic"
+        },
+        {
+          "field": "is_tea_garden_tribe",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false,
+          "cat": "demographic"
+        },
+        {
+          "field": "lives_on_river_island",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false,
+          "cat": "demographic"
+        },
+        {
+          "field": "meets_14_point_self_declaration",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false,
+          "cat": "economic"
+        }
+      ]
+    },
+    "exclusions": [
+      {
+        "field": "household_has_existing_lpg_connection",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "other",
+        "quantifier": "self",
+        "except": null,
+        "count_op": null,
+        "count": null
+      }
+    ],
+    "temporal_validity": {
+      "valid_from": "2021-08-10",
+      "valid_to": null,
+      "extracted_at": "2026-08-18",
+      "supersedes": null
+    },
+    "operational_requirements": [
+      "Aadhaar-based KYC required"
+    ],
+    "extraction_metadata": {
+      "confidence": 0.95,
+      "source_clause": "Eligibility",
+      "flagged_for_review": false
+    }
+  },
+  "exact_field_matches": [
+    "household_has_existing_lpg_connection",
+    "is_aay_beneficiary",
+    "is_bpl_household",
+    "is_forest_dweller",
+    "is_in_secc_2011_list",
+    "is_most_backward_class",
+    "is_pmay_g_beneficiary",
+    "is_sc_st",
+    "is_tea_garden_tribe",
+    "lives_on_river_island",
+    "meets_14_point_self_declaration"
+  ],
+  "gold_fields": [
+    "age",
+    "household_has_existing_lpg_connection",
+    "is_aay_beneficiary",
+    "is_bpl_household",
+    "is_forest_dweller",
+    "is_in_secc_2011_list",
+    "is_indian_citizen",
+    "is_most_backward_class",
+    "is_pmay_g_beneficiary",
+    "is_sc_st",
+    "is_tea_garden_tribe",
+    "is_woman",
+    "lives_on_river_island",
+    "meets_14_point_self_declaration"
+  ],
+  "draft_fields": [
+    "household_has_existing_lpg_connection",
+    "is_aay_beneficiary",
+    "is_bpl_household",
+    "is_forest_dweller",
+    "is_in_secc_2011_list",
+    "is_most_backward_class",
+    "is_pmay_g_beneficiary",
+    "is_sc_st",
+    "is_tea_garden_tribe",
+    "lives_on_river_island",
+    "meets_14_point_self_declaration"
+  ],
+  "ontology_proposed_predicates": [
+    {
+      "path": "inclusion.or[4]",
+      "cat": "economic",
+      "field": "is_aay_beneficiary",
+      "op": "==",
+      "value": true,
+      "ontology_proposed": true
+    }
+  ],
+  "unflagged_out_of_ontology_fields": []
+}

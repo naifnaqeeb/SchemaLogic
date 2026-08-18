@@ -1,0 +1,28 @@
+{
+  "source": "myscheme_unverified",
+  "attribution": "Derived from the Indian Government's myScheme portal (myscheme.gov.in) via the shrijayan/gov_myscheme Hugging Face dataset (Apache-2.0).",
+  "n_files_listed": 2067,
+  "n_parsed": 2066,
+  "n_download_or_extract_failures": 1,
+  "download_failures": [
+    {
+      "path": "text_data/test",
+      "error": "Cannot read an empty file"
+    }
+  ],
+  "field_coverage_pct": {
+    "scheme_name": 100.0,
+    "description": 100.0,
+    "eligibility_text": 100.0,
+    "benefits_text": 100.0,
+    "application_process_text": 99.9
+  },
+  "n_full_page_shape_unrecognized": 0,
+  "n_records_with_exclusions_section": 412,
+  "region_breakdown": {
+    "state_or_ut": 1531,
+    "central_or_other": 515,
+    "unknown": 20
+  },
+  "n_records_with_mojibake": 1746
+}

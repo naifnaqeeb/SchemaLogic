@@ -1,0 +1,103 @@
+{
+  "_note": "Synthetic individual profiles for PM-UJJWALA-2.0 outcome-equivalence testing (plan Section 6, 'profile test suites'). Mirrors the scenarios in tests/test_gold_schemes.py's PM-UJJWALA section. unit_of_eligibility is 'individual' -- profiles use only 'self', no family_members (matches the existing gold-scheme tests' shape; the evaluator doesn't read unit_of_eligibility itself, only whether quantifiers other than 'self' are used by predicates).",
+
+  "eligible_baseline": {
+    "_comment": "BPL woman, adult, citizen, no existing LPG connection -> eligible.",
+    "self": {
+      "is_woman": true,
+      "age": 25,
+      "is_indian_citizen": true,
+      "is_bpl_household": true,
+      "household_has_existing_lpg_connection": false
+    }
+  },
+
+  "already_has_lpg_connection": {
+    "_comment": "Existing LPG connection -> excluded.",
+    "self": {
+      "is_woman": true,
+      "age": 25,
+      "is_indian_citizen": true,
+      "is_bpl_household": true,
+      "household_has_existing_lpg_connection": true
+    }
+  },
+
+  "no_category_membership_undetermined": {
+    "_comment": "No inclusion-category fact known at all -> undetermined.",
+    "self": {
+      "is_woman": true,
+      "age": 25,
+      "is_indian_citizen": true,
+      "household_has_existing_lpg_connection": false
+    }
+  },
+
+  "sc_st_alone": {
+    "_comment": "SC/ST alone (not also a PMAY-G beneficiary) -> eligible; separate categories, not a compound AND.",
+    "self": {
+      "is_woman": true,
+      "age": 25,
+      "is_indian_citizen": true,
+      "is_sc_st": true,
+      "is_pmay_g_beneficiary": false,
+      "household_has_existing_lpg_connection": false
+    }
+  },
+
+  "pmay_g_beneficiary_alone": {
+    "_comment": "PMAY-G beneficiary alone (not SC/ST) -> eligible.",
+    "self": {
+      "is_woman": true,
+      "age": 25,
+      "is_indian_citizen": true,
+      "is_sc_st": false,
+      "is_pmay_g_beneficiary": true,
+      "household_has_existing_lpg_connection": false
+    }
+  },
+
+  "self_declaration_fallback": {
+    "_comment": "14-point self-declaration route, no other category -> eligible.",
+    "self": {
+      "is_woman": true,
+      "age": 25,
+      "is_indian_citizen": true,
+      "meets_14_point_self_declaration": true,
+      "household_has_existing_lpg_connection": false
+    }
+  },
+
+  "not_a_woman_ineligible": {
+    "_comment": "Male applicant -> ineligible, regardless of category membership. Exercises whether the extractor actually captured is_woman as a gating AND condition.",
+    "self": {
+      "is_woman": false,
+      "age": 25,
+      "is_indian_citizen": true,
+      "is_bpl_household": true,
+      "household_has_existing_lpg_connection": false
+    }
+  },
+
+  "minor_ineligible": {
+    "_comment": "Under 18 -> ineligible. Exercises whether the extractor captured age>=18 as a gating AND condition.",
+    "self": {
+      "is_woman": true,
+      "age": 15,
+      "is_indian_citizen": true,
+      "is_bpl_household": true,
+      "household_has_existing_lpg_connection": false
+    }
+  },
+
+  "non_citizen_ineligible": {
+    "_comment": "Non-citizen -> ineligible per gold. Exercises whether the extractor captured is_indian_citizen as a gating AND condition -- this is the field the draft was expected to miss going into this run.",
+    "self": {
+      "is_woman": true,
+      "age": 25,
+      "is_indian_citizen": false,
+      "is_bpl_household": true,
+      "household_has_existing_lpg_connection": false
+    }
+  }
+}

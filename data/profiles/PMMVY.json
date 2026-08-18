@@ -1,0 +1,185 @@
+{
+  "_note": "Synthetic individual profiles for PMMVY outcome-equivalence testing (plan Section 6, 'profile test suites'). Mirrors the scenarios in tests/test_gold_schemes.py's PMMVY section. unit_of_eligibility is 'individual' -- profiles use only 'self'.",
+
+  "eligible_baseline": {
+    "_comment": "BPL, first child, in-range age -> eligible.",
+    "self": {
+      "age": 25,
+      "is_sc_st": false,
+      "has_40_percent_or_more_disability": false,
+      "is_bpl_household": true,
+      "is_ab_pmjay_beneficiary": false,
+      "is_e_shram_registered": false,
+      "is_pm_kisan_beneficiary": false,
+      "has_active_mgnrega_job_card": false,
+      "family_annual_income_inr": 200000,
+      "is_frontline_worker": false,
+      "is_nfsa_ration_card_holder": false,
+      "pregnancy_child_order": 1,
+      "child_is_girl": false
+    }
+  },
+
+  "second_child_boy_ineligible": {
+    "_comment": "PMMVY 2.0's second-child extension only covers a second child if it's a girl.",
+    "self": {
+      "age": 25,
+      "is_sc_st": false,
+      "has_40_percent_or_more_disability": false,
+      "is_bpl_household": true,
+      "is_ab_pmjay_beneficiary": false,
+      "is_e_shram_registered": false,
+      "is_pm_kisan_beneficiary": false,
+      "has_active_mgnrega_job_card": false,
+      "family_annual_income_inr": 200000,
+      "is_frontline_worker": false,
+      "is_nfsa_ration_card_holder": false,
+      "pregnancy_child_order": 2,
+      "child_is_girl": false
+    }
+  },
+
+  "second_child_girl_eligible": {
+    "self": {
+      "age": 25,
+      "is_sc_st": false,
+      "has_40_percent_or_more_disability": false,
+      "is_bpl_household": true,
+      "is_ab_pmjay_beneficiary": false,
+      "is_e_shram_registered": false,
+      "is_pm_kisan_beneficiary": false,
+      "has_active_mgnrega_job_card": false,
+      "family_annual_income_inr": 200000,
+      "is_frontline_worker": false,
+      "is_nfsa_ration_card_holder": false,
+      "pregnancy_child_order": 2,
+      "child_is_girl": true
+    }
+  },
+
+  "third_child_ineligible": {
+    "self": {
+      "age": 25,
+      "is_sc_st": false,
+      "has_40_percent_or_more_disability": false,
+      "is_bpl_household": true,
+      "is_ab_pmjay_beneficiary": false,
+      "is_e_shram_registered": false,
+      "is_pm_kisan_beneficiary": false,
+      "has_active_mgnrega_job_card": false,
+      "family_annual_income_inr": 200000,
+      "is_frontline_worker": false,
+      "is_nfsa_ration_card_holder": false,
+      "pregnancy_child_order": 3,
+      "child_is_girl": true
+    }
+  },
+
+  "under_18_ineligible": {
+    "self": {
+      "age": 16,
+      "is_sc_st": false,
+      "has_40_percent_or_more_disability": false,
+      "is_bpl_household": true,
+      "is_ab_pmjay_beneficiary": false,
+      "is_e_shram_registered": false,
+      "is_pm_kisan_beneficiary": false,
+      "has_active_mgnrega_job_card": false,
+      "family_annual_income_inr": 200000,
+      "is_frontline_worker": false,
+      "is_nfsa_ration_card_holder": false,
+      "pregnancy_child_order": 1,
+      "child_is_girl": false
+    }
+  },
+
+  "over_55_ineligible": {
+    "self": {
+      "age": 60,
+      "is_sc_st": false,
+      "has_40_percent_or_more_disability": false,
+      "is_bpl_household": true,
+      "is_ab_pmjay_beneficiary": false,
+      "is_e_shram_registered": false,
+      "is_pm_kisan_beneficiary": false,
+      "has_active_mgnrega_job_card": false,
+      "family_annual_income_inr": 200000,
+      "is_frontline_worker": false,
+      "is_nfsa_ration_card_holder": false,
+      "pregnancy_child_order": 1,
+      "child_is_girl": false
+    }
+  },
+
+  "no_category_membership_ineligible": {
+    "self": {
+      "age": 25,
+      "is_sc_st": false,
+      "has_40_percent_or_more_disability": false,
+      "is_bpl_household": false,
+      "is_ab_pmjay_beneficiary": false,
+      "is_e_shram_registered": false,
+      "is_pm_kisan_beneficiary": false,
+      "has_active_mgnrega_job_card": false,
+      "family_annual_income_inr": 1000000,
+      "is_frontline_worker": false,
+      "is_nfsa_ration_card_holder": false,
+      "pregnancy_child_order": 1,
+      "child_is_girl": false
+    }
+  },
+
+  "ab_pmjay_beneficiary_alone_eligible": {
+    "_comment": "Cross-scheme category: AB-PMJAY beneficiary status alone qualifies.",
+    "self": {
+      "age": 25,
+      "is_sc_st": false,
+      "has_40_percent_or_more_disability": false,
+      "is_bpl_household": false,
+      "is_ab_pmjay_beneficiary": true,
+      "is_e_shram_registered": false,
+      "is_pm_kisan_beneficiary": false,
+      "has_active_mgnrega_job_card": false,
+      "family_annual_income_inr": 1000000,
+      "is_frontline_worker": false,
+      "is_nfsa_ration_card_holder": false,
+      "pregnancy_child_order": 1,
+      "child_is_girl": false
+    }
+  },
+
+  "income_based_eligibility_alone_eligible": {
+    "self": {
+      "age": 25,
+      "is_sc_st": false,
+      "has_40_percent_or_more_disability": false,
+      "is_bpl_household": false,
+      "is_ab_pmjay_beneficiary": false,
+      "is_e_shram_registered": false,
+      "is_pm_kisan_beneficiary": false,
+      "has_active_mgnrega_job_card": false,
+      "family_annual_income_inr": 750000,
+      "is_frontline_worker": false,
+      "is_nfsa_ration_card_holder": false,
+      "pregnancy_child_order": 1,
+      "child_is_girl": false
+    }
+  },
+
+  "missing_parity_data_undetermined": {
+    "self": {
+      "age": 25,
+      "is_sc_st": false,
+      "has_40_percent_or_more_disability": false,
+      "is_bpl_household": true,
+      "is_ab_pmjay_beneficiary": false,
+      "is_e_shram_registered": false,
+      "is_pm_kisan_beneficiary": false,
+      "has_active_mgnrega_job_card": false,
+      "family_annual_income_inr": 200000,
+      "is_frontline_worker": false,
+      "is_nfsa_ration_card_holder": false,
+      "child_is_girl": false
+    }
+  }
+}

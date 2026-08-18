@@ -1,0 +1,103 @@
+{
+  "scheme_id": "PM-KISAN",
+  "model": "openai/gpt-oss-120b",
+  "run_timestamp": "2026-08-18T00:53:45.473653",
+  "note": "Outcome-equivalence, ontology-constrained draft vs corrected gold, SINGLE-VOCABULARY profile suite (no dual-authoring).",
+  "gold_reference": "data/gold/PM-KISAN.json",
+  "draft_source_run": "data\\extraction_runs\\PM-KISAN_gpt-oss-120b_ontology_20260818T005207.json",
+  "profiles_source": "data/profiles/PM-KISAN.json",
+  "report": {
+    "scheme_id": "PM-KISAN",
+    "n_profiles": 12,
+    "agreement_rate": 0.9166666666666666,
+    "false_positive_eligible_rate": 0.08333333333333333,
+    "false_negative_eligible_rate": 0.0,
+    "other_mismatch_rate": 0.0,
+    "comparisons": [
+      {
+        "profile_id": "eligible_baseline",
+        "gold_verdict": "eligible",
+        "draft_verdict": "eligible",
+        "agree": true,
+        "disagreement_type": null
+      },
+      {
+        "profile_id": "income_tax_family_member",
+        "gold_verdict": "ineligible",
+        "draft_verdict": "ineligible",
+        "agree": true,
+        "disagreement_type": null
+      },
+      {
+        "profile_id": "govt_employee_no_exception",
+        "gold_verdict": "ineligible",
+        "draft_verdict": "ineligible",
+        "agree": true,
+        "disagreement_type": null
+      },
+      {
+        "profile_id": "govt_employee_group_d_exception",
+        "gold_verdict": "eligible",
+        "draft_verdict": "eligible",
+        "agree": true,
+        "disagreement_type": null
+      },
+      {
+        "profile_id": "pension_exclusion_no_exception",
+        "gold_verdict": "ineligible",
+        "draft_verdict": "ineligible",
+        "agree": true,
+        "disagreement_type": null
+      },
+      {
+        "profile_id": "pension_group_d_exception",
+        "gold_verdict": "eligible",
+        "draft_verdict": "eligible",
+        "agree": true,
+        "disagreement_type": null
+      },
+      {
+        "profile_id": "professional_family_member",
+        "gold_verdict": "ineligible",
+        "draft_verdict": "ineligible",
+        "agree": true,
+        "disagreement_type": null
+      },
+      {
+        "profile_id": "institutional_landholder",
+        "gold_verdict": "ineligible",
+        "draft_verdict": "ineligible",
+        "agree": true,
+        "disagreement_type": null
+      },
+      {
+        "profile_id": "political_post_family_member",
+        "gold_verdict": "ineligible",
+        "draft_verdict": "ineligible",
+        "agree": true,
+        "disagreement_type": null
+      },
+      {
+        "profile_id": "nri_family_member",
+        "gold_verdict": "ineligible",
+        "draft_verdict": "ineligible",
+        "agree": true,
+        "disagreement_type": null
+      },
+      {
+        "profile_id": "missing_data_both_undetermined",
+        "gold_verdict": "undetermined_missing_facts",
+        "draft_verdict": "undetermined_missing_facts",
+        "agree": true,
+        "disagreement_type": null
+      },
+      {
+        "profile_id": "citizenship_gap_false_positive",
+        "gold_verdict": "ineligible",
+        "draft_verdict": "eligible",
+        "agree": false,
+        "disagreement_type": "false_positive_eligible"
+      }
+    ]
+  }
+}

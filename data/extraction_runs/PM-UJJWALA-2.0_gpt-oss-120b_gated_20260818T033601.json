@@ -1,0 +1,159 @@
+{
+  "scheme_id": "PM-UJJWALA-2.0",
+  "note": "Gate-approved-only repair applied to the ORIGINAL pre-repair draft.",
+  "gated_extraction": {
+    "scheme_id": "PM-UJJWALA-2.0",
+    "unit_of_eligibility": "family",
+    "inclusion": {
+      "and": [
+        {
+          "or": [
+            {
+              "field": "is_in_secc_2011_list",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": false,
+              "cat": "demographic"
+            },
+            {
+              "field": "is_bpl_household",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": false,
+              "cat": "economic"
+            },
+            {
+              "field": "is_sc_st",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": false,
+              "cat": "demographic"
+            },
+            {
+              "field": "is_pmay_g_beneficiary",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": false,
+              "cat": "demographic"
+            },
+            {
+              "field": "is_aay_beneficiary",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": true,
+              "cat": "economic"
+            },
+            {
+              "field": "is_forest_dweller",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": false,
+              "cat": "demographic"
+            },
+            {
+              "field": "is_most_backward_class",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": false,
+              "cat": "demographic"
+            },
+            {
+              "field": "is_tea_garden_tribe",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": false,
+              "cat": "demographic"
+            },
+            {
+              "field": "lives_on_river_island",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": false,
+              "cat": "demographic"
+            },
+            {
+              "field": "meets_14_point_self_declaration",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": false,
+              "cat": "economic"
+            }
+          ]
+        },
+        {
+          "field": "is_woman",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false,
+          "cat": "demographic"
+        },
+        {
+          "field": "age",
+          "op": ">=",
+          "value": 18,
+          "ontology_proposed": true,
+          "cat": "demographic"
+        }
+      ]
+    },
+    "exclusions": [
+      {
+        "field": "household_has_existing_lpg_connection",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "other",
+        "quantifier": "self",
+        "except": null,
+        "count_op": null,
+        "count": null
+      }
+    ],
+    "temporal_validity": {
+      "valid_from": "2021-08-10",
+      "valid_to": null,
+      "extracted_at": "2026-08-18",
+      "supersedes": null
+    },
+    "operational_requirements": [
+      "Aadhaar-based KYC required"
+    ],
+    "extraction_metadata": {
+      "confidence": 0.95,
+      "source_clause": "Eligibility",
+      "flagged_for_review": false
+    }
+  },
+  "gate_decisions": [
+    {
+      "category": "preambular_implied_fact",
+      "target_field": "is_woman",
+      "decision": "auto_accept",
+      "signals": {
+        "quote_verbatim_in_source": true,
+        "self_consistent_across_samples": true,
+        "confidence": 0.95,
+        "threshold_used": 0.7
+      },
+      "reasons": [
+        "source quote verbatim, confidence above threshold, no contradicting signals"
+      ],
+      "caveat": "AUTO-ACCEPT means this finding passed the fabrication/groundedness checks — it does NOT mean the predicate was verified correct. Confirmed false-accept shape at validation time: plausible-sounding but incoherent or redundant predicates (a real, verbatim-quoted source sentence stretched into an unwarranted or nonsensical predicate). Keep this visible wherever auto-accept decisions are logged or reviewed — do not flatten it into a bare 'gate said fine'."
+    },
+    {
+      "category": "preambular_implied_fact",
+      "target_field": "age",
+      "decision": "auto_accept",
+      "signals": {
+        "quote_verbatim_in_source": true,
+        "self_consistent_across_samples": true,
+        "confidence": 0.9,
+        "threshold_used": 0.7
+      },
+      "reasons": [
+        "source quote verbatim, confidence above threshold, no contradicting signals"
+      ],
+      "caveat": "AUTO-ACCEPT means this finding passed the fabrication/groundedness checks — it does NOT mean the predicate was verified correct. Confirmed false-accept shape at validation time: plausible-sounding but incoherent or redundant predicates (a real, verbatim-quoted source sentence stretched into an unwarranted or nonsensical predicate). Keep this visible wherever auto-accept decisions are logged or reviewed — do not flatten it into a bare 'gate said fine'."
+    }
+  ]
+}

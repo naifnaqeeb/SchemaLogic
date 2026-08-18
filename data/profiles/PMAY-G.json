@@ -1,0 +1,270 @@
+{
+  "_note": "Synthetic family profiles for PMAY-G outcome-equivalence testing (plan Section 6, 'profile test suites'). Mirrors the scenarios in tests/test_gold_schemes.py's PMAY-G section (_pmayg_base_profile + variant tests). Uses gold's canonical field names only (schema/field_ontology.py).",
+
+  "eligible_baseline": {
+    "_comment": "Kutcha house, no disqualifiers -> eligible.",
+    "self": {
+      "is_houseless": false,
+      "lives_in_kutcha_house": true,
+      "is_secc_automatically_included": false,
+      "is_govt_employee": false,
+      "owns_non_agricultural_enterprise_registered_with_govt": false,
+      "kisan_credit_card_limit_inr": 0,
+      "owns_refrigerator": false,
+      "owns_landline_phone": false,
+      "owns_gt_2_5_acres_irrigated_land": false,
+      "owns_motorised_three_or_four_wheeler": false,
+      "owns_mechanized_agricultural_equipment_3_or_4_wheeler": false,
+      "owns_pucca_house": false,
+      "monthly_income_inr": 5000,
+      "paid_income_tax_last_assessment_year": false
+    },
+    "family_members": [
+      {
+        "is_govt_employee": false,
+        "monthly_income_inr": 5000,
+        "paid_income_tax_last_assessment_year": false
+      }
+    ]
+  },
+
+  "income_over_ceiling": {
+    "_comment": "Family member earns > Rs. 15,000/month -> excluded.",
+    "self": {
+      "is_houseless": false,
+      "lives_in_kutcha_house": true,
+      "is_secc_automatically_included": false,
+      "is_govt_employee": false,
+      "owns_non_agricultural_enterprise_registered_with_govt": false,
+      "kisan_credit_card_limit_inr": 0,
+      "owns_refrigerator": false,
+      "owns_landline_phone": false,
+      "owns_gt_2_5_acres_irrigated_land": false,
+      "owns_motorised_three_or_four_wheeler": false,
+      "owns_mechanized_agricultural_equipment_3_or_4_wheeler": false,
+      "owns_pucca_house": false,
+      "monthly_income_inr": 5000,
+      "paid_income_tax_last_assessment_year": false
+    },
+    "family_members": [
+      {
+        "is_govt_employee": false,
+        "monthly_income_inr": 20000,
+        "paid_income_tax_last_assessment_year": false
+      }
+    ]
+  },
+
+  "missing_housing_status_undetermined": {
+    "_comment": "No housing-status fact known at all -> undetermined, not silently guessed.",
+    "self": {
+      "is_govt_employee": false,
+      "owns_non_agricultural_enterprise_registered_with_govt": false,
+      "kisan_credit_card_limit_inr": 0,
+      "owns_refrigerator": false,
+      "owns_landline_phone": false,
+      "owns_gt_2_5_acres_irrigated_land": false,
+      "owns_motorised_three_or_four_wheeler": false,
+      "owns_mechanized_agricultural_equipment_3_or_4_wheeler": false,
+      "owns_pucca_house": false,
+      "monthly_income_inr": 5000,
+      "paid_income_tax_last_assessment_year": false
+    },
+    "family_members": [
+      {
+        "is_govt_employee": false,
+        "monthly_income_inr": 5000,
+        "paid_income_tax_last_assessment_year": false
+      }
+    ]
+  },
+
+  "secc_automatically_included_regardless_of_housing": {
+    "_comment": "Destitute/manual-scavenger/etc category -> eligible even without kutcha-house status.",
+    "self": {
+      "is_houseless": false,
+      "lives_in_kutcha_house": false,
+      "is_secc_automatically_included": true,
+      "is_govt_employee": false,
+      "owns_non_agricultural_enterprise_registered_with_govt": false,
+      "kisan_credit_card_limit_inr": 0,
+      "owns_refrigerator": false,
+      "owns_landline_phone": false,
+      "owns_gt_2_5_acres_irrigated_land": false,
+      "owns_motorised_three_or_four_wheeler": false,
+      "owns_mechanized_agricultural_equipment_3_or_4_wheeler": false,
+      "owns_pucca_house": false,
+      "monthly_income_inr": 5000,
+      "paid_income_tax_last_assessment_year": false
+    },
+    "family_members": [
+      {
+        "is_govt_employee": false,
+        "monthly_income_inr": 5000,
+        "paid_income_tax_last_assessment_year": false
+      }
+    ]
+  },
+
+  "refrigerator": {
+    "_comment": "Owns a refrigerator -> excluded.",
+    "self": {
+      "is_houseless": false,
+      "lives_in_kutcha_house": true,
+      "is_secc_automatically_included": false,
+      "is_govt_employee": false,
+      "owns_non_agricultural_enterprise_registered_with_govt": false,
+      "kisan_credit_card_limit_inr": 0,
+      "owns_refrigerator": true,
+      "owns_landline_phone": false,
+      "owns_gt_2_5_acres_irrigated_land": false,
+      "owns_motorised_three_or_four_wheeler": false,
+      "owns_mechanized_agricultural_equipment_3_or_4_wheeler": false,
+      "owns_pucca_house": false,
+      "monthly_income_inr": 5000,
+      "paid_income_tax_last_assessment_year": false
+    },
+    "family_members": [
+      {
+        "is_govt_employee": false,
+        "monthly_income_inr": 5000,
+        "paid_income_tax_last_assessment_year": false
+      }
+    ]
+  },
+
+  "landline_phone": {
+    "_comment": "Owns a landline phone -> excluded.",
+    "self": {
+      "is_houseless": false,
+      "lives_in_kutcha_house": true,
+      "is_secc_automatically_included": false,
+      "is_govt_employee": false,
+      "owns_non_agricultural_enterprise_registered_with_govt": false,
+      "kisan_credit_card_limit_inr": 0,
+      "owns_refrigerator": false,
+      "owns_landline_phone": true,
+      "owns_gt_2_5_acres_irrigated_land": false,
+      "owns_motorised_three_or_four_wheeler": false,
+      "owns_mechanized_agricultural_equipment_3_or_4_wheeler": false,
+      "owns_pucca_house": false,
+      "monthly_income_inr": 5000,
+      "paid_income_tax_last_assessment_year": false
+    },
+    "family_members": [
+      {
+        "is_govt_employee": false,
+        "monthly_income_inr": 5000,
+        "paid_income_tax_last_assessment_year": false
+      }
+    ]
+  },
+
+  "irrigated_land_over_threshold": {
+    "_comment": "Owns > 2.5 acres irrigated land -> excluded.",
+    "self": {
+      "is_houseless": false,
+      "lives_in_kutcha_house": true,
+      "is_secc_automatically_included": false,
+      "is_govt_employee": false,
+      "owns_non_agricultural_enterprise_registered_with_govt": false,
+      "kisan_credit_card_limit_inr": 0,
+      "owns_refrigerator": false,
+      "owns_landline_phone": false,
+      "owns_gt_2_5_acres_irrigated_land": true,
+      "owns_motorised_three_or_four_wheeler": false,
+      "owns_mechanized_agricultural_equipment_3_or_4_wheeler": false,
+      "owns_pucca_house": false,
+      "monthly_income_inr": 5000,
+      "paid_income_tax_last_assessment_year": false
+    },
+    "family_members": [
+      {
+        "is_govt_employee": false,
+        "monthly_income_inr": 5000,
+        "paid_income_tax_last_assessment_year": false
+      }
+    ]
+  },
+
+  "mechanized_agri_equipment": {
+    "_comment": "Owns mechanized 3-4 wheeler agricultural equipment -> excluded.",
+    "self": {
+      "is_houseless": false,
+      "lives_in_kutcha_house": true,
+      "is_secc_automatically_included": false,
+      "is_govt_employee": false,
+      "owns_non_agricultural_enterprise_registered_with_govt": false,
+      "kisan_credit_card_limit_inr": 0,
+      "owns_refrigerator": false,
+      "owns_landline_phone": false,
+      "owns_gt_2_5_acres_irrigated_land": false,
+      "owns_motorised_three_or_four_wheeler": false,
+      "owns_mechanized_agricultural_equipment_3_or_4_wheeler": true,
+      "owns_pucca_house": false,
+      "monthly_income_inr": 5000,
+      "paid_income_tax_last_assessment_year": false
+    },
+    "family_members": [
+      {
+        "is_govt_employee": false,
+        "monthly_income_inr": 5000,
+        "paid_income_tax_last_assessment_year": false
+      }
+    ]
+  },
+
+  "non_agricultural_enterprise": {
+    "_comment": "Owns a non-agricultural enterprise registered with the government -> excluded.",
+    "self": {
+      "is_houseless": false,
+      "lives_in_kutcha_house": true,
+      "is_secc_automatically_included": false,
+      "is_govt_employee": false,
+      "owns_non_agricultural_enterprise_registered_with_govt": true,
+      "kisan_credit_card_limit_inr": 0,
+      "owns_refrigerator": false,
+      "owns_landline_phone": false,
+      "owns_gt_2_5_acres_irrigated_land": false,
+      "owns_motorised_three_or_four_wheeler": false,
+      "owns_mechanized_agricultural_equipment_3_or_4_wheeler": false,
+      "owns_pucca_house": false,
+      "monthly_income_inr": 5000,
+      "paid_income_tax_last_assessment_year": false
+    },
+    "family_members": [
+      {
+        "is_govt_employee": false,
+        "monthly_income_inr": 5000,
+        "paid_income_tax_last_assessment_year": false
+      }
+    ]
+  },
+
+  "income_tax_family_member": {
+    "_comment": "Family member paid income tax last assessment year -> excluded.",
+    "self": {
+      "is_houseless": false,
+      "lives_in_kutcha_house": true,
+      "is_secc_automatically_included": false,
+      "is_govt_employee": false,
+      "owns_non_agricultural_enterprise_registered_with_govt": false,
+      "kisan_credit_card_limit_inr": 0,
+      "owns_refrigerator": false,
+      "owns_landline_phone": false,
+      "owns_gt_2_5_acres_irrigated_land": false,
+      "owns_motorised_three_or_four_wheeler": false,
+      "owns_mechanized_agricultural_equipment_3_or_4_wheeler": false,
+      "owns_pucca_house": false,
+      "monthly_income_inr": 5000,
+      "paid_income_tax_last_assessment_year": false
+    },
+    "family_members": [
+      {
+        "is_govt_employee": false,
+        "monthly_income_inr": 5000,
+        "paid_income_tax_last_assessment_year": true
+      }
+    ]
+  }
+}

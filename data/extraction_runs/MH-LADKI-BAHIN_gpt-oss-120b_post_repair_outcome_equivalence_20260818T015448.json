@@ -1,0 +1,88 @@
+{
+  "scheme_id": "MH-LADKI-BAHIN",
+  "model": "openai/gpt-oss-120b",
+  "run_timestamp": "2026-08-18T01:54:48.299007",
+  "note": "POST-REPAIR outcome-equivalence (Phase 2 judge+repair validation).",
+  "repaired_source_run": "data\\extraction_runs\\MH-LADKI-BAHIN_gpt-oss-120b_judge_repair_20260818T015321.json",
+  "profiles_source": "data/profiles/MH-LADKI-BAHIN.json",
+  "report": {
+    "scheme_id": "MH-LADKI-BAHIN",
+    "n_profiles": 10,
+    "agreement_rate": 0.7,
+    "false_positive_eligible_rate": 0.0,
+    "false_negative_eligible_rate": 0.1,
+    "other_mismatch_rate": 0.2,
+    "comparisons": [
+      {
+        "profile_id": "eligible_baseline",
+        "gold_verdict": "eligible",
+        "draft_verdict": "undetermined_missing_facts",
+        "agree": false,
+        "disagreement_type": "other_mismatch"
+      },
+      {
+        "profile_id": "over_age_65",
+        "gold_verdict": "ineligible",
+        "draft_verdict": "ineligible",
+        "agree": true,
+        "disagreement_type": null
+      },
+      {
+        "profile_id": "four_wheeler_no_exception",
+        "gold_verdict": "ineligible",
+        "draft_verdict": "ineligible",
+        "agree": true,
+        "disagreement_type": null
+      },
+      {
+        "profile_id": "four_wheeler_tractor_exception",
+        "gold_verdict": "eligible",
+        "draft_verdict": "ineligible",
+        "agree": false,
+        "disagreement_type": "false_negative_eligible"
+      },
+      {
+        "profile_id": "income_tax_family_member",
+        "gold_verdict": "ineligible",
+        "draft_verdict": "ineligible",
+        "agree": true,
+        "disagreement_type": null
+      },
+      {
+        "profile_id": "govt_employee_family_member",
+        "gold_verdict": "ineligible",
+        "draft_verdict": "undetermined_missing_facts",
+        "agree": false,
+        "disagreement_type": "other_mismatch"
+      },
+      {
+        "profile_id": "other_govt_scheme_benefit_at_threshold",
+        "gold_verdict": "ineligible",
+        "draft_verdict": "ineligible",
+        "agree": true,
+        "disagreement_type": null
+      },
+      {
+        "profile_id": "mp_mla_family_member",
+        "gold_verdict": "ineligible",
+        "draft_verdict": "ineligible",
+        "agree": true,
+        "disagreement_type": null
+      },
+      {
+        "profile_id": "govt_board_post_family_member",
+        "gold_verdict": "ineligible",
+        "draft_verdict": "ineligible",
+        "agree": true,
+        "disagreement_type": null
+      },
+      {
+        "profile_id": "missing_income_data",
+        "gold_verdict": "undetermined_missing_facts",
+        "draft_verdict": "undetermined_missing_facts",
+        "agree": true,
+        "disagreement_type": null
+      }
+    ]
+  }
+}

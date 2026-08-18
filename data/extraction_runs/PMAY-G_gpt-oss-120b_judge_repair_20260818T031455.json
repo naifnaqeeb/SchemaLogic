@@ -1,0 +1,313 @@
+{
+  "scheme_id": "PMAY-G",
+  "model": "openai/gpt-oss-120b",
+  "run_timestamp": "2026-08-18T03:14:55.787302",
+  "draft_source_run": "data\\extraction_runs\\PMAY-G_gpt-oss-120b_ontology_20260818T031252.json",
+  "source_document": "data/raw_documents/PMAY-G.md",
+  "gold_reference": "data/gold/PMAY-G.json",
+  "judge_passes": [
+    {
+      "pass": 1,
+      "findings": [
+        {
+          "category": "preambular_implied_fact",
+          "description": "Eligibility is limited to rural households as stated in the Objective section.",
+          "source_quote": "PMAY-G aims to provide pucca (permanent) houses with basic amenities to all **rural** houseless households and households living in kutcha or dilapidated houses...",
+          "confidence": 0.96,
+          "proposed_predicate": {
+            "location": "inclusion",
+            "cat": "demographic",
+            "field": "is_rural_resident",
+            "op": "==",
+            "value": true,
+            "quantifier": "self",
+            "ontology_proposed": true,
+            "except": null
+          },
+          "proposed_supersedes": null
+        }
+      ]
+    },
+    {
+      "pass": 2,
+      "findings": [
+        {
+          "category": "temporal_supersession",
+          "description": "The September 2024 revision removed the exclusion based on ownership of a fishing boat, but the draft's supersedes field is null.",
+          "source_quote": "ownership of a fishing boat ... no longer excludes a household",
+          "confidence": 0.96,
+          "proposed_predicate": null,
+          "proposed_supersedes": {
+            "retired_field": "owns_fishing_boat",
+            "retired_op": "==",
+            "retired_value": true,
+            "amendment_source_quote": "ownership of a fishing boat ... no longer excludes a household",
+            "rule_version_label": "prior_version",
+            "new_valid_from": null
+          }
+        },
+        {
+          "category": "temporal_supersession",
+          "description": "The September 2024 revision removed the exclusion based on ownership of a motorised two-wheeler, but the draft's supersedes field is null.",
+          "source_quote": "ownership of ... a motorised two-wheeler no longer excludes a household",
+          "confidence": 0.96,
+          "proposed_predicate": null,
+          "proposed_supersedes": {
+            "retired_field": "owns_motorised_two_wheeler",
+            "retired_op": "==",
+            "retired_value": true,
+            "amendment_source_quote": "ownership of ... a motorised two-wheeler no longer excludes a household",
+            "rule_version_label": "prior_version",
+            "new_valid_from": null
+          }
+        },
+        {
+          "category": "temporal_supersession",
+          "description": "The September 2024 revision raised the monthly income exclusion threshold from Rs. 10,000 to Rs. 15,000, but the draft's supersedes field does not record the superseded rule.",
+          "source_quote": "the monthly income threshold was raised to Rs. 15,000 (up from Rs. 10,000)",
+          "confidence": 0.97,
+          "proposed_predicate": null,
+          "proposed_supersedes": {
+            "retired_field": "monthly_income_inr",
+            "retired_op": ">",
+            "retired_value": 10000,
+            "amendment_source_quote": "the monthly income threshold was raised to Rs. 15,000 (up from Rs. 10,000)",
+            "rule_version_label": "prior_version",
+            "new_valid_from": null
+          }
+        }
+      ]
+    }
+  ],
+  "repair_log": [
+    {
+      "pass": 1,
+      "applied": [
+        {
+          "category": "preambular_implied_fact",
+          "description": "Eligibility is limited to rural households as stated in the Objective section.",
+          "confidence": 0.96,
+          "applied": true,
+          "type": "predicate",
+          "location": "inclusion",
+          "field": "is_rural_resident"
+        }
+      ]
+    },
+    {
+      "pass": 2,
+      "applied": [
+        {
+          "category": "temporal_supersession",
+          "description": "The September 2024 revision removed the exclusion based on ownership of a fishing boat, but the draft's supersedes field is null.",
+          "confidence": 0.96,
+          "applied": true,
+          "type": "supersedes",
+          "field": "owns_fishing_boat"
+        },
+        {
+          "category": "temporal_supersession",
+          "description": "The September 2024 revision removed the exclusion based on ownership of a motorised two-wheeler, but the draft's supersedes field is null.",
+          "confidence": 0.96,
+          "applied": true,
+          "type": "supersedes",
+          "field": "owns_motorised_two_wheeler"
+        },
+        {
+          "category": "temporal_supersession",
+          "description": "The September 2024 revision raised the monthly income exclusion threshold from Rs. 10,000 to Rs. 15,000, but the draft's supersedes field does not record the superseded rule.",
+          "confidence": 0.97,
+          "applied": true,
+          "type": "supersedes",
+          "field": "monthly_income_inr"
+        }
+      ]
+    }
+  ],
+  "repaired_scheme": {
+    "scheme_id": "PMAY-G",
+    "unit_of_eligibility": "family",
+    "inclusion": {
+      "and": [
+        {
+          "or": [
+            {
+              "field": "is_houseless",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": false,
+              "cat": "economic"
+            },
+            {
+              "field": "lives_in_kutcha_house",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": false,
+              "cat": "economic"
+            },
+            {
+              "field": "is_secc_automatically_included",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": false,
+              "cat": "economic"
+            }
+          ]
+        },
+        {
+          "field": "is_rural_resident",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": true,
+          "cat": "demographic"
+        }
+      ]
+    },
+    "exclusions": [
+      {
+        "field": "kisan_credit_card_limit_inr",
+        "op": ">=",
+        "value": 50000,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "is_govt_employee",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "occupation",
+        "quantifier": "self",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "owns_non_agricultural_enterprise_registered_with_govt",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "monthly_income_inr",
+        "op": ">",
+        "value": 15000,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "paid_income_tax_last_assessment_year",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "some_family_member",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "owns_refrigerator",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "owns_landline_phone",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "owns_gt_2_5_acres_irrigated_land",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "owns_motorised_three_or_four_wheeler",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "owns_mechanized_agricultural_equipment_3_or_4_wheeler",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "owns_pucca_house",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "count_op": null,
+        "count": null
+      }
+    ],
+    "temporal_validity": {
+      "valid_from": "2024-09-10",
+      "valid_to": null,
+      "extracted_at": "2026-08-18",
+      "supersedes": {
+        "rule_version": "prior_version",
+        "retired_predicate": {
+          "field": "monthly_income_inr",
+          "op": ">",
+          "value": 10000
+        },
+        "amendment_source": "the monthly income threshold was raised to Rs. 15,000 (up from Rs. 10,000)"
+      }
+    },
+    "operational_requirements": [
+      "Beneficiary identification is through the Awaas+ survey entry, verified by Gram Sabhas.",
+      "Payments are made electronically to Aadhaar-seeded bank or post office accounts."
+    ],
+    "extraction_metadata": {
+      "confidence": 0.95,
+      "source_clause": "Eligibility Criteria and Exclusion Criteria sections",
+      "flagged_for_review": false
+    }
+  }
+}

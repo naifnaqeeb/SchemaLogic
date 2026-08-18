@@ -1,0 +1,192 @@
+{
+  "scheme_id": "IGNOAPS",
+  "model": "openai/gpt-oss-120b",
+  "run_timestamp": "2026-08-18T01:26:25.482053",
+  "note": "Ontology-constrained extraction run (schema/field_ontology.py).",
+  "source_document": "data/raw_documents/IGNOAPS.md",
+  "gold_reference": "data/gold/IGNOAPS.json",
+  "draft_extraction": {
+    "scheme_id": "IGNOAPS",
+    "unit_of_eligibility": "individual",
+    "inclusion": {
+      "and": [
+        {
+          "field": "age",
+          "op": ">=",
+          "value": 60,
+          "ontology_proposed": false,
+          "cat": "demographic"
+        },
+        {
+          "or": [
+            {
+              "field": "is_bpl_household",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": false,
+              "cat": "economic"
+            },
+            {
+              "and": [
+                {
+                  "field": "is_woman",
+                  "op": "==",
+                  "value": true,
+                  "ontology_proposed": false,
+                  "cat": "demographic"
+                },
+                {
+                  "field": "is_widow",
+                  "op": "==",
+                  "value": true,
+                  "ontology_proposed": true,
+                  "cat": "other"
+                },
+                {
+                  "field": "has_aids",
+                  "op": "==",
+                  "value": true,
+                  "ontology_proposed": true,
+                  "cat": "other"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "exclusions": [
+      {
+        "field": "is_govt_employee",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "occupation",
+        "quantifier": "self",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "family_agricultural_land_acres",
+        "op": ">=",
+        "value": 5,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "owns_four_wheeler",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "count_op": null,
+        "count": null
+      }
+    ],
+    "temporal_validity": {
+      "valid_from": "1995-08-15",
+      "valid_to": null,
+      "extracted_at": "2026-08-18",
+      "supersedes": null
+    },
+    "operational_requirements": [
+      "Beneficiary must have a bank account or post office savings account",
+      "Beneficiary must have an Aadhaar number"
+    ],
+    "extraction_metadata": {
+      "confidence": 0.95,
+      "source_clause": "Chapter II 2.3, 2.4.3",
+      "flagged_for_review": false
+    }
+  },
+  "exact_field_matches": [
+    "age",
+    "is_bpl_household"
+  ],
+  "gold_fields": [
+    "age",
+    "has_regular_family_financial_support",
+    "is_bpl_household"
+  ],
+  "draft_fields": [
+    "age",
+    "family_agricultural_land_acres",
+    "has_aids",
+    "is_bpl_household",
+    "is_govt_employee",
+    "is_widow",
+    "is_woman",
+    "owns_four_wheeler"
+  ],
+  "ontology_proposed_predicates": [
+    {
+      "path": "inclusion.and[1].or[1].and[1]",
+      "cat": "other",
+      "field": "is_widow",
+      "op": "==",
+      "value": true,
+      "ontology_proposed": true
+    },
+    {
+      "path": "inclusion.and[1].or[1].and[2]",
+      "cat": "other",
+      "field": "has_aids",
+      "op": "==",
+      "value": true,
+      "ontology_proposed": true
+    }
+  ],
+  "unflagged_out_of_ontology_fields": [
+    {
+      "path": "inclusion.and[1].or[1].and[0]",
+      "cat": "demographic",
+      "field": "is_woman",
+      "op": "==",
+      "value": true,
+      "ontology_proposed": false
+    },
+    {
+      "index": 0,
+      "cat": "occupation",
+      "field": "is_govt_employee",
+      "op": "==",
+      "value": true,
+      "quantifier": "self",
+      "ontology_proposed": false,
+      "except": null,
+      "count_op": null,
+      "count": null
+    },
+    {
+      "index": 1,
+      "cat": "economic",
+      "field": "family_agricultural_land_acres",
+      "op": ">=",
+      "value": 5,
+      "quantifier": "self",
+      "ontology_proposed": false,
+      "except": null,
+      "count_op": null,
+      "count": null
+    },
+    {
+      "index": 2,
+      "cat": "economic",
+      "field": "owns_four_wheeler",
+      "op": "==",
+      "value": true,
+      "quantifier": "self",
+      "ontology_proposed": false,
+      "except": null,
+      "count_op": null,
+      "count": null
+    }
+  ]
+}

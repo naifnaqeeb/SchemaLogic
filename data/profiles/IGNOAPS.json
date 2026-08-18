@@ -1,0 +1,59 @@
+{
+  "_note": "Single-vocabulary (gold field names only) outcome-equivalence profiles for IGNOAPS.",
+
+  "eligible_baseline": {
+    "self": {
+      "age": 65, "is_bpl_household": true, "has_regular_family_financial_support": false,
+      "is_govt_employee": false, "family_agricultural_land_acres": 0, "owns_four_wheeler": false
+    }
+  },
+
+  "under_60": {
+    "self": {
+      "age": 45, "is_bpl_household": true, "has_regular_family_financial_support": false,
+      "is_govt_employee": false, "family_agricultural_land_acres": 0, "owns_four_wheeler": false
+    }
+  },
+
+  "not_bpl": {
+    "self": {
+      "age": 65, "is_bpl_household": false, "has_regular_family_financial_support": false,
+      "is_govt_employee": false, "family_agricultural_land_acres": 0, "owns_four_wheeler": false
+    }
+  },
+
+  "has_family_support": {
+    "self": {
+      "age": 65, "is_bpl_household": true, "has_regular_family_financial_support": true,
+      "is_govt_employee": false, "family_agricultural_land_acres": 0, "owns_four_wheeler": false
+    }
+  },
+
+  "govt_employee": {
+    "self": {
+      "age": 65, "is_bpl_household": true, "has_regular_family_financial_support": false,
+      "is_govt_employee": true, "family_agricultural_land_acres": 0, "owns_four_wheeler": false
+    }
+  },
+
+  "five_acres_land": {
+    "self": {
+      "age": 65, "is_bpl_household": true, "has_regular_family_financial_support": false,
+      "is_govt_employee": false, "family_agricultural_land_acres": 5, "owns_four_wheeler": false
+    }
+  },
+
+  "owns_four_wheeler": {
+    "self": {
+      "age": 65, "is_bpl_household": true, "has_regular_family_financial_support": false,
+      "is_govt_employee": false, "family_agricultural_land_acres": 0, "owns_four_wheeler": true
+    }
+  },
+
+  "missing_support_data": {
+    "self": {
+      "age": 65, "is_bpl_household": true,
+      "is_govt_employee": false, "family_agricultural_land_acres": 0, "owns_four_wheeler": false
+    }
+  }
+}
