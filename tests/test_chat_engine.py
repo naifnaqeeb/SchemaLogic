@@ -13,14 +13,17 @@ from unittest.mock import patch
 
 import pytest
 
-from schemelogic.conversational import chat_engine
+from schemelogic.conversational import chat_engine, i18n
 from schemelogic.conversational.answer_parser import AnswerParseFailure, AnswerParseResult
 from schemelogic.conversational.chat_engine import ChatDeps
 from schemelogic.conversational.intake import IntakeFailure, IntakeResult
 from schemelogic.conversational.router import RouterResult
 from schemelogic.extraction.extractor import ExtractionFailure
+from schemelogic.llm.provider import ProviderFailure
 from schemelogic.retrieval.indexer import DocumentChunk, LocalIndex
 from schemelogic.schema.models import Scheme
+
+from tests.fixtures import PM_KISAN
 
 TEST_SCHEME = {
     "scheme_id": "TEST",
@@ -247,20 +250,122 @@ def test_verdict_ineligible_when_exclusion_triggers(state, deps):
 
 def test_ai_checked_success_starts_question_loop_labeled_ai_checked(state, deps):
     scheme = Scheme.model_validate(TEST_SCHEME)
-    with patch("schemelogic.conversational.chat_engine.ai_checked.get_or_extract_scheme", return_value=scheme):
+    with patch("schemelogic.conversational.chat_engine.ai_checked.extract_with_reason", return_value=(scheme, None)):
         chat_engine.select_scheme(state, "silver-1", "silver", deps)
     assert state["conversation_tier"] == "ai_checked"
     assert state["conversation_session"] is not None
     assert any("AI-Checked" in m["text"] for m in state["messages"] if m["kind"] == "text")
 
 
+def _drive_test_scheme_to_verdict(state, deps) -> None:
+    """Same three answers for either tier: age (number, free text) -> is_citizen -> is_wealthy
+    (booleans, quick-reply buttons). Mirrors how a citizen actually answers in the UI."""
+    with _mock_router("answer"):
+        chat_engine.handle_user_message(state, "25", deps)
+    chat_engine.submit_quick_reply(state, "Yes", deps)
+    chat_engine.submit_quick_reply(state, "No", deps)
+
+
+def test_ai_checked_qa_is_identical_to_gold_except_tier(deps):
+    """Item-3 parity guard: once extraction succeeds, an AI-Checked scheme must run the SAME
+    question loop, accept the same free-text-plus-quick-reply answers, and produce the same
+    evaluator verdict with the same sections as a gold scheme. The only permitted differences are
+    the tier label (which drives the badge + the honest-labelling disclaimer) and the scheme id."""
+    scheme = Scheme.model_validate(TEST_SCHEME)
+
+    gold_state: dict = {}
+    chat_engine.init_state(gold_state)
+    ai_state: dict = {}
+    chat_engine.init_state(ai_state)
+
+    with patch("schemelogic.conversational.chat_engine.phrase_verdict", return_value="phrased"):
+        chat_engine.select_scheme(gold_state, "TEST", "gold", deps)
+        _drive_test_scheme_to_verdict(gold_state, deps)
+        with patch(
+            "schemelogic.conversational.chat_engine.ai_checked.extract_with_reason", return_value=(scheme, None),
+        ):
+            chat_engine.select_scheme(ai_state, "silver-1", "silver", deps)
+        _drive_test_scheme_to_verdict(ai_state, deps)
+
+    def questions(s):
+        return [(m["text"], m["quick_replies"]) for m in s["messages"] if m["kind"] == "question"]
+
+    # identical questions, identical answer affordances (free text for number, buttons for boolean)
+    assert questions(gold_state) == questions(ai_state)
+    assert questions(gold_state)[0][1] is None  # age: free text only
+    assert questions(gold_state)[1][1] == ("Yes", "No")  # boolean: buttons kept as convenience
+
+    gold_verdict = [m for m in gold_state["messages"] if m["kind"] == "verdict"][-1]
+    ai_verdict = [m for m in ai_state["messages"] if m["kind"] == "verdict"][-1]
+
+    # same sections present (Why?/Technical detail/What next all render off these keys)
+    assert set(gold_verdict) == set(ai_verdict)
+    # same three-valued verdict, from the same real evaluator -- not a mocked LLM answer
+    assert gold_verdict["verdict_value"] == ai_verdict["verdict_value"]
+    assert gold_verdict["headline"] == ai_verdict["headline"]
+    assert gold_verdict["trace"] == ai_verdict["trace"]
+    # ...and the ONLY differences are tier + scheme id
+    differing = {k for k in gold_verdict if gold_verdict[k] != ai_verdict[k]}
+    assert differing <= {"tier", "scheme_id", "next_steps"}
+    assert gold_verdict["tier"] == "gold"
+    assert ai_verdict["tier"] == "ai_checked"
+
+
+def test_ai_checked_verdict_carries_tier_for_the_disclaimer(deps):
+    """The disclaimer is rendered off `tier` in both frontends (app.py's _render_verdict_message
+    and ChatMessageView's verdict case), so every AI-Checked verdict must carry it -- including on
+    a CACHED re-selection, where the selection-time "I ran automatic rule extraction" note is
+    deliberately not repeated."""
+    scheme = Scheme.model_validate(TEST_SCHEME)
+    state: dict = {}
+    chat_engine.init_state(state)
+    state["scheme_cache"]["silver-1"] = scheme  # already extracted earlier this session
+
+    with patch("schemelogic.conversational.chat_engine.phrase_verdict", return_value="phrased"), patch(
+        "schemelogic.conversational.chat_engine.ai_checked.extract_with_reason", return_value=(scheme, None),
+    ):
+        chat_engine.select_scheme(state, "silver-1", "silver", deps)
+        _drive_test_scheme_to_verdict(state, deps)
+
+    verdict = [m for m in state["messages"] if m["kind"] == "verdict"][-1]
+    assert verdict["tier"] == "ai_checked"
+    assert i18n.t("ai_checked_verdict_disclaimer").strip()  # the string the frontends render
+    assert "not been checked by a human" in i18n.t("ai_checked_verdict_disclaimer").lower()
+
+
 def test_ai_checked_failure_degrades_to_description_only(state, deps):
-    with patch("schemelogic.conversational.chat_engine.ai_checked.get_or_extract_scheme", return_value=None):
+    with patch("schemelogic.conversational.chat_engine.ai_checked.extract_with_reason", return_value=(None, ExtractionFailure(reason="schema_validation_failed", detail="x"))):
         chat_engine.select_scheme(state, "silver-1", "silver", deps)
     assert state["conversation_session"] is None
     last = state["messages"][-1]
     assert last["kind"] == "scheme_detail"
     assert last["tier"] == "silver"
+
+
+def test_transient_extraction_failure_says_so_instead_of_blaming_the_scheme(state, deps):
+    """A quota/transport failure must not be reported as "these rules couldn't be extracted" --
+    that's a false statement about the scheme and discourages the retry that will likely work."""
+    with patch(
+        "schemelogic.conversational.chat_engine.ai_checked.extract_with_reason",
+        return_value=(None, ExtractionFailure(reason="rate_limited", detail="429")),
+    ):
+        chat_engine.select_scheme(state, "silver-1", "silver", deps)
+    texts = " ".join(m["text"] for m in state["messages"] if m["kind"] == "text")
+    assert "couldn't reach the rule-extraction service" in texts
+    assert "wasn't able to reliably extract" not in texts
+    assert "again in a moment" in texts
+    assert state["messages"][-1]["kind"] == "scheme_detail"  # still shows the description meanwhile
+
+
+def test_content_shaped_extraction_failure_still_reports_honestly(state, deps):
+    with patch(
+        "schemelogic.conversational.chat_engine.ai_checked.extract_with_reason",
+        return_value=(None, ExtractionFailure(reason="schema_validation_failed", detail="bad")),
+    ):
+        chat_engine.select_scheme(state, "silver-1", "silver", deps)
+    texts = " ".join(m["text"] for m in state["messages"] if m["kind"] == "text")
+    assert "wasn't able to reliably extract" in texts
+    assert "couldn't reach the rule-extraction service" not in texts
 
 
 def test_unknown_scheme_id_does_not_crash(state, deps):
@@ -272,7 +377,7 @@ def test_silver_selection_failure_is_explicit_not_silent(state, deps):
     """Bug 1: the automatic on-selection extraction attempt must always be explicit about what
     happened -- a 'Checking...' message before, and a distinct failure message after, not just
     the bare description with no indication anything was tried."""
-    with patch("schemelogic.conversational.chat_engine.ai_checked.get_or_extract_scheme", return_value=None):
+    with patch("schemelogic.conversational.chat_engine.ai_checked.extract_with_reason", return_value=(None, ExtractionFailure(reason="schema_validation_failed", detail="x"))):
         chat_engine.select_scheme(state, "silver-1", "silver", deps)
     texts = [m["text"] for m in state["messages"] if m["kind"] == "text"]
     assert any("Checking the rules" in t for t in texts)
@@ -324,7 +429,7 @@ def test_eligibility_request_triggers_extraction_when_not_yet_attempted(state, d
     state["current_scheme_name"] = "Silver Scheme"
     scheme = Scheme.model_validate(TEST_SCHEME)
     with patch(
-        "schemelogic.conversational.chat_engine.ai_checked.get_or_extract_scheme", return_value=scheme,
+        "schemelogic.conversational.chat_engine.ai_checked.extract_with_reason", return_value=(scheme, None),
     ) as mock_extract, _mock_router("eligibility_request"):
         chat_engine.handle_user_message(state, "am I eligible for this scheme?", deps)
     mock_extract.assert_called_once()
@@ -450,7 +555,7 @@ def test_search_misclassification_redirects_to_named_shortlist_item(state, deps)
         ),
     ]
     with patch("schemelogic.conversational.chat_engine.discovery_search") as mock_search, patch(
-        "schemelogic.conversational.chat_engine.ai_checked.get_or_extract_scheme", return_value=None,
+        "schemelogic.conversational.chat_engine.ai_checked.extract_with_reason", return_value=(None, ExtractionFailure(reason="schema_validation_failed", detail="x")),
     ), _mock_router("search", search_query="tell me about the silver scheme"):
         chat_engine.handle_user_message(state, "tell me about the silver scheme", deps)
     mock_search.assert_not_called()  # no brand-new discovery search was run
@@ -476,7 +581,7 @@ def test_search_with_no_name_match_runs_a_real_search(state, deps):
 
 def test_reset_clears_conversation_but_keeps_scheme_cache(state, deps):
     scheme = Scheme.model_validate(TEST_SCHEME)
-    with patch("schemelogic.conversational.chat_engine.ai_checked.get_or_extract_scheme", return_value=scheme):
+    with patch("schemelogic.conversational.chat_engine.ai_checked.extract_with_reason", return_value=(scheme, None)):
         chat_engine.select_scheme(state, "silver-1", "silver", deps)
     state["scheme_cache"]["silver-1"] = scheme
     chat_engine.reset(state)
@@ -488,6 +593,114 @@ def test_reset_clears_conversation_but_keeps_scheme_cache(state, deps):
 def test_empty_message_is_a_no_op(state, deps):
     chat_engine.handle_user_message(state, "   ", deps)
     assert state["messages"] == []
+
+
+# --- Bug 3 fix: pending-question priority over stale shortlist matching ------------------------
+# Real transcript: mid-Q&A for PM-KISAN, asked "What is your monthly pension amount, in rupees?",
+# the citizen answered "10000" as free text -- it got matched against the shortlist shown several
+# turns earlier ("Which one did you mean? Say the number...") instead of being accepted as the
+# pension answer, and the conversation could never reach a verdict.
+
+
+def test_start_question_loop_clears_stale_shortlist(state, deps):
+    with _mock_router("search", search_query="test"):
+        chat_engine.handle_user_message(state, "test", deps)
+    assert state["shortlist"] is not None  # sanity: a shortlist really is showing
+    chat_engine.select_scheme(state, "TEST", "gold", deps)
+    assert state["shortlist"] is None
+
+
+def test_free_text_numeric_pension_answer_accepted_mid_qa_not_swallowed_by_shortlist(state, deps):
+    """Reproduces the exact reported transcript end-to-end, through the REAL router (mocked only
+    at the provider-call boundary, so the heuristic fallback -- the actual suspected culprit,
+    given this project's recurring Groq quota exhaustion -- genuinely runs, not a stubbed
+    RouterResult)."""
+    (deps.gold_dir / "PM-KISAN.json").write_text(json.dumps(PM_KISAN), encoding="utf-8")
+
+    with _mock_router("search", search_query="pm kisan"):
+        chat_engine.handle_user_message(state, "pm kisan farmer scheme", deps)
+    chat_engine.select_scheme(state, "PM-KISAN", "gold", deps)
+
+    def answer(field_name: str, reply: str) -> None:
+        assert state["conversation_session"].pending_question.field == field_name
+        chat_engine.submit_quick_reply(state, reply, deps)
+
+    answer("is_indian_citizen", "Yes")
+    answer("owns_cultivable_land_in_records", "Yes")
+    answer("paid_income_tax_last_assessment_year", "No")
+    answer("is_serving_or_retired_govt_employee", "Yes")
+    answer("is_group_d_class_iv_or_mts", "Yes")  # exempts the govt-employee exclusion
+
+    q = state["conversation_session"].pending_question
+    assert q.field == "monthly_pension_inr"
+    assert q.answer_type == "number"
+    assert q.quick_replies is None  # free text only -- exactly like the real transcript
+
+    with patch(
+        "schemelogic.conversational.router.chat_completion_with_fallback",
+        return_value=ProviderFailure(primary_error="quota", secondary_error="quota"),
+    ):
+        chat_engine.handle_user_message(state, "10000", deps)
+
+    last_text = state["messages"][-1]["text"].lower()
+    assert "which one did you mean" not in last_text  # the actual bug's dead-end symptom
+    assert state["conversation_session"] is not None  # still mid-Q&A, not derailed
+    assert state["conversation_session"].profile["self"]["monthly_pension_inr"] == 10000
+    assert state["conversation_session"].pending_question.field != "monthly_pension_inr"
+
+
+def test_free_text_numeric_answer_wins_even_with_a_stale_shortlist_still_in_state(state, deps):
+    """Defense-in-depth: even if a stale shortlist somehow survives into a Q&A (bypassing the
+    _start_question_loop clear tested above), the router's own priority fix must still hold."""
+    chat_engine.select_scheme(state, "TEST", "gold", deps)  # pending question: age (number)
+    state["shortlist"] = [
+        DocumentChunk(
+            doc_id="silver-1", scheme_id="silver-1", effective_date=None, citation="", source_path="",
+            chunk_index=0, text="Silver Scheme. An unverified scheme for testing.", source_type="silver_unverified",
+        ),
+    ]
+    assert state["conversation_session"].pending_question.field == "age"
+
+    with patch(
+        "schemelogic.conversational.router.chat_completion_with_fallback",
+        return_value=ProviderFailure(primary_error="quota", secondary_error="quota"),
+    ):
+        chat_engine.handle_user_message(state, "25", deps)
+
+    last_text = state["messages"][-1]["text"].lower()
+    assert "which one did you mean" not in last_text
+    assert state["conversation_session"].profile["self"]["age"] == 25
+
+
+def test_no_mid_qa_with_stale_shortlist_was_never_affected_and_still_stays_fixed(state, deps):
+    """Audit finding: 'no' was never misrouted even before this fix (too short to match
+    match_shortlist_name, no digits, no trigger phrase) -- locked in as a regression guard."""
+    chat_engine.select_scheme(state, "TEST", "gold", deps)  # pending question: age (number)
+    with patch(
+        "schemelogic.conversational.router.chat_completion_with_fallback",
+        return_value=ProviderFailure(primary_error="quota", secondary_error="quota"),
+    ):
+        chat_engine.handle_user_message(state, "25", deps)  # pending question now: is_citizen (boolean)
+    assert state["conversation_session"].pending_question.field == "is_citizen"
+
+    state["shortlist"] = [
+        DocumentChunk(
+            doc_id="silver-1", scheme_id="silver-1", effective_date=None, citation="", source_path="",
+            chunk_index=0, text="Silver Scheme. An unverified scheme for testing.", source_type="silver_unverified",
+        ),
+    ]
+
+    with patch(
+        "schemelogic.conversational.router.chat_completion_with_fallback",
+        return_value=ProviderFailure(primary_error="quota", secondary_error="quota"),
+    ), patch("schemelogic.conversational.chat_engine.phrase_verdict", return_value="x"):
+        chat_engine.handle_user_message(state, "no", deps)
+
+    # "no" answers is_citizen=False, which alone resolves an immediate INELIGIBLE verdict (the
+    # inclusion side fails) -- not the dead-end "which one did you mean" shortlist-disambiguation.
+    last = state["messages"][-1]
+    assert "which one did you mean" not in last["text"].lower()
+    assert last["kind"] == "verdict"
 
 
 # --- language param threading (presentation-layer language toggle) -----------------------------

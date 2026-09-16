@@ -22,6 +22,120 @@ def _tmp_disk_cache(tmp_path, monkeypatch):
     monkeypatch.setattr(ai_checked, "DISK_CACHE_DIR", tmp_path / "ai_checked_cache")
 
 
+VACUOUS_SCHEME = {
+    "scheme_id": "VACUOUS",
+    "unit_of_eligibility": "individual",
+    # Exactly the shape a real 3,938-char myScheme document collapsed to on 2026-09-15, while
+    # self-reporting confidence 0.95 / flagged_for_review False.
+    "inclusion": {"and": [{"cat": "citizenship", "field": "is_indian_citizen", "op": "==", "value": True}]},
+    "exclusions": [],
+    "temporal_validity": {"valid_from": "2020-01-01", "extracted_at": "2026-01-01"},
+    "extraction_metadata": {"confidence": 0.95, "source_clause": "x", "flagged_for_review": False},
+}
+
+ONE_REAL_CRITERION_SCHEME = {
+    "scheme_id": "THIN-BUT-REAL",
+    "unit_of_eligibility": "individual",
+    "inclusion": {
+        "and": [
+            {"cat": "citizenship", "field": "is_indian_citizen", "op": "==", "value": True},
+            {"cat": "demographic", "field": "is_woman", "op": "==", "value": True},
+        ]
+    },
+    "exclusions": [],
+    "temporal_validity": {"valid_from": "2020-01-01", "extracted_at": "2026-01-01"},
+    "extraction_metadata": {"confidence": 0.4, "source_clause": "x", "flagged_for_review": True},
+}
+
+
+def test_is_vacuous_flags_a_rule_free_extraction():
+    assert ai_checked.is_vacuous(Scheme.model_validate(VACUOUS_SCHEME)) is True
+
+
+def test_is_vacuous_does_not_flag_a_genuine_single_criterion_scheme():
+    """The guard must catch collapsed extractions without rejecting real one-criterion schemes --
+    'Indian citizen AND woman' discriminates between citizens; 'Indian citizen' alone does not."""
+    assert ai_checked.is_vacuous(Scheme.model_validate(ONE_REAL_CRITERION_SCHEME)) is False
+
+
+def test_is_vacuous_does_not_flag_a_scheme_carrying_only_exclusions():
+    scheme = Scheme.model_validate(
+        {**VACUOUS_SCHEME, "exclusions": [
+            {"cat": "economic", "quantifier": "self", "field": "paid_income_tax_last_assessment_year",
+             "op": "==", "value": True},
+        ]}
+    )
+    assert ai_checked.is_vacuous(scheme) is False
+
+
+def test_vacuous_extraction_falls_back_to_description_only_and_is_not_disk_cached():
+    """Honest-failure requirement: a schema-valid but rule-free extraction must be treated exactly
+    like a failure, so the citizen gets the description rather than a meaningless one-question Q&A
+    ending in a confident-looking verdict."""
+    record = {"scheme_name": "Big Scheme", "description": "lots of prose", "eligibility_text": "lots more"}
+    session_cache: dict = {}
+    with patch(
+        "schemelogic.conversational.ai_checked.extract_scheme",
+        return_value=Scheme.model_validate(VACUOUS_SCHEME),
+    ):
+        result = ai_checked.get_or_extract_scheme("vac-slug", record, session_cache)
+    assert result is None
+    assert session_cache["vac-slug"] is None
+    assert not (ai_checked.DISK_CACHE_DIR / "vac-slug.json").exists()
+
+
+def test_transient_failure_is_not_session_cached_so_reselecting_retries():
+    """A 429 says the account was busy, not that the scheme is un-extractable. Caching it as a
+    permanent failure pinned that scheme to description-only for the whole session -- the dominant
+    real-world cause of the fallback per the 2026-09-15 diagnosis (one extraction costs ~7.5k
+    tokens against a flat 8000 TPM ceiling, so a 429 mid-chat is routine)."""
+    record = {"scheme_name": "S", "description": "d", "eligibility_text": "e"}
+    session_cache: dict = {}
+    scheme = make_pm_kisan_scheme()
+    with patch(
+        "schemelogic.conversational.ai_checked.extract_scheme",
+        side_effect=[ExtractionFailure(reason="rate_limited", detail="429"), scheme],
+    ) as mock_extract:
+        first, failure = ai_checked.extract_with_reason("slug-429", record, session_cache)
+        assert first is None
+        assert failure is not None and failure.reason == "rate_limited"
+        assert "slug-429" not in session_cache  # NOT remembered as a failure
+
+        second, failure2 = ai_checked.extract_with_reason("slug-429", record, session_cache)
+    assert second is scheme  # the retry really happens and can succeed
+    assert failure2 is None
+    assert mock_extract.call_count == 2
+
+
+def test_content_shaped_failure_is_session_cached_and_not_retried():
+    """The counterpart: re-submitting the same text to the same model gives the same result, so a
+    content-shaped failure IS remembered -- that's the quota discipline the tier depends on."""
+    record = {"scheme_name": "S", "description": "d", "eligibility_text": "e"}
+    session_cache: dict = {}
+    with patch(
+        "schemelogic.conversational.ai_checked.extract_scheme",
+        return_value=ExtractionFailure(reason="schema_validation_failed", detail="bad"),
+    ) as mock_extract:
+        ai_checked.extract_with_reason("slug-bad", record, session_cache)
+        ai_checked.extract_with_reason("slug-bad", record, session_cache)
+    assert session_cache["slug-bad"] is None
+    assert mock_extract.call_count == 1
+
+
+def test_get_or_extract_scheme_still_returns_a_bare_scheme_or_none():
+    """The original signature is what chat_engine's tests and the API layer use -- kept as a thin
+    wrapper so adding the failure reason didn't become a breaking change."""
+    record = {"scheme_name": "S", "description": "d", "eligibility_text": "e"}
+    scheme = make_pm_kisan_scheme()
+    with patch("schemelogic.conversational.ai_checked.extract_scheme", return_value=scheme):
+        assert ai_checked.get_or_extract_scheme("s1", record, {}) is scheme
+    with patch(
+        "schemelogic.conversational.ai_checked.extract_scheme",
+        return_value=ExtractionFailure(reason="malformed_json", detail="x"),
+    ):
+        assert ai_checked.get_or_extract_scheme("s2", record, {}) is None
+
+
 def test_build_source_text_concatenates_available_fields():
     record = {"scheme_name": "Test Scheme", "description": "desc here", "eligibility_text": "elig here"}
     text = ai_checked.build_source_text(record)

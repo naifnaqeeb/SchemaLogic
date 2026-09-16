@@ -136,6 +136,83 @@ def test_heuristic_greeting_takes_priority_over_shortlist():
     assert result.intent == "greeting"
 
 
+# --- pending-question priority over stale shortlist matching (Bug 3 fix) ------------------------
+# Real transcript: mid-Q&A for PM-KISAN, asked "What is your monthly pension amount, in rupees?",
+# a citizen answering "10000" as free text got matched against a shortlist shown several turns
+# earlier (via _INDEX_PATTERN's bare-\d+ alternative) instead of being read as the pending
+# question's answer, and the chat could never reach a verdict.
+
+
+def test_heuristic_pending_question_wins_over_bare_number_matching_shortlist_index():
+    with patch(
+        "schemelogic.conversational.router.chat_completion_with_fallback",
+        return_value=ProviderFailure(primary_error="x", secondary_error="y"),
+    ):
+        result = classify_message(
+            "10000", has_pending_question=True,
+            pending_question_text="What is your monthly pension amount, in rupees?",
+            has_shortlist=True, shortlist_names=SHORTLIST_NAMES,
+        )
+    assert result.intent == "answer"
+
+
+def test_heuristic_pending_question_wins_over_numeric_age_answer():
+    with patch(
+        "schemelogic.conversational.router.chat_completion_with_fallback",
+        return_value=ProviderFailure(primary_error="x", secondary_error="y"),
+    ):
+        result = classify_message(
+            "25", has_pending_question=True, pending_question_text="What is your age?",
+            has_shortlist=True, shortlist_names=SHORTLIST_NAMES,
+        )
+    assert result.intent == "answer"
+
+
+def test_heuristic_pending_question_wins_over_ordinal_word_matching_shortlist():
+    """A number-shaped answer isn't the only collision risk -- an ordinal word in a free-text
+    answer (e.g. "third" as part of a sentence) must not be read as shortlist position 3 either."""
+    with patch(
+        "schemelogic.conversational.router.chat_completion_with_fallback",
+        return_value=ProviderFailure(primary_error="x", secondary_error="y"),
+    ):
+        result = classify_message(
+            "this is my third pregnancy", has_pending_question=True,
+            pending_question_text="How many children do you have?",
+            has_shortlist=True, shortlist_names=SHORTLIST_NAMES,
+        )
+    assert result.intent == "answer"
+
+
+def test_heuristic_no_mid_pending_question_was_never_affected_by_stale_shortlist():
+    """Audit finding from the bug report: 'no' was already safe before this fix (too short for
+    match_shortlist_name, no digits, no trigger phrase) -- locked in as a regression guard."""
+    with patch(
+        "schemelogic.conversational.router.chat_completion_with_fallback",
+        return_value=ProviderFailure(primary_error="x", secondary_error="y"),
+    ):
+        result = classify_message(
+            "no", has_pending_question=True, pending_question_text="Are you a government employee?",
+            has_shortlist=True, shortlist_names=SHORTLIST_NAMES,
+        )
+    assert result.intent == "answer"
+
+
+def test_heuristic_pending_question_still_allows_explicit_name_reference_to_interrupt():
+    """The one allowed escape hatch, per the bug report's own carve-out ('unless the message is
+    unambiguously an unrelated request, e.g. explicitly naming a different scheme'): an
+    unambiguous, distinctive-name reference to a DIFFERENT shortlist item can still interrupt."""
+    with patch(
+        "schemelogic.conversational.router.chat_completion_with_fallback",
+        return_value=ProviderFailure(primary_error="x", secondary_error="y"),
+    ):
+        result = classify_message(
+            "what about the aquaculture one", has_pending_question=True,
+            pending_question_text="What is your age?", has_shortlist=True, shortlist_names=SHORTLIST_NAMES,
+        )
+    assert result.intent == "scheme_lookup"
+    assert result.target_index == 3
+
+
 # --- eligibility_request (Bug 1 fix) -----------------------------------------------------------
 
 

@@ -136,14 +136,29 @@ class Supersedes(BaseModel):
 class TemporalValidity(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    valid_from: date
+    valid_from: date | None = None
+    """When the rules took legal effect, or None when the source document genuinely doesn't say.
+
+    Optional since 2026-09-15. Every hand-annotated gold scheme sets a real date (they're
+    annotated from primary notifications, which carry one), so nothing about the gold path or the
+    Phase 3 numbers changes. It's the myScheme-scraped silver records that frequently state no
+    effective date at all: making this required meant a live AI-Checked extraction whose
+    eligibility logic was completely sound got thrown away over absent DATE METADATA, dropping the
+    citizen to the description-only fallback (measured 2026-09-15 on dmrnicmasii, whose extraction
+    recovered a correct nested-OR inclusion tree and then failed validation on
+    `valid_from: null`).
+
+    None means "the source document does not state one" -- deliberately not filled in with
+    extracted_at or today's date, which would assert an effective date the document never gave.
+    Nothing in the evaluator reads this field; eligibility never depends on it."""
+
     valid_to: date | None = None
     extracted_at: date
     supersedes: Supersedes | None = None
 
     @model_validator(mode="after")
     def _valid_to_after_valid_from(self) -> "TemporalValidity":
-        if self.valid_to is not None and self.valid_to < self.valid_from:
+        if self.valid_to is not None and self.valid_from is not None and self.valid_to < self.valid_from:
             raise ValueError("valid_to must not be before valid_from")
         return self
 

@@ -18,6 +18,16 @@ def test_all_gold_schemes_parse():
         Scheme.model_validate(data)
 
 
+def test_every_gold_scheme_still_states_a_real_effective_date():
+    """`TemporalValidity.valid_from` became optional on 2026-09-15 so that AI-Checked extractions
+    from myScheme text (which often states no date) aren't discarded over absent metadata. Gold
+    schemes are annotated from primary notifications, which DO carry a date -- this guards against
+    that optionality quietly eroding gold-set quality."""
+    for data in (AB_PMJAY, IGNOAPS, PMAY_G, PM_UJJWALA, MAHARASHTRA_LADKI_BAHIN, PMMVY):
+        scheme = Scheme.model_validate(data)
+        assert scheme.temporal_validity.valid_from is not None, f"{scheme.scheme_id} lost its valid_from"
+
+
 # --- AB-PMJAY ---------------------------------------------------------------------------
 
 AB_PMJAY_SCHEME = Scheme.model_validate(AB_PMJAY)

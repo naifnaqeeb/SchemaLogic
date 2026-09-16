@@ -62,6 +62,25 @@ _STRINGS: dict[str, dict[Language, str]] = {
     "seal_verified": {"en": "Verified", "hi": "सत्यापित"},
     "seal_ai_checked": {"en": "AI-Checked", "hi": "एआई-जांचित"},
     "seal_unverified": {"en": "Unverified", "hi": "असत्यापित"},
+    # Shown on EVERY AI-Checked verdict, in both frontends. The Q&A and the evaluator are
+    # deliberately identical to a Verified scheme's, so the seal badge alone is too quiet a signal
+    # at the moment a citizen reads an actual verdict -- this is the honest-labelling requirement
+    # that keeps the trust distinction intact despite the identical interaction. Never drop or
+    # soften this: the rules behind an AI-Checked verdict genuinely had no human sign-off.
+    "ai_checked_verdict_disclaimer": {
+        "en": (
+            "These rules were extracted automatically by AI from this scheme's published text and "
+            "have NOT been checked by a human reviewer. The verdict above was computed by the same "
+            "deterministic rules engine used for Verified schemes, but the rules it applied may be "
+            "incomplete or wrong — confirm with the official source before acting on this."
+        ),
+        "hi": (
+            "ये नियम इस योजना के प्रकाशित पाठ से AI द्वारा स्वचालित रूप से निकाले गए हैं और किसी "
+            "व्यक्ति द्वारा जांचे नहीं गए हैं। ऊपर का निर्णय उसी नियम-इंजन से निकला है जो सत्यापित "
+            "योजनाओं के लिए उपयोग होता है, लेकिन जिन नियमों पर वह लागू हुआ वे अधूरे या गलत हो सकते "
+            "हैं — इस पर कार्य करने से पहले आधिकारिक स्रोत से पुष्टि करें।"
+        ),
+    },
     "category_all": {"en": "All Schemes", "hi": "सभी योजनाएं"},
     "category_farmers": {"en": "Farmers", "hi": "किसान"},
     "category_students": {"en": "Students", "hi": "छात्र"},

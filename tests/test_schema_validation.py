@@ -51,6 +51,24 @@ def test_valid_to_before_valid_from_rejected():
         Scheme.model_validate(bad)
 
 
+def test_valid_from_may_be_absent_when_the_source_states_no_effective_date():
+    """myScheme-scraped text frequently gives no effective date. Requiring one meant a live
+    AI-Checked extraction with completely sound eligibility logic was discarded over absent date
+    metadata, dropping the citizen to description-only (measured 2026-09-15). None means "the
+    document doesn't say" -- never a filled-in guess."""
+    ok = copy.deepcopy(PM_KISAN)
+    ok["temporal_validity"]["valid_from"] = None
+    scheme = Scheme.model_validate(ok)
+    assert scheme.temporal_validity.valid_from is None
+
+
+def test_valid_to_with_absent_valid_from_does_not_crash_the_ordering_check():
+    ok = copy.deepcopy(PM_KISAN)
+    ok["temporal_validity"]["valid_from"] = None
+    ok["temporal_validity"]["valid_to"] = "2023-01-01"
+    assert Scheme.model_validate(ok).temporal_validity.valid_to is not None
+
+
 def test_confidence_out_of_range_rejected():
     bad = copy.deepcopy(PM_KISAN)
     bad["extraction_metadata"]["confidence"] = 1.5

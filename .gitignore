@@ -4,3 +4,8 @@ __pycache__/
 .pytest_cache/
 data/raw_documents/
 .venv/
+# Runtime LLM-call-avoidance cache for the AI-Checked tier (see conversational/ai_checked.py):
+# regenerable derived data, and per-machine -- the extraction it holds can always be re-run.
+data/cache/
+# Agent scratch lock, not project state.
+.claude/scheduled_tasks.lock

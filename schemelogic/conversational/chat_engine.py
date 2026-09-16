@@ -12,7 +12,9 @@ throughout this module: the LLM never states an eligibility verdict.
   - answer_parser.parse_answer_llm() only normalizes a free-text answer into a typed value for the
     ALREADY-DETERMINED pending field -- it never decides whether that value makes the citizen
     eligible.
-  - ai_checked.get_or_extract_scheme() only ever produces a Scheme (a rule definition) or None.
+  - ai_checked.extract_with_reason() only ever produces a Scheme (a rule definition) or None plus
+    the reason it failed -- never a verdict, and never a Scheme carrying no discriminating rule
+    (see ai_checked.is_vacuous, which fails those honestly to the description-only display).
   - Every verdict in this module comes from ConversationSession.current_result(), which calls
     schemelogic.evaluator.symbolic_engine.evaluate() -- the same deterministic engine gold schemes
     have always used. phrase_verdict() (the one other LLM touchpoint) only words an
@@ -290,7 +292,7 @@ def _attempt_ai_checked_extraction(
     already_attempted = scheme_id in cache
     if not already_attempted:
         _say(state, "Checking the rules for this scheme now...")
-    scheme = ai_checked.get_or_extract_scheme(scheme_id, record, cache)
+    scheme, failure = ai_checked.extract_with_reason(scheme_id, record, cache)
 
     if scheme is not None:
         if not already_attempted:
@@ -305,7 +307,18 @@ def _attempt_ai_checked_extraction(
         return
 
     state["current_scheme_tier"] = "silver"
-    if already_attempted:
+    if failure is not None and failure.reason in ("rate_limited", "api_error"):
+        # A transient/quota failure, NOT a scheme whose rules can't be extracted -- saying
+        # otherwise would be a false statement about the scheme, and would discourage the citizen
+        # from the retry that will very likely work (see ai_checked._RETRYABLE_FAILURES: these
+        # aren't session-cached either, so selecting the scheme again really does retry).
+        _say(
+            state,
+            f"I couldn't reach the rule-extraction service just now, so I haven't checked "
+            f"**{record.get('scheme_name', scheme_id)}**'s rules yet — here's the description as "
+            "listed meanwhile. Selecting it again in a moment will retry the check.",
+        )
+    elif already_attempted:
         _say(
             state,
             f"I already tried automatic rule extraction for **{record.get('scheme_name', scheme_id)}** "
@@ -333,6 +346,12 @@ def _start_question_loop(
     state: State, scheme_id: str, tier: str, scheme: Scheme, deps: ChatDeps, initial_profile: dict | None = None,
 ) -> None:
     _say(state, f"Let's check your eligibility for {scheme_id}.", kind="scheme_intro", scheme_id=scheme_id, tier=tier)
+    # Bug 3 fix: once a real Q&A session starts, a shortlist selection is no longer a live
+    # possibility -- clearing it here stops a stale shortlist from several turns earlier from
+    # confusing the router (heuristic AND live LLM, since it also drops out of the system prompt)
+    # into reading a free-text answer as a shortlist reference (see router._heuristic_classify's
+    # matching fix for the other half of this).
+    state["shortlist"] = None
     session = ConversationSession(scheme=scheme)
     query_context = state.get("query_context", "")
     if initial_profile:

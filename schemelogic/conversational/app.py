@@ -60,6 +60,11 @@ def _render_verdict_message(msg: dict) -> None:
         st.write(msg["text"])
         shared.render_verdict_banner(msg["verdict_value"], msg["headline"])
         st.markdown(shared.render_seal(msg["tier"]), unsafe_allow_html=True)
+        if msg["tier"] == "ai_checked":
+            # Honest-labelling requirement (see i18n's own note on this key): the AI-Checked Q&A
+            # and evaluator are deliberately identical to a Verified scheme's, so the seal badge
+            # alone is too quiet a signal at the moment a citizen reads an actual verdict.
+            st.warning(i18n.t("ai_checked_verdict_disclaimer"))
         with st.expander("Why? (plain-language explanation)"):
             st.markdown(trace_to_citizen_english(msg["trace"]))
         with st.expander("Technical detail (field names, raw trace)"):

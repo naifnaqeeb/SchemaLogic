@@ -43,9 +43,10 @@ from __future__ import annotations
 
 import json
 import os
+import time
 from dataclasses import dataclass
 from datetime import date
-from typing import Literal
+from typing import Callable, Literal
 
 from dotenv import load_dotenv
 from groq import APIError, Groq
@@ -118,7 +119,45 @@ FailureReason = Literal[
     "malformed_json",
     "schema_validation_failed",
     "api_error",
+    "rate_limited",
+    "truncated_completion_budget",
 ]
+
+# Groq reports a structured-output generation that ran out of completion budget mid-JSON as a 400
+# `json_validate_failed` whose failed_generation reads "max completion tokens reached before
+# generating a valid document" -- NOT as a truncated 200 response. Until this was split out, it
+# landed in the catch-all `api_error` bucket, which hid the single most actionable failure cause
+# behind the least actionable label (measured 2026-09-15: it was the ONLY hard failure in a
+# 16-scheme AI-Checked sample, 1/16).
+_TRUNCATION_MARKERS = ("json_validate_failed", "max completion tokens reached")
+_RATE_LIMIT_MARKERS = ("rate_limit", "429", "tokens per", "requests per")
+
+_RATE_LIMIT_RETRIES = 2
+_RATE_LIMIT_DEFAULT_WAIT = 20.0  # ~a third of the TPM refill window, when Groq sends no hint
+_RATE_LIMIT_MAX_WAIT = 45.0  # never block a live chat turn longer than this on one retry
+
+
+def _retry_after_seconds(exc: APIError) -> float:
+    """Groq's own `retry-after` header when present, clamped. Falls back to a fixed wait."""
+    headers = getattr(getattr(exc, "response", None), "headers", None) or {}
+    for key in ("retry-after", "x-ratelimit-reset-tokens"):
+        raw = headers.get(key)
+        if not raw:
+            continue
+        try:
+            return min(max(float(str(raw).rstrip("s")), 1.0), _RATE_LIMIT_MAX_WAIT)
+        except ValueError:
+            continue
+    return _RATE_LIMIT_DEFAULT_WAIT
+
+
+def _api_error_reason(detail: str) -> FailureReason:
+    d = detail.lower()
+    if any(m in d for m in _TRUNCATION_MARKERS):
+        return "truncated_completion_budget"
+    if any(m in d for m in _RATE_LIMIT_MARKERS):
+        return "rate_limited"
+    return "api_error"
 
 
 @dataclass
@@ -130,7 +169,12 @@ class ExtractionFailure:
     raw_response: str | None = None
 
 
-def _core_system_prompt() -> str:
+def _core_system_prompt(ontology_compact: bool = False) -> str:
+    """`ontology_compact=True` renders the canonical field vocabulary with each field's
+    description truncated to its first sentence (the same rendering judge_repair.py already
+    uses). Measured 2026-09-15: drops the core call's fixed prompt overhead ~450 tokens, which on
+    a flat 8000 TPM account ceiling converts directly into completion headroom. Off by default so
+    the validated gold extraction path is byte-identical to what produced the Phase 3 numbers."""
     return (
         "You extract structured, executable eligibility logic from Indian government welfare "
         "scheme documents into the given JSON schema. You never decide eligibility yourself — "
@@ -162,7 +206,7 @@ def _core_system_prompt() -> str:
         "one of these concepts, instead of inventing your own spelling. This is the single "
         "biggest thing that breaks comparability between extraction runs, so treat it as a hard "
         "preference, not a suggestion:\n"
-        f"{field_ontology.format_for_prompt()}\n\n"
+        f"{field_ontology.format_for_prompt(compact=ontology_compact)}\n\n"
         "If (and only if) a predicate genuinely doesn't match any concept above, invent a clear "
         "snake_case field name yourself AND set that predicate's `ontology_proposed` to true. "
         "Never invent a new field name silently — either reuse a canonical one, or propose one "
@@ -198,28 +242,54 @@ def _call_groq(
     document_text: str,
     schema_name: str,
     json_schema: dict,
+    reasoning_effort: str | None = None,
+    rate_limit_retries: int = _RATE_LIMIT_RETRIES,
+    sleep: Callable[[float], None] | None = None,
 ) -> dict | ExtractionFailure:
-    """One structured-output call. Returns the parsed JSON dict, or an ExtractionFailure."""
-    try:
-        response = client.chat.completions.create(
-            model=model,
-            temperature=0.2,
-            max_tokens=max_tokens,
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": document_text},
-            ],
-            response_format={
-                "type": "json_schema",
-                "json_schema": {
-                    "name": schema_name,
-                    "schema": json_schema,
-                    "strict": False,
+    """One structured-output call. Returns the parsed JSON dict, or an ExtractionFailure.
+
+    Retries a rate-limited (429) call up to `rate_limit_retries` times, honouring Groq's own
+    `retry-after` hint when present. This is the single highest-value reliability fix for the
+    live AI-Checked path: one core extraction call costs a median ~7.5k tokens against this
+    account's flat 8000 TPM ceiling, so an extraction fired while the router/intake/phrasing
+    calls are still inside the same minute gets a 429 and -- before this retry existed -- fell
+    straight through to the description-only display even though the extraction itself was
+    perfectly capable of succeeding a few seconds later. A daily (TPD) exhaustion still can't be
+    retried around, and isn't: the delays here are seconds, not minutes.
+    """
+    extra = {"reasoning_effort": reasoning_effort} if reasoning_effort else {}
+    attempt = 0
+    while True:
+        try:
+            response = client.chat.completions.create(
+                model=model,
+                temperature=0.2,
+                max_tokens=max_tokens,
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": document_text},
+                ],
+                response_format={
+                    "type": "json_schema",
+                    "json_schema": {
+                        "name": schema_name,
+                        "schema": json_schema,
+                        "strict": False,
+                    },
                 },
-            },
-        )
-    except APIError as exc:
-        return ExtractionFailure(reason="api_error", detail=str(exc))
+                **extra,
+            )
+            break
+        except APIError as exc:
+            detail = str(exc)
+            reason = _api_error_reason(detail)
+            if reason != "rate_limited" or attempt >= rate_limit_retries:
+                return ExtractionFailure(reason=reason, detail=detail)
+            # Resolved at call time, not bound as a default argument, so a test (or a caller with
+            # its own pacing) can substitute it -- a default of `time.sleep` would capture the
+            # real function at import and make every retry test sleep for real.
+            (sleep or time.sleep)(_retry_after_seconds(exc))
+            attempt += 1
 
     choice = response.choices[0]
     content = choice.message.content
@@ -241,6 +311,8 @@ def extract_scheme(
     model: str = DEFAULT_MODEL,
     as_of_date: date | None = None,
     client: Groq | None = None,
+    reasoning_effort: str | None = None,
+    ontology_compact: bool = False,
 ) -> Scheme | ExtractionFailure:
     """Extract a schema-conformant Scheme from raw scheme document text via Groq.
 
@@ -253,7 +325,7 @@ def extract_scheme(
     as_of_date = as_of_date or date.today()
     client = client or Groq(api_key=os.environ["GROQ_API_KEY"])
 
-    core_system_prompt = _core_system_prompt()
+    core_system_prompt = _core_system_prompt(ontology_compact=ontology_compact)
     core = _call_groq(
         client,
         model,
@@ -262,7 +334,31 @@ def extract_scheme(
         document_text,
         "scheme_core_extraction",
         _CORE_JSON_SCHEMA,
+        reasoning_effort=reasoning_effort,
     )
+
+    if isinstance(core, ExtractionFailure) and core.reason == "truncated_completion_budget":
+        # Recovery attempt, reached ONLY where the call above already failed -- so this can never
+        # change the output of a currently-succeeding extraction (gold included). Both knobs buy
+        # completion headroom: the compact ontology shrinks the fixed prompt (~450 tokens), and
+        # reasoning_effort="low" stops gpt-oss's reasoning tokens from consuming the JSON budget
+        # they're billed against. Measured 2026-09-15 on the one truncating scheme in the
+        # AI-Checked sample (dmrnicmasii, a 7-criterion Tamil Nadu scheme): completion dropped
+        # 1,107 -> 454 tokens and the extraction validated. Not enabled by default because it
+        # can't be assumed quality-neutral for schemes that DO fit the budget.
+        if not (ontology_compact and reasoning_effort == "low"):
+            retry_prompt = _core_system_prompt(ontology_compact=True)
+            core = _call_groq(
+                client,
+                model,
+                _completion_budget(retry_prompt, document_text, _CORE_JSON_SCHEMA),
+                retry_prompt,
+                document_text,
+                "scheme_core_extraction",
+                _CORE_JSON_SCHEMA,
+                reasoning_effort="low",
+            )
+
     if isinstance(core, ExtractionFailure):
         return core
 
@@ -275,6 +371,7 @@ def extract_scheme(
         document_text,
         "scheme_meta_extraction",
         _META_JSON_SCHEMA,
+        reasoning_effort=reasoning_effort,
     )
     if isinstance(meta, ExtractionFailure):
         return meta

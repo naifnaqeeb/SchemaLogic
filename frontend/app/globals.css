@@ -1,0 +1,46 @@
+@import "tailwindcss";
+
+:root {
+  --sl-bg: #f5f6f8;
+  --sl-surface: #ffffff;
+  --sl-hairline: #e4e7ec;
+  --sl-text: #1a1a2e;
+  --sl-muted: #6b7280;
+  --sl-navy: #0f1b3d;
+  --sl-accent: #c9791a;
+  --sl-accent-soft: rgba(201, 121, 26, 0.1);
+  --sl-verified: #2f9e67;
+  --sl-warrant: #c9791a;
+  --sl-ineligible: #c0524b;
+  --sl-ai-checked: #4c6fcb;
+  --sl-shadow: 0 1px 3px rgba(16, 24, 40, 0.07), 0 1px 2px rgba(16, 24, 40, 0.05);
+}
+
+@theme inline {
+  --color-sl-bg: var(--sl-bg);
+  --color-sl-surface: var(--sl-surface);
+  --color-sl-hairline: var(--sl-hairline);
+  --color-sl-text: var(--sl-text);
+  --color-sl-muted: var(--sl-muted);
+  --color-sl-navy: var(--sl-navy);
+  --color-sl-accent: var(--sl-accent);
+  --color-sl-accent-soft: var(--sl-accent-soft);
+  --color-sl-verified: var(--sl-verified);
+  --color-sl-warrant: var(--sl-warrant);
+  --color-sl-ineligible: var(--sl-ineligible);
+  --color-sl-ai-checked: var(--sl-ai-checked);
+  --font-sans: var(--font-plex-sans);
+  --font-mono: var(--font-plex-mono);
+}
+
+body {
+  background: var(--sl-bg);
+  color: var(--sl-text);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}

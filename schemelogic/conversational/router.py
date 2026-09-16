@@ -121,6 +121,21 @@ def _heuristic_classify(
     if has_current_scheme and any(phrase in lowered for phrase in _ELIGIBILITY_PHRASES):
         return RouterResult(intent="eligibility_request")
 
+    # Bug 3 fix: a pending question -- especially a free-text NUMERIC answer like "10000" for a
+    # pension amount -- was being swallowed by the shortlist-index block below, because
+    # _INDEX_PATTERN's bare-\d+ alternative matches ANY number in the message and a shortlist from
+    # several turns earlier is still sitting in state throughout the whole Q&A (see
+    # chat_engine._start_question_loop's shortlist clear for the other half of this fix). A pending
+    # question now always wins UNLESS the message is an unambiguous, distinctive-name reference to a
+    # DIFFERENT shortlist item (Bug 2's conservative match_shortlist_name) -- a bare number/ordinal
+    # or a generic trigger word ("check", "select") is exactly what a plausible answer looks like,
+    # so those alone must never be read as "abandon the question and look up a shortlist item".
+    if has_pending_question:
+        name_match = match_shortlist_name(stripped, shortlist_names) if has_shortlist else None
+        if name_match is not None:
+            return RouterResult(intent="scheme_lookup", target_index=name_match)
+        return RouterResult(intent="answer")
+
     if has_shortlist:
         mentions_lookup = any(phrase in lowered for phrase in _LOOKUP_TRIGGER_PHRASES)
         target_index = None
@@ -136,9 +151,6 @@ def _heuristic_classify(
             target_index = match_shortlist_name(stripped, shortlist_names)  # Bug 2 fix
         if mentions_lookup or target_index is not None:
             return RouterResult(intent="scheme_lookup", target_index=target_index)
-
-    if has_pending_question:
-        return RouterResult(intent="answer")
 
     return RouterResult(intent="search", search_query=stripped)
 
@@ -169,9 +181,17 @@ def _system_prompt(
         "relevant to a scheme search or the pending question.\n"
         '- "search": describes their situation or what kind of help they want, to search for '
         "schemes (this includes REFINING a previous search with more detail).\n"
-        '- "answer": answers the currently pending question (only valid if one is pending).\n'
+        '- "answer": answers the currently pending question (only valid if one is pending). A '
+        "pending question ALWAYS takes priority -- if a question is pending, prefer \"answer\" "
+        "for anything that could plausibly be a direct value for it (numbers, yes/no, short "
+        "phrases), even if a shortlist happens to also be present in context above. Only choose "
+        '"scheme_lookup" instead when the message unambiguously names a DIFFERENT scheme from the '
+        "shortlist by its actual name/description -- a bare number by itself is virtually always "
+        "an answer (e.g. a pension amount, an age, a count), never a shortlist index, once a "
+        "question is pending.\n"
         '- "scheme_lookup": refers to a specific scheme from the shortlist above by number or '
-        "description (\"tell me more about #2\", \"the second one\", \"check the third one\").\n"
+        "description (\"tell me more about #2\", \"the second one\", \"check the third one\") "
+        "-- only when no question is pending, or the message clearly names a different scheme.\n"
         '- "eligibility_request": explicitly asks about eligibility/qualification for the '
         '"scheme currently in view" above ("am I eligible for this?", "do I qualify?", "can I '
         "apply?\") -- ONLY valid if a current scheme is in context above. Prefer this over "

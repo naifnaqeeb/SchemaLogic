@@ -3,13 +3,35 @@ name = "schemelogic"
 version = "0.0.1"
 description = "Neuro-symbolic eligibility-logic pipeline for Indian welfare schemes"
 requires-python = ">=3.11"
+# Every import outside the stdlib, grouped by what needs it. Lower bounds are the versions this
+# has actually been run against (see the comment on each group); no upper pins, since nothing here
+# is pinned to a breaking API.
 dependencies = [
+    # schema + evaluator (the core, LLM-free path)
     "pydantic>=2",
+    # ingestion: gold source PDFs -> text
     "pypdf>=4",
+    # LLM access: extraction/judge go direct to Groq (extraction/extractor.py), the conversational
+    # layer's provider wrapper falls back Groq -> OpenRouter via the OpenAI SDK (llm/provider.py)
+    "groq>=0.37",
+    "openai>=2",
+    "python-dotenv>=1",
+    # retrieval + discovery: local sentence-transformers embeddings, numpy cosine similarity.
+    # No external API and no FAISS/Qdrant -- corpus size doesn't warrant them (see
+    # retrieval/indexer.py's module docstring).
+    "sentence-transformers>=5",
+    "numpy>=2",
+    # frontends: the Streamlit app (conversational/app.py, annotation/review_app.py) and the
+    # FastAPI backend the Next.js frontend calls (api/main.py, served with uvicorn)
+    "streamlit>=1.61",
+    "fastapi>=0.141",
+    "uvicorn>=0.52",
 ]
 
 [project.optional-dependencies]
-dev = ["pytest"]
+# httpx is a FastAPI TestClient requirement and is used directly by tests/test_extractor.py to
+# build the httpx.Request/Response objects its fake Groq APIError instances carry.
+dev = ["pytest>=9", "httpx>=0.28"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
