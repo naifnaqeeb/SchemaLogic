@@ -19,8 +19,9 @@ from schemelogic.conversational.chat_engine import ChatDeps
 from schemelogic.conversational.intake import IntakeFailure, IntakeResult
 from schemelogic.conversational.router import RouterResult
 from schemelogic.extraction.extractor import ExtractionFailure
-from schemelogic.llm.provider import ProviderFailure
+from schemelogic.llm.provider import ProviderFailure, ProviderResult
 from schemelogic.retrieval.indexer import DocumentChunk, LocalIndex
+from schemelogic.schema import field_ontology
 from schemelogic.schema.models import Scheme
 
 from tests.fixtures import PM_KISAN
@@ -340,6 +341,61 @@ def test_ai_checked_failure_degrades_to_description_only(state, deps):
     last = state["messages"][-1]
     assert last["kind"] == "scheme_detail"
     assert last["tier"] == "silver"
+
+
+NOVEL_FIELD_SCHEME = {
+    "scheme_id": "NOVEL",
+    "unit_of_eligibility": "individual",
+    "inclusion": {"and": [{"cat": "other", "field": "is_forward_community", "op": "==", "value": True,
+                           "ontology_proposed": True}]},
+    "exclusions": [],
+    "temporal_validity": {"valid_from": "2020-01-01", "extracted_at": "2026-01-01"},
+    "extraction_metadata": {"confidence": 0.5, "source_clause": "x", "flagged_for_review": True},
+}
+
+
+def test_novel_field_question_is_phrased_for_the_citizen_not_left_generic(state, deps):
+    """The improvement has to land in the CONVERSATION, not just the registry: without phrasing a
+    novel field is asked as 'Do you meet this criterion: "is forward community"?'."""
+    scheme = Scheme.model_validate(NOVEL_FIELD_SCHEME)
+    field_ontology.clear_registered_citizen_questions()
+    try:
+        with patch(
+            "schemelogic.conversational.field_phrasing.chat_completion_with_fallback",
+            return_value=ProviderResult(content="Do you belong to a Forward Community?", provider_used="groq"),
+        ), patch(
+            "schemelogic.conversational.field_phrasing._save_disk_cache"
+        ), patch(
+            "schemelogic.conversational.field_phrasing._load_disk_cache", return_value={}
+        ), patch(
+            "schemelogic.conversational.chat_engine.ai_checked.extract_scheme", return_value=scheme
+        ):
+            chat_engine.select_scheme(state, "silver-1", "silver", deps)
+        question = [m for m in state["messages"] if m["kind"] == "question"][-1]
+        assert question["text"] == "Do you belong to a Forward Community?"
+        assert "meet this criterion" not in question["text"]
+    finally:
+        field_ontology.clear_registered_citizen_questions()
+
+
+def test_phrasing_failure_leaves_the_generic_question_and_never_blocks_the_qa(state, deps):
+    scheme = Scheme.model_validate(NOVEL_FIELD_SCHEME)
+    field_ontology.clear_registered_citizen_questions()
+    try:
+        with patch(
+            "schemelogic.conversational.field_phrasing.chat_completion_with_fallback",
+            side_effect=RuntimeError("provider exploded"),
+        ), patch(
+            "schemelogic.conversational.field_phrasing._load_disk_cache", return_value={}
+        ), patch(
+            "schemelogic.conversational.chat_engine.ai_checked.extract_scheme", return_value=scheme
+        ):
+            chat_engine.select_scheme(state, "silver-1", "silver", deps)
+        question = [m for m in state["messages"] if m["kind"] == "question"][-1]
+        assert "meet this criterion" in question["text"]  # the old fallback, intact
+        assert state["conversation_session"] is not None  # Q&A still running
+    finally:
+        field_ontology.clear_registered_citizen_questions()
 
 
 def test_transient_extraction_failure_says_so_instead_of_blaming_the_scheme(state, deps):

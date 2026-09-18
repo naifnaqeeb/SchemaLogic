@@ -637,13 +637,47 @@ def display_label_for(field: str) -> str:
     return spec.display_label if spec is not None else field.replace("_", " ").capitalize()
 
 
+# Runtime phrasings for fields NOT in the canonical ontology above — populated by
+# conversational/field_phrasing.py when an AI-Checked extraction proposes a field the ontology has
+# never seen (75% of extracted fields in the 2026-09-15 sample). Deliberately a separate dict, not
+# entries in FIELD_ONTOLOGY: these are display strings only, carry no `cat`/`value_type`/`schemes`
+# provenance, were never human-reviewed, and must not leak into format_for_prompt() (which teaches
+# the extractor its canonical vocabulary) or into all_field_names() (which the structural-F1
+# comparison treats as the known vocabulary). A canonical field's phrasing is never overridden.
+_RUNTIME_CITIZEN_QUESTIONS: dict[str, str] = {}
+
+
+def register_citizen_question(field: str, question: str) -> bool:
+    """Record a generated citizen question for a non-canonical `field`. Returns False (and changes
+    nothing) for a field the canonical ontology already covers — a human-written question always
+    wins over a generated one."""
+    if get_field(field) is not None or not question.strip():
+        return False
+    _RUNTIME_CITIZEN_QUESTIONS[field] = question.strip()
+    return True
+
+
+def registered_citizen_questions() -> dict[str, str]:
+    """Read-only view of the runtime phrasings, for tests and cache persistence."""
+    return dict(_RUNTIME_CITIZEN_QUESTIONS)
+
+
+def clear_registered_citizen_questions() -> None:
+    _RUNTIME_CITIZEN_QUESTIONS.clear()
+
+
 def citizen_question_for(field: str) -> str | None:
-    """The canonical citizen_question for `field`, or None if `field` isn't in the ontology yet
-    (caller must supply its own generic fallback phrasing in that case — this function never
-    fabricates one, since a fabricated question for an unknown field is exactly the kind of
-    silent-guessing this project avoids everywhere else)."""
+    """The canonical citizen_question for `field`, a generated one if field_phrasing registered
+    it, or None if neither exists (caller must supply its own generic fallback phrasing in that
+    case — this function never fabricates one, since a fabricated question for an unknown field is
+    exactly the kind of silent-guessing this project avoids everywhere else).
+
+    Canonical first, always: a generated phrasing can only ever fill a gap, never replace a
+    human-written question."""
     spec = get_field(field)
-    return spec.citizen_question if spec is not None else None
+    if spec is not None:
+        return spec.citizen_question
+    return _RUNTIME_CITIZEN_QUESTIONS.get(field)
 
 
 def fields_by_category(cat: PredicateCategory) -> list[FieldSpec]:

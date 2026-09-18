@@ -28,6 +28,7 @@ from pathlib import Path
 
 from pydantic import ValidationError
 
+from schemelogic.conversational import field_phrasing
 from schemelogic.extraction.extractor import ExtractionFailure, extract_scheme
 from schemelogic.schema.models import Scheme
 
@@ -94,6 +95,21 @@ def is_vacuous(scheme: Scheme) -> bool:
     return _substantive_predicate_count(scheme) == 0
 
 
+def _ensure_citizen_questions(scheme: Scheme) -> None:
+    """Generate plain-language questions for this scheme's novel fields, so the Q&A reads like a
+    gold scheme's instead of 'Do you meet this criterion: "is forward community"?'.
+
+    Strictly best-effort and strictly cosmetic: it only ever fills in DISPLAY strings for fields
+    the canonical ontology doesn't cover, never touches the rules the evaluator runs, and any
+    failure leaves the existing generic phrasing in place. Wrapped here as well as internally
+    because this sits on the live selection path -- a phrasing problem must never cost a citizen
+    the eligibility check itself."""
+    try:
+        field_phrasing.ensure_questions_for_scheme(scheme)
+    except Exception:  # noqa: BLE001
+        pass
+
+
 def build_source_text(record: dict) -> str:
     """Best available text for a silver (myScheme-scraped) record -- there's no raw source
     document for these the way gold schemes have one, so this concatenates whatever scraped
@@ -123,6 +139,10 @@ def extract_with_reason(
     disk_hit = _load_from_disk(slug)
     if disk_hit is not None:
         session_cache[slug] = disk_hit
+        # The scheme survived the process restart but the in-memory phrasing registry didn't, so
+        # re-register here. Already-phrased fields come straight from the phrasing disk cache --
+        # no LLM call -- and only genuinely new fields cost anything.
+        _ensure_citizen_questions(disk_hit)
         return disk_hit, None
 
     source_text = build_source_text(record)
@@ -151,6 +171,7 @@ def extract_with_reason(
 
     session_cache[slug] = result
     _save_to_disk(slug, result)
+    _ensure_citizen_questions(result)
     return result, None
 
 

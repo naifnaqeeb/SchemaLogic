@@ -99,6 +99,38 @@ def no_sleep(monkeypatch):
     return waits
 
 
+# --- the test-suite quota guards themselves -----------------------------------------------------
+# These assert that tests/conftest.py's protections actually fire. Without them the guards are
+# unverified claims: the leak they exist to stop (2026-09-16, nine live Groq POSTs during a run
+# that reported all-green) was invisible precisely BECAUSE a failed provider call is a legitimate
+# degradation path everywhere in this codebase, so a live call and a mocked failure look alike.
+
+
+def test_constructing_a_real_groq_client_in_tests_is_blocked_loudly():
+    with pytest.raises(AssertionError, match="real Groq client was constructed"):
+        extractor.Groq(api_key="not-a-real-key")
+
+
+def test_constructing_a_real_groq_client_in_judge_repair_is_blocked_loudly():
+    from schemelogic.extraction import judge_repair
+
+    with pytest.raises(AssertionError, match="real Groq client was constructed"):
+        judge_repair.Groq(api_key="not-a-real-key")
+
+
+def test_provider_wrapper_calls_are_defaulted_to_failure_in_tests():
+    """The other half of the guard: the four conversational modules bind
+    chat_completion_with_fallback by value, so each binding is patched separately. If any one of
+    them were missed, that module's calls would silently reach the network (which is exactly how
+    the intake call escaped a router-only patch)."""
+    from schemelogic.conversational import answer_parser, intake, phrasing, router
+    from schemelogic.llm.provider import ProviderFailure as PF
+
+    for module in (router, intake, phrasing, answer_parser):
+        result = module.chat_completion_with_fallback([{"role": "user", "content": "hi"}])
+        assert isinstance(result, PF), f"{module.__name__} would have made a live call"
+
+
 # --- failure taxonomy ---------------------------------------------------------------------------
 
 

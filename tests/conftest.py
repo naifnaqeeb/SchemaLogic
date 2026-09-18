@@ -56,6 +56,36 @@ def _block_provider_calls():
 
 
 @pytest.fixture(autouse=True)
+def _isolate_disk_caches(tmp_path, monkeypatch):
+    """Point every on-disk cache at tmp_path, for every test.
+
+    These caches are keyed by slug/field and live under data/cache/, and most test modules never
+    redirected them -- so any test whose extraction SUCCEEDED wrote a real file there. That then
+    fed back in as a cache hit: a chat_engine test that stored a scheme under "silver-1" made a
+    later test's first extraction attempt never happen at all, failing an assertion about call
+    counts for reasons nothing in that test could explain (2026-09-18). Tests must not write to,
+    or read from, the project's real caches."""
+    monkeypatch.setattr(
+        "schemelogic.conversational.ai_checked.DISK_CACHE_DIR", tmp_path / "ai_checked_cache"
+    )
+    monkeypatch.setattr(
+        "schemelogic.conversational.field_phrasing.DISK_CACHE_PATH",
+        tmp_path / "field_questions.json",
+    )
+
+
+@pytest.fixture(autouse=True)
+def _clear_runtime_field_questions():
+    """The generated-question registry is module-level state; leaking it between tests would let
+    one test's phrasing silently satisfy another's assertion about the generic fallback."""
+    from schemelogic.schema import field_ontology
+
+    field_ontology.clear_registered_citizen_questions()
+    yield
+    field_ontology.clear_registered_citizen_questions()
+
+
+@pytest.fixture(autouse=True)
 def _block_direct_groq_clients(monkeypatch):
     """extraction/extractor.py and extraction/judge_repair.py construct their own Groq client
     rather than going through the provider wrapper (see extractor.py's module docstring for why).
