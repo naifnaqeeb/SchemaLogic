@@ -1,0 +1,275 @@
+{
+  "run": "baseline2_direct_llm",
+  "model": "provider default (gpt-oss-120b via Groq)",
+  "token_budget": 60000,
+  "tokens_spent": 55597,
+  "schemes_completed": [
+    "PM-KISAN",
+    "IGNOAPS",
+    "MH-LADKI-BAHIN"
+  ],
+  "schemes_not_attempted": [
+    "PM-UJJWALA-2.0",
+    "PMMVY",
+    "PMAY-G",
+    "AB-PMJAY"
+  ],
+  "stopped_reason": "budget: could not fit PM-UJJWALA-2.0",
+  "reports": [
+    {
+      "scheme_id": "PM-KISAN",
+      "n_profiles": 12,
+      "agreement_rate": 0.9166666666666666,
+      "harmful_positive_rate": 0.0,
+      "counts": {
+        "over_cautious": 1,
+        "agree": 11
+      },
+      "tokens_used": 22275,
+      "failures": [],
+      "comparisons": [
+        {
+          "profile_id": "eligible_baseline",
+          "baseline_verdict": "unsure",
+          "evaluator_verdict": "eligible",
+          "relation": "over_cautious",
+          "baseline_reason": "Eligibility criteria are met, but the applicant's Aadhaar‑seeded bank account/e‑KYC status is not provided."
+        },
+        {
+          "profile_id": "income_tax_family_member",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "agree",
+          "baseline_reason": "A family member paid income tax in the last assessment year, which places the family in an exclusion category."
+        },
+        {
+          "profile_id": "govt_employee_no_exception",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "agree",
+          "baseline_reason": "Applicant is a serving or retired government employee, which is listed as an exclusion category."
+        },
+        {
+          "profile_id": "pension_exclusion_no_exception",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "agree",
+          "baseline_reason": "A family member receives a pension of Rs 15,000 per month, exceeding the Rs 10,000 threshold that excludes pensioners from the scheme."
+        },
+        {
+          "profile_id": "pension_group_d_exception",
+          "baseline_verdict": "eligible",
+          "evaluator_verdict": "eligible",
+          "relation": "agree",
+          "baseline_reason": "The applicant’s family owns cultivable land in official records and none of the members fall under any exclusion category listed in the PM‑KISAN guidelines."
+        },
+        {
+          "profile_id": "professional_family_member",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "agree",
+          "baseline_reason": "A family member is a practicing registered professional, which is listed among the exclusion categories for PM‑KISAN."
+        },
+        {
+          "profile_id": "institutional_landholder",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "agree",
+          "baseline_reason": "The applicant is an institutional landholder, which is an explicit exclusion category for PM‑KISAN."
+        },
+        {
+          "profile_id": "political_post_family_member",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "agree",
+          "baseline_reason": "A family member holds a constitutional/elected government post, which places the farmer family in an exclusion category under PM‑KISAN."
+        },
+        {
+          "profile_id": "nri_family_member",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "agree",
+          "baseline_reason": "A family member is classified as an NRI, which is listed among the exclusion categories for PM‑KISAN."
+        },
+        {
+          "profile_id": "missing_data_both_undetermined",
+          "baseline_verdict": "unsure",
+          "evaluator_verdict": "undetermined_missing_facts",
+          "relation": "agree",
+          "baseline_reason": "Applicant's land ownership status and Aadhaar‑seeded bank account/e‑KYC details are not provided, which are required for eligibility."
+        },
+        {
+          "profile_id": "citizenship_gap_false_positive",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "agree",
+          "baseline_reason": "The applicant is not an Indian citizen, which is a fundamental eligibility condition for the PM‑KISAN scheme despite meeting land‑ownership and exclusion‑category criteria."
+        },
+        {
+          "profile_id": "govt_employee_group_d_exception",
+          "baseline_verdict": "eligible",
+          "evaluator_verdict": "eligible",
+          "relation": "agree",
+          "baseline_reason": "Applicant owns cultivable land and is not in any exclusion category; being a Group D/Class IV employee is exempt from the government‑employee exclusion.",
+          "recovered_with_higher_max_tokens": true
+        }
+      ]
+    },
+    {
+      "scheme_id": "IGNOAPS",
+      "n_profiles": 8,
+      "agreement_rate": 0.75,
+      "harmful_positive_rate": 0.25,
+      "counts": {
+        "agree": 6,
+        "false_positive_vs_ineligible": 1,
+        "false_positive_vs_undetermined": 1
+      },
+      "tokens_used": 15016,
+      "failures": [],
+      "comparisons": [
+        {
+          "profile_id": "eligible_baseline",
+          "baseline_verdict": "eligible",
+          "evaluator_verdict": "eligible",
+          "relation": "agree",
+          "baseline_reason": "Applicant is 65 years old, belongs to a BPL household, and does not meet any exclusion criteria (no government job, no ≥5 acres land, no four-wheeler)."
+        },
+        {
+          "profile_id": "under_60",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "agree",
+          "baseline_reason": "The applicant is 45 years old, below the required minimum age of 60 for IGNOAPS."
+        },
+        {
+          "profile_id": "not_bpl",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "agree",
+          "baseline_reason": "The scheme requires the applicant to belong to a Below Poverty Line (BPL) household, which the applicant does not meet."
+        },
+        {
+          "profile_id": "has_family_support",
+          "baseline_verdict": "eligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "false_positive_vs_ineligible",
+          "baseline_reason": "Applicant is 65, belongs to a BPL household, and does not meet any exclusion criteria (no government job, no ≥5 acres land, no four‑wheeler)."
+        },
+        {
+          "profile_id": "govt_employee",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "agree",
+          "baseline_reason": "Applicant is a government employee, which is an exclusion criterion for IGNOAPS."
+        },
+        {
+          "profile_id": "five_acres_land",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "agree",
+          "baseline_reason": "Although the applicant is over 60 and belongs to a BPL household, they own five acres of land, which meets the exclusion criterion of owning five acres or more."
+        },
+        {
+          "profile_id": "owns_four_wheeler",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "agree",
+          "baseline_reason": "Applicant owns a four-wheeler, which is an exclusion criterion for IGNOAPS."
+        },
+        {
+          "profile_id": "missing_support_data",
+          "baseline_verdict": "eligible",
+          "evaluator_verdict": "undetermined_missing_facts",
+          "relation": "false_positive_vs_undetermined",
+          "baseline_reason": "Applicant is 65 years old, belongs to a BPL household, and does not fall under any exclusion criteria (no government job, no ≥5 acres land, no four‑wheeler)."
+        }
+      ]
+    },
+    {
+      "scheme_id": "MH-LADKI-BAHIN",
+      "n_profiles": 10,
+      "agreement_rate": 1.0,
+      "harmful_positive_rate": 0.0,
+      "counts": {
+        "agree": 10
+      },
+      "tokens_used": 18306,
+      "failures": [],
+      "comparisons": [
+        {
+          "profile_id": "eligible_baseline",
+          "baseline_verdict": "eligible",
+          "evaluator_verdict": "eligible",
+          "relation": "agree",
+          "baseline_reason": "The applicant meets all eligibility criteria (age, residence, income, bank account) and none of the disqualification conditions apply."
+        },
+        {
+          "profile_id": "over_age_65",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "agree",
+          "baseline_reason": "The applicant is 70 years old, exceeding the scheme's maximum age limit of 65 years."
+        },
+        {
+          "profile_id": "four_wheeler_no_exception",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "agree",
+          "baseline_reason": "The applicant's family owns a four-wheeler vehicle, which is a disqualifying condition under the scheme's exclusions."
+        },
+        {
+          "profile_id": "income_tax_family_member",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "agree",
+          "baseline_reason": "A family member is an income‑tax assessee, which disqualifies the family under the scheme’s exclusion criteria."
+        },
+        {
+          "profile_id": "govt_employee_family_member",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "agree",
+          "baseline_reason": "A family member is a regular/permanent government employee, which is a disqualification under the scheme."
+        },
+        {
+          "profile_id": "other_govt_scheme_benefit_at_threshold",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "agree",
+          "baseline_reason": "She receives a monthly benefit of Rs. 1,500 from another government scheme, which disqualifies her under the scheme’s exclusion criteria."
+        },
+        {
+          "profile_id": "mp_mla_family_member",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "agree",
+          "baseline_reason": "A family member holds a constitutional/political post (MP/MLA), which disqualifies the family under the scheme's exclusion criteria."
+        },
+        {
+          "profile_id": "govt_board_post_family_member",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "agree",
+          "baseline_reason": "A family member holds a chairperson/director/board position in a government corporation, which disqualifies the family under the scheme's exclusions."
+        },
+        {
+          "profile_id": "missing_income_data",
+          "baseline_verdict": "unsure",
+          "evaluator_verdict": "undetermined_missing_facts",
+          "relation": "agree",
+          "baseline_reason": "Marital status and family annual income are not provided, which are required to confirm eligibility."
+        },
+        {
+          "profile_id": "four_wheeler_tractor_exception",
+          "baseline_verdict": "eligible",
+          "evaluator_verdict": "eligible",
+          "relation": "agree",
+          "baseline_reason": "Applicant meets residency, age, income, bank account and beneficiary category requirements, and the only vehicle owned is a tractor, which is excluded from the four‑wheeler disqualification.",
+          "recovered_with_higher_max_tokens": true
+        }
+      ]
+    }
+  ],
+  "note_recovered": "Two profiles initially failed with json_validate_failed (completion budget consumed by reasoning tokens); re-run with max_tokens=2000, same prompt/model, and marked recovered_with_higher_max_tokens."
+}
