@@ -466,3 +466,86 @@ def test_count_quantifier_definite_over_cap_ignores_missing_member_elsewhere():
     result = evaluate(COUNT_SCHEME, profile)
     assert result.verdict == Verdict.INELIGIBLE
     assert result.trace["exclusions"][0]["count_constraint"]["result"] is True
+
+
+# --- except_scope: whose record an exclusion's exception is read from (2026-10-03) ---------------
+# A household-route exemption (AB-PMJAY's 70+ route) can't be expressed with a member-scoped
+# exception: for an exclusion triggered by a family member, the exception would be read off THAT
+# member's record, which doesn't carry the household fact. See models.ExceptScope.
+
+ROUTE_SCHEME = Scheme.model_validate({
+    "scheme_id": "ROUTE",
+    "unit_of_eligibility": "family",
+    "inclusion": {"or": [
+        {"cat": "economic", "field": "is_poor", "op": "==", "value": True},
+        {"cat": "demographic", "field": "household_route", "op": "==", "value": True},
+    ]},
+    "exclusions": [{
+        "cat": "economic", "quantifier": "some_family_member",
+        "field": "pays_tax", "op": "==", "value": True,
+        "except": {"field": "household_route", "op": "==", "value": True},
+        "except_scope": "applicant",
+    }],
+    "temporal_validity": {"valid_from": "2020-01-01", "extracted_at": "2026-01-01"},
+    "extraction_metadata": {"confidence": 1.0, "source_clause": "t", "flagged_for_review": False},
+})
+
+
+def _route_profile(route, member_pays_tax: bool) -> dict:
+    self_record = {"is_poor": True, "pays_tax": False}
+    if route is not None:
+        self_record["household_route"] = route
+    return {"self": self_record, "family_members": [{"pays_tax": member_pays_tax}]}
+
+
+def test_applicant_scoped_exception_waives_an_exclusion_triggered_by_another_member():
+    result = evaluate(ROUTE_SCHEME, _route_profile(route=True, member_pays_tax=True))
+    assert result.verdict == Verdict.ELIGIBLE
+    member = result.trace["exclusions"][0]["members"][1]
+    assert member["predicate"]["result"] is True  # the member DID pay tax...
+    assert member["except"]["result"] is True  # ...and the exception, read from self, waived it
+    assert member["except_member"] == "self"
+
+
+def test_applicant_scoped_exception_false_still_excludes_definitely():
+    """The regression a member-scoped exception would cause: with no household route, a tax-paying
+    member must exclude DEFINITELY, not collapse to undetermined."""
+    result = evaluate(ROUTE_SCHEME, _route_profile(route=False, member_pays_tax=True))
+    assert result.verdict == Verdict.INELIGIBLE
+
+
+def test_applicant_scoped_exception_missing_is_undetermined_and_asks_the_applicant():
+    from schemelogic.conversational.question_selector import select_next_question
+
+    profile = _route_profile(route=None, member_pays_tax=True)
+    assert evaluate(ROUTE_SCHEME, profile).verdict == Verdict.UNDETERMINED
+    question = select_next_question(ROUTE_SCHEME, profile)
+    assert question.field == "household_route"
+    assert question.member == "self"  # not "one of your family members"
+
+
+def test_member_scoped_exception_cannot_express_a_household_route():
+    """Documents WHY except_scope exists: the identical scheme with the default member scope reads
+    the route off the tax-paying member, finds nothing, and gets both cases wrong."""
+    data = ROUTE_SCHEME.model_dump(mode="json", by_alias=True)
+    data["exclusions"][0]["except_scope"] = "member"
+    member_scoped = Scheme.model_validate(data)
+    assert evaluate(member_scoped, _route_profile(True, True)).verdict == Verdict.UNDETERMINED
+    assert evaluate(member_scoped, _route_profile(False, True)).verdict == Verdict.UNDETERMINED
+
+
+def test_default_scope_is_member_so_existing_exceptions_are_unchanged():
+    """PM-KISAN's Group D carve-out exempts the employee themselves -- member scope is right, and
+    it is what every exclusion written before except_scope existed gets by default."""
+    assert all(e.except_scope.value == "member" for e in PM_KISAN_SCHEME.exclusions)
+    profile = _base_eligible_profile()
+    profile["family_members"][0]["is_serving_or_retired_govt_employee"] = True
+    profile["family_members"][0]["is_group_d_class_iv_or_mts"] = True
+    assert evaluate(PM_KISAN_SCHEME, profile).verdict == Verdict.ELIGIBLE
+
+
+def test_except_scope_without_an_except_clause_is_rejected():
+    data = ROUTE_SCHEME.model_dump(mode="json", by_alias=True)
+    del data["exclusions"][0]["except"]
+    with pytest.raises(ValueError, match="except_scope"):
+        Scheme.model_validate(data)

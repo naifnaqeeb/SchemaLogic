@@ -61,7 +61,9 @@ def exclusion_to_english(exc: Exclusion) -> str:
         count_op = exc.count_op.value if hasattr(exc.count_op, "value") else exc.count_op
         line += f" (count {count_op} {exc.count})"
     if exc.except_ is not None:
-        line += f"\n    EXCEPT if same member: {_field_words(exc.except_.field)} is {exc.except_.value!r}"
+        scope = exc.except_scope.value if hasattr(exc.except_scope, "value") else exc.except_scope
+        whose = "the applicant's record" if scope == "applicant" else "same member"
+        line += f"\n    EXCEPT if {whose}: {_field_words(exc.except_.field)} is {exc.except_.value!r}"
     return line
 
 
@@ -98,9 +100,27 @@ def trace_to_citizen_english(trace: dict[str, Any]) -> str:
         lines.append("Things that would disqualify you:")
         for excl in exclusions:
             result = excl.get("result")
-            mark = "Applies to you 🚫" if result is True else ("Doesn't apply ✅" if result is False else "Not yet known ❓")
+            if result is True:
+                mark = "Applies to you 🚫"
+            elif result is False and _was_waived(excl):
+                # The disqualifying fact IS true, but an exception sets it aside (e.g. AB-PMJAY's
+                # 70+ route, PM-KISAN's Group D carve-out). "Doesn't apply" would tell a 70+ senior
+                # who owns a refrigerator that they don't own one.
+                mark = "True for you, but waived by an exception ✅"
+            elif result is False:
+                mark = "Doesn't apply ✅"
+            else:
+                mark = "Not yet known ❓"
             lines.append(f"- {display_label_for(excl['field'])}: {mark}")
     return "\n".join(lines)
+
+
+def _was_waived(excl_trace: dict[str, Any]) -> bool:
+    """Some member met the disqualifying condition and an exception set it aside."""
+    return any(
+        (m.get("predicate") or {}).get("result") is True and (m.get("except") or {}).get("result") is True
+        for m in excl_trace.get("members", [])
+    )
 
 
 def scheme_to_english(scheme: Scheme) -> str:

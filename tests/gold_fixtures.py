@@ -8,6 +8,12 @@ PM-KISAN (tests/fixtures.py) is the one exception: it's transcribed verbatim fro
 Section 2.2 reference example.
 """
 
+# Applicant-scoped exception put on every AB-PMJAY exclusion (gold fix, 2026-10-03): the 70+
+# route is covered "irrespective of socio-economic status", so none of the SECC exclusions may
+# block it. Applicant-scoped because four exclusions are some_family_member -- see
+# models.ExceptScope and docs/GOLD_AUDIT_2026-10-03.md.
+_SEVENTY_PLUS_ROUTE = {"field": "has_family_member_aged_70_or_above", "op": "==", "value": True}
+
 AB_PMJAY = {
     # VERIFIED against three primary NHA/PIB documents (data/raw_documents/AB-PMJAY_primary_*.pdf):
     #   - Beneficiary Identification Guidelines (NHA): SECC 2011's 6 deprivation criteria used by
@@ -44,58 +50,72 @@ AB_PMJAY = {
         {
             "cat": "economic", "quantifier": "self",
             "field": "household_owns_motorised_vehicle_or_fishing_boat", "op": "==", "value": True,
+            "except": _SEVENTY_PLUS_ROUTE, "except_scope": "applicant",
         },
         {
             "cat": "economic", "quantifier": "self",
             "field": "owns_mechanized_agricultural_equipment_3_or_4_wheeler", "op": "==", "value": True,
+            "except": _SEVENTY_PLUS_ROUTE, "except_scope": "applicant",
         },
         {
             "cat": "economic", "quantifier": "self",
             "field": "kisan_credit_card_limit_inr", "op": ">", "value": 50000,
+            "except": _SEVENTY_PLUS_ROUTE, "except_scope": "applicant",
         },
         {
             "cat": "occupation", "quantifier": "some_family_member",
             "field": "is_govt_employee", "op": "==", "value": True,
+            "except": _SEVENTY_PLUS_ROUTE, "except_scope": "applicant",
         },
         {
             "cat": "economic", "quantifier": "self",
             "field": "owns_non_agricultural_enterprise_registered_with_govt", "op": "==", "value": True,
+            "except": _SEVENTY_PLUS_ROUTE, "except_scope": "applicant",
         },
         {
             "cat": "economic", "quantifier": "some_family_member",
             "field": "monthly_income_inr", "op": ">", "value": 10000,
+            "except": _SEVENTY_PLUS_ROUTE, "except_scope": "applicant",
         },
         {
             "cat": "economic", "quantifier": "some_family_member",
             "field": "paid_income_tax_last_assessment_year", "op": "==", "value": True,
+            "except": _SEVENTY_PLUS_ROUTE, "except_scope": "applicant",
         },
         {
             "cat": "economic", "quantifier": "some_family_member",
             "field": "paid_professional_tax", "op": "==", "value": True,
+            "except": _SEVENTY_PLUS_ROUTE, "except_scope": "applicant",
         },
         {
             "cat": "economic", "quantifier": "self",
             "field": "house_has_3_or_more_pucca_rooms", "op": "==", "value": True,
+            "except": _SEVENTY_PLUS_ROUTE, "except_scope": "applicant",
         },
         {
             "cat": "economic", "quantifier": "self",
             "field": "owns_refrigerator", "op": "==", "value": True,
+            "except": _SEVENTY_PLUS_ROUTE, "except_scope": "applicant",
         },
         {
             "cat": "economic", "quantifier": "self",
             "field": "owns_landline_phone", "op": "==", "value": True,
+            "except": _SEVENTY_PLUS_ROUTE, "except_scope": "applicant",
         },
         {
             "cat": "economic", "quantifier": "self",
             "field": "owns_gt_2_5_acres_irrigated_land_with_irrigation_equipment", "op": "==", "value": True,
+            "except": _SEVENTY_PLUS_ROUTE, "except_scope": "applicant",
         },
         {
             "cat": "economic", "quantifier": "self",
             "field": "owns_5_or_more_acres_irrigated_land_two_or_more_crop_seasons", "op": "==", "value": True,
+            "except": _SEVENTY_PLUS_ROUTE, "except_scope": "applicant",
         },
         {
             "cat": "economic", "quantifier": "self",
             "field": "owns_7_5_or_more_acres_land_with_irrigation_equipment", "op": "==", "value": True,
+            "except": _SEVENTY_PLUS_ROUTE, "except_scope": "applicant",
         },
     ],
     "temporal_validity": {
@@ -140,6 +160,20 @@ AB_PMJAY = {
             "selection/election rule, not a blanket disqualifier, the same shape as MH-LADKI-"
             "BAHIN's unmodeled 'one unmarried woman' rule. Flagged as a known gap rather than "
             "force-fit into a predicate that could misrepresent the actual choice-based rule."
+            " GOLD CHANGE 2026-10-03 (docs/GOLD_AUDIT_2026-10-03.md): every exclusion now carries "
+            "except has_family_member_aged_70_or_above == true with except_scope 'applicant'. "
+            "Reason: the 70+ expansion guidelines cover citizens aged 70+ 'irrespective of their "
+            "socio-economic status' and never apply the SECC exclusions to them, but as a flat list"
+            " the 14 exclusions applied to every inclusion path -- so a 70+ senior whose household "
+            "owned a refrigerator or landline, had a member earning over Rs 10,000/month, or had a "
+            "member paying income tax was wrongly ineligible. The exception is applicant-scoped "
+            "because the 70+ route is a fact about the applicant's household, while four of these "
+            "exclusions are some_family_member: a member-scoped exception would be read off the "
+            "member who triggered the exclusion, find nothing, and turn both the 70+ case and an "
+            "ordinary correct 'ineligible' into 'undetermined'. Exclusions still apply in full to "
+            "the SECC-deprived, automatic-inclusion, RSBY and urban-informal-worker routes. Caveat:"
+            " under the guidelines the 70+ cover belongs to the 70+ members specifically, shared on"
+            " a family basis; this gold keeps its existing household-level modelling of that route."
         ),
         "flagged_for_review": False,
     },

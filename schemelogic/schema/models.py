@@ -44,6 +44,33 @@ class Quantifier(str, Enum):
     COUNT_FAMILY_MEMBERS = "count_family_members"
 
 
+# Whose facts an exclusion's `except` clause is read from.
+#
+# MEMBER (the default, and every exclusion's behaviour before 2026-10-03): the exception is checked
+# on the same member who triggered the exclusion. Right for exemptions that are a property of that
+# person -- PM-KISAN's "government employees, EXCEPT Group D staff" exempts the Group D employee.
+#
+# APPLICANT: the exception is read once, from the applicant's own record (profile["self"]), for
+# every member. Needed when the exemption is a property of the application route rather than of the
+# member who tripped the exclusion. AB-PMJAY's 70+ route forced it: the NHA covers citizens aged 70+
+# "irrespective of their socio-economic status", so an income-tax-paying son must not block his
+# 75-year-old father's coverage. A member-scoped exception reads the 70+ fact off the son, finds
+# nothing, and yields "undetermined" -- and in a household with no 70+ member at all, turns a
+# correct "ineligible" into "undetermined" too. Logically the route needs
+# `eligible = route OR (others AND NOT excluded)`: each exclusion carries `AND NOT route`, where
+# `route` is a fact about the applicant's household. See docs/GOLD_AUDIT_2026-10-03.md.
+#
+# Kept as a comment, not a docstring, deliberately: Pydantic embeds class docstrings into
+# model_json_schema(), which extraction/extractor.py sends to the LLM on every core call. As a
+# docstring this rationale cost ~436 tokens per extraction on an account where the completion
+# budget is already the main failure mode (measured 2026-10-03).
+class ExceptScope(str, Enum):
+    """Whose record an exclusion's `except` clause is read from: the triggering member, or the applicant."""
+
+    MEMBER = "member"
+    APPLICANT = "applicant"
+
+
 class CountOperator(str, Enum):
     """Comparison used against a family-member count (Phase 0.5 counting-quantifier extension)."""
 
@@ -105,10 +132,17 @@ class Exclusion(Predicate):
 
     quantifier: Quantifier = Quantifier.SELF
     except_: SimplePredicate | None = Field(default=None, alias="except")
+    except_scope: ExceptScope = ExceptScope.MEMBER
     count_op: CountOperator | None = None
     count: int | None = Field(default=None, ge=0)
 
     model_config = ConfigDict(extra="forbid", populate_by_name=True)
+
+    @model_validator(mode="after")
+    def _validate_except_scope(self) -> "Exclusion":
+        if self.except_scope != ExceptScope.MEMBER and self.except_ is None:
+            raise ValueError("except_scope is only meaningful when an `except` clause is present")
+        return self
 
     @model_validator(mode="after")
     def _validate_count_fields(self) -> "Exclusion":

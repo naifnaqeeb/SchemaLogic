@@ -48,9 +48,14 @@
       "ontology_proposed": false,
       "cat": "economic",
       "quantifier": "self",
-      "except": null,
+      "except": {
+        "field": "has_family_member_aged_70_or_above",
+        "op": "==",
+        "value": true
+      },
       "count_op": null,
-      "count": null
+      "count": null,
+      "except_scope": "applicant"
     },
     {
       "field": "owns_mechanized_agricultural_equipment_3_or_4_wheeler",
@@ -59,9 +64,14 @@
       "ontology_proposed": false,
       "cat": "economic",
       "quantifier": "self",
-      "except": null,
+      "except": {
+        "field": "has_family_member_aged_70_or_above",
+        "op": "==",
+        "value": true
+      },
       "count_op": null,
-      "count": null
+      "count": null,
+      "except_scope": "applicant"
     },
     {
       "field": "kisan_credit_card_limit_inr",
@@ -70,9 +80,14 @@
       "ontology_proposed": false,
       "cat": "economic",
       "quantifier": "self",
-      "except": null,
+      "except": {
+        "field": "has_family_member_aged_70_or_above",
+        "op": "==",
+        "value": true
+      },
       "count_op": null,
-      "count": null
+      "count": null,
+      "except_scope": "applicant"
     },
     {
       "field": "is_govt_employee",
@@ -81,9 +96,14 @@
       "ontology_proposed": false,
       "cat": "occupation",
       "quantifier": "some_family_member",
-      "except": null,
+      "except": {
+        "field": "has_family_member_aged_70_or_above",
+        "op": "==",
+        "value": true
+      },
       "count_op": null,
-      "count": null
+      "count": null,
+      "except_scope": "applicant"
     },
     {
       "field": "owns_non_agricultural_enterprise_registered_with_govt",
@@ -92,9 +112,14 @@
       "ontology_proposed": false,
       "cat": "economic",
       "quantifier": "self",
-      "except": null,
+      "except": {
+        "field": "has_family_member_aged_70_or_above",
+        "op": "==",
+        "value": true
+      },
       "count_op": null,
-      "count": null
+      "count": null,
+      "except_scope": "applicant"
     },
     {
       "field": "monthly_income_inr",
@@ -103,9 +128,14 @@
       "ontology_proposed": false,
       "cat": "economic",
       "quantifier": "some_family_member",
-      "except": null,
+      "except": {
+        "field": "has_family_member_aged_70_or_above",
+        "op": "==",
+        "value": true
+      },
       "count_op": null,
-      "count": null
+      "count": null,
+      "except_scope": "applicant"
     },
     {
       "field": "paid_income_tax_last_assessment_year",
@@ -114,9 +144,14 @@
       "ontology_proposed": false,
       "cat": "economic",
       "quantifier": "some_family_member",
-      "except": null,
+      "except": {
+        "field": "has_family_member_aged_70_or_above",
+        "op": "==",
+        "value": true
+      },
       "count_op": null,
-      "count": null
+      "count": null,
+      "except_scope": "applicant"
     },
     {
       "field": "paid_professional_tax",
@@ -125,9 +160,14 @@
       "ontology_proposed": false,
       "cat": "economic",
       "quantifier": "some_family_member",
-      "except": null,
+      "except": {
+        "field": "has_family_member_aged_70_or_above",
+        "op": "==",
+        "value": true
+      },
       "count_op": null,
-      "count": null
+      "count": null,
+      "except_scope": "applicant"
     },
     {
       "field": "house_has_3_or_more_pucca_rooms",
@@ -136,9 +176,14 @@
       "ontology_proposed": false,
       "cat": "economic",
       "quantifier": "self",
-      "except": null,
+      "except": {
+        "field": "has_family_member_aged_70_or_above",
+        "op": "==",
+        "value": true
+      },
       "count_op": null,
-      "count": null
+      "count": null,
+      "except_scope": "applicant"
     },
     {
       "field": "owns_refrigerator",
@@ -147,9 +192,14 @@
       "ontology_proposed": false,
       "cat": "economic",
       "quantifier": "self",
-      "except": null,
+      "except": {
+        "field": "has_family_member_aged_70_or_above",
+        "op": "==",
+        "value": true
+      },
       "count_op": null,
-      "count": null
+      "count": null,
+      "except_scope": "applicant"
     },
     {
       "field": "owns_landline_phone",
@@ -158,9 +208,14 @@
       "ontology_proposed": false,
       "cat": "economic",
       "quantifier": "self",
-      "except": null,
+      "except": {
+        "field": "has_family_member_aged_70_or_above",
+        "op": "==",
+        "value": true
+      },
       "count_op": null,
-      "count": null
+      "count": null,
+      "except_scope": "applicant"
     },
     {
       "field": "owns_gt_2_5_acres_irrigated_land_with_irrigation_equipment",
@@ -169,9 +224,14 @@
       "ontology_proposed": false,
       "cat": "economic",
       "quantifier": "self",
-      "except": null,
+      "except": {
+        "field": "has_family_member_aged_70_or_above",
+        "op": "==",
+        "value": true
+      },
       "count_op": null,
-      "count": null
+      "count": null,
+      "except_scope": "applicant"
     },
     {
       "field": "owns_5_or_more_acres_irrigated_land_two_or_more_crop_seasons",
@@ -180,9 +240,14 @@
       "ontology_proposed": false,
       "cat": "economic",
       "quantifier": "self",
-      "except": null,
+      "except": {
+        "field": "has_family_member_aged_70_or_above",
+        "op": "==",
+        "value": true
+      },
       "count_op": null,
-      "count": null
+      "count": null,
+      "except_scope": "applicant"
     },
     {
       "field": "owns_7_5_or_more_acres_land_with_irrigation_equipment",
@@ -191,9 +256,14 @@
       "ontology_proposed": false,
       "cat": "economic",
       "quantifier": "self",
-      "except": null,
+      "except": {
+        "field": "has_family_member_aged_70_or_above",
+        "op": "==",
+        "value": true
+      },
       "count_op": null,
-      "count": null
+      "count": null,
+      "except_scope": "applicant"
     }
   ],
   "temporal_validity": {
@@ -208,7 +278,7 @@
   ],
   "extraction_metadata": {
     "confidence": 0.93,
-    "source_clause": "VERIFIED against primary sources (see file header). Inclusion: is_secc_deprived_household covers SECC's D1/D2/D3/D4/D5/D7 rural deprivation criteria, directly quoted from the Beneficiary Identification Guidelines ('Total deprived Households ... who belong to one of the six deprivation criteria amongst D1, D2, D3, D4, D5 and D7') — D6 ('no literate adult above 25') is part of SECC's general 7-criteria deprivation grading but explicitly NOT one of the six PM-JAY uses, confirmed by that exact phrase. is_urban_informal_worker is a SEPARATE inclusion path (corrected in a Phase 3 structural-F1 check — originally miscategorized as folded into is_secc_deprived_household, but the document lists it under its own 'Urban occupational categories' heading, distinct from the rural D1-D7 list): rag picker, beggar, domestic worker, street vendor, construction worker, and similar SECC urban-informal-worker categories. is_secc_automatically_included and is_valid_rsby_beneficiary are new umbrella fields, each directly quoted from the same document ('Automatically included - Households without shelter; Destitute...'; 'all such enrolled families under RSBY that do not feature in the targeted groups ... will be included as well'). has_family_member_aged_70_or_above: directly quoted from the 70+ expansion guidelines ('expansion of AB PM-JAY to cover all senior citizens of 70 years of age and above irrespective of their socio-economic status, on family basis', approved 11.09.2024). Exclusions: all 14 directly quoted verbatim from the PIB SECC press release's numbered list (i-xiv) — items i/iii/iv/vii previously captured from secondary sources are now primary-cited exactly; items ii/v/vi/viii/ix/x/xi/xii/xiii/xiv are new. kisan_credit_card_limit_inr uses op='>' (strict), matching the document's exact wording 'a credit limit of over Rs. 50,000' — corrected in the same Phase 3 check from an earlier '>=' authoring slip. Items xii-xiv are compound (acreage AND irrigation-equipment-count) facts folded into single boolean fields since exclusion predicates can't express an AND of two fields — flagged as a schema-expressiveness workaround, same pattern as other compound facts elsewhere in this project. NOT modeled: the one-time, irrevocable choice a 70+ beneficiary already covered by CGHS/ECHS/CAPF/state schemes must make between their existing scheme and AB-PMJAY (70+ guidelines, Section 6-7) — this is a genuine selection/election rule, not a blanket disqualifier, the same shape as MH-LADKI-BAHIN's unmodeled 'one unmarried woman' rule. Flagged as a known gap rather than force-fit into a predicate that could misrepresent the actual choice-based rule.",
+    "source_clause": "VERIFIED against primary sources (see file header). Inclusion: is_secc_deprived_household covers SECC's D1/D2/D3/D4/D5/D7 rural deprivation criteria, directly quoted from the Beneficiary Identification Guidelines ('Total deprived Households ... who belong to one of the six deprivation criteria amongst D1, D2, D3, D4, D5 and D7') — D6 ('no literate adult above 25') is part of SECC's general 7-criteria deprivation grading but explicitly NOT one of the six PM-JAY uses, confirmed by that exact phrase. is_urban_informal_worker is a SEPARATE inclusion path (corrected in a Phase 3 structural-F1 check — originally miscategorized as folded into is_secc_deprived_household, but the document lists it under its own 'Urban occupational categories' heading, distinct from the rural D1-D7 list): rag picker, beggar, domestic worker, street vendor, construction worker, and similar SECC urban-informal-worker categories. is_secc_automatically_included and is_valid_rsby_beneficiary are new umbrella fields, each directly quoted from the same document ('Automatically included - Households without shelter; Destitute...'; 'all such enrolled families under RSBY that do not feature in the targeted groups ... will be included as well'). has_family_member_aged_70_or_above: directly quoted from the 70+ expansion guidelines ('expansion of AB PM-JAY to cover all senior citizens of 70 years of age and above irrespective of their socio-economic status, on family basis', approved 11.09.2024). Exclusions: all 14 directly quoted verbatim from the PIB SECC press release's numbered list (i-xiv) — items i/iii/iv/vii previously captured from secondary sources are now primary-cited exactly; items ii/v/vi/viii/ix/x/xi/xii/xiii/xiv are new. kisan_credit_card_limit_inr uses op='>' (strict), matching the document's exact wording 'a credit limit of over Rs. 50,000' — corrected in the same Phase 3 check from an earlier '>=' authoring slip. Items xii-xiv are compound (acreage AND irrigation-equipment-count) facts folded into single boolean fields since exclusion predicates can't express an AND of two fields — flagged as a schema-expressiveness workaround, same pattern as other compound facts elsewhere in this project. NOT modeled: the one-time, irrevocable choice a 70+ beneficiary already covered by CGHS/ECHS/CAPF/state schemes must make between their existing scheme and AB-PMJAY (70+ guidelines, Section 6-7) — this is a genuine selection/election rule, not a blanket disqualifier, the same shape as MH-LADKI-BAHIN's unmodeled 'one unmarried woman' rule. Flagged as a known gap rather than force-fit into a predicate that could misrepresent the actual choice-based rule. GOLD CHANGE 2026-10-03 (docs/GOLD_AUDIT_2026-10-03.md): every exclusion now carries except has_family_member_aged_70_or_above == true with except_scope 'applicant'. Reason: the 70+ expansion guidelines cover citizens aged 70+ 'irrespective of their socio-economic status' and never apply the SECC exclusions to them, but as a flat list the 14 exclusions applied to every inclusion path -- so a 70+ senior whose household owned a refrigerator or landline, had a member earning over Rs 10,000/month, or had a member paying income tax was wrongly ineligible. The exception is applicant-scoped because the 70+ route is a fact about the applicant's household, while four of these exclusions are some_family_member: a member-scoped exception would be read off the member who triggered the exclusion, find nothing, and turn both the 70+ case and an ordinary correct 'ineligible' into 'undetermined'. Exclusions still apply in full to the SECC-deprived, automatic-inclusion, RSBY and urban-informal-worker routes. Caveat: under the guidelines the 70+ cover belongs to the 70+ members specifically, shared on a family basis; this gold keeps its existing household-level modelling of that route.",
     "flagged_for_review": false
   }
 }

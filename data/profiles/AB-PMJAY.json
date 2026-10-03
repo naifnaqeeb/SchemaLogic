@@ -1,6 +1,5 @@
 {
   "_note": "Synthetic family profiles for AB-PMJAY outcome-equivalence testing (plan Section 6, 'profile test suites'). Mirrors the 8 scenarios already covered in tests/test_gold_schemes.py's AB-PMJAY section (_pmjay_base_profile + 7 variant tests) so the outcome-equivalence harness and the symbolic-evaluator unit tests exercise the same cases. Uses gold's canonical field names only (schema/field_ontology.py).",
-
   "eligible_baseline": {
     "_comment": "SECC-deprived household, no disqualifiers -> eligible.",
     "self": {
@@ -32,7 +31,6 @@
       }
     ]
   },
-
   "income_tax_family_member": {
     "_comment": "Family member paid income tax last assessment year -> some_family_member exclusion fires.",
     "self": {
@@ -64,7 +62,6 @@
       }
     ]
   },
-
   "missing_deprivation_and_age_data_undetermined": {
     "_comment": "Both inclusion-relevant facts missing (SECC-deprived status, 70+ status) -> undetermined, not silently guessed.",
     "self": {
@@ -94,7 +91,6 @@
       }
     ]
   },
-
   "seventy_plus_eligible_regardless_of_secc": {
     "_comment": "2024 amendment: a 70+ family member is eligible universally, irrespective of SECC/BPL status.",
     "self": {
@@ -126,7 +122,6 @@
       }
     ]
   },
-
   "mechanized_agri_equipment": {
     "_comment": "Owns mechanized 3-4 wheeler agricultural equipment -> excluded.",
     "self": {
@@ -158,7 +153,6 @@
       }
     ]
   },
-
   "monthly_income_over_threshold": {
     "_comment": "Family member earns > Rs. 10,000/month -> excluded.",
     "self": {
@@ -190,7 +184,6 @@
       }
     ]
   },
-
   "refrigerator": {
     "_comment": "Owns a refrigerator -> excluded.",
     "self": {
@@ -222,7 +215,6 @@
       }
     ]
   },
-
   "compound_irrigated_land_exclusion": {
     "_comment": "Owns > 2.5 acres irrigated land WITH irrigation equipment -> excluded (compound AND-of-two-fields case).",
     "self": {
@@ -250,6 +242,68 @@
         "is_govt_employee": false,
         "monthly_income_inr": 5000,
         "paid_income_tax_last_assessment_year": false,
+        "paid_professional_tax": false
+      }
+    ]
+  },
+  "seventy_plus_household_refrigerator_and_landline": {
+    "_comment": "Gold fix 2026-10-03: 70+ route with household socio-economic facts that the SECC exclusions would otherwise catch. Eligible per the NHA 70+ guidelines ('irrespective of their socio-economic status'). Old gold: ineligible.",
+    "self": {
+      "is_secc_deprived_household": false,
+      "is_secc_automatically_included": false,
+      "is_valid_rsby_beneficiary": false,
+      "has_family_member_aged_70_or_above": true,
+      "household_owns_motorised_vehicle_or_fishing_boat": false,
+      "owns_mechanized_agricultural_equipment_3_or_4_wheeler": false,
+      "kisan_credit_card_limit_inr": 0,
+      "owns_non_agricultural_enterprise_registered_with_govt": false,
+      "house_has_3_or_more_pucca_rooms": false,
+      "owns_refrigerator": true,
+      "owns_landline_phone": true,
+      "owns_gt_2_5_acres_irrigated_land_with_irrigation_equipment": false,
+      "owns_5_or_more_acres_irrigated_land_two_or_more_crop_seasons": false,
+      "owns_7_5_or_more_acres_land_with_irrigation_equipment": false,
+      "is_govt_employee": false,
+      "monthly_income_inr": 5000,
+      "paid_income_tax_last_assessment_year": false,
+      "paid_professional_tax": false
+    },
+    "family_members": [
+      {
+        "is_govt_employee": false,
+        "monthly_income_inr": 5000,
+        "paid_income_tax_last_assessment_year": false,
+        "paid_professional_tax": false
+      }
+    ]
+  },
+  "seventy_plus_family_member_pays_income_tax": {
+    "_comment": "Gold fix 2026-10-03: 70+ route where a FAMILY MEMBER pays income tax and earns over Rs 10,000/month -- some_family_member exclusions, triggered by someone other than the applicant. Eligible per the 70+ guidelines. Old gold: ineligible.",
+    "self": {
+      "is_secc_deprived_household": false,
+      "is_secc_automatically_included": false,
+      "is_valid_rsby_beneficiary": false,
+      "has_family_member_aged_70_or_above": true,
+      "household_owns_motorised_vehicle_or_fishing_boat": false,
+      "owns_mechanized_agricultural_equipment_3_or_4_wheeler": false,
+      "kisan_credit_card_limit_inr": 0,
+      "owns_non_agricultural_enterprise_registered_with_govt": false,
+      "house_has_3_or_more_pucca_rooms": false,
+      "owns_refrigerator": false,
+      "owns_landline_phone": false,
+      "owns_gt_2_5_acres_irrigated_land_with_irrigation_equipment": false,
+      "owns_5_or_more_acres_irrigated_land_two_or_more_crop_seasons": false,
+      "owns_7_5_or_more_acres_land_with_irrigation_equipment": false,
+      "is_govt_employee": false,
+      "monthly_income_inr": 5000,
+      "paid_income_tax_last_assessment_year": false,
+      "paid_professional_tax": false
+    },
+    "family_members": [
+      {
+        "is_govt_employee": false,
+        "monthly_income_inr": 25000,
+        "paid_income_tax_last_assessment_year": true,
         "paid_professional_tax": false
       }
     ]

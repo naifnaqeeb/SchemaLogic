@@ -117,6 +117,80 @@ def test_pmjay_seventy_plus_family_member_eligible_regardless_of_secc():
     assert evaluate(AB_PMJAY_SCHEME, profile).verdict == Verdict.ELIGIBLE
 
 
+# --- AB-PMJAY 70+ path vs the socio-economic exclusions (gold fix, 2026-10-03) -----------------
+# The NHA 70+ expansion guidelines cover citizens aged 70+ "irrespective of their socio-economic
+# status" and never apply the 14 SECC exclusions to them. The gold applied those exclusions to every
+# inclusion path, so the 70+ route was blocked by exactly the facts it is meant to ignore. The
+# existing 70+ test above set every exclusion false and so never noticed. These exercise it.
+# See docs/GOLD_AUDIT_2026-10-03.md section 3 and section 6.
+
+
+def _pmjay_seventy_plus_profile() -> dict:
+    profile = _pmjay_base_profile()
+    profile["self"]["is_secc_deprived_household"] = False  # qualifies ONLY via the 70+ route
+    profile["self"]["has_family_member_aged_70_or_above"] = True
+    return profile
+
+
+def test_pmjay_seventy_plus_with_household_refrigerator_is_still_eligible():
+    """A self-quantified exclusion must not block the 70+ route."""
+    profile = _pmjay_seventy_plus_profile()
+    profile["self"]["owns_refrigerator"] = True
+    assert evaluate(AB_PMJAY_SCHEME, profile).verdict == Verdict.ELIGIBLE
+
+
+def test_pmjay_seventy_plus_with_income_tax_paying_family_member_is_still_eligible():
+    """The hard case. Income tax is a some_family_member exclusion, so it is triggered by a member
+    OTHER than the applicant -- and the 70+ fact lives on the applicant's record, not that member's.
+    An exception evaluated on the triggering member cannot see it."""
+    profile = _pmjay_seventy_plus_profile()
+    profile["family_members"][0]["paid_income_tax_last_assessment_year"] = True
+    assert evaluate(AB_PMJAY_SCHEME, profile).verdict == Verdict.ELIGIBLE
+
+
+def test_pmjay_seventy_plus_with_high_earning_family_member_is_still_eligible():
+    profile = _pmjay_seventy_plus_profile()
+    profile["family_members"][0]["monthly_income_inr"] = 25000
+    assert evaluate(AB_PMJAY_SCHEME, profile).verdict == Verdict.ELIGIBLE
+
+
+def test_pmjay_seventy_plus_with_every_exclusion_triggered_is_still_eligible():
+    """Irrespective of socio-economic status means all of it, at once."""
+    profile = _pmjay_seventy_plus_profile()
+    for field, value in list(profile["self"].items()):
+        if isinstance(value, bool) and field not in (
+            "is_secc_deprived_household", "is_secc_automatically_included",
+            "is_valid_rsby_beneficiary", "has_family_member_aged_70_or_above",
+        ):
+            profile["self"][field] = True
+    profile["self"]["kisan_credit_card_limit_inr"] = 100000
+    profile["family_members"][0].update(
+        is_govt_employee=True, monthly_income_inr=50000,
+        paid_income_tax_last_assessment_year=True, paid_professional_tax=True,
+    )
+    assert evaluate(AB_PMJAY_SCHEME, profile).verdict == Verdict.ELIGIBLE
+
+
+def test_pmjay_exclusions_still_apply_to_non_seventy_plus_routes():
+    """Control: the fix must narrow the exclusions to the non-70+ routes, not switch them off."""
+    profile = _pmjay_base_profile()  # SECC-deprived, no 70+ member
+    profile["family_members"][0]["paid_income_tax_last_assessment_year"] = True
+    assert evaluate(AB_PMJAY_SCHEME, profile).verdict == Verdict.INELIGIBLE
+    profile = _pmjay_base_profile()
+    profile["self"]["owns_refrigerator"] = True
+    assert evaluate(AB_PMJAY_SCHEME, profile).verdict == Verdict.INELIGIBLE
+
+
+def test_pmjay_unknown_seventy_plus_status_with_an_exclusion_is_undetermined_not_ineligible():
+    """SECC-deprived, owns a refrigerator, 70+ status not yet known. If there IS a 70+ member the
+    household is eligible; if not, the refrigerator excludes it. Neither verdict is justified until
+    the fact is known -- so undetermined, and the question to ask is the 70+ one."""
+    profile = _pmjay_base_profile()
+    del profile["self"]["has_family_member_aged_70_or_above"]
+    profile["self"]["owns_refrigerator"] = True
+    assert evaluate(AB_PMJAY_SCHEME, profile).verdict == Verdict.UNDETERMINED
+
+
 def test_pmjay_mechanized_agri_equipment_is_ineligible():
     profile = _pmjay_base_profile()
     profile["self"]["owns_mechanized_agricultural_equipment_3_or_4_wheeler"] = True
@@ -563,3 +637,4 @@ def test_pmmvy_missing_parity_data_is_undetermined():
     profile = _pmmvy_base_profile()
     del profile["self"]["pregnancy_child_order"]
     assert evaluate(PMMVY_SCHEME, profile).verdict == Verdict.UNDETERMINED
+

@@ -64,9 +64,14 @@ def _walk_exclusions(exclusions_trace: list[dict[str, Any]], out: list[MissingFi
                 )
             except_pred = member_entry.get("except")
             if except_pred is not None and except_pred.get("result") is None:
+                # An applicant-scoped exception (models.ExceptScope) is read from the applicant's
+                # record whichever member triggered the exclusion, so ask the applicant -- asking
+                # "one of your family members" for a household-route fact would be wrong, and the
+                # answer would land on a record the evaluator never reads.
                 out.append(
                     MissingField(
-                        field=except_pred["field"], member=member_entry["member"],
+                        field=except_pred["field"],
+                        member=member_entry.get("except_member", member_entry["member"]),
                         cat=None, expected_value=except_pred.get("expected"),
                     )
                 )

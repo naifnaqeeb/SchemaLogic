@@ -15,6 +15,7 @@ from typing import Any, Optional
 from schemelogic.schema.models import (
     AndNode,
     CountOperator,
+    ExceptScope,
     Exclusion,
     OrNode,
     Predicate,
@@ -240,11 +241,20 @@ def _eval_exclusion(
     member_traces: list[dict[str, Any]] = []
     member_results: list[Trit] = []
 
+    # An APPLICANT-scoped exception is a fact about the application route (e.g. AB-PMJAY's 70+
+    # route), so it is read from the applicant's record for EVERY member -- not from the member who
+    # triggered the exclusion, whose record won't carry it. See ExceptScope's docstring.
+    applicant_scoped = (
+        exclusion.except_ is not None and exclusion.except_scope == ExceptScope.APPLICANT
+    )
+    except_member_label = "self" if applicant_scoped else None
+
     for label, member_dict in members:
         pred_result, pred_actual = _evaluate_predicate(exclusion, member_dict)
 
         if exclusion.except_ is not None:
-            except_result, except_actual = _evaluate_predicate(exclusion.except_, member_dict)
+            except_source = profile.get("self", {}) if applicant_scoped else member_dict
+            except_result, except_actual = _evaluate_predicate(exclusion.except_, except_source)
         else:
             except_result, except_actual = False, None
 
@@ -260,6 +270,9 @@ def _eval_exclusion(
             member_trace["except"] = _predicate_trace(
                 exclusion.except_, except_result, except_actual
             )
+            # Whose record the exception was read from. question_selector uses this to ask the
+            # right person when the exception's fact is missing.
+            member_trace["except_member"] = except_member_label or label
         member_traces.append(member_trace)
 
     count_trace: dict[str, Any] | None = None
@@ -278,6 +291,7 @@ def _eval_exclusion(
         "field": exclusion.field,
         "quantifier": exclusion.quantifier.value,
         "has_except": exclusion.except_ is not None,
+        "except_scope": exclusion.except_scope.value if exclusion.except_ is not None else None,
         "result": combined,
         "members": member_traces,
     }

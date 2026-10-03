@@ -267,7 +267,62 @@ could not separate LLM error from gold error exactly where every harmful case sa
 
 *Recorded as each fix lands. Every change is also written into the scheme's own `source_clause`.*
 
-(pending)
+Each fix followed the same order: write a profile that exercises the conflict, confirm it fails
+against the current gold, change the gold, confirm it passes, and confirm every pre-existing profile
+gives the same verdict as before. Both copies of the gold set were changed together, enforced by
+`test_gold_json_and_test_fixture_copies_hold_identical_rules`.
+
+### 6.1 AB-PMJAY — the 70+ route bypasses the socio-economic exclusions
+
+**Change.** Every one of the 14 exclusions now carries
+`except: has_family_member_aged_70_or_above == true`, with `except_scope: "applicant"`.
+
+**Why an exception at all.** The required logic is
+`eligible = 70plus ∨ (other_routes ∧ ¬excluded)`. A flat exclusion list computes
+`(70plus ∨ other_routes) ∧ ¬excluded`, which blocks the 70+ route. The two are equal once every
+exclusion carries `∧ ¬70plus`, i.e. an exception on the 70+ fact.
+
+**Why a new scope, and not a plain `except`.** The schema's `except` was member-local: the
+evaluator read it from whichever member triggered the exclusion. Four of these exclusions are
+`some_family_member` (government employee, income above ₹10,000, income tax, professional tax), so
+they are usually triggered by someone other than the applicant — but the 70+ fact is a household
+fact, recorded on the applicant. Tested before choosing, with the real evaluator:
+
+| Case | Wanted | Plain member-scoped `except` |
+|---|---|---|
+| 70+ household, applicant's household owns a refrigerator (`self`) | eligible | eligible ✓ |
+| 70+ household, a family member pays income tax (`some_family_member`) | eligible | **undetermined** ✗ |
+| *Control:* non-70+ household, a family member pays income tax | ineligible | **undetermined** ✗ — a regression |
+
+The exception was read off the tax-paying member's record, found nothing, and turned both the fix
+and a currently-correct verdict into "undetermined". So the evaluator gained `except_scope`
+(`schemelogic/schema/models.py`, `ExceptScope`): `"member"` is the default and preserves every
+existing exclusion exactly; `"applicant"` reads the exception once from the applicant's record.
+`question_selector` asks the applicant (not "one of your family members") when that fact is
+missing, and the citizen-facing explanation now says an exclusion was *waived* rather than "doesn't
+apply" — a 70+ senior who owns a refrigerator should not be told they don't own one.
+
+**Tests.** 6 engine-level tests for the new scope (`tests/test_symbolic_engine.py`, including one
+that pins the member-scoped failure above as the reason the scope exists) and 6 AB-PMJAY tests
+(`tests/test_gold_schemes.py`). Five of those six failed against the old gold, as intended; the
+sixth is a control showing the exclusions still apply in full to every non-70+ route.
+
+**Profiles added** to `data/profiles/AB-PMJAY.json`:
+
+| Profile | Old gold | New gold |
+|---|---|---|
+| `seventy_plus_household_refrigerator_and_landline` | ineligible | **eligible** |
+| `seventy_plus_family_member_pays_income_tax` | ineligible | **eligible** |
+
+All 8 pre-existing AB-PMJAY profiles give identical verdicts under the old and new gold.
+
+**Cost.** The new field appears in the extraction JSON schema: +112 tokens per core extraction
+call. The scope's rationale is kept as a code comment rather than a docstring because Pydantic
+embeds docstrings in the schema — as a docstring it cost +436 tokens per call.
+
+**Caveat, recorded in the `source_clause`.** Under the guidelines the 70+ cover belongs to the 70+
+members, shared on a family basis. This gold keeps its existing household-level modelling of that
+route; the fix only stops the socio-economic exclusions from blocking it.
 
 ## 7. Superseded figures
 

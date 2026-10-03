@@ -4,7 +4,7 @@ Deferred, non-blocking issues found during Phase 2/3 validation. Logged here ins
 immediately so they aren't rediscovered from scratch later. Each entry: what, where, why deferred,
 suggested fix.
 
-## Gold: AB-PMJAY applies socio-economic exclusions to the 70+ path
+## [RESOLVED 2026-10-03] Gold: AB-PMJAY applies socio-economic exclusions to the 70+ path
 
 **Where**: `data/gold/AB-PMJAY.json` (and its copy in `tests/gold_fixtures.py`) — the 14 SECC
 exclusions and the `has_family_member_aged_70_or_above` inclusion branch.
@@ -20,7 +20,12 @@ exclusion false, so it never exercised the conflict.
 
 **Found**: gold sourcing audit, 2026-10-03 (`docs/GOLD_AUDIT_2026-10-03.md` §3).
 
-**Status**: Open as of 2026-10-03 — scheduled for fix in this pass.
+**Status**: **Resolved 2026-10-03.** Every exclusion now carries an applicant-scoped exception on
+`has_family_member_aged_70_or_above`. That required a backward-compatible evaluator extension,
+`except_scope`, because a plain member-scoped exception reads the 70+ fact off whichever family
+member triggered the exclusion and yields "undetermined" — including for a household with no 70+
+member at all, which was previously, correctly, "ineligible". Full record and the tests that forced
+the design: `docs/GOLD_AUDIT_2026-10-03.md` §6.1.
 
 ## Gold: PMMVY age floor is 18, the source says 18 years 7 months
 
