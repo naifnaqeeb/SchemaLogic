@@ -18,13 +18,6 @@
         "cat": "demographic"
       },
       {
-        "field": "is_indian_citizen",
-        "op": "==",
-        "value": true,
-        "ontology_proposed": false,
-        "cat": "citizenship"
-      },
-      {
         "or": [
           {
             "field": "is_bpl_household",
@@ -124,7 +117,7 @@
   ],
   "extraction_metadata": {
     "confidence": 0.7,
-    "source_clause": "VERIFIED launch dates and 'adult woman of the poor family' framing against two PIB Research Unit documents (see file header); the inclusion category list is corroborated across three independently cross-checked secondary syntheses rather than a retrieved verbatim primary notification (pib.gov.in blocks direct fetch; the retrievable PIB PDFs were stats-focused, not eligibility-detail-focused) — hence confidence between PMAY-G's (0.75, single secondary corroboration) and AB-PMJAY's (0.93, verbatim numbered primary list). is_sc_st and is_pmay_g_beneficiary split from the prior draft's single compound is_sc_st_pmay_g_beneficiary field (see ontology docstring) — all three sources independently describe these as separate categories. meets_14_point_self_declaration added as a real 4th inclusion pathway (SECC list / seven added categories / 14-point self-declaration) missing from the prior draft entirely. lives_on_river_island renamed from lives_on_river_island_without_lpg (redundant qualifier, see ontology docstring). NOT independently verified: the exact age threshold (18 is the standard Indian legal-adult age and matches 'adult woman' framing in every source checked, but no source stated '18' as a scheme-specific numeric threshold explicitly).",
+    "source_clause": "VERIFIED launch dates and 'adult woman of the poor family' framing against two PIB Research Unit documents (see file header); the inclusion category list is corroborated across three independently cross-checked secondary syntheses rather than a retrieved verbatim primary notification (pib.gov.in blocks direct fetch; the retrievable PIB PDFs were stats-focused, not eligibility-detail-focused) — hence confidence between PMAY-G's (0.75, single secondary corroboration) and AB-PMJAY's (0.93, verbatim numbered primary list). is_sc_st and is_pmay_g_beneficiary split from the prior draft's single compound is_sc_st_pmay_g_beneficiary field (see ontology docstring) — all three sources independently describe these as separate categories. meets_14_point_self_declaration added as a real 4th inclusion pathway (SECC list / seven added categories / 14-point self-declaration) missing from the prior draft entirely. lives_on_river_island renamed from lives_on_river_island_without_lpg (redundant qualifier, see ontology docstring). NOT independently verified: the exact age threshold (18 is the standard Indian legal-adult age and matches 'adult woman' framing in every source checked, but no source stated '18' as a scheme-specific numeric threshold explicitly). GOLD CHANGE 2026-10-03 (docs/GOLD_AUDIT_2026-10-03.md): REMOVED the inclusion predicate is_indian_citizen == true. Reason: it had no recorded source. The source document (data/raw_documents/PM-UJJWALA-2.0.md) never mentions citizenship -- no 'citizen', 'Indian national' or 'nationality' anywhere -- and this clause, which documents every other uncertainty above, never accounted for it. Unlike PM-KISAN's citizenship predicate, which is a documented inference from that scheme's NRI exclusion, this one was neither stated nor argued for. Both the Phase 3 extractor (citizenship-category F1 = 0.0) and Baseline 2 (non-citizen profile counted as a harmful false positive) were charged with errors for disagreeing with it. If the primary PMUY 2.0 notification does require citizenship, cite that clause here and restore the predicate.",
     "flagged_for_review": true
   }
 }

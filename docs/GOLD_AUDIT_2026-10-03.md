@@ -363,6 +363,31 @@ All 10 pre-existing PMMVY profiles give identical verdicts under the old and new
 **Unchanged and still unmodelled:** the source measures age *at the time of childbirth*; both bounds
 here use the applicant's current age.
 
+### 6.3 PM-UJJWALA-2.0 — `is_indian_citizen` removed
+
+**Change.** The inclusion predicate `is_indian_citizen == true` is removed.
+
+**Why.** It was the gold set's one unsourced predicate (§2). The source never mentions citizenship,
+and the `source_clause` — which documents every other uncertainty in this scheme in detail — never
+accounted for it. PM-KISAN's citizenship predicate is different and stays: it is a documented
+inference from that scheme's NRI exclusion, and the audit confirmed the inference is accurate. The
+new `source_clause` records the condition for restoring it: cite a primary PMUY 2.0 clause that
+requires citizenship.
+
+**Tests.** 2 new (`tests/test_gold_schemes.py`), both failing against the old gold: a non-citizen
+meeting every stated criterion is eligible, and citizenship is never asked. No existing test had
+asserted the rule — the UJJWALA tests only set `is_indian_citizen: True` as a background fact, which
+the evaluator now ignores.
+
+**Profile renamed** in `data/profiles/PM-UJJWALA-2.0.json`, facts byte-identical so earlier results
+on it stay comparable:
+
+| Profile | Old gold | New gold |
+|---|---|---|
+| `non_citizen_ineligible` → `non_citizen_not_excluded_by_source` | ineligible | **eligible** |
+
+All 8 other PM-UJJWALA profiles give identical verdicts under the old and new gold.
+
 ## 7. Superseded figures
 
 *Old and corrected numbers, side by side, once the fixes are re-evaluated.*

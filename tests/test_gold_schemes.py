@@ -698,3 +698,35 @@ def test_pmmvy_months_question_is_only_ever_asked_of_an_eighteen_year_old():
     assert "months_since_last_birthday" not in asked_fields({"age": 30, "is_bpl_household": True})
     assert "months_since_last_birthday" not in asked_fields({"age": 17})
     assert "months_since_last_birthday" in asked_fields({"age": 18, "is_bpl_household": True})
+
+
+# --- PM-UJJWALA-2.0: citizenship is not a stated requirement (gold fix, 2026-10-03) ------------
+# The gold gated eligibility on is_indian_citizen, but the source document never mentions
+# citizenship and the gold's source_clause -- which documents every other uncertainty -- never
+# sourced it. Both the extractor (Phase 3) and Baseline 2 were charged with errors for disagreeing
+# with it. See docs/GOLD_AUDIT_2026-10-03.md section 6.3.
+
+
+def test_ujjwala_non_citizen_meeting_every_stated_criterion_is_not_excluded():
+    profile = {
+        "self": {
+            "is_woman": True,
+            "age": 25,
+            "is_indian_citizen": False,
+            "is_bpl_household": True,
+            "household_has_existing_lpg_connection": False,
+        }
+    }
+    assert evaluate(PM_UJJWALA_SCHEME, profile).verdict == Verdict.ELIGIBLE
+
+
+def test_ujjwala_citizenship_is_never_asked():
+    """A requirement with no source must not cost the citizen a question either."""
+    from schemelogic.conversational.question_selector import select_next_question
+
+    profile = {"self": {"is_woman": True, "age": 25}, "family_members": []}
+    asked: list[str] = []
+    while (q := select_next_question(PM_UJJWALA_SCHEME, profile)) is not None:
+        asked.append(q.field)
+        profile["self"][q.field] = q.field == "is_bpl_household" if q.answer_type == "boolean" else 30
+    assert "is_indian_citizen" not in asked

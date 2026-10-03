@@ -176,7 +176,7 @@ the JSON directly) so there is one source of truth.
 
 **Status**: Mitigated, not resolved.
 
-## Gold: PM-UJJWALA-2.0's citizenship predicate has no recorded source
+## [RESOLVED 2026-10-03] Gold: PM-UJJWALA-2.0's citizenship predicate has no recorded source
 
 **Where**: `data/gold/PM-UJJWALA-2.0.json`, `inclusion.and[2]` —
 `{"field": "is_indian_citizen", "op": "==", "value": true}` — and the profile that exercises it,
@@ -226,7 +226,7 @@ it in `source_clause` and add it to the source document. If not, remove the pred
 re-derive the affected numbers. Worth then auditing all 7 gold schemes for any other predicate
 whose `source_clause` doesn't account for it — this was found by accident.
 
-**Status**: Open as of 2026-10-03.
+**Status**: **Resolved 2026-10-03** — predicate removed from both gold copies, per the decision to treat it as unsourced. The `source_clause` records the condition for restoring it (a cited primary PMUY 2.0 clause requiring citizenship). The profile was renamed `non_citizen_not_excluded_by_source`, facts unchanged, and the Baseline 2 contested-row caveat for it no longer applies. Record: `docs/GOLD_AUDIT_2026-10-03.md` §6.3.
 
 ## Calibration gate: self-reported confidence can be inverted, not just noisy
 
