@@ -242,43 +242,114 @@ def test_ignoaps_under_60_is_ineligible():
     profile = _ignoaps_base_profile()
     profile["self"]["age"] = 45
     assert evaluate(IGNOAPS_SCHEME, profile).verdict == Verdict.INELIGIBLE
-
-
-def test_ignoaps_has_family_support_is_ineligible():
-    profile = _ignoaps_base_profile()
-    profile["self"]["has_regular_family_financial_support"] = True
-    assert evaluate(IGNOAPS_SCHEME, profile).verdict == Verdict.INELIGIBLE
-
-
-def test_ignoaps_missing_support_field_is_undetermined():
-    profile = _ignoaps_base_profile()
-    del profile["self"]["has_regular_family_financial_support"]
-    assert evaluate(IGNOAPS_SCHEME, profile).verdict == Verdict.UNDETERMINED
-
-
-def test_ignoaps_govt_employee_is_ineligible():
-    """Para 2.4.3's exclusion-criteria aside, applied as a real IGNOAPS exclusion."""
-    profile = _ignoaps_base_profile()
-    profile["self"]["is_govt_employee"] = True
-    assert evaluate(IGNOAPS_SCHEME, profile).verdict == Verdict.INELIGIBLE
-
-
-def test_ignoaps_five_acres_land_is_ineligible():
-    profile = _ignoaps_base_profile()
-    profile["self"]["family_agricultural_land_acres"] = 5
-    assert evaluate(IGNOAPS_SCHEME, profile).verdict == Verdict.INELIGIBLE
-
-
 def test_ignoaps_under_five_acres_land_is_eligible():
     profile = _ignoaps_base_profile()
     profile["self"]["family_agricultural_land_acres"] = 4.99
     assert evaluate(IGNOAPS_SCHEME, profile).verdict == Verdict.ELIGIBLE
 
 
-def test_ignoaps_four_wheeler_owner_is_ineligible():
+# --- IGNOAPS: family support removed; carve-out criteria scoped to the carve-out (2026-10-03) ----
+# Replaces five tests that asserted the old rules:
+#   - family support excluded / its absence left the verdict undetermined. The predicate was an
+#     "interpretive elevation" of NSAP's programme-wide destitute definition that its own author
+#     doubted, and is removed.
+#   - government job / 5+ acres / four-wheeler excluded EVERY applicant. All three IGNOAPS sources
+#     state them only inside the Para 2.4.3 carve-out ("except widows suffering from AIDS who will be
+#     considered if they are not attracted by any of the exclusion criteria..."), so they now gate
+#     that carve-out route and nothing else.
+# See docs/GOLD_AUDIT_2026-10-03.md section 6.4.
+
+
+def _ignoaps_aids_widow_profile() -> dict:
+    """Not BPL -- eligible, if at all, only through the Para 2.4.3 carve-out."""
+    return {
+        "self": {
+            "age": 65,
+            "is_bpl_household": False,
+            "is_widow_suffering_from_aids": True,
+            "is_govt_employee": False,
+            "family_agricultural_land_acres": 0,
+            "owns_four_wheeler": False,
+        }
+    }
+
+
+def test_ignoaps_bpl_applicant_with_family_support_is_still_eligible():
+    profile = _ignoaps_base_profile()
+    profile["self"]["has_regular_family_financial_support"] = True
+    assert evaluate(IGNOAPS_SCHEME, profile).verdict == Verdict.ELIGIBLE
+
+
+def test_ignoaps_family_support_is_never_asked():
+    from schemelogic.conversational.question_selector import select_next_question
+
+    profile = {"self": {"age": 65}, "family_members": []}
+    asked: list[str] = []
+    while (q := select_next_question(IGNOAPS_SCHEME, profile)) is not None:
+        asked.append(q.field)
+        profile["self"][q.field] = True if q.answer_type == "boolean" else 0
+    assert "has_regular_family_financial_support" not in asked
+
+
+def test_ignoaps_bpl_applicant_with_govt_job_is_eligible():
+    """Carve-out criterion: does not apply to the ordinary BPL route."""
+    profile = _ignoaps_base_profile()
+    profile["self"]["is_govt_employee"] = True
+    assert evaluate(IGNOAPS_SCHEME, profile).verdict == Verdict.ELIGIBLE
+
+
+def test_ignoaps_bpl_applicant_with_five_acres_is_eligible():
+    profile = _ignoaps_base_profile()
+    profile["self"]["family_agricultural_land_acres"] = 5
+    assert evaluate(IGNOAPS_SCHEME, profile).verdict == Verdict.ELIGIBLE
+
+
+def test_ignoaps_bpl_applicant_with_four_wheeler_is_eligible():
     profile = _ignoaps_base_profile()
     profile["self"]["owns_four_wheeler"] = True
+    assert evaluate(IGNOAPS_SCHEME, profile).verdict == Verdict.ELIGIBLE
+
+
+def test_ignoaps_non_bpl_aids_widow_clear_of_the_criteria_is_eligible():
+    assert evaluate(IGNOAPS_SCHEME, _ignoaps_aids_widow_profile()).verdict == Verdict.ELIGIBLE
+
+
+def test_ignoaps_non_bpl_aids_widow_with_govt_job_is_ineligible():
+    profile = _ignoaps_aids_widow_profile()
+    profile["self"]["is_govt_employee"] = True
     assert evaluate(IGNOAPS_SCHEME, profile).verdict == Verdict.INELIGIBLE
+
+
+def test_ignoaps_non_bpl_aids_widow_with_five_acres_is_ineligible():
+    """The criterion is 'five acres of land or more', so exactly 5 counts."""
+    profile = _ignoaps_aids_widow_profile()
+    profile["self"]["family_agricultural_land_acres"] = 5
+    assert evaluate(IGNOAPS_SCHEME, profile).verdict == Verdict.INELIGIBLE
+
+
+def test_ignoaps_non_bpl_aids_widow_with_four_wheeler_is_ineligible():
+    profile = _ignoaps_aids_widow_profile()
+    profile["self"]["owns_four_wheeler"] = True
+    assert evaluate(IGNOAPS_SCHEME, profile).verdict == Verdict.INELIGIBLE
+
+
+def test_ignoaps_non_bpl_without_the_carve_out_is_ineligible():
+    profile = _ignoaps_aids_widow_profile()
+    profile["self"]["is_widow_suffering_from_aids"] = False
+    assert evaluate(IGNOAPS_SCHEME, profile).verdict == Verdict.INELIGIBLE
+
+
+def test_ignoaps_non_bpl_aids_widow_with_criteria_unknown_is_undetermined():
+    profile = _ignoaps_aids_widow_profile()
+    del profile["self"]["is_govt_employee"]
+    assert evaluate(IGNOAPS_SCHEME, profile).verdict == Verdict.UNDETERMINED
+
+
+def test_ignoaps_bpl_status_unknown_is_undetermined():
+    """IGNOAPS keeps a missing-data case: with family support gone, BPL status is what's unknown."""
+    profile = _ignoaps_base_profile()
+    del profile["self"]["is_bpl_household"]
+    assert evaluate(IGNOAPS_SCHEME, profile).verdict == Verdict.UNDETERMINED
 
 
 # --- PMAY-G ---------------------------------------------------------------------------------

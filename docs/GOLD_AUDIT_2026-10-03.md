@@ -203,9 +203,12 @@ Classified S against the `.md`, which is all the gold was built from. §4 shows 
 
 ## 4. PMAY-G: a primary source turned up during the audit
 
-`data/raw_documents/IGNOAPS_primary.pdf` is mislabelled: it is the **Ministry of Rural Development
-Annual Report 2024-25** (447 pages). It covers PMAY-G, and it is the primary-quality source this
-gold never had. Its "revised automatic exclusion criteria under the new phase of the PMAY-G":
+`data/raw_documents/IGNOAPS_primary.pdf` is the whole **Ministry of Rural Development Annual Report
+2024-25** (447 pages). It is filed under IGNOAPS deliberately — the IGNOAPS gold cites its
+pp.156–163, which cover NSAP — but the same report also covers PMAY-G, and for PMAY-G it is the
+primary-quality source that gold never had. *(An earlier draft of this audit called the file
+"mislabelled"; the IGNOAPS fixture's own header shows the annotator knew what it was, so that
+overstated it.)* Its "revised automatic exclusion criteria under the new phase of the PMAY-G":
 
 > Step 1: Exclusion of pucca houses — All households living in houses with pucca roof and/or pucca
 > wall and households living in houses with more than 2 rooms are filtered out.
@@ -387,6 +390,77 @@ on it stay comparable:
 | `non_citizen_ineligible` → `non_citizen_not_excluded_by_source` | ineligible | **eligible** |
 
 All 8 other PM-UJJWALA profiles give identical verdicts under the old and new gold.
+
+### 6.4 IGNOAPS — family support removed; the carve-out criteria scoped to the carve-out
+
+**Changes.**
+1. The exclusion `has_regular_family_financial_support` is removed.
+2. The three criteria — government job, five acres or more, a four-wheeler for own use — are no
+   longer exclusions applied to every applicant.
+3. The NSAP Para 2.4.3 carve-out is modelled as an alternative to BPL status, with those three
+   criteria as its conditions. New field `is_widow_suffering_from_aids`.
+
+```
+before:  age >= 60  AND  is_bpl_household
+         EXCLUDE if: family support | govt job | land >= 5 acres | four-wheeler
+
+after:   age >= 60  AND  ( is_bpl_household
+                           OR ( is_widow_suffering_from_aids AND NOT govt job
+                                AND land < 5 acres AND NOT four-wheeler ) )
+         (no exclusions)
+```
+
+**Why (1).** Its own author called it "an interpretive elevation" of NSAP's programme-wide
+*destitute* definition (Para 1.1.1) — "philosophical/preambular framing" that "may already be
+subsumed by the BPL determination". Across the 56-page guidelines, "support from family" appears
+only in that definition. Both of Baseline 2's IGNOAPS harmful errors turned on it.
+
+**Why (2), and the search behind it.** You asked for the criteria to be restricted to the carve-out
+*unless* some source applied them generally. All three IGNOAPS sources were searched: in the NSAP
+guidelines and the PIB backgrounder they appear only inside Para 2.4.3; the MoRD annual report has 8
+other hits, and every one concerns PMAY-G's exclusion list, the SECC exclusion list, or the 1997 BPL
+census methodology — none applies them to IGNOAPS. The default held.
+
+**Why (3) — a judgement call you may want to revisit.** "Restrict to the carve-out's scope" can be
+read two ways:
+- **Model the carve-out** (done): the criteria survive, but gate only the AIDS-widow route. This
+  follows the grammar of Para 2.4.3 — *"only BPL persons … would be considered … except widows
+  suffering from AIDS who will be considered if they are not attracted by any of the exclusion
+  criteria"* — which is an exception to the BPL requirement.
+- **Delete them**, leaving the carve-out unmodelled, as the original gold had flagged it.
+
+The modelled version is more faithful, and it's the only one that doesn't wrongly reject a non-BPL
+widow living with AIDS. **But it has a real cost: every non-BPL applicant aged 60+ is now asked
+whether she is a widow living with HIV/AIDS.** The question is worded respectfully and says why it's
+asked, but it's a sensitive question on a common path. Two ambiguities also remain, both recorded in
+the `source_clause`: Para 2.4.3 sits under a heading about *priority* for vulnerable groups, so it
+may have been meant as a processing note; and it may be aimed at the widow pension rather than
+IGNOAPS.
+
+**Tests.** Five tests asserting the old rules were *replaced*, not deleted, so the three criteria
+stay covered under their correct scope: they now rule out the carve-out route and leave the BPL route
+alone. 12 tests in the new block; 7 failed against the old gold as intended.
+
+**Profiles.** Facts of all 8 existing profiles are unchanged, so earlier results on them stay
+comparable; only their `_comment` metadata changed. Verdicts:
+
+| Profile | Old gold | New gold |
+|---|---|---|
+| `eligible_baseline` | eligible | eligible |
+| `under_60` | ineligible | ineligible |
+| `not_bpl` | ineligible | **undetermined** — non-BPL, carve-out status not stated |
+| `has_family_support` | ineligible | **eligible** |
+| `govt_employee` | ineligible | **eligible** |
+| `five_acres_land` | ineligible | **eligible** |
+| `owns_four_wheeler` | ineligible | **eligible** |
+| `missing_support_data` | undetermined | **eligible** — the missing fact is no longer a criterion |
+| *new* `not_bpl_not_aids_widow` | ineligible | ineligible |
+| *new* `aids_widow_non_bpl_clear_of_criteria` | ineligible | **eligible** |
+| *new* `aids_widow_non_bpl_owns_four_wheeler` | ineligible | ineligible |
+| *new* `missing_bpl_status_undetermined` | undetermined | undetermined |
+
+The last profile keeps IGNOAPS's missing-data case — the probe the Baseline 2 silent-default analysis
+depends on, which `missing_support_data` no longer is.
 
 ## 7. Superseded figures
 

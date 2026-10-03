@@ -191,39 +191,26 @@ IGNOAPS = {
     "inclusion": {
         "and": [
             {"cat": "demographic", "field": "age", "op": ">=", "value": 60},
-            {"cat": "economic", "field": "is_bpl_household", "op": "==", "value": True},
+            {
+                # Gold fix 2026-10-03: BPL, OR the NSAP Para 2.4.3 AIDS-widow carve-out -- the only
+                # place the three criteria below appear in any IGNOAPS source. See source_clause.
+                "or": [
+                    {"cat": "economic", "field": "is_bpl_household", "op": "==", "value": True},
+                    {
+                        "and": [
+                            {"cat": "demographic", "field": "is_widow_suffering_from_aids", "op": "==", "value": True},
+                            {"cat": "occupation", "field": "is_govt_employee", "op": "==", "value": False},
+                            {"cat": "economic", "field": "family_agricultural_land_acres", "op": "<", "value": 5},
+                            {"cat": "economic", "field": "owns_four_wheeler", "op": "==", "value": False},
+                        ]
+                    },
+                ]
+            },
         ]
     },
-    "exclusions": [
-        {
-            "cat": "economic",
-            "quantifier": "self",
-            "field": "has_regular_family_financial_support",
-            "op": "==",
-            "value": True,
-        },
-        {
-            "cat": "occupation",
-            "quantifier": "self",
-            "field": "is_govt_employee",
-            "op": "==",
-            "value": True,
-        },
-        {
-            "cat": "economic",
-            "quantifier": "self",
-            "field": "family_agricultural_land_acres",
-            "op": ">=",
-            "value": 5,
-        },
-        {
-            "cat": "economic",
-            "quantifier": "self",
-            "field": "owns_four_wheeler",
-            "op": "==",
-            "value": True,
-        },
-    ],
+    # Gold fix 2026-10-03: has_regular_family_financial_support removed, and the three Para 2.4.3
+    # criteria moved into the carve-out above -- see source_clause.
+    "exclusions": [],
     "temporal_validity": {
         "valid_from": "2007-01-01",
         "valid_to": None,
@@ -238,41 +225,67 @@ IGNOAPS = {
             "quoted from Chapter II Section 2.3 ('The eligible age for IGNOAPS is 60 years'; "
             "'assistance under the sub-schemes of NSAP are applicable for persons belonging to "
             "Below Poverty Line (BPL) category'). valid_from=2007 directly quoted from Chapter I "
-            "Para 1.2.4 ('From the year 2007, the scheme was expanded to cover all eligible "
-            "persons Below Poverty Line (BPL). The scheme for old aged persons was renamed as "
-            "Indira Gandhi National Old Age Pension Scheme (IGNOAPS)') — exact month/day not "
-            "given in the source, so 01-01 is a placeholder for 'year 2007', not a literal date. "
-            "CAVEAT: has_regular_family_financial_support is an interpretive elevation, not a "
-            "literal Section 2.3 line item — it's built from Para 1.1.1's programme-wide "
-            "'destitute' definition ('any person who has little or no regular means of "
-            "subsistence from his/her own source of income or through financial support from "
-            "family members or other sources'), which reads as philosophical/preambular framing "
-            "for NSAP as a whole rather than a numbered IGNOAPS-specific operative test, and may "
-            "already be substantively subsumed by the BPL determination itself rather than an "
-            "independent test. is_govt_employee / family_agricultural_land_acres>=5 / "
-            "owns_four_wheeler (self, added 2026-08-18): Para 2.4.3's aside on AIDS-widow "
-            "prioritization — 'widows suffering from AIDS who will be considered if they are not "
-            "attracted by any of the exclusion criteria of having a job in government, owning "
-            "five acres of land or more or owning a four wheeler for own use' — was initially "
-            "read as an elliptical reference to a separate BPL/SECC determination methodology and "
-            "left out of this gold file. Cross-checking against an independent ontology-"
-            "constrained LLM extraction run on the same source text (see "
-            "data/extraction_runs/IGNOAPS_gpt-oss-120b_ontology_*.json) surfaced the same three "
-            "criteria as live IGNOAPS exclusions; re-reading the clause, the phrase names 'the "
-            "exclusion criteria' as an existing, already-applicable standard (measured even "
+            "Para 1.2.4 ('From the year 2007, the scheme was expanded to cover all eligible persons"
+            " Below Poverty Line (BPL). The scheme for old aged persons was renamed as Indira "
+            "Gandhi National Old Age Pension Scheme (IGNOAPS)') — exact month/day not given in the "
+            "source, so 01-01 is a placeholder for 'year 2007', not a literal date. CAVEAT: "
+            "has_regular_family_financial_support is an interpretive elevation, not a literal "
+            "Section 2.3 line item — it's built from Para 1.1.1's programme-wide 'destitute' "
+            "definition ('any person who has little or no regular means of subsistence from his/her"
+            " own source of income or through financial support from family members or other "
+            "sources'), which reads as philosophical/preambular framing for NSAP as a whole rather "
+            "than a numbered IGNOAPS-specific operative test, and may already be substantively "
+            "subsumed by the BPL determination itself rather than an independent test. "
+            "is_govt_employee / family_agricultural_land_acres>=5 / owns_four_wheeler (self, added "
+            "2026-08-18): Para 2.4.3's aside on AIDS-widow prioritization — 'widows suffering from "
+            "AIDS who will be considered if they are not attracted by any of the exclusion criteria"
+            " of having a job in government, owning five acres of land or more or owning a four "
+            "wheeler for own use' — was initially read as an elliptical reference to a separate "
+            "BPL/SECC determination methodology and left out of this gold file. Cross-checking "
+            "against an independent ontology-constrained LLM extraction run on the same source text"
+            " (see data/extraction_runs/IGNOAPS_gpt-oss-120b_ontology_*.json) surfaced the same "
+            "three criteria as live IGNOAPS exclusions; re-reading the clause, the phrase names "
+            "'the exclusion criteria' as an existing, already-applicable standard (measured even "
             "against the special-case AIDS-widow carve-out), which is a more defensible reading "
             "than treating it as out-of-scope. Corrected here — an example of the draft-extraction "
             "catching a real annotation gap, consistent with the draft-then-verify workflow "
-            "(Section 6.5). NOT modeled: the pre-2007 NOAPS restriction that the 2007 BPL "
-            "expansion superseded — Para 1.2.4 confirms an expansion happened but doesn't state "
-            "the prior restriction's specific numeric criterion, so no supersedes.retired_"
-            "predicate could be constructed without guessing. NOT modeled: Para 2.4.3 also implies "
-            "an alternate inclusion path for AIDS-affected widows ('except widows suffering from "
-            "AIDS who will be considered if they are not attracted by any of the exclusion "
-            "criteria...') that may bypass the BPL requirement specifically, but it's ambiguous "
-            "whether this is a real alternate eligibility branch or just a processing-priority "
-            "note (the section header is 'Priority to particularly vulnerable individuals'), and "
-            "what exactly it bypasses. Flagged as a known gap rather than guessed at."
+            "(Section 6.5). NOT modeled: the pre-2007 NOAPS restriction that the 2007 BPL expansion"
+            " superseded — Para 1.2.4 confirms an expansion happened but doesn't state the prior "
+            "restriction's specific numeric criterion, so no supersedes.retired_predicate could be "
+            "constructed without guessing. NOT modeled: Para 2.4.3 also implies an alternate "
+            "inclusion path for AIDS-affected widows ('except widows suffering from AIDS who will "
+            "be considered if they are not attracted by any of the exclusion criteria...') that may"
+            " bypass the BPL requirement specifically, but it's ambiguous whether this is a real "
+            "alternate eligibility branch or just a processing-priority note (the section header is"
+            " 'Priority to particularly vulnerable individuals'), and what exactly it bypasses. "
+            "Flagged as a known gap rather than guessed at. GOLD CHANGE 2026-10-03 "
+            "(docs/GOLD_AUDIT_2026-10-03.md), SUPERSEDING the sentences above about "
+            "has_regular_family_financial_support, about the three Para 2.4.3 criteria being live "
+            "IGNOAPS exclusions, and about the AIDS-widow path being NOT modeled: (1) REMOVED the "
+            "exclusion has_regular_family_financial_support. It was, as noted above, an "
+            "interpretive elevation of NSAP's programme-wide destitute definition (Para 1.1.1), not"
+            " an operative IGNOAPS test, and possibly subsumed by BPL; across the full NSAP "
+            "guidelines 'support from family' appears only in that definition. Both of Baseline 2's"
+            " IGNOAPS harmful errors turned on it. (2) The three criteria -- government job, five "
+            "acres or more, a four-wheeler for own use -- are no longer exclusions on every "
+            "applicant. All three IGNOAPS sources were searched (the NSAP guidelines, the MoRD "
+            "Annual Report 2024-25 and the 2025 PIB backgrounder): the criteria appear only inside "
+            "Para 2.4.3's carve-out, 'only BPL persons from the eligible categories would be "
+            "considered under NSAP except widows suffering from AIDS who will be considered if they"
+            " are not attracted by any of the exclusion criteria of having a job in government, "
+            "owning five acres of land or more or owning a four wheeler for own use'; every other "
+            "occurrence in the annual report concerns PMAY-G, SECC or the 1997 BPL census. They now"
+            " gate that carve-out and nothing else. (3) The carve-out is therefore modeled, as an "
+            "alternative to BPL status: age >= 60 AND (is_bpl_household OR "
+            "(is_widow_suffering_from_aids AND NOT govt job AND land < 5 acres AND NOT "
+            "four-wheeler)). This reads Para 2.4.3 as a real exception to the BPL requirement, "
+            "which is what its grammar says ('only BPL persons ... except widows ... who will be "
+            "considered if ...'). It remains possible it was meant only as a processing priority --"
+            " its section is headed 'Priority to particularly vulnerable individuals' -- and that "
+            "it is aimed at the widow pension rather than IGNOAPS; both are recorded here as open. "
+            "Net effect: exclusions is now empty, and a 60+ BPL applicant is eligible regardless of"
+            " family support, a government job, land or a vehicle, as the operative IGNOAPS "
+            "criteria (Section 2.3: age and BPL) state."
         ),
         "flagged_for_review": False,
     },

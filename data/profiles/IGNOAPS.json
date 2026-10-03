@@ -1,59 +1,124 @@
 {
   "_note": "Single-vocabulary (gold field names only) outcome-equivalence profiles for IGNOAPS.",
-
   "eligible_baseline": {
     "self": {
-      "age": 65, "is_bpl_household": true, "has_regular_family_financial_support": false,
-      "is_govt_employee": false, "family_agricultural_land_acres": 0, "owns_four_wheeler": false
+      "age": 65,
+      "is_bpl_household": true,
+      "has_regular_family_financial_support": false,
+      "is_govt_employee": false,
+      "family_agricultural_land_acres": 0,
+      "owns_four_wheeler": false
     }
   },
-
   "under_60": {
     "self": {
-      "age": 45, "is_bpl_household": true, "has_regular_family_financial_support": false,
-      "is_govt_employee": false, "family_agricultural_land_acres": 0, "owns_four_wheeler": false
+      "age": 45,
+      "is_bpl_household": true,
+      "has_regular_family_financial_support": false,
+      "is_govt_employee": false,
+      "family_agricultural_land_acres": 0,
+      "owns_four_wheeler": false
     }
   },
-
   "not_bpl": {
     "self": {
-      "age": 65, "is_bpl_household": false, "has_regular_family_financial_support": false,
-      "is_govt_employee": false, "family_agricultural_land_acres": 0, "owns_four_wheeler": false
-    }
+      "age": 65,
+      "is_bpl_household": false,
+      "has_regular_family_financial_support": false,
+      "is_govt_employee": false,
+      "family_agricultural_land_acres": 0,
+      "owns_four_wheeler": false
+    },
+    "_comment": "Verdict changed 2026-10-03 (facts unchanged): ineligible -> UNDETERMINED. Non-BPL, so eligible only via the Para 2.4.3 AIDS-widow carve-out, and this profile doesn't say whether she qualifies for it. See not_bpl_not_aids_widow for the clean ineligible case."
   },
-
   "has_family_support": {
     "self": {
-      "age": 65, "is_bpl_household": true, "has_regular_family_financial_support": true,
-      "is_govt_employee": false, "family_agricultural_land_acres": 0, "owns_four_wheeler": false
-    }
+      "age": 65,
+      "is_bpl_household": true,
+      "has_regular_family_financial_support": true,
+      "is_govt_employee": false,
+      "family_agricultural_land_acres": 0,
+      "owns_four_wheeler": false
+    },
+    "_comment": "Verdict changed 2026-10-03 (facts unchanged): ineligible -> ELIGIBLE. Family support is no longer a criterion (removed as an interpretive, unsourced test)."
   },
-
   "govt_employee": {
     "self": {
-      "age": 65, "is_bpl_household": true, "has_regular_family_financial_support": false,
-      "is_govt_employee": true, "family_agricultural_land_acres": 0, "owns_four_wheeler": false
-    }
+      "age": 65,
+      "is_bpl_household": true,
+      "has_regular_family_financial_support": false,
+      "is_govt_employee": true,
+      "family_agricultural_land_acres": 0,
+      "owns_four_wheeler": false
+    },
+    "_comment": "Verdict changed 2026-10-03 (facts unchanged): ineligible -> ELIGIBLE. A government job only gates the AIDS-widow carve-out; this applicant qualifies via BPL."
   },
-
   "five_acres_land": {
     "self": {
-      "age": 65, "is_bpl_household": true, "has_regular_family_financial_support": false,
-      "is_govt_employee": false, "family_agricultural_land_acres": 5, "owns_four_wheeler": false
-    }
+      "age": 65,
+      "is_bpl_household": true,
+      "has_regular_family_financial_support": false,
+      "is_govt_employee": false,
+      "family_agricultural_land_acres": 5,
+      "owns_four_wheeler": false
+    },
+    "_comment": "Verdict changed 2026-10-03 (facts unchanged): ineligible -> ELIGIBLE. Land only gates the AIDS-widow carve-out; this applicant qualifies via BPL."
   },
-
   "owns_four_wheeler": {
     "self": {
-      "age": 65, "is_bpl_household": true, "has_regular_family_financial_support": false,
-      "is_govt_employee": false, "family_agricultural_land_acres": 0, "owns_four_wheeler": true
-    }
+      "age": 65,
+      "is_bpl_household": true,
+      "has_regular_family_financial_support": false,
+      "is_govt_employee": false,
+      "family_agricultural_land_acres": 0,
+      "owns_four_wheeler": true
+    },
+    "_comment": "Verdict changed 2026-10-03 (facts unchanged): ineligible -> ELIGIBLE. A four-wheeler only gates the AIDS-widow carve-out; this applicant qualifies via BPL."
   },
-
   "missing_support_data": {
     "self": {
-      "age": 65, "is_bpl_household": true,
-      "is_govt_employee": false, "family_agricultural_land_acres": 0, "owns_four_wheeler": false
+      "age": 65,
+      "is_bpl_household": true,
+      "is_govt_employee": false,
+      "family_agricultural_land_acres": 0,
+      "owns_four_wheeler": false
+    },
+    "_comment": "Verdict changed 2026-10-03 (facts unchanged): undetermined -> ELIGIBLE. The missing fact (family support) is no longer a criterion, so nothing is missing. missing_bpl_status_undetermined is IGNOAPS's missing-data case now."
+  },
+  "not_bpl_not_aids_widow": {
+    "_comment": "Added 2026-10-03: non-BPL and not covered by the AIDS-widow carve-out -- the clean ineligible case.",
+    "self": {
+      "age": 65,
+      "is_bpl_household": false,
+      "is_widow_suffering_from_aids": false
+    }
+  },
+  "aids_widow_non_bpl_clear_of_criteria": {
+    "_comment": "Added 2026-10-03: non-BPL widow living with AIDS, clear of all three Para 2.4.3 criteria -- eligible via the carve-out. Old gold: ineligible (not BPL).",
+    "self": {
+      "age": 65,
+      "is_bpl_household": false,
+      "is_widow_suffering_from_aids": true,
+      "is_govt_employee": false,
+      "family_agricultural_land_acres": 0,
+      "owns_four_wheeler": false
+    }
+  },
+  "aids_widow_non_bpl_owns_four_wheeler": {
+    "_comment": "Added 2026-10-03: as above but owns a four-wheeler for own use -- 'attracted by' a carve-out criterion, so ineligible.",
+    "self": {
+      "age": 65,
+      "is_bpl_household": false,
+      "is_widow_suffering_from_aids": true,
+      "is_govt_employee": false,
+      "family_agricultural_land_acres": 0,
+      "owns_four_wheeler": true
+    }
+  },
+  "missing_bpl_status_undetermined": {
+    "_comment": "Added 2026-10-03: IGNOAPS's missing-data case after the fix -- BPL status unknown. Keeps the per-scheme undetermined probe used for the silent-default analysis.",
+    "self": {
+      "age": 65
     }
   }
 }

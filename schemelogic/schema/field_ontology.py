@@ -82,6 +82,17 @@ _FIELDS: tuple[FieldSpec, ...] = (
         display_label="Age",
     ),
     FieldSpec(
+        "is_widow_suffering_from_aids", PredicateCategory.DEMOGRAPHIC, "boolean",
+        "Applicant is a widow living with HIV/AIDS. Gates the NSAP Para 2.4.3 carve-out: such widows "
+        "may be considered without BPL status if they are clear of the stated exclusion criteria "
+        "(government job, 5+ acres of land, a four-wheeler for own use). Added 2026-10-03 "
+        "(docs/GOLD_AUDIT_2026-10-03.md section 6.4).",
+        schemes=("IGNOAPS",),
+        citizen_question="Are you a widow living with HIV or AIDS? (This is asked only because it can "
+                         "make you eligible even without a BPL card.)",
+        display_label="Widow living with HIV/AIDS",
+    ),
+    FieldSpec(
         "months_since_last_birthday", PredicateCategory.DEMOGRAPHIC, "number",
         "Whole months elapsed since the applicant's most recent birthday (0-11). Pairs with `age` "
         "(whole years) to express an age threshold that isn't a whole number of years -- PMMVY's "

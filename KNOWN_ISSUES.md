@@ -79,7 +79,7 @@ only ambiguous value, and the months question is only ever reached for an 18-yea
 gold's encoding. Still unmodelled, as before: the source measures age *at the time of childbirth*,
 while the gold uses current age. Record: `docs/GOLD_AUDIT_2026-10-03.md` §6.2.
 
-## Gold: IGNOAPS exclusions rest on an inference its author doubts, and on an out-of-scope clause
+## [RESOLVED 2026-10-03] Gold: IGNOAPS exclusions rest on an inference its author doubts, and on an out-of-scope clause
 
 **Where**: `data/gold/IGNOAPS.json` exclusions.
 
@@ -93,7 +93,7 @@ the gold applies them to every applicant.
 
 **Found**: gold sourcing audit, 2026-10-03.
 
-**Status**: Open as of 2026-10-03 — scheduled for fix in this pass.
+**Status**: **Resolved 2026-10-03.** `has_regular_family_financial_support` removed. The three criteria now gate only the Para 2.4.3 AIDS-widow carve-out, which is modelled as an alternative to BPL status (new field `is_widow_suffering_from_aids`), after searching all three IGNOAPS sources and finding no text that applies them generally. **Open decision for the gold owner:** modelling the carve-out means every non-BPL applicant aged 60+ is now asked whether she is a widow living with HIV/AIDS. The alternative — deleting the criteria and leaving the carve-out unmodelled — avoids that question but would wrongly reject such a widow. Record: `docs/GOLD_AUDIT_2026-10-03.md` §6.4.
 
 ## Gold: PMMVY encodes "first/second living child" as birth order
 
@@ -121,8 +121,9 @@ inconsistent quantifiers (`some_family_member` for govt employee, income and tax
 enterprise, assets and land).
 
 The audit then found a primary-quality source that answers the first question:
-`data/raw_documents/IGNOAPS_primary.pdf` is actually the **MoRD Annual Report 2024-25**, and it
-states PMAY-G's revised criteria directly (`docs/GOLD_AUDIT_2026-10-03.md` §4). Against it, the gold
+`data/raw_documents/IGNOAPS_primary.pdf` is the whole **MoRD Annual Report 2024-25** — filed under
+IGNOAPS because the IGNOAPS gold cites its NSAP pages — and it also states PMAY-G's revised criteria
+directly (`docs/GOLD_AUDIT_2026-10-03.md` §4). Against it, the gold
 has four concrete errors:
 - `owns_refrigerator` and `owns_landline_phone` are exclusions the Union Cabinet **deleted** —
   households owning either get a wrong "ineligible";
@@ -138,7 +139,8 @@ others as household-level, which partly matches the gold and partly doesn't.
 source. It is an official Ministry publication, more authoritative than the PIB backgrounder and
 news coverage the gold was built from. If adopted: remove the two deleted exclusions, add the two
 missing ones, correct the operator, re-model the pucca pre-filter, and align quantifiers with the
-report's wording. Ideally also rename the PDF so it isn't filed under IGNOAPS.
+report's wording. Worth also saving the PMAY-G pages under a PMAY-G name, so the next audit finds
+them where it looks.
 
 **Status**: Open, document-only by decision for this pass, although a primary source is now on hand.
 
