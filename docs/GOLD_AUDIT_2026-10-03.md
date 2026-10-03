@@ -324,6 +324,45 @@ embeds docstrings in the schema — as a docstring it cost +436 tokens per call.
 members, shared on a family basis. This gold keeps its existing household-level modelling of that
 route; the fix only stops the socio-economic exclusions from blocking it.
 
+### 6.2 PMMVY — the age floor is 18 years 7 months
+
+**Change.** New final conjunct `or[age >= 19, months_since_last_birthday >= 7]`, and a new ontology
+field `months_since_last_birthday` (0–11, citizen question: *"How many full months have passed since
+your last birthday?"*).
+
+**Why this encoding.** Citizens are asked their age in whole years, so 18 is the only value that
+can't decide the floor on its own. Alternatives rejected: a fractional `age >= 18.583` would turn
+every whole-year answer of 18 into "ineligible", wrongly rejecting 18y7m–18y11m; a single age-in-
+months field would ask every applicant their age in months. The coarse `age >= 18` stays as the first
+conjunct, so a 17-year-old is ruled out at the first question.
+
+**Why last.** The question selector asks every unresolved leaf, including ones under an `or` that is
+already satisfied (logged separately in `KNOWN_ISSUES.md` — on PMMVY it asks 9 irrelevant questions
+of an applicant who has already qualified). Placed earlier, `months_since_last_birthday` would have
+been the second question for *every* applicant. Placed last, the verdict is settled before it is
+reached for anyone aged 19 or over. A test pins this.
+
+**The `source_clause` claim.** It said the age criterion was "corroborated verbatim" by a second
+official source. That was true of the source *text* — which says 18 years 7 months — but read as a
+claim about the encoding, which was false. It now says so explicitly. The fixture's own header
+comment also quoted "18 years 7 months", so the discrepancy was visible at annotation time.
+
+**Tests.** 7 new (`tests/test_gold_schemes.py`); four failed against the old gold — 18y3m and 18y6m
+were wrongly eligible, 18 with months unknown was wrongly eligible rather than undetermined, and the
+precise question didn't exist.
+
+**Profiles added** to `data/profiles/PMMVY.json`:
+
+| Profile | Old gold | New gold |
+|---|---|---|
+| `eighteen_years_three_months_below_floor` | eligible | **ineligible** |
+| `eighteen_years_seven_months_at_floor` | eligible | eligible *(boundary control)* |
+
+All 10 pre-existing PMMVY profiles give identical verdicts under the old and new gold.
+
+**Unchanged and still unmodelled:** the source measures age *at the time of childbirth*; both bounds
+here use the applicant's current age.
+
 ## 7. Superseded figures
 
 *Old and corrected numbers, side by side, once the fixes are re-evaluated.*

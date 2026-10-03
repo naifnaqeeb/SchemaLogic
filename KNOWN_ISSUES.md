@@ -27,7 +27,41 @@ member triggered the exclusion and yields "undetermined" — including for a hou
 member at all, which was previously, correctly, "ineligible". Full record and the tests that forced
 the design: `docs/GOLD_AUDIT_2026-10-03.md` §6.1.
 
-## Gold: PMMVY age floor is 18, the source says 18 years 7 months
+## Question selector asks about branches that are already decided
+
+**Where**: `schemelogic/conversational/question_selector.py`, `_walk_inclusion()` /
+`find_missing_fields()`.
+
+**What**: the selector collects every unresolved leaf in the inclusion tree, including leaves under
+a branch whose result is already known. The evaluator traces every child of an `or` (it doesn't
+short-circuit), so once one alternative is satisfied, the citizen is still asked about all the
+others whenever anything else in the scheme is still unknown. Measured 2026-10-03 on PMMVY: a woman
+who has already said she is SC/ST — which satisfies the category requirement — is then asked **9
+irrelevant questions** (disability, BPL, AB-PMJAY, e-Shram, PM-KISAN, MGNREGA, income, frontline
+worker, NFSA) before the one that still matters, the child's birth order. The same shape affects
+every scheme with an `or`: PM-UJJWALA's ten categories, AB-PMJAY's five routes, PMAY-G's three, and
+any AI-Checked scheme.
+
+Verdicts are never wrong — this is about which questions get asked, not what is concluded. But it
+undercuts the reason the plan gives for three-valued verdicts: asking "only the questions still
+needed".
+
+**Found**: while encoding the PMMVY age-floor fix, 2026-10-03. That fix works around it by placing
+the precise floor LAST in its conjunction; see the PMMVY entry below.
+
+**Suggested fix**: in `_walk_inclusion`, don't descend into a node whose result is already definite.
+Under Kleene logic a known True or False can't be changed by resolving the unknowns beneath it, so
+those leaves are provably irrelevant. Apply the same per member in `_walk_exclusions`: skip a member
+entry whose combined result is already definite, which also covers exclusions waived by an
+exception. Needs a test pinning the PMMVY sequence above, and a check that `test_question_selector`
+doesn't encode the current over-asking as expected behaviour.
+
+**Why not fixed here**: it changes the question order of every OR-structured conversation, gold and
+AI-Checked, which is outside a gold-data fix and deserves its own review.
+
+**Status**: Open as of 2026-10-03.
+
+## [RESOLVED 2026-10-03] Gold: PMMVY age floor is 18, the source says 18 years 7 months
 
 **Where**: `data/gold/PMMVY.json`, `inclusion.and[0]` — `age >= 18`.
 
@@ -38,7 +72,12 @@ never recorded. Women aged 18y0m–18y6m get a wrong **eligible**, the harmful d
 
 **Found**: gold sourcing audit, 2026-10-03.
 
-**Status**: Open as of 2026-10-03 — scheduled for fix in this pass.
+**Status**: **Resolved 2026-10-03.** Added the conjunct `or[age >= 19, months_since_last_birthday >= 7]`
+plus a new ontology field `months_since_last_birthday`. Ages are asked in whole years, so 18 is the
+only ambiguous value, and the months question is only ever reached for an 18-year-old. The
+`source_clause` now says plainly that "corroborated verbatim" referred to the source text, not this
+gold's encoding. Still unmodelled, as before: the source measures age *at the time of childbirth*,
+while the gold uses current age. Record: `docs/GOLD_AUDIT_2026-10-03.md` §6.2.
 
 ## Gold: IGNOAPS exclusions rest on an inference its author doubts, and on an out-of-scope clause
 

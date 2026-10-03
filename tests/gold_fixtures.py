@@ -786,6 +786,14 @@ PMMVY = {
                     },
                 ]
             },
+            # Precise age floor, 18 years 7 months (gold fix 2026-10-03). Placed LAST so the
+            # months question is only reached for an 18-year-old -- see the source_clause.
+            {
+                "or": [
+                    {"cat": "demographic", "field": "age", "op": ">=", "value": 19},
+                    {"cat": "demographic", "field": "months_since_last_birthday", "op": ">=", "value": 7},
+                ]
+            },
         ]
     },
     "exclusions": [],
@@ -814,18 +822,32 @@ PMMVY = {
         "confidence": 0.85,
         "source_clause": (
             "VERIFIED against a PIB Backgrounder (24 Aug 2025) with an explicit PMMVY-vs-2.0 "
-            "before/after comparison table (temporal/amendment facts) and an 'Eligibility "
-            "Criteria & Exclusions' section (age, category table) — age criterion independently "
-            "corroborated verbatim by a second official source (Savitribai Phule National "
-            "Institute of Women & Child Development FAQ). Means-tested (not universal) nature "
-            "cross-checked against an independent policy-institute summary. NOT independently "
-            "checked against the actual MWCD scheme guidelines/notification PDF (not "
-            "retrievable — same pib.gov.in fetch-blocking issue as every other Phase 3 scheme). "
-            "'Other vulnerable groups as notified by Central Government' (10th inclusion "
-            "category) intentionally unmodeled — open-ended, not a concrete predicate. A "
-            "government-employment/other-maternity-benefit exclusion appearing in one "
-            "low-confidence secondary source only was deliberately NOT included (see file header) "
-            "rather than guessed."
+            "before/after comparison table (temporal/amendment facts) and an 'Eligibility Criteria "
+            "& Exclusions' section (age, category table) — age criterion ('between 18 years 7 "
+            "months and 55 years of age at the time of childbirth') independently corroborated "
+            "verbatim by a second official source (Savitribai Phule National Institute of Women & "
+            "Child Development FAQ). CORRECTED 2026-10-03: that corroboration was of the SOURCE "
+            "TEXT, not of this gold's encoding -- until 2026-10-03 the gold encoded the floor as "
+            "age >= 18, silently dropping the 7 months, and this clause's earlier wording "
+            "('corroborated verbatim') implied the encoded predicate matched the source when it did"
+            " not. Means-tested (not universal) nature cross-checked against an independent "
+            "policy-institute summary. NOT independently checked against the actual MWCD scheme "
+            "guidelines/notification PDF (not retrievable — same pib.gov.in fetch-blocking issue as"
+            " every other Phase 3 scheme). 'Other vulnerable groups as notified by Central "
+            "Government' (10th inclusion category) intentionally unmodeled — open-ended, not a "
+            "concrete predicate. A government-employment/other-maternity-benefit exclusion "
+            "appearing in one low-confidence secondary source only was deliberately NOT included "
+            "(see file header) rather than guessed. GOLD CHANGE 2026-10-03 "
+            "(docs/GOLD_AUDIT_2026-10-03.md): added inclusion conjunct or[age >= 19, "
+            "months_since_last_birthday >= 7], encoding the 18-years-7-months floor. Reason: with "
+            "age >= 18 alone, women aged 18y0m-18y6m were wrongly eligible (the harmful direction)."
+            " Ages are asked in whole years, so 18 is the only ambiguous value; the coarse age >= "
+            "18 conjunct is kept first so a 17-year-old is ruled out at the first question, and the"
+            " precise floor is placed LAST in the conjunction so that the months question is only "
+            "ever reached for an 18-year-old (the question selector asks every unresolved leaf, "
+            "even under an already-satisfied 'or' -- see KNOWN_ISSUES.md). The 55-year ceiling is "
+            "unchanged. Still NOT modeled, unchanged by this fix: the source measures age 'at the "
+            "time of childbirth', while both bounds here use the applicant's current age."
         ),
         "flagged_for_review": True,
     },

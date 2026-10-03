@@ -638,3 +638,63 @@ def test_pmmvy_missing_parity_data_is_undetermined():
     del profile["self"]["pregnancy_child_order"]
     assert evaluate(PMMVY_SCHEME, profile).verdict == Verdict.UNDETERMINED
 
+
+# --- PMMVY age floor: 18 years 7 months, not 18 (gold fix, 2026-10-03) -------------------------
+# Source: "between 18 years 7 months and 55 years of age". The gold had `age >= 18`, so women aged
+# 18y0m-18y6m got a wrong ELIGIBLE -- the harmful direction. Ages are asked in whole years, so 18 is
+# the one ambiguous value; only then is the months-since-last-birthday question needed.
+# See docs/GOLD_AUDIT_2026-10-03.md section 6.2.
+
+
+def _pmmvy_at(years: int, months: int | None) -> dict:
+    profile = _pmmvy_base_profile()
+    profile["self"]["age"] = years
+    if months is not None:
+        profile["self"]["months_since_last_birthday"] = months
+    return profile
+
+
+def test_pmmvy_eighteen_years_three_months_is_below_the_floor():
+    assert evaluate(PMMVY_SCHEME, _pmmvy_at(18, 3)).verdict == Verdict.INELIGIBLE
+
+
+def test_pmmvy_eighteen_years_six_months_is_below_the_floor():
+    assert evaluate(PMMVY_SCHEME, _pmmvy_at(18, 6)).verdict == Verdict.INELIGIBLE
+
+
+def test_pmmvy_eighteen_years_seven_months_is_exactly_the_floor():
+    assert evaluate(PMMVY_SCHEME, _pmmvy_at(18, 7)).verdict == Verdict.ELIGIBLE
+
+
+def test_pmmvy_eighteen_with_months_unknown_is_undetermined_not_eligible():
+    """At 18 the whole-year age alone can't decide it -- the old gold said eligible."""
+    assert evaluate(PMMVY_SCHEME, _pmmvy_at(18, None)).verdict == Verdict.UNDETERMINED
+
+
+def test_pmmvy_nineteen_and_over_needs_no_months():
+    assert evaluate(PMMVY_SCHEME, _pmmvy_at(19, None)).verdict == Verdict.ELIGIBLE
+
+
+def test_pmmvy_seventeen_is_ineligible_without_asking_months():
+    assert evaluate(PMMVY_SCHEME, _pmmvy_at(17, None)).verdict == Verdict.INELIGIBLE
+
+
+def test_pmmvy_months_question_is_only_ever_asked_of_an_eighteen_year_old():
+    """The question selector asks every unresolved leaf, including ones under an already-satisfied
+    `or` (logged in KNOWN_ISSUES). The precise floor sits LAST in the conjunction so that, for anyone
+    19 or over, the verdict is settled before it is ever reached."""
+    from schemelogic.conversational.question_selector import select_next_question
+
+    def asked_fields(start: dict) -> list[str]:
+        profile = {"self": dict(start), "family_members": []}
+        fields: list[str] = []
+        while (q := select_next_question(PMMVY_SCHEME, profile)) is not None:
+            fields.append(q.field)
+            profile["self"][q.field] = {"pregnancy_child_order": 1, "months_since_last_birthday": 9}.get(
+                q.field, False if q.answer_type == "boolean" else 100000
+            )
+        return fields
+
+    assert "months_since_last_birthday" not in asked_fields({"age": 30, "is_bpl_household": True})
+    assert "months_since_last_birthday" not in asked_fields({"age": 17})
+    assert "months_since_last_birthday" in asked_fields({"age": 18, "is_bpl_household": True})

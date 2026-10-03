@@ -82,6 +82,16 @@ _FIELDS: tuple[FieldSpec, ...] = (
         display_label="Age",
     ),
     FieldSpec(
+        "months_since_last_birthday", PredicateCategory.DEMOGRAPHIC, "number",
+        "Whole months elapsed since the applicant's most recent birthday (0-11). Pairs with `age` "
+        "(whole years) to express an age threshold that isn't a whole number of years -- PMMVY's "
+        "floor is 18 years 7 months, so at age 18 exactly, whole years alone can't decide it. "
+        "Added 2026-10-03 (docs/GOLD_AUDIT_2026-10-03.md section 6.2).",
+        schemes=("PMMVY",),
+        citizen_question="How many full months have passed since your last birthday? (0 to 11)",
+        display_label="Months since last birthday",
+    ),
+    FieldSpec(
         "is_woman", PredicateCategory.DEMOGRAPHIC, "boolean",
         "Applicant is a woman.",
         schemes=("MH-LADKI-BAHIN", "PM-UJJWALA-2.0"),
