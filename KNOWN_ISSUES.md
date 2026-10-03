@@ -4,6 +4,58 @@ Deferred, non-blocking issues found during Phase 2/3 validation. Logged here ins
 immediately so they aren't rediscovered from scratch later. Each entry: what, where, why deferred,
 suggested fix.
 
+## Gold: PM-UJJWALA-2.0's citizenship predicate has no recorded source
+
+**Where**: `data/gold/PM-UJJWALA-2.0.json`, `inclusion.and[2]` —
+`{"field": "is_indian_citizen", "op": "==", "value": true}` — and the profile that exercises it,
+`data/profiles/PM-UJJWALA-2.0.json` → `non_citizen_ineligible`.
+
+**What**: the gold makes Indian citizenship a gating inclusion condition, but the scheme's source
+document (`data/raw_documents/PM-UJJWALA-2.0.md`) never mentions citizenship — no match for
+"citizen", "Indian national" or "nationality" anywhere in it — and the gold's own `source_clause`,
+which carefully documents every other uncertainty (the unstated age threshold, the
+secondary-source category list, field renames), says nothing about where this predicate came
+from.
+
+Contrast PM-KISAN, whose gold explicitly records its own `is_indian_citizen` as "NOT a
+directly-stated standalone clause... inferred from the Para 4.1(c) NRI exclusion". That is a
+documented inference a reader can evaluate. PM-UJJWALA's is undocumented.
+
+**Why it matters — two independent systems have now "failed" on exactly this predicate**:
+- Phase 3 check-in, 2026-08-18: the extractor missed it (citizenship-category F1 = 0.0, fn = 1).
+- Baseline 2, 2026-10-03: the direct-LLM baseline answered "eligible" for `non_citizen_ineligible`
+  where the evaluator says ineligible, counted as a harmful false positive.
+
+Both were judged against a rule the source they were given does not contain. In both cases the
+"error" may be faithfulness to the document. The profile's own `_comment` says this was "the
+field the draft was expected to miss going into this run", so the predicate was known to be weak
+when the profile was written.
+
+The real PMUY guidelines may well require citizenship; if so, the primary notification saying so
+needs to be cited in `source_clause` and ideally added to the source document. If not, the
+predicate should come out of the gold. Either way the current state silently charges the
+extractor and the baseline for disagreeing with an unsourced rule.
+
+**Effect on reported numbers**: Baseline 2 is reported both ways until this is resolved
+(see `scripts/summarize_baseline2.py`):
+  - counting the row: 67 profiles, agreement 94.0%, harmful-positive 4.5% (3/67)
+  - excluding it as contested: 66 profiles, agreement 95.5%, harmful-positive 3.0% (2/66)
+The Phase 3 PM-UJJWALA citizenship false negative should be read with the same caveat.
+
+**Found**: Baseline 2 completion run, 2026-10-03.
+
+**Why not fixed here**: it's a ground-truth decision for whoever owns the gold set, and changing
+gold silently moves every number already reported against it. Same root cause the status reports
+keep flagging: the gold set was built without the plan's annotation process (no guidelines, no
+dual annotation, no annotation log), so nothing forced every predicate to carry a source.
+
+**Suggested fix**: locate the primary PMUY 2.0 notification clause on citizenship. If found, cite
+it in `source_clause` and add it to the source document. If not, remove the predicate and
+re-derive the affected numbers. Worth then auditing all 7 gold schemes for any other predicate
+whose `source_clause` doesn't account for it — this was found by accident.
+
+**Status**: Open as of 2026-10-03.
+
 ## Calibration gate: self-reported confidence can be inverted, not just noisy
 
 **Where**: `schemelogic/deferral/calibration_gate.py` (the `confidence` signal and its
