@@ -53,7 +53,7 @@ to source-document length is suspicious regardless of stated confidence.
 
 **Status**: Open as of 2026-09-16. Citizen-facing path mitigated structurally; gate unfixed.
 
-## AI-Checked Q&A phrasing is rough for newly-proposed ontology fields
+## [RESOLVED 2026-09-18] AI-Checked Q&A phrasing is rough for newly-proposed ontology fields
 
 **Where**: `schemelogic/conversational/question_selector.py`'s `build_question()` fallback branch,
 reached whenever `schemelogic/schema/field_ontology.py`'s `citizen_question_for(field)` returns
@@ -89,7 +89,50 @@ disk alongside the AI-Checked scheme cache; on any failure fall back to the curr
 rather than blocking the Q&A. Growing `field_ontology.py` itself is the alternative, and is the
 better answer for fields that recur across many schemes.
 
-**Status**: Open as of 2026-09-16, planned.
+**Status**: **Resolved 2026-09-18** in commit `c437975` ("feat(ai-checked): plain-language questions
+for novel extracted fields"). Kept here as a record, not deleted.
+
+**Resolution**: implemented as the suggested fix. `schemelogic/conversational/field_phrasing.py`
+makes one LLM call per NOVEL field (never per scheme, never per session), producing question
+wording only, and registers it in a runtime overlay that `field_ontology.citizen_question_for()`
+consults after the canonical ontology — so `question_selector.py` stays LLM-free and every consumer
+picks it up without plumbing. Canonical, human-written questions are never overridden, and the
+overlay is kept out of `FIELD_ONTOLOGY` / `format_for_prompt()` / `all_field_names()` so generated
+strings can't leak into the extractor's vocabulary or the structural-F1 comparison. Cached per
+field in memory and in `data/cache/field_questions.json`; failures are never cached, and any
+failure leaves the old generic phrasing in place rather than blocking the Q&A. Covered by 27 tests
+in `tests/test_field_phrasing.py` plus 2 conversation-level tests in `tests/test_chat_engine.py`
+(the improvement reaches the question the citizen actually sees; a phrasing failure leaves the
+fallback and the Q&A still runs).
+
+**Evidence it works** (live, not mocked):
+- `dmrnicmasii` — the scheme that originally exposed this — 6/6 novel fields phrased, second pass 0
+  LLM calls. `Do you meet this criterion: "is forward community"?` became `Are you a member of the
+  Forward Community?`; `"bride education 10th passed"` became `Has the bride passed the 10th
+  standard?`.
+- An independent live app session on scheme `fs` (2026-09-19 17:26) phrased 8 more fields on a
+  scheme the feature was never tuned against, e.g. `Are you a member of the Other Backward Classes
+  (OBC) category?`, `Do you receive a post-matric scholarship for Scheduled Caste or Scheduled
+  Tribe?`. 14 phrasings cached across the two schemes; all reviewed by hand.
+
+**How often it matters**: in the 2026-09-19 AI-Checked diagnosis (n=16 new schemes), 61 of 75
+substantive predicates — **81.3%** — were novel fields (78.4% pooled over n=32), i.e. roughly four
+of every five questions in an AI-Checked conversation now go through this path. Note that figure
+measures the feature's REACH, not its quality: the diagnosis runs called the extractor directly and
+did not phrase anything. Quality evidence is the hand-reviewed live phrasings above, which is a
+small sample (14 fields, 2 schemes).
+
+**Residual imperfections, recorded so they aren't rediscovered**:
+- Subject preservation is good but not perfect: `bride_has_degree` → `Do you have a degree?` drops
+  the bride, where its sibling fields kept her. Benign when the applicant is the bride, wrong
+  otherwise.
+- The cache is keyed by field name alone, so the first scheme to phrase a shared field decides its
+  wording for every later scheme. Intended (a field is meant to be one reusable concept), but it
+  means scheme context only informs the FIRST phrasing of a field.
+- Three defects caught only by live validation, now fixed and covered by tests: a `max_tokens=60`
+  cap returned empty content on every call (gpt-oss reasoning tokens), `is_forward_community` was
+  initially rendered "forward-thinking community" without scheme context, and two contradictory
+  validator rules rejected valid third-party and field-sourced-number phrasings.
 
 ## Calibration gate: markdown bold markers can break verbatim-quote matching
 
