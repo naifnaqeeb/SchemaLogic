@@ -4,6 +4,134 @@ Deferred, non-blocking issues found during Phase 2/3 validation. Logged here ins
 immediately so they aren't rediscovered from scratch later. Each entry: what, where, why deferred,
 suggested fix.
 
+## Gold: AB-PMJAY applies socio-economic exclusions to the 70+ path
+
+**Where**: `data/gold/AB-PMJAY.json` (and its copy in `tests/gold_fixtures.py`) — the 14 SECC
+exclusions and the `has_family_member_aged_70_or_above` inclusion branch.
+
+**What**: the exclusions are a flat list, so they apply to every inclusion path. The NHA's 70+
+expansion guidelines (`data/raw_documents/AB-PMJAY_primary_70plus_expansion.pdf`) cover all
+citizens aged 70+ *"irrespective of their socio-economic status"* and never apply the SECC
+exclusions to them. Verified with the real evaluator: a 70+ senior whose household owns a
+refrigerator or landline, has a member earning >₹10,000/month, or has a member paying income tax
+gets **ineligible**. That is a wrong verdict from the live app, for exactly the population the 2024
+expansion targeted. The gold's own `seventy_plus_eligible_regardless_of_secc` profile set every
+exclusion false, so it never exercised the conflict.
+
+**Found**: gold sourcing audit, 2026-10-03 (`docs/GOLD_AUDIT_2026-10-03.md` §3).
+
+**Status**: Open as of 2026-10-03 — scheduled for fix in this pass.
+
+## Gold: PMMVY age floor is 18, the source says 18 years 7 months
+
+**Where**: `data/gold/PMMVY.json`, `inclusion.and[0]` — `age >= 18`.
+
+**What**: the source (`data/raw_documents/PMMVY.md`) says the beneficiary must be *"between 18 years
+7 months and 55 years of age at the time of childbirth"*. The gold's floor drops the 7 months, and
+its `source_clause` says the age criterion was "corroborated verbatim" — so the discrepancy was
+never recorded. Women aged 18y0m–18y6m get a wrong **eligible**, the harmful direction.
+
+**Found**: gold sourcing audit, 2026-10-03.
+
+**Status**: Open as of 2026-10-03 — scheduled for fix in this pass.
+
+## Gold: IGNOAPS exclusions rest on an inference its author doubts, and on an out-of-scope clause
+
+**Where**: `data/gold/IGNOAPS.json` exclusions.
+
+**What**: `has_regular_family_financial_support` is built from the NSAP programme-wide *destitute*
+definition (Para 1.1.1); the gold's own `source_clause` calls it "an interpretive elevation",
+"philosophical/preambular framing" that "may already be subsumed by the BPL determination". Both of
+Baseline 2's IGNOAPS harmful errors turn on it. The other three exclusions (government job, 5+ acres,
+four-wheeler) appear verbatim only inside the §2.4.3 AIDS-widow carve-out — "except widows suffering
+from AIDS who will be considered if they are not attracted by any of the exclusion criteria…" — but
+the gold applies them to every applicant.
+
+**Found**: gold sourcing audit, 2026-10-03.
+
+**Status**: Open as of 2026-10-03 — scheduled for fix in this pass.
+
+## Gold: PMMVY encodes "first/second living child" as birth order
+
+**Where**: `data/gold/PMMVY.json`, `inclusion.and[3]` — `pregnancy_child_order`.
+
+**What**: the source covers the *first living child* and, under PMMVY 2.0, the *second living child*
+if a girl. `pregnancy_child_order` reads as birth order, which differs whenever an earlier child has
+died: a woman whose first child died would, by the source, be claiming for her first *living* child,
+but the gold would count it as order 2 and demand a girl. Undocumented.
+
+**What would resolve it**: the MWCD scheme guidelines or notification text defining "living child"
+for PMMVY purposes (the gold was built from a PIB backgrounder; the guidelines were never
+retrieved). If that text confirms the living-child reading, re-encode as a count of living children,
+with a citizen question that asks it that way.
+
+**Status**: Open, document-only (no primary source on hand).
+
+## Gold: PMAY-G exclusions — a primary source now contradicts the gold
+
+**Where**: `data/gold/PMAY-G.json` exclusions.
+
+**What**: logged originally as two questions — the source `.md` says exclusions were "reduced from 13
+to 10 parameters" but lists 11, and identically worded "Households with…" clauses get
+inconsistent quantifiers (`some_family_member` for govt employee, income and tax; `self` for
+enterprise, assets and land).
+
+The audit then found a primary-quality source that answers the first question:
+`data/raw_documents/IGNOAPS_primary.pdf` is actually the **MoRD Annual Report 2024-25**, and it
+states PMAY-G's revised criteria directly (`docs/GOLD_AUDIT_2026-10-03.md` §4). Against it, the gold
+has four concrete errors:
+- `owns_refrigerator` and `owns_landline_phone` are exclusions the Union Cabinet **deleted** —
+  households owning either get a wrong "ineligible";
+- *paying professional tax* and *5+ acres of unirrigated land* are exclusions the gold is missing;
+- irrigated land is "2.5 acres **or more**" (`>=`), where the gold has `>`;
+- pucca housing is a separate Step 1 pre-filter (pucca roof and/or wall, or more than 2 rooms), not
+  one of the 10 — which explains the "11 vs 10" count, and is broader than `owns_pucca_house`.
+
+The quantifier inconsistency remains: the annual report words some criteria as "any member" and
+others as household-level, which partly matches the gold and partly doesn't.
+
+**What would resolve it**: a decision to adopt the MoRD annual report as PMAY-G's authoritative
+source. It is an official Ministry publication, more authoritative than the PIB backgrounder and
+news coverage the gold was built from. If adopted: remove the two deleted exclusions, add the two
+missing ones, correct the operator, re-model the pucca pre-filter, and align quantifiers with the
+report's wording. Ideally also rename the PDF so it isn't filed under IGNOAPS.
+
+**Status**: Open, document-only by decision for this pass, although a primary source is now on hand.
+
+## Gold: MH-LADKI-BAHIN's MP/MLA exclusion uses a broader field
+
+**Where**: `data/gold/MH-LADKI-BAHIN.json`, `excl[3]` — `holds_constitutional_or_political_post`.
+
+**What**: the Marathi GR clause (५) is literally "ज्यांच्या कुटुंबातील सदस्य विद्यमान किंवा माजी
+खासदार/आमदार आहे" — a family member who is a current or former **MP/MLA**. The gold reuses
+PM-KISAN's canonical `holds_constitutional_or_political_post`, which also covers constitutional
+posts, ministers, mayors and district panchayat chairs. A family with a former mayor would be
+wrongly excluded. The `source_clause` calls it "the same real-world concept"; it isn't.
+
+**What would resolve it**: no new source is needed, since the GR is primary and unambiguous. Add a
+narrower `is_current_or_former_mp_or_mla` field for this scheme. It's listed as document-only
+because it's a field-design change for the gold owner to approve rather than a clear error of fact.
+
+**Status**: Open, document-only.
+
+## Test hazard: the gold set exists twice
+
+**Where**: `data/gold/*.json` (read by the app, the evaluation harness and Baseline 2) and the
+Python copies in `tests/gold_fixtures.py` / `tests/fixtures.py` (read by `tests/test_gold_schemes.py`).
+
+**What**: nothing checked the two agreed. A gold fix applied to only one would leave the gold tests
+green while asserting the old behaviour. They were found to be in sync on 2026-10-03, before any
+fix. `tests/gold_fixtures.py`'s docstring also still describes the copies as unverified
+"illustrative test data", which is no longer true.
+
+**Mitigated**: `test_gold_json_and_test_fixture_copies_hold_identical_rules` now fails on any drift,
+and `scripts/audit_gold.py sync` checks the same thing.
+
+**What would resolve it fully**: generate the test copies from `data/gold/` (or have the tests load
+the JSON directly) so there is one source of truth.
+
+**Status**: Mitigated, not resolved.
+
 ## Gold: PM-UJJWALA-2.0's citizenship predicate has no recorded source
 
 **Where**: `data/gold/PM-UJJWALA-2.0.json`, `inclusion.and[2]` —

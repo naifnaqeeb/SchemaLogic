@@ -13,6 +13,31 @@ from tests.gold_fixtures import (
 )
 
 
+def test_gold_json_and_test_fixture_copies_hold_identical_rules():
+    """The gold set exists twice: data/gold/*.json (read by the app, the evaluation harness and
+    Baseline 2) and the Python copies in tests/gold_fixtures.py + tests/fixtures.py (read by every
+    test in this file). Nothing previously checked they agreed, so fixing a rule in only one place
+    would have left these tests green while asserting the OLD behaviour -- found 2026-10-03 while
+    planning the gold-audit fixes. Any gold change must now land in both or this fails."""
+    import json
+    from pathlib import Path
+
+    from tests.fixtures import PM_KISAN
+
+    gold_dir = Path(__file__).resolve().parents[1] / "data" / "gold"
+    copies = {
+        "AB-PMJAY": AB_PMJAY, "IGNOAPS": IGNOAPS, "MH-LADKI-BAHIN": MAHARASHTRA_LADKI_BAHIN,
+        "PM-UJJWALA-2.0": PM_UJJWALA, "PMAY-G": PMAY_G, "PMMVY": PMMVY, "PM-KISAN": PM_KISAN,
+    }
+    assert sorted(copies) == sorted(p.stem for p in gold_dir.glob("*.json")), "a gold scheme has no test copy"
+    for scheme_id, copy in copies.items():
+        disk = Scheme.model_validate(json.loads((gold_dir / f"{scheme_id}.json").read_text(encoding="utf-8")))
+        fixture = Scheme.model_validate(copy)
+        assert disk.model_dump(mode="json", by_alias=True) == fixture.model_dump(mode="json", by_alias=True), (
+            f"{scheme_id}: data/gold JSON and the test fixture copy have drifted apart"
+        )
+
+
 def test_all_gold_schemes_parse():
     for data in (AB_PMJAY, IGNOAPS, PMAY_G, PM_UJJWALA, MAHARASHTRA_LADKI_BAHIN, PMMVY):
         Scheme.model_validate(data)
