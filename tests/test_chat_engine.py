@@ -684,8 +684,10 @@ def test_free_text_numeric_pension_answer_accepted_mid_qa_not_swallowed_by_short
     answer("is_indian_citizen", "Yes")
     answer("owns_cultivable_land_in_records", "Yes")
     answer("paid_income_tax_last_assessment_year", "No")
-    answer("is_serving_or_retired_govt_employee", "Yes")
-    answer("is_group_d_class_iv_or_mts", "Yes")  # exempts the govt-employee exclusion
+    # Not a serving government employee, so the pension question still matters. (Answering "Yes" then
+    # "Group D" -- the original transcript -- no longer reaches it: Group D also exempts the pension
+    # exclusion, so since 2026-10-04 the selector doesn't ask a question that can't change the verdict.)
+    answer("is_serving_or_retired_govt_employee", "No")
 
     q = state["conversation_session"].pending_question
     assert q.field == "monthly_pension_inr"

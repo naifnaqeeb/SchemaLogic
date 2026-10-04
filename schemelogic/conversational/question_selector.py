@@ -4,8 +4,9 @@ conversational layer: it must never guess at a missing fact, only ever ask for i
 
 Walks the trace dict produced by schemelogic.evaluator.symbolic_engine.evaluate(), finds every
 leaf predicate whose `result` is None (which, per that module's own logic, only ever happens when
-the field is genuinely absent from the profile — never for any other reason), and returns the
-FIRST one it finds as a canned question. "First" is deterministic: inclusion tree first
+the field is genuinely absent from the profile — never for any other reason) AND that sits under no
+already-decided node, so its answer could still change the verdict, and returns the FIRST one it
+finds as a canned question. "First" is deterministic: inclusion tree first
 (depth-first, left-to-right), then exclusions in list order — same order the evaluator itself
 walks the scheme, so which question comes first is a direct, explicable function of the scheme
 definition, not an arbitrary choice.
@@ -18,7 +19,7 @@ from typing import Any
 
 import re
 
-from schemelogic.evaluator.symbolic_engine import EvaluationResult, Verdict, evaluate
+from schemelogic.evaluator.symbolic_engine import EvaluationError, EvaluationResult, Verdict, evaluate
 from schemelogic.schema.field_ontology import citizen_question_for
 from schemelogic.schema.models import Scheme
 
@@ -40,11 +41,20 @@ class Question:
     quick_replies: tuple[str, ...] | None  # ("Yes", "No") for boolean, else None
 
 
+# Only UNDETERMINED nodes are descended into. Under Kleene logic a node already True or False stays so
+# however the unknowns beneath it resolve, so nothing under it can change the verdict -- asking about it
+# only lengthens the conversation (PMMVY, 2026-10-03: an SC/ST applicant was asked about nine other
+# categories her answer had already made irrelevant). Conversely every unknown leaf on an all-undetermined
+# path IS still offered, so a fact that could change the verdict is never skipped, and an undetermined
+# verdict always has at least one question.
+
+
 def _walk_inclusion(node: dict[str, Any], out: list[MissingField]) -> None:
+    if node.get("result") is not None:
+        return
     node_type = node.get("type")
     if node_type == "predicate":
-        if node.get("result") is None:
-            out.append(MissingField(field=node["field"], member="self", cat=node.get("cat"), expected_value=node.get("expected")))
+        out.append(MissingField(field=node["field"], member="self", cat=node.get("cat"), expected_value=node.get("expected")))
         return
     if node_type in ("and", "or"):
         for child in node.get("children", []):
@@ -53,28 +63,36 @@ def _walk_inclusion(node: dict[str, Any], out: list[MissingField]) -> None:
 
 def _walk_exclusions(exclusions_trace: list[dict[str, Any]], out: list[MissingField]) -> None:
     for excl in exclusions_trace:
-        for member_entry in excl.get("members", []):
-            pred = member_entry["predicate"]
-            if pred.get("result") is None:
-                out.append(
-                    MissingField(
-                        field=pred["field"], member=member_entry["member"],
-                        cat=pred.get("cat"), expected_value=pred.get("expected"),
+        if excl.get("result") is not None:
+            continue  # already fires, or can't -- including an exclusion its exception has waived
+        excl_except = excl.get("except")  # present only for an applicant-scoped exception
+        condition_open = excl_except is None or excl.get("condition_result") is None
+        if condition_open:
+            for member_entry in excl.get("members", []):
+                if member_entry.get("result") is not None:
+                    continue  # this member's part is decided
+                pred = member_entry["predicate"]
+                if pred.get("result") is None:
+                    out.append(
+                        MissingField(
+                            field=pred["field"], member=member_entry["member"],
+                            cat=pred.get("cat"), expected_value=pred.get("expected"),
+                        )
                     )
-                )
-            except_pred = member_entry.get("except")
-            if except_pred is not None and except_pred.get("result") is None:
-                # Member-scoped exception: a fact about this member, so ask this member.
-                out.append(
-                    MissingField(
-                        field=except_pred["field"], member=member_entry["member"],
-                        cat=None, expected_value=except_pred.get("expected"),
+                except_pred = member_entry.get("except")
+                if except_pred is not None and except_pred.get("result") is None:
+                    # Member-scoped exception: a fact about this member, so ask this member. (The row
+                    # is undetermined, so its condition isn't False: the exception still matters.)
+                    out.append(
+                        MissingField(
+                            field=except_pred["field"], member=member_entry["member"],
+                            cat=None, expected_value=except_pred.get("expected"),
+                        )
                     )
-                )
-        # Applicant-scoped exception (models.ExceptScope): the evaluator records it ONCE, at
-        # exclusion level, read from the applicant's record. Ask the applicant -- never "one of your
-        # family members", whose record the evaluator doesn't read for it.
-        excl_except = excl.get("except")
+        # Applicant-scoped exception (models.ExceptScope): recorded ONCE, at exclusion level, read from
+        # the applicant's record. Ask the applicant -- never "one of your family members", whose record
+        # the evaluator doesn't read for it. (The exclusion is undetermined, so its condition isn't
+        # False and the exception still matters.)
         if excl_except is not None and excl_except.get("result") is None:
             out.append(
                 MissingField(
@@ -85,8 +103,10 @@ def _walk_exclusions(exclusions_trace: list[dict[str, Any]], out: list[MissingFi
 
 
 def find_missing_fields(result: EvaluationResult) -> list[MissingField]:
-    """Every missing fact in the trace, in evaluation order (inclusion tree, then exclusions),
-    NOT deduplicated by field name — the same field can legitimately be missing for two different
+    """The missing facts under no already-decided node, in evaluation order (inclusion tree, then
+    exclusions). Never leaves out a fact whose answer could change the verdict; when one fact feeds
+    several rules it can include some that can't, which select_next_question filters out. NOT
+    deduplicated by field name — the same field can legitimately be missing for two different
     members (e.g. self and family_member[0]), and those are two different questions."""
     out: list[MissingField] = []
     _walk_inclusion(result.trace["inclusion"], out)
@@ -155,6 +175,110 @@ def build_question(missing: MissingField) -> Question:
     )
 
 
+# --- exact relevance ------------------------------------------------------------------------------
+# The walk above is exact while each field appears once. When one fact feeds several rules (AB-PMJAY's
+# 70+ age waives all 14 exclusions; PM-KISAN's Group D carve-out sits on two), a fact can sit on an
+# undetermined path and still be unable to change the verdict -- e.g. with a refrigerator owned and age
+# unknown, AB-PMJAY's vehicle question can't matter: 70+ waives everything, under 70 the refrigerator
+# excludes. So before asking, the selector PROVES the answer could change the verdict.
+
+
+class _SearchBudgetExceeded(Exception):
+    pass
+
+
+_SEARCH_BUDGET = 20_000  # evaluate() calls per candidate; far above anything the gold schemes need
+
+
+def _candidate_values(scheme: Scheme, field: str) -> list[Any]:
+    """Values covering every region the scheme's predicates on `field` distinguish: each side of and on
+    every numeric threshold (with midpoints, so thresholds closer than 1 apart are still separated),
+    True/False for booleans, each listed value plus one that matches none for strings and lists."""
+    values: list[Any] = []
+    numbers: set[float] = set()
+
+    def visit(pred: Any) -> None:
+        if pred.field != field:
+            return
+        v = pred.value
+        if isinstance(v, bool):
+            values.extend((True, False))
+        elif isinstance(v, (int, float)):
+            numbers.add(v)
+        elif isinstance(v, list):
+            values.extend(v)
+            values.append("__none_of_these__")
+        else:
+            values.extend((v, "__none_of_these__"))
+
+    def walk(node: Any) -> None:
+        children = getattr(node, "and_", None) or getattr(node, "or_", None)
+        if children is not None:
+            for child in children:
+                walk(child)
+        else:
+            visit(node)
+
+    walk(scheme.inclusion)
+    for excl in scheme.exclusions:
+        visit(excl)
+        if excl.except_ is not None:
+            visit(excl.except_)
+    if numbers:
+        ordered = sorted(numbers)
+        values.extend(ordered)
+        values.extend((ordered[0] - 1, ordered[-1] + 1))
+        values.extend((a + b) / 2 for a, b in zip(ordered, ordered[1:]))
+    return list(dict.fromkeys(values))  # stable de-duplication
+
+
+def _with(profile: dict[str, Any], assignment: dict[tuple[str, str], Any]) -> dict[str, Any]:
+    filled = {"self": dict(profile.get("self", {})),
+              "family_members": [dict(m) for m in profile.get("family_members", [])]}
+    if "family_members" not in profile:
+        del filled["family_members"]  # keep "no key" distinct from "empty family"
+    for (member, field), value in assignment.items():
+        record = filled["self"] if member == "self" else filled["family_members"][int(member[len("family_member["):-1])]
+        record[field] = value
+    return filled
+
+
+def _could_change_verdict(scheme: Scheme, profile: dict[str, Any], target: tuple[str, str]) -> bool:
+    """Is there some way of answering the OTHER missing facts under which two answers to `target` give
+    different verdicts? Depth-first over the other facts, pruned by the evaluator itself: a branch ends
+    as soon as every answer to `target` gives the same definite verdict (nothing below can separate
+    them -- definite verdicts are sound) or two answers give different definite verdicts (a witness)."""
+    target_values = _candidate_values(scheme, target[1])
+    calls = [0]
+
+    def search(assignment: dict[tuple[str, str], Any]) -> bool:
+        results = []
+        for value in target_values:
+            calls[0] += 1
+            if calls[0] > _SEARCH_BUDGET:
+                raise _SearchBudgetExceeded
+            results.append(evaluate(scheme, _with(profile, {**assignment, target: value})))
+        definite = {r.verdict for r in results if r.verdict != Verdict.UNDETERMINED}
+        if len(definite) > 1:
+            return True
+        open_results = [r for r in results if r.verdict == Verdict.UNDETERMINED]
+        if not open_results:
+            return False
+        branch = next(
+            ((m.member, m.field) for r in open_results for m in find_missing_fields(r)
+             if (m.member, m.field) != target and (m.member, m.field) not in assignment),
+            None,
+        )
+        if branch is None:
+            return True  # unreachable (an undetermined result always has an open fact); if not, ask
+        return any(search({**assignment, branch: v}) for v in _candidate_values(scheme, branch[1]))
+
+    try:
+        return search({})
+    except (_SearchBudgetExceeded, EvaluationError):
+        return True  # can't prove it irrelevant: ask, as the structural walk alone would
+
+
 def select_next_question(scheme: Scheme, profile: dict[str, Any]) -> Question | None:
     """Returns None once the profile already has enough information for a definite verdict
     (ELIGIBLE or INELIGIBLE) — the caller should stop asking questions and move to the final
@@ -170,4 +294,11 @@ def select_next_question(scheme: Scheme, profile: dict[str, Any]) -> Question | 
             f"verdict is undetermined_missing_facts but no missing leaf predicate found in trace "
             f"for scheme {scheme.scheme_id!r} — evaluator/trace-walker mismatch"
         )
-    return build_question(missing[0])
+    candidates = list(dict.fromkeys(missing))  # the same fact can be offered by several rules
+    for candidate in candidates:
+        if _could_change_verdict(scheme, profile, (candidate.member, candidate.field)):
+            return build_question(candidate)
+    # No single answer can change the verdict, yet the evaluator can't decide: the fact feeding several
+    # rules cancels out (KNOWN_ISSUES, "Kleene evaluation is incomplete..."). Asking the first fact
+    # resolves that, and is the only way the conversation reaches the verdict every answer leads to.
+    return build_question(candidates[0])

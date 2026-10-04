@@ -141,7 +141,7 @@ re-derive them alongside the change.
 
 **Status**: Open as of 2026-10-04.
 
-## Question selector asks about branches that are already decided
+## [RESOLVED 2026-10-04] Question selector asks about branches that are already decided
 
 **Where**: `schemelogic/conversational/question_selector.py`, `_walk_inclusion()` /
 `find_missing_fields()`.
@@ -173,7 +173,21 @@ doesn't encode the current over-asking as expected behaviour.
 **Why not fixed here**: it changes the question order of every OR-structured conversation, gold and
 AI-Checked, which is outside a gold-data fix and deserves its own review.
 
-**Status**: Open as of 2026-10-03.
+**Status**: **Resolved 2026-10-04.** `find_missing_fields` descends only into undetermined nodes
+(inclusion nodes, exclusions, member rows), so nothing under a decided branch is offered — exact when
+each fact appears once. Where one fact feeds several rules (AB-PMJAY's age waives all 14 exclusions;
+PM-KISAN's Group D carve-out sits on two), a fact can sit on an undetermined path and still be unable
+to change the verdict, so `select_next_question` also proves relevance before asking: a deterministic
+search over the other missing facts (values on each side of every threshold), pruned by the
+evaluator's own definite verdicts. A brute-force oracle over every gold scheme (361 partial profiles)
+confirms each question asked can change the verdict and that no fact that could is withheld. The
+PMMVY sequence is now age → SC/ST → birth order (3 questions, was 12). Over simulated chats on every
+gold profile, 15% fewer questions (452 → 383) with identical verdicts; the slowest turn took 19 ms.
+One exception, by necessity: when the evaluator is undetermined only through the incompleteness in
+"Kleene evaluation is incomplete…" above, no single answer can change the verdict, and the selector
+asks the first candidate so the conversation can reach it. PMMVY's "precise floor placed LAST"
+ordering workaround is no longer needed; it is harmless and was left in the gold as is, and that
+`source_clause` remark about the selector is now historical.
 
 ## [RESOLVED 2026-10-03] Gold: PMMVY age floor is 18, the source says 18 years 7 months
 
