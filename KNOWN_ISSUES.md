@@ -53,6 +53,73 @@ The 40-year-old is now ineligible; every other profile is unchanged. Baseline 2 
 draft both make the old household reading, so each gains a false positive on the new profile
 (`docs/GOLD_AUDIT_2026-10-03.md` §6.7, §7.6). Still not modelled: asking on a senior's behalf.
 
+## Schema expressiveness limits (second except_scope review, finding 12)
+
+**Where**: `schemelogic/schema/models.py` — what an `Exclusion` and its `except` can say. Found
+2026-10-04 by the second independent review, checking the AB-PMJAY 70+ guidelines against the
+mechanism. The 70+ route itself is expressible (now encoded, `docs/GOLD_AUDIT_2026-10-03.md` §6.7);
+these parts are not:
+
+- **(a) An exception with more than one condition.** `except` is a single `SimplePredicate`. "Except
+  aged 70+ OR (some other condition)" needs a derived boolean field. Splitting it into two exclusions
+  is wrong: two exclusions each excepting one condition give `P ∧ ¬(w1 ∧ w2)`, not `P ∧ ¬(w1 ∨ w2)`.
+- **(b) The route condition is restated, not referenced.** AB-PMJAY's waiver repeats `age >= 70` in
+  the inclusion and 14 exceptions; nothing ties them together, so an edit to one can drift from the
+  others. Route-scoped exclusions ("this exclusion applies to routes X, Y only") would be the faithful
+  encoding. Today only the gold sync and AB-PMJAY tests would catch a drift.
+- **(c) Choices are not rules.** A 70+ senior already in CGHS/ECHS/CAPF or a state scheme chooses
+  between it and AB-PMJAY — an election, not an exclusion. Already recorded in AB-PMJAY's
+  `source_clause` as unmodelled; MH-LADKI-BAHIN's "one unmarried woman" rule is the same shape.
+- **(d) Who counts as family.** The guidelines' family is spouse, *dependent* parents and children,
+  and other dependants. The evaluator takes `family_members` as given and can't test dependency.
+- **(e) Database status vs current facts.** The SECC exclusions describe a household's 2011 SECC
+  record but are encoded as current facts (`owns_refrigerator`). The shared cover and top-ups in
+  §5.1/5.2 are benefit amounts, not eligibility, and aren't modelled.
+- **(f) Outside the text.** The guideline excerpt doesn't say whether SECC automatic inclusion
+  overrides automatic exclusion, and lists only rural parameters.
+
+**Why deferred**: each needs a schema extension (OR-exceptions, route references, election rules) or
+a data decision; none produces a wrong verdict on the current gold. **Suggested fix**: (a) and (b)
+first — an `except` that accepts an AND/OR node, and an optional `applies_to_routes` on exclusions.
+
+## Kleene evaluation is incomplete when one field feeds several predicates (second review, finding 5)
+
+**Where**: `schemelogic/evaluator/symbolic_engine.py`. **What**: three-valued evaluation treats each
+missing fact as independent at every place it's read, so a field used twice can leave a verdict
+undetermined though every value of it decides the same way. Minimal case: exclusion
+`some_family_member a == 1 except a == 1 (applicant scope)`, applicant's `a` missing — the condition
+on the applicant's row and the waiver cancel for every value of `a`, but the verdict is undetermined.
+
+**Not a safety issue**: it is *sound* — never a wrong definite verdict (30,000-case soundness fuzz, 0
+violations) — only sometimes asks a question it didn't need to. It predates `except_scope`; member
+scope has the same gap within one member. `tests/test_engine_fuzz.py` prints the rate on every run
+(about 15% of undetermined results on its random schemes; 0 when fields are disjoint).
+
+**Possible follow-up (cheap)**: a validator *warning* when an exclusion's `except` tests the same
+field as its condition — the only shape in which applicant scope adds a new instance. Not an error:
+such a rule can be legitimate.
+
+## Conversational flow: family facts default to "no family" (second review, finding 7 — investigated, awaiting decision)
+
+**Where**: `schemelogic/conversational/session.py` (`ConversationSession.profile` starts as
+`{"self": {}, "family_members": []}`), `question_selector.py` (asks only about members already in the
+list), `intake.py`. **What**: every chat begins with an explicit empty family, and nothing asks how
+many family members there are, so `some_family_member` / `all_family_members` / count exclusions are
+evaluated over the applicant alone unless the opening message happened to describe relatives. For
+most family-quantified fields the ontology's question to the applicant is phrased for the household
+("Did you **or a family member** pay income tax?"), and the answer, stored on the applicant, covers
+it. Three are not: `monthly_income_inr` (AB-PMJAY, PMAY-G: "What is the monthly income…?"),
+`monthly_pension_inr` and `is_nri_per_income_tax_act_1961` (PM-KISAN, applicant-only wording). For
+those, a relative's disqualifying fact is never asked, and the chat can say **eligible**.
+
+**Impact of the proposed engine rule** (absent key = family unknown → undetermined for non-self
+quantifiers; `[]` = no family): measured 2026-10-04 with a patched evaluator, nothing committed.
+0 of 75 gold profiles change verdict; 1 test changes (the one pinning today's behaviour); 0 chat
+sessions change, because the chat always has the key. Starting the chat *without* the key removes
+every wrong definite answer in a simulation, but the selector then asks about `family_member[0]`,
+`[1]`, … with no way to say "no one else" — it needs a household-size question to be usable.
+Full numbers in the 2026-10-04 report.
+
 ## Structural F1 never scores `except` clauses
 
 **Where**: `schemelogic/evaluation/structural_f1.py` — `FlatPredicate.match_key()` is
