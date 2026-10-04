@@ -885,3 +885,25 @@ def test_the_same_counts_are_accepted_with_applicant_scope_or_no_exception(op):
     data = _member_scoped_count_scheme(op, 1)
     data["exclusions"][0].update({"except": None})
     assert Scheme.model_validate(data).exclusions[0].except_ is None
+
+
+# --- a malformed waiver fact raises, even when the exclusion can't fire (second review, finding 3) --
+# Decided 2026-10-04: keep the raise. A fact of the wrong type is a data-quality problem the evaluator
+# refuses to paper over, wherever it sits -- the conversational layer turns it into a plain message,
+# never a verdict (tests/test_chat_engine.py).
+
+
+@pytest.mark.parametrize("scope,quantifier", [("applicant", "some_family_member"), ("member", "some_family_member"),
+                                              ("member", "self")])
+def test_a_wrongly_typed_exception_fact_raises_even_when_the_condition_is_false(scope, quantifier):
+    data = _route_scheme("some_family_member").model_dump(mode="json", by_alias=True)
+    data["exclusions"][0].update(quantifier=quantifier, except_scope=scope,
+                                 **{"except": {"field": "age_years", "op": ">=", "value": 70}})
+    scheme = Scheme.model_validate(data)
+    profile = {"self": {"is_poor": True, "pays_tax": False, "age_years": "seventy"},
+               "family_members": [{"pays_tax": False, "age_years": 40}]}
+    with pytest.raises(EvaluationError, match="cannot compare"):
+        evaluate(scheme, profile)
+    # the same scheme without the exception is ELIGIBLE: the raise is about the bad fact, not a verdict
+    data["exclusions"][0].update({"except": None, "except_scope": "member"})
+    assert evaluate(Scheme.model_validate(data), profile).verdict == E

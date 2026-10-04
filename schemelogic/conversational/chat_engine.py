@@ -35,6 +35,7 @@ from schemelogic.conversational.answer_parser import AnswerParseResult
 from schemelogic.conversational.intake import IntakeResult, parse_opening_message
 from schemelogic.conversational.phrasing import phrase_verdict, verdict_headline
 from schemelogic.conversational.session import AnswerParseError, ConversationSession
+from schemelogic.evaluator.symbolic_engine import EvaluationError
 from schemelogic.discovery.indexer import (
     DescriptionMatch,
     NextSteps,
@@ -377,18 +378,40 @@ def _advance(state: State, deps: ChatDeps) -> None:
     verdict (see this module's own top-level invariant note)."""
     session: ConversationSession = state["conversation_session"]
     tier = state["conversation_tier"]
-    q = session.advance()
+    try:
+        q = session.advance()
+        result = session.current_result() if q is None else None
+    except EvaluationError as exc:
+        _evaluation_failed(state, session, exc)
+        return
     if q is not None:
         _say(state, q.prompt, kind="question", quick_replies=q.quick_replies)
         return
 
-    result = session.current_result()
     phrased = phrase_verdict(result, language=deps.language)
     next_steps = _resolve_next_steps(session.scheme.scheme_id, tier, deps)
     _say(
         state, phrased, kind="verdict",
         verdict_value=result.verdict.value, headline=verdict_headline(result), trace=result.trace,
         scheme_id=session.scheme.scheme_id, tier=tier, next_steps=next_steps,
+    )
+    state["conversation_session"] = None
+    state["conversation_tier"] = None
+
+
+def _evaluation_failed(state: State, session: ConversationSession, exc: EvaluationError) -> None:
+    """The evaluator refuses to compare facts of the wrong type (e.g. a word where a number belongs,
+    which the intake parser can produce) rather than guess -- see symbolic_engine.EvaluationError.
+    That is not a verdict, so none is shown: the citizen is told plainly, pointed to the local
+    office, and the session ends so the bad fact isn't re-evaluated on every later message."""
+    _say(
+        state,
+        f"I couldn't work out a result for {session.scheme.scheme_id}: one of the answers I have isn't in "
+        "a form the scheme's rules can use (for example, words where a number was needed), and I won't "
+        "guess. This is not a decision about your eligibility. You can start the check again, or ask "
+        "at your local office.",
+        # kind stays "text" so both UIs render it; `error` marks it for anything that needs to tell
+        error="evaluation_error", scheme_id=session.scheme.scheme_id, detail=str(exc),
     )
     state["conversation_session"] = None
     state["conversation_tier"] = None

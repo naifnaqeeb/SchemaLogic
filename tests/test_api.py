@@ -257,3 +257,17 @@ def test_select_silver_scheme_extraction_failure_degrades_to_scheme_detail_via_a
     # scheme_detail's record/description text must already be mojibake-clean (fixed at the data
     # layer -- this just confirms the API doesn't reintroduce corruption on the way out)
     assert "â€" not in str(detail_msg["record"])
+
+
+def test_an_evaluation_error_reaches_the_api_as_a_message_not_a_500():
+    from schemelogic.conversational.examples import ExampleProfile
+
+    bad = ExampleProfile(label="bad-type", scheme_id="PM-KISAN", description="test only",
+                         profile={"self": {"monthly_pension_inr": "ten thousand"}, "family_members": []})
+    with patch("api.main.EXAMPLES", [bad]):
+        r = client.post("/chat/example", json={"session_id": _new_session_id("bad-type"), "label": "bad-type"})
+    assert r.status_code == 200
+    body = r.json()
+    assert [m["error"] for m in body["messages"] if m.get("error")] == ["evaluation_error"]
+    assert not [m for m in body["messages"] if m["kind"] == "verdict"]
+    assert body["pending_question"] is None

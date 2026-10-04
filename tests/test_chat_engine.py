@@ -791,3 +791,50 @@ def test_deps_language_threaded_into_answer_parser_call(state, deps):
     ) as mock_parse:
         chat_engine.handle_user_message(state, "I just turned 25", deps)
     assert mock_parse.call_args.kwargs["language"] == "hi"
+
+
+# --- a fact the evaluator refuses to compare (EvaluationError) --------------------------------------
+# The evaluator raises rather than guess when a fact has the wrong type -- e.g. the intake LLM writing
+# "twenty five" into a numeric field. That must reach the citizen as a plain message, never a crash and
+# never a verdict (decided 2026-10-04, second independent review, finding 3).
+
+
+def _assert_graceful_evaluation_failure(state):
+    errors = [m for m in state["messages"] if m.get("error") == "evaluation_error"]
+    assert len(errors) == 1
+    assert errors[0]["kind"] == "text"  # rendered by both UIs
+    assert "not a decision about your eligibility" in errors[0]["text"]
+    assert "local office" in errors[0]["text"]
+    assert not [m for m in state["messages"] if m["kind"] == "verdict"]
+    assert state["conversation_session"] is None  # the bad fact isn't re-evaluated on every message
+
+
+def test_wrongly_typed_fact_from_intake_gives_a_plain_message_not_a_crash(state, deps):
+    state["query_context"] = "I am twenty five and a citizen"
+    with patch(
+        "schemelogic.conversational.chat_engine.parse_opening_message",
+        return_value=IntakeResult(profile={"self": {"age": "twenty five"}, "family_members": []},
+                                  provider_used="groq", raw_content="{}"),
+    ), patch("schemelogic.conversational.chat_engine.phrase_verdict") as mock_phrase:
+        chat_engine.select_scheme(state, "TEST", "gold", deps)
+    mock_phrase.assert_not_called()
+    _assert_graceful_evaluation_failure(state)
+
+
+def test_wrongly_typed_fact_in_an_initial_profile_gives_a_plain_message(state, deps):
+    chat_engine.select_scheme(state, "TEST", "gold", deps,
+                              initial_profile={"self": {"age": 30, "is_citizen": True, "is_wealthy": False},
+                                               "family_members": [{"age": "old"}]})
+    # family facts don't reach TEST's rules, so this one is fine; now a bad applicant fact:
+    state2: dict = {}
+    chat_engine.init_state(state2)
+    chat_engine.select_scheme(state2, "TEST", "gold", deps, initial_profile={"self": {"age": [30]}})
+    _assert_graceful_evaluation_failure(state2)
+
+
+def test_after_an_evaluation_failure_the_citizen_can_start_again(state, deps):
+    chat_engine.select_scheme(state, "TEST", "gold", deps, initial_profile={"self": {"age": "x"}})
+    _assert_graceful_evaluation_failure(state)
+    chat_engine.select_scheme(state, "TEST", "gold", deps)
+    assert state["conversation_session"] is not None
+    assert state["messages"][-1]["kind"] == "question"
