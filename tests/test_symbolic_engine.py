@@ -854,3 +854,34 @@ def test_trace_consumers_handle_an_applicant_scoped_waiver():
     assert "Applies to you" not in text
     assert "eligible" in plain_template_answer(result).lower()
     find_missing_fields(result)  # must not raise on rows without `except`
+
+
+# --- member-scoped exceptions and "<", "<=", "==" counts (second review, finding 6) -------------
+
+
+def _member_scoped_count_scheme(op: str, n: int) -> dict:
+    data = _route_scheme("count_family_members", op if op in (">", ">=") else ">", n).model_dump(mode="json", by_alias=True)
+    data["exclusions"][0].update(count_op=op, except_scope="member")
+    return data
+
+
+@pytest.mark.parametrize("op", ["<", "<=", "=="])
+def test_member_scoped_exception_with_a_count_that_could_be_triggered_by_it_is_rejected(op):
+    """The review's reproducer: count `< 1` taxpayers, member-scoped exception. A taxpaying member the
+    exception exempts drops out of the count -- 0 taxpayers -- so "< 1" fired BECAUSE of the
+    exception (INELIGIBLE, where the same scheme without the exception said ELIGIBLE)."""
+    with pytest.raises(ValueError, match=f"cannot be combined with count_op '{op}'"):
+        Scheme.model_validate(_member_scoped_count_scheme(op, 1))
+
+
+@pytest.mark.parametrize("op", [">", ">="])
+def test_member_scoped_exception_with_a_count_it_can_only_lower_is_accepted(op):
+    assert Scheme.model_validate(_member_scoped_count_scheme(op, 1)).exclusions[0].count_op.value == op
+
+
+@pytest.mark.parametrize("op", ["<", "<=", "=="])
+def test_the_same_counts_are_accepted_with_applicant_scope_or_no_exception(op):
+    assert _route_scheme("count_family_members", op, 1).exclusions[0].except_scope.value == "applicant"
+    data = _member_scoped_count_scheme(op, 1)
+    data["exclusions"][0].update({"except": None})
+    assert Scheme.model_validate(data).exclusions[0].except_ is None

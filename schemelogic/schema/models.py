@@ -147,6 +147,17 @@ class Exclusion(Predicate):
             # A self-quantified exclusion only ever reads the applicant, so applicant scope changes
             # nothing -- accepting it would only hide an authoring or extraction mistake.
             raise ValueError("except_scope 'applicant' has no effect with quantifier 'self'; use 'member'")
+        if (
+            self.except_ is not None and self.except_scope == ExceptScope.MEMBER
+            and self.count_op in (CountOperator.LT, CountOperator.LTE, CountOperator.EQ)
+        ):
+            # A member-scoped exception exempts members from the count, which LOWERS it -- under
+            # "<", "<=" or "==" that can make the exclusion fire because of the exception (second
+            # independent review, 2026-10-04, finding 6).
+            raise ValueError(
+                f"a member-scoped `except` cannot be combined with count_op '{self.count_op.value}': "
+                "exempting a member lowers the count, so the exception could trigger the exclusion"
+            )
         return self
 
     @model_validator(mode="after")

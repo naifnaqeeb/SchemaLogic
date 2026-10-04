@@ -51,6 +51,14 @@ QUANTIFIERS = ("self", "some_family_member", "all_family_members", "count_family
 COUNT_OPS = ("<", "<=", "==", ">", ">=")
 
 
+def _count_ops_for(excl: dict) -> tuple[str, ...]:
+    """A member-scoped exception can't be combined with "<", "<=" or "==" (models.Exclusion rejects
+    it: exempting a member lowers the count, so the exception could trigger the exclusion)."""
+    if excl.get("except") and excl.get("except_scope", "member") == "member":
+        return (">", ">=")
+    return COUNT_OPS
+
+
 def _scheme(inclusion: dict, exclusions: list[dict]) -> dict:
     return {
         "scheme_id": "FUZZ", "unit_of_eligibility": "family", "inclusion": inclusion, "exclusions": exclusions,
@@ -81,7 +89,7 @@ def _member_scope_scheme(rng: random.Random) -> dict:
             if rng.random() < 0.5:
                 excl["except_scope"] = "member"  # explicit default must equal omitted default
         if quantifier == "count_family_members":
-            excl["count_op"], excl["count"] = rng.choice(COUNT_OPS), rng.randint(0, 3)
+            excl["count_op"], excl["count"] = rng.choice(_count_ops_for(excl)), rng.randint(0, 3)
         elif rng.random() < 0.2 and quantifier == "self":
             del excl["quantifier"]  # omitted quantifier must equal explicit "self"
         exclusions.append(excl)
@@ -164,7 +172,7 @@ def _exclusion(rng: random.Random, applicant_scope: bool | None = None) -> dict:
         if applicant_scope or (quantifier != "self" and rng.random() < 0.6):
             excl["except_scope"] = "applicant"
     if quantifier == "count_family_members":
-        excl["count_op"], excl["count"] = rng.choice(COUNT_OPS), rng.randint(0, 3)
+        excl["count_op"], excl["count"] = rng.choice(_count_ops_for(excl)), rng.randint(0, 3)
     return excl
 
 
@@ -311,19 +319,23 @@ def _without_exceptions(data: dict) -> dict:
     return data
 
 
-def test_applicant_scoped_exception_never_makes_a_verdict_worse_than_no_exception():
-    """The defining property of a waiver, against the no-exception baseline and with missing facts:
-    never ELIGIBLE -> UNDETERMINED/INELIGIBLE, never UNDETERMINED -> INELIGIBLE."""
+@pytest.mark.parametrize("scope", ["applicant", "any"])
+def test_an_exception_never_makes_a_verdict_worse_than_no_exception(scope):
+    """The defining property of an exception, against the no-exception baseline and with missing facts:
+    never ELIGIBLE -> UNDETERMINED/INELIGIBLE, never UNDETERMINED -> INELIGIBLE. Holds for member scope
+    too now that member-scoped exceptions can't be combined with "<", "<=" or "==" counts."""
     rng = random.Random(17)
     worse = []
     for _ in range(PROPERTY_CASES):
-        data = _scheme(_inclusion(rng), [_exclusion(rng, applicant_scope=True) for _ in range(rng.randint(1, 2))])
+        exclusions = [_exclusion(rng, applicant_scope=True if scope == "applicant" else None)
+                      for _ in range(rng.randint(1, 2))]
+        data = _scheme(_inclusion(rng), exclusions)
         profile = _partial_profile(rng)
         with_exception = engine.evaluate(Scheme.model_validate(data), profile).verdict
         baseline = engine.evaluate(Scheme.model_validate(_without_exceptions(data)), profile).verdict
         if _RANK[with_exception] < _RANK[baseline]:
             worse.append((data, profile, baseline, with_exception))
-    print(f"\n[no worse off] {PROPERTY_CASES:,} cases, {len(worse)} made worse by the exception")
+    print(f"\n[no worse off, {scope} scope] {PROPERTY_CASES:,} cases, {len(worse)} made worse by an exception")
     assert not worse, worse[:2]
 
 
