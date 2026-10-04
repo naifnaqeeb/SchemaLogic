@@ -1,0 +1,143 @@
+{
+  "run": "baseline2_direct_llm (re-scored against corrected gold)",
+  "date": "2026-10-04",
+  "methodology_module": "schemelogic/evaluation/direct_llm_baseline.py",
+  "rescoring": "Answers reused verbatim wherever a profile's facts are byte-identical to an earlier run's (the LLM never sees the gold); only new profiles were asked. See answer_source.",
+  "gold_fixes": "docs/GOLD_AUDIT_2026-10-03.md section 6",
+  "label": "pmay-g-updated-doc",
+  "token_budget": 40000,
+  "tokens_spent_estimated": 32452,
+  "token_note": "ESTIMATED from document size; ProviderResult does not surface usage.",
+  "schemes_completed": [
+    "PMAY-G"
+  ],
+  "schemes_not_attempted": [],
+  "stopped_reason": null,
+  "reports": [
+    {
+      "scheme_id": "PMAY-G",
+      "n_profiles": 14,
+      "agreement_rate": 1.0,
+      "harmful_positive_rate": 0.0,
+      "counts": {
+        "agree": 14
+      },
+      "tokens_used": 32452,
+      "failures": [],
+      "comparisons": [
+        {
+          "profile_id": "eligible_baseline",
+          "baseline_verdict": "eligible",
+          "evaluator_verdict": "eligible",
+          "relation": "agree",
+          "baseline_reason": "The applicant lives in a kutcha house with two rooms and meets the inclusion criteria, and does not satisfy any of the revised exclusion parameters.",
+          "answer_source": "new_llm_call"
+        },
+        {
+          "profile_id": "income_over_ceiling",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "agree",
+          "baseline_reason": "A family member earns more than the Rs 15,000 monthly income limit, triggering automatic exclusion.",
+          "answer_source": "new_llm_call"
+        },
+        {
+          "profile_id": "missing_housing_status_undetermined",
+          "baseline_verdict": "unsure",
+          "evaluator_verdict": "undetermined_missing_facts",
+          "relation": "agree",
+          "baseline_reason": "Applicant meets no exclusion criteria, but the required housing condition (houseless or kuccha house with ≤2 rooms) is not specified.",
+          "answer_source": "new_llm_call"
+        },
+        {
+          "profile_id": "secc_automatically_included_regardless_of_housing",
+          "baseline_verdict": "eligible",
+          "evaluator_verdict": "eligible",
+          "relation": "agree",
+          "baseline_reason": "The applicant is marked as automatically included under SECC criteria and does not meet any of the revised exclusion parameters.",
+          "answer_source": "new_llm_call"
+        },
+        {
+          "profile_id": "refrigerator",
+          "baseline_verdict": "eligible",
+          "evaluator_verdict": "eligible",
+          "relation": "agree",
+          "baseline_reason": "Applicant meets the Kuccha‑house eligibility and does not meet any of the revised exclusion criteria.",
+          "answer_source": "new_llm_call"
+        },
+        {
+          "profile_id": "landline_phone",
+          "baseline_verdict": "eligible",
+          "evaluator_verdict": "eligible",
+          "relation": "agree",
+          "baseline_reason": "The applicant lives in a kutcha house with ≤2 rooms and meets no revised exclusion criteria (no pucca house, no high income, no prohibited assets, no govt employment, etc.).",
+          "answer_source": "new_llm_call"
+        },
+        {
+          "profile_id": "irrigated_land_over_threshold",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "agree",
+          "baseline_reason": "Applicant owns more than 2.5 acres of irrigated land, which is an automatic exclusion criterion under the revised PMAY‑G rules.",
+          "answer_source": "new_llm_call"
+        },
+        {
+          "profile_id": "mechanized_agri_equipment",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "agree",
+          "baseline_reason": "The applicant owns mechanised three/four-wheeler agricultural equipment, which is listed among the automatic exclusion criteria for PMAY‑G.",
+          "answer_source": "new_llm_call"
+        },
+        {
+          "profile_id": "non_agricultural_enterprise",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "agree",
+          "baseline_reason": "The applicant owns a non‑agricultural enterprise registered with the government, which is a listed automatic exclusion criterion under the revised PMAY‑G rules.",
+          "answer_source": "new_llm_call"
+        },
+        {
+          "profile_id": "income_tax_family_member",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "agree",
+          "baseline_reason": "A family member pays income tax, which triggers an automatic exclusion under the revised criteria.",
+          "answer_source": "new_llm_call"
+        },
+        {
+          "profile_id": "professional_tax_family_member",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "agree",
+          "baseline_reason": "A family member pays professional tax, which is listed as an automatic exclusion criterion under the revised PMAY‑G rules.",
+          "answer_source": "new_llm_call"
+        },
+        {
+          "profile_id": "unirrigated_land_five_acres",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "agree",
+          "baseline_reason": "Applicant owns 5 acres of unirrigated land, which meets exclusion criterion x (own 5 acres or more of unirrigated land).",
+          "answer_source": "new_llm_call"
+        },
+        {
+          "profile_id": "irrigated_land_exactly_two_and_a_half_acres",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "agree",
+          "baseline_reason": "The household owns 2.5 acres of irrigated land, meeting the exclusion criterion of owning 2.5 acres or more of irrigated land.",
+          "answer_source": "new_llm_call"
+        },
+        {
+          "profile_id": "kutcha_house_with_three_rooms",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "agree",
+          "baseline_reason": "Applicant's house has more than 2 rooms, which triggers exclusion under Step 1 of the revised criteria.",
+          "answer_source": "new_llm_call"
+        }
+      ]
+    }
+  ]
+}

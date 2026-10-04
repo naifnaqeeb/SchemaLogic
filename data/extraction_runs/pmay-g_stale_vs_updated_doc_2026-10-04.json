@@ -1,0 +1,410 @@
+{
+  "rows": [
+    {
+      "run": "PMAY-G_gpt-oss-120b_gated_20260818T031713.json",
+      "scheme_id": "PMAY-G",
+      "source_document_sha256": null,
+      "outcome_equivalence": {
+        "n_profiles": 14,
+        "agreement_rate": 0.5,
+        "false_positive_eligible_rate": 0.35714285714285715,
+        "false_negative_eligible_rate": 0.14285714285714285,
+        "other_mismatch_rate": 0.0
+      },
+      "disagreements": [
+        {
+          "profile_id": "income_over_ceiling",
+          "gold_verdict": "ineligible",
+          "draft_verdict": "eligible",
+          "agree": false,
+          "disagreement_type": "false_positive_eligible"
+        },
+        {
+          "profile_id": "refrigerator",
+          "gold_verdict": "eligible",
+          "draft_verdict": "ineligible",
+          "agree": false,
+          "disagreement_type": "false_negative_eligible"
+        },
+        {
+          "profile_id": "landline_phone",
+          "gold_verdict": "eligible",
+          "draft_verdict": "ineligible",
+          "agree": false,
+          "disagreement_type": "false_negative_eligible"
+        },
+        {
+          "profile_id": "professional_tax_family_member",
+          "gold_verdict": "ineligible",
+          "draft_verdict": "eligible",
+          "agree": false,
+          "disagreement_type": "false_positive_eligible"
+        },
+        {
+          "profile_id": "unirrigated_land_five_acres",
+          "gold_verdict": "ineligible",
+          "draft_verdict": "eligible",
+          "agree": false,
+          "disagreement_type": "false_positive_eligible"
+        },
+        {
+          "profile_id": "irrigated_land_exactly_two_and_a_half_acres",
+          "gold_verdict": "ineligible",
+          "draft_verdict": "eligible",
+          "agree": false,
+          "disagreement_type": "false_positive_eligible"
+        },
+        {
+          "profile_id": "kutcha_house_with_three_rooms",
+          "gold_verdict": "ineligible",
+          "draft_verdict": "eligible",
+          "agree": false,
+          "disagreement_type": "false_positive_eligible"
+        }
+      ],
+      "structural_f1": {
+        "category": "__overall__",
+        "tp": 8,
+        "fp": 6,
+        "fn": 7,
+        "precision": 0.5714,
+        "recall": 0.5333,
+        "f1": 0.5517
+      },
+      "structural_diff": {
+        "inclusion_diff": {
+          "exact_matches": [
+            {
+              "field": "is_houseless"
+            },
+            {
+              "field": "lives_in_kutcha_house"
+            },
+            {
+              "field": "is_secc_automatically_included"
+            }
+          ],
+          "present_but_wrong": [],
+          "missing": [],
+          "hallucinated": []
+        },
+        "exclusion_diff": {
+          "exact_matches": [
+            {
+              "field": "owns_motorised_three_or_four_wheeler"
+            },
+            {
+              "field": "owns_mechanized_agricultural_equipment_3_or_4_wheeler"
+            },
+            {
+              "field": "kisan_credit_card_limit_inr"
+            },
+            {
+              "field": "owns_non_agricultural_enterprise_registered_with_govt"
+            },
+            {
+              "field": "paid_income_tax_last_assessment_year"
+            }
+          ],
+          "present_but_wrong": [
+            {
+              "field": "is_govt_employee",
+              "gold": {
+                "field": "is_govt_employee",
+                "cat": "occupation",
+                "op": "==",
+                "value": true,
+                "quantifier": "some_family_member",
+                "has_except": false
+              },
+              "draft": {
+                "field": "is_govt_employee",
+                "cat": "occupation",
+                "op": "==",
+                "value": true,
+                "quantifier": "self",
+                "has_except": false
+              }
+            },
+            {
+              "field": "monthly_income_inr",
+              "gold": {
+                "field": "monthly_income_inr",
+                "cat": "economic",
+                "op": ">",
+                "value": 15000,
+                "quantifier": "some_family_member",
+                "has_except": false
+              },
+              "draft": {
+                "field": "monthly_income_inr",
+                "cat": "economic",
+                "op": ">",
+                "value": 15000,
+                "quantifier": "self",
+                "has_except": false
+              }
+            }
+          ],
+          "missing": [
+            {
+              "field": "house_has_pucca_roof_or_wall",
+              "cat": "economic",
+              "op": "==",
+              "value": true,
+              "quantifier": "self",
+              "has_except": false
+            },
+            {
+              "field": "house_room_count",
+              "cat": "economic",
+              "op": ">",
+              "value": 2,
+              "quantifier": "self",
+              "has_except": false
+            },
+            {
+              "field": "paid_professional_tax",
+              "cat": "economic",
+              "op": "==",
+              "value": true,
+              "quantifier": "some_family_member",
+              "has_except": false
+            },
+            {
+              "field": "irrigated_land_acres",
+              "cat": "economic",
+              "op": ">=",
+              "value": 2.5,
+              "quantifier": "self",
+              "has_except": false
+            },
+            {
+              "field": "unirrigated_land_acres",
+              "cat": "economic",
+              "op": ">=",
+              "value": 5,
+              "quantifier": "self",
+              "has_except": false
+            }
+          ],
+          "hallucinated": [
+            {
+              "field": "owns_refrigerator",
+              "cat": "economic",
+              "op": "==",
+              "value": true,
+              "quantifier": "self",
+              "has_except": false
+            },
+            {
+              "field": "owns_landline_phone",
+              "cat": "economic",
+              "op": "==",
+              "value": true,
+              "quantifier": "self",
+              "has_except": false
+            },
+            {
+              "field": "owns_gt_2_5_acres_irrigated_land",
+              "cat": "economic",
+              "op": "==",
+              "value": true,
+              "quantifier": "self",
+              "has_except": false
+            },
+            {
+              "field": "owns_pucca_house",
+              "cat": "economic",
+              "op": "==",
+              "value": true,
+              "quantifier": "self",
+              "has_except": false
+            }
+          ]
+        },
+        "exception_diff": {
+          "exact_matches": [],
+          "present_but_wrong": [],
+          "missing": [],
+          "hallucinated": []
+        }
+      }
+    },
+    {
+      "run": "PMAY-G_gpt-oss-120b_ontology_updated-doc_20261004T220612.json",
+      "scheme_id": "PMAY-G",
+      "source_document_sha256": "f614c93821f510771790492801da10bdcefcc1a7484175c6f87846f2e00d9fee",
+      "outcome_equivalence": {
+        "n_profiles": 14,
+        "agreement_rate": 0.5,
+        "false_positive_eligible_rate": 0.0,
+        "false_negative_eligible_rate": 0.14285714285714285,
+        "other_mismatch_rate": 0.35714285714285715
+      },
+      "disagreements": [
+        {
+          "profile_id": "eligible_baseline",
+          "gold_verdict": "eligible",
+          "draft_verdict": "undetermined_missing_facts",
+          "agree": false,
+          "disagreement_type": "other_mismatch"
+        },
+        {
+          "profile_id": "secc_automatically_included_regardless_of_housing",
+          "gold_verdict": "eligible",
+          "draft_verdict": "undetermined_missing_facts",
+          "agree": false,
+          "disagreement_type": "other_mismatch"
+        },
+        {
+          "profile_id": "refrigerator",
+          "gold_verdict": "eligible",
+          "draft_verdict": "ineligible",
+          "agree": false,
+          "disagreement_type": "false_negative_eligible"
+        },
+        {
+          "profile_id": "landline_phone",
+          "gold_verdict": "eligible",
+          "draft_verdict": "ineligible",
+          "agree": false,
+          "disagreement_type": "false_negative_eligible"
+        },
+        {
+          "profile_id": "irrigated_land_over_threshold",
+          "gold_verdict": "ineligible",
+          "draft_verdict": "undetermined_missing_facts",
+          "agree": false,
+          "disagreement_type": "other_mismatch"
+        },
+        {
+          "profile_id": "unirrigated_land_five_acres",
+          "gold_verdict": "ineligible",
+          "draft_verdict": "undetermined_missing_facts",
+          "agree": false,
+          "disagreement_type": "other_mismatch"
+        },
+        {
+          "profile_id": "irrigated_land_exactly_two_and_a_half_acres",
+          "gold_verdict": "ineligible",
+          "draft_verdict": "undetermined_missing_facts",
+          "agree": false,
+          "disagreement_type": "other_mismatch"
+        }
+      ],
+      "structural_f1": {
+        "category": "__overall__",
+        "tp": 13,
+        "fp": 3,
+        "fn": 2,
+        "precision": 0.8125,
+        "recall": 0.8667,
+        "f1": 0.8387
+      },
+      "structural_diff": {
+        "inclusion_diff": {
+          "exact_matches": [
+            {
+              "field": "is_houseless"
+            },
+            {
+              "field": "lives_in_kutcha_house"
+            },
+            {
+              "field": "is_secc_automatically_included"
+            }
+          ],
+          "present_but_wrong": [],
+          "missing": [],
+          "hallucinated": []
+        },
+        "exclusion_diff": {
+          "exact_matches": [
+            {
+              "field": "house_has_pucca_roof_or_wall"
+            },
+            {
+              "field": "house_room_count"
+            },
+            {
+              "field": "owns_motorised_three_or_four_wheeler"
+            },
+            {
+              "field": "owns_mechanized_agricultural_equipment_3_or_4_wheeler"
+            },
+            {
+              "field": "kisan_credit_card_limit_inr"
+            },
+            {
+              "field": "is_govt_employee"
+            },
+            {
+              "field": "owns_non_agricultural_enterprise_registered_with_govt"
+            },
+            {
+              "field": "monthly_income_inr"
+            },
+            {
+              "field": "paid_income_tax_last_assessment_year"
+            },
+            {
+              "field": "paid_professional_tax"
+            }
+          ],
+          "present_but_wrong": [],
+          "missing": [
+            {
+              "field": "irrigated_land_acres",
+              "cat": "economic",
+              "op": ">=",
+              "value": 2.5,
+              "quantifier": "self",
+              "has_except": false
+            },
+            {
+              "field": "unirrigated_land_acres",
+              "cat": "economic",
+              "op": ">=",
+              "value": 5,
+              "quantifier": "self",
+              "has_except": false
+            }
+          ],
+          "hallucinated": [
+            {
+              "field": "owns_refrigerator",
+              "cat": "economic",
+              "op": "==",
+              "value": true,
+              "quantifier": "self",
+              "has_except": false
+            },
+            {
+              "field": "owns_landline_phone",
+              "cat": "economic",
+              "op": "==",
+              "value": true,
+              "quantifier": "self",
+              "has_except": false
+            },
+            {
+              "field": "owns_gt_2_5_acres_irrigated_land_with_irrigation_equipment",
+              "cat": "economic",
+              "op": "==",
+              "value": true,
+              "quantifier": "self",
+              "has_except": false
+            }
+          ]
+        },
+        "exception_diff": {
+          "exact_matches": [],
+          "present_but_wrong": [],
+          "missing": [],
+          "hallucinated": []
+        }
+      }
+    }
+  ]
+}

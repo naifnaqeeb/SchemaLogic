@@ -684,6 +684,38 @@
         "fn": 7,
         "exceptions": null
       }
+    },
+    {
+      "scheme": "PMAY-G",
+      "draft_run": "PMAY-G_gpt-oss-120b_ontology_updated-doc_20261004T220612.json",
+      "old_metric_snapshot_gold": {
+        "f1": 0.8,
+        "tp": 12,
+        "fp": 4,
+        "fn": 2,
+        "exceptions": null
+      },
+      "new_metric_snapshot_gold": {
+        "f1": 0.8,
+        "tp": 12,
+        "fp": 4,
+        "fn": 2,
+        "exceptions": null
+      },
+      "old_metric_current_gold": {
+        "f1": 0.8387,
+        "tp": 13,
+        "fp": 3,
+        "fn": 2,
+        "exceptions": null
+      },
+      "new_metric_current_gold": {
+        "f1": 0.8387,
+        "tp": 13,
+        "fp": 3,
+        "fn": 2,
+        "exceptions": null
+      }
     }
   ]
 }

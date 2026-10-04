@@ -1,0 +1,219 @@
+{
+  "scheme_id": "PMAY-G",
+  "model": "openai/gpt-oss-120b",
+  "run_timestamp": "2026-10-04T22:06:12.624472",
+  "note": "Ontology-constrained extraction run (updated-doc).",
+  "source_document": "data/raw_documents/PMAY-G.md",
+  "source_document_sha256": "f614c93821f510771790492801da10bdcefcc1a7484175c6f87846f2e00d9fee",
+  "gold_reference": "data/gold/PMAY-G.json",
+  "draft_extraction": {
+    "scheme_id": "PMAY-G",
+    "unit_of_eligibility": "family",
+    "inclusion": {
+      "or": [
+        {
+          "field": "is_houseless",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false,
+          "cat": "economic"
+        },
+        {
+          "field": "lives_in_kutcha_house",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false,
+          "cat": "economic"
+        },
+        {
+          "field": "is_secc_automatically_included",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false,
+          "cat": "economic"
+        }
+      ]
+    },
+    "exclusions": [
+      {
+        "field": "kisan_credit_card_limit_inr",
+        "op": ">=",
+        "value": 50000,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "is_govt_employee",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "occupation",
+        "quantifier": "some_family_member",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "owns_non_agricultural_enterprise_registered_with_govt",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "monthly_income_inr",
+        "op": ">",
+        "value": 15000,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "some_family_member",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "paid_income_tax_last_assessment_year",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "some_family_member",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "paid_professional_tax",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "some_family_member",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "owns_refrigerator",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "owns_landline_phone",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "owns_gt_2_5_acres_irrigated_land_with_irrigation_equipment",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "owns_motorised_three_or_four_wheeler",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "owns_mechanized_agricultural_equipment_3_or_4_wheeler",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "house_has_pucca_roof_or_wall",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "house_room_count",
+        "op": ">",
+        "value": 2,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      }
+    ],
+    "temporal_validity": {
+      "valid_from": "2024-09-10",
+      "valid_to": null,
+      "extracted_at": "2026-10-04",
+      "supersedes": {
+        "rule_version": "PMAY-G revision Sep 2024",
+        "retired_predicate": {
+          "ownership_fishing_boat": true,
+          "ownership_motorised_two_wheeler": true,
+          "income_threshold": "Rs 10,000 per month"
+        },
+        "amendment_source": "September 2024 revision announcement (10-11 September 2024)"
+      }
+    },
+    "operational_requirements": [
+      "Beneficiary identification through the Awaas+ survey entry, verified by Gram Sabhas.",
+      "Payments made electronically to Aadhaar‑seeded bank or post office accounts."
+    ],
+    "extraction_metadata": {
+      "confidence": 0.95,
+      "source_clause": "Eligibility Criteria and Exclusion Criteria sections (including September 2024 revision details)",
+      "flagged_for_review": false
+    }
+  }
+}

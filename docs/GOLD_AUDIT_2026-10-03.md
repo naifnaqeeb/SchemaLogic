@@ -698,6 +698,8 @@ These earlier statements should no longer be cited:
 | PMAY-G extraction draft: 90.0% outcome agreement, structural F1 0.857 | **Superseded** by 50.0% / 0.552 against the MoRD-sourced gold (§7.7) — mostly a source gap, see the caveat there. |
 | Baseline 2: 89.5% agreement, 1.3% harmful FP, 6.6% FN (n=76) | **Superseded** by 82.5% / 6.2% / 8.8% (n=80) (§7.7). |
 | PMAY-G Baseline 2: 100% agreement | **Superseded** by 57.1% (§7.7). |
+| PMAY-G Baseline 2 57.1%, aggregate 82.5% / 6.2% / 8.8% (§7.7) | Stale-document results, kept as a record; with the updated document **100%** and **90.0% / 1.2% / 6.2%** (§7.9). |
+| PMAY-G extraction draft 50.0% / F1 0.552 (§7.7) | Stale-document result, kept; with the updated document 50.0% (FP 0.0%) / **0.839** (§7.9). |
 
 ### 7.5 What the corrections show
 
@@ -887,3 +889,70 @@ gate-approved or ontology draft shown, the rest are in the file:
 
 Still not handled, and logged in `KNOWN_ISSUES.md`: two predicates on the same field in the same
 location (MH-LADKI-BAHIN's and PMMVY's paired `age` bounds) are still collapsed to one.
+
+### 7.9 PMAY-G, a temporal-maintenance case: extraction from a stale official document
+
+*2026-10-04. Follows §7.7.*
+
+**The setup.** The PMAY-G input document (`data/raw_documents/PMAY-G.md`) was compiled in 2026-08
+from a PIB backgrounder of 19 Nov 2024 and news coverage of the Sept-2024 revision. Every statement in
+it came from an official or near-official source. But it still listed the refrigerator and landline
+exclusions that, per the MoRD Annual Report 2024-25, the Union Cabinet had deleted, and it lacked four
+of the revised criteria. Gold, extraction draft and Baseline 2 were all built or run on it, so they
+agreed with each other — 90.0% outcome agreement, F1 0.857, Baseline 2 100% — while all three
+encoded deleted rules. The audit caught it only by reading a different primary document.
+
+**What was done.** The MoRD report's p.141 passage — the Cabinet-deletion sentence, Step 1 and the 10
+parameters — was appended to the document verbatim; nothing already in it was changed or removed, so
+the document now holds both the stale list and the statement that two of its items were deleted.
+The raw documents are gitignored, so the versions are pinned by hash: stale
+`4ae7bc58…44ef` (kept locally as `PMAY-G_stale_PIB_2024.md`), updated `f614c938…9fee`. One live
+extraction (`scripts/run_extraction.py PMAY-G --label=updated-doc`; the judge and gate were not
+re-run — last time the gate deferred all four of its findings, so the gated output equalled the
+plain extraction) and 14 live Baseline 2 calls with no answer reuse (`--no-reuse`, ~32.5k tokens
+estimated). Both against the current, MoRD-sourced gold.
+
+| Against current gold | Stale document (recorded, §7.7) | Updated document |
+|---|---|---|
+| Extraction draft — outcome agreement | 50.0% | 50.0% |
+| — false positive (eligible) | **35.7%** | **0.0%** |
+| — false negative (eligible) | 14.3% | 14.3% |
+| — structural F1 | 0.552 | **0.839** |
+| Baseline 2 (direct LLM) — agreement | 57.1% | **100.0%** |
+| — harmful false positive | 28.6% | **0.0%** |
+| Baseline 2 aggregate, all 7 schemes (n=80) | 82.5% / 6.2% FP / 8.8% FN | **90.0% / 1.2% / 6.2%** |
+
+Records: `pmay-g_stale_vs_updated_doc_2026-10-04.json` (`scripts/score_draft.py`),
+`baseline2_direct_llm_2026-10-04_pmay-g-mord.json` (stale) and
+`baseline2_direct_llm_2026-10-04_pmay-g-updated-doc.json` (updated).
+
+**What the extraction did with the updated document.** It picked up everything new: Step 1 as
+`house_has_pucca_roof_or_wall` and `house_room_count > 2`, professional tax, the revised income
+ceiling. It **kept the refrigerator and landline exclusions** — the document's older list still
+names them, and the extractor reproduced them despite the sentence saying they "have been deleted".
+It missed unirrigated land, and encoded irrigated land with AB-PMJAY's compound
+`owns_gt_2_5_acres_irrigated_land_with_irrigation_equipment` field instead. The unchanged 50.0%
+hides a change of kind: the seven disagreements went from four harmful "eligible" errors plus three
+denials to two denials (refrigerator, landline) plus five "undetermined" — the latter because the
+profiles carry the gold's land fields, not the compound field the draft chose, so the draft can't
+decide them. That is a profile-coverage artifact of the harness, not a draft verdict.
+
+**What the direct LLM did.** Given the same document, it honoured the deletion: refrigerator and
+landline households eligible, all four new criteria applied, 14/14.
+
+**What this shows.**
+1. **Agreement among systems built from the same document measures the document, not correctness.**
+   All three PMAY-G judgements agreed on deleted rules for as long as they shared a stale source.
+2. **Rules get deleted, and documents keep the deleted text.** A schemes database that is compiled
+   once and not maintained will keep producing extractions — and gold — of rules that no longer
+   exist. The newer source here was an annual report, not a notification; nothing in the stale
+   document signalled that it was stale.
+3. **Appending the correction was not enough for the extractor.** Faced with an old list and a later
+   sentence deleting two of its items, the extractor kept the items; the direct LLM, answering one
+   applicant at a time, applied the deletion. The extractor emits a rule set in one pass and appears
+   to treat each list item as a rule to carry over, where reconciling "deleted" against an earlier
+   list is exactly the temporal supersession the schema's `temporal_validity.supersedes` exists for.
+   One extraction run — a single observation, not a rate.
+4. **The symbolic layer's guarantee is only as current as its gold.** It evaluated the deleted rules
+   faithfully for two months. Maintaining the gold against current primary sources is part of the
+   system, not a one-off.

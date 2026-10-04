@@ -302,7 +302,7 @@ them where it looks.
 
 **Status**: **Resolved 2026-10-04.** The MoRD Annual Report 2024-25 is adopted for PMAY-G's exclusions: refrigerator and landline removed; professional tax and 5+ acres unirrigated added; irrigated land now `irrigated_land_acres >= 2.5`; the Step 1 pucca filter modelled as a pucca roof or wall, or more than 2 rooms (`docs/GOLD_AUDIT_2026-10-03.md` §6.8). Quantifiers already matched the report's wording. Still open: whether the exclusions apply to compulsory-inclusion households, and the inclusion side is still PIB-sourced.
 
-**Follow-up (decision needed)**: `data/raw_documents/PMAY-G.md` — the document the extraction draft and Baseline 2 are given — is the PIB-based compilation and still lists the deleted exclusions. Against the corrected gold both comparisons now mostly measure that source gap (§7.7). Adding the report's p.141 text to it (and saving those pages under a PMAY-G name) would let them be re-run against the source the gold follows.
+**Follow-up done 2026-10-04**: the report's p.141 text was appended to `data/raw_documents/PMAY-G.md` and the draft and Baseline 2 re-run (`docs/GOLD_AUDIT_2026-10-03.md` §7.9): Baseline 2 100%; the new draft drops every harmful error but still keeps the deleted refrigerator and landline exclusions. The stale-document results are kept as a record.
 
 ## Gold: MH-LADKI-BAHIN's MP/MLA exclusion uses a broader field
 

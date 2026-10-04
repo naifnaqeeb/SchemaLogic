@@ -4,6 +4,7 @@ LIVE for new profiles only: makes real LLM calls for profiles that have no earli
 
     B2_TOKEN_BUDGET=30000 PYTHONPATH=. python scripts/rescore_baseline2.py AB-PMJAY PMMVY PM-UJJWALA-2.0 IGNOAPS
     B2_TOKEN_BUDGET=60000 PYTHONPATH=. python scripts/rescore_baseline2.py AB-PMJAY --label=ab-pmjay-70plus-age
+    B2_TOKEN_BUDGET=40000 PYTHONPATH=. python scripts/rescore_baseline2.py PMAY-G --label=pmay-g-updated-doc --no-reuse
 
 Why re-scoring is sound: Baseline 2's LLM is shown the scheme DOCUMENT and the profile FACTS -- never
 the gold. When the gold changes but a profile's facts don't, the LLM's answer to that profile is
@@ -72,7 +73,7 @@ def _facts(profile: dict) -> str:
                       sort_keys=True)
 
 
-def main(schemes: list[str], label: str | None = None) -> None:
+def main(schemes: list[str], label: str | None = None, reuse: bool = True) -> None:
     # A second re-score on the same day must not overwrite the first: --label names it.
     out_path = RUNS / f"baseline2_direct_llm_{date.today().isoformat()}{'_' + label if label else ''}.json"
     if out_path.exists():
@@ -83,7 +84,8 @@ def main(schemes: list[str], label: str | None = None) -> None:
 
     for sid in schemes:
         doc, scheme, profiles = rb2._load(sid)
-        earlier = _earlier_answers(sid)
+        # --no-reuse: the scheme DOCUMENT changed, so earlier answers no longer answer the same question
+        earlier = _earlier_answers(sid) if reuse else None
         earlier_file, earlier_rows = earlier if earlier else (None, {})
         old_profiles = {}
         if earlier_file:
@@ -179,4 +181,5 @@ def main(schemes: list[str], label: str | None = None) -> None:
 
 if __name__ == "__main__":
     labels = [a.split("=", 1)[1] for a in sys.argv[1:] if a.startswith("--label=")]
-    main([a for a in sys.argv[1:] if not a.startswith("-")], labels[0] if labels else None)
+    main([a for a in sys.argv[1:] if not a.startswith("-")], labels[0] if labels else None,
+         reuse="--no-reuse" not in sys.argv[1:])
