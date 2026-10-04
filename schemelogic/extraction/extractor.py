@@ -49,6 +49,7 @@ from datetime import date
 from typing import Callable, Literal
 
 from dotenv import load_dotenv
+import openai
 from groq import APIError, Groq
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
@@ -65,6 +66,29 @@ from schemelogic.schema.models import (
 load_dotenv()
 
 DEFAULT_MODEL = "openai/gpt-oss-120b"
+
+# Both SDKs' API errors: Groq's own client by default, an OpenAI-SDK client for provider="openrouter".
+_API_ERRORS = (APIError, openai.APIError)
+UsageSink = Callable[[dict], None]
+
+
+def _client_for(provider: str):
+    """The default client for `provider` -- Groq's SDK for "groq" (unchanged), the shared
+    OpenAI-compatible client from schemelogic.llm.provider for anything else."""
+    if provider == "groq":
+        return Groq(api_key=os.environ["GROQ_API_KEY"])
+    from schemelogic.llm.provider import get_provider, make_client
+
+    return make_client(get_provider(provider))
+
+
+def _report_usage(sink: UsageSink | None, response, call: str) -> None:
+    usage = getattr(response, "usage", None)
+    if sink is None or usage is None:
+        return
+    sink({"call": call, "prompt_tokens": getattr(usage, "prompt_tokens", None),
+          "completion_tokens": getattr(usage, "completion_tokens", None),
+          "total_tokens": getattr(usage, "total_tokens", None)})
 
 # TPM (tokens/minute) budget management — see module docstring. A hardcoded max_tokens constant
 # needed retuning every time field_ontology.py grew (it did, repeatedly, as schemes were added —
@@ -272,6 +296,7 @@ def _call_groq(
     reasoning_effort: str | None = None,
     rate_limit_retries: int = _RATE_LIMIT_RETRIES,
     sleep: Callable[[float], None] | None = None,
+    usage_sink: UsageSink | None = None,
 ) -> dict | ExtractionFailure:
     """One structured-output call. Returns the parsed JSON dict, or an ExtractionFailure.
 
@@ -307,7 +332,7 @@ def _call_groq(
                 **extra,
             )
             break
-        except APIError as exc:
+        except _API_ERRORS as exc:
             detail = str(exc)
             reason = _api_error_reason(detail)
             if reason != "rate_limited" or attempt >= rate_limit_retries:
@@ -318,6 +343,7 @@ def _call_groq(
             (sleep or time.sleep)(_retry_after_seconds(exc))
             attempt += 1
 
+    _report_usage(usage_sink, response, schema_name)
     choice = response.choices[0]
     content = choice.message.content
 
@@ -340,6 +366,8 @@ def extract_scheme(
     client: Groq | None = None,
     reasoning_effort: str | None = None,
     ontology_compact: bool = False,
+    provider: str = "groq",
+    usage_sink: UsageSink | None = None,
 ) -> Scheme | ExtractionFailure:
     """Extract a schema-conformant Scheme from raw scheme document text via Groq.
 
@@ -350,7 +378,7 @@ def extract_scheme(
     silent guessing on missing/bad data" principle, applied to the extraction layer.
     """
     as_of_date = as_of_date or date.today()
-    client = client or Groq(api_key=os.environ["GROQ_API_KEY"])
+    client = client or _client_for(provider)
 
     core_system_prompt = _core_system_prompt(ontology_compact=ontology_compact)
     core = _call_groq(
@@ -362,6 +390,7 @@ def extract_scheme(
         "scheme_core_extraction",
         _CORE_JSON_SCHEMA,
         reasoning_effort=reasoning_effort,
+        usage_sink=usage_sink,
     )
 
     if isinstance(core, ExtractionFailure) and core.reason == "truncated_completion_budget":
@@ -384,6 +413,7 @@ def extract_scheme(
                 "scheme_core_extraction",
                 _CORE_JSON_SCHEMA,
                 reasoning_effort="low",
+                usage_sink=usage_sink,
             )
 
     if isinstance(core, ExtractionFailure):
@@ -399,6 +429,7 @@ def extract_scheme(
         "scheme_meta_extraction",
         _META_JSON_SCHEMA,
         reasoning_effort=reasoning_effort,
+        usage_sink=usage_sink,
     )
     if isinstance(meta, ExtractionFailure):
         return meta

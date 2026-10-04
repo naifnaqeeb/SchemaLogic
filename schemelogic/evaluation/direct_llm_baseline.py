@@ -29,7 +29,7 @@ from dataclasses import dataclass, field
 from typing import Any, Literal
 
 from schemelogic.evaluator.symbolic_engine import Verdict, evaluate
-from schemelogic.llm.provider import ProviderFailure, chat_completion_with_fallback
+from schemelogic.llm.provider import OPENROUTER, ProviderFailure, chat_completion_with_fallback, get_provider
 from schemelogic.schema.models import Scheme
 
 DirectVerdict = Literal["eligible", "ineligible", "unsure"]
@@ -167,9 +167,13 @@ def _system_prompt() -> str:
 
 
 def ask_direct(
-    document_text: str, profile: dict[str, Any], scheme_name: str | None = None, **call_kwargs: Any
+    document_text: str, profile: dict[str, Any], scheme_name: str | None = None,
+    provider: str = "groq", fallback: bool = True, **call_kwargs: Any
 ) -> DirectAnswer | DirectFailure:
-    """One LLM call, one verdict. No evaluator, no rules, no trace -- this is the whole point."""
+    """One LLM call, one verdict. No evaluator, no rules, no trace -- this is the whole point.
+
+    `provider` is the primary; `fallback=False` disables the OpenRouter fallback, so an experiment's
+    answers all come from the provider it records (the default -- Groq, falling back -- is unchanged)."""
     header = f"Scheme: {scheme_name}\n\n" if scheme_name else ""
     user = (
         f"{header}--- SCHEME DOCUMENT ---\n{document_text}\n\n"
@@ -189,6 +193,8 @@ def ask_direct(
     try:
         response = chat_completion_with_fallback(
             [{"role": "system", "content": _system_prompt()}, {"role": "user", "content": user}],
+            primary=get_provider(provider),
+            secondary=OPENROUTER if fallback and provider != "openrouter" else None,
             **kwargs,
         )
     except Exception as exc:  # noqa: BLE001

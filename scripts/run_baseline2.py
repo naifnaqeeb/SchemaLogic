@@ -57,6 +57,12 @@ _RECOVERY_RESERVE = 3500  # held back so a recovery call can't push a scheme ove
 _last = {"at": 0.0, "tokens": 0}
 
 
+
+# --provider=<groq|openrouter> (default groq) and --no-fallback (experiments: never fall back to
+# another provider, so every answer comes from the provider recorded). Defaults are unchanged.
+PROVIDER = next((a.split("=", 1)[1] for a in sys.argv[1:] if a.startswith("--provider=")), "groq")
+FALLBACK = "--no-fallback" not in sys.argv[1:]
+
 def _pace(next_estimate: int) -> None:
     """Keep a rolling minute under the flat TPM ceiling."""
     refilled = (TPM / 60.0) * (time.time() - _last["at"])
@@ -121,7 +127,7 @@ def main(order: list[str]) -> None:
                 estimate = per_call if cap is None else per_call + cap
                 _pace(estimate)
                 kwargs = {} if cap is None else {"max_tokens": cap}
-                result = dlb.ask_direct(doc, profile, scheme_name=scheme_id, **kwargs)
+                result = dlb.ask_direct(doc, profile, scheme_name=scheme_id, provider=PROVIDER, fallback=FALLBACK, **kwargs)
                 spent += estimate
                 report.tokens_used += estimate
                 _last.update(at=time.time(), tokens=estimate)
@@ -169,7 +175,9 @@ def main(order: list[str]) -> None:
         "run": "baseline2_direct_llm",
         "date": date.today().isoformat(),
         "methodology_module": "schemelogic/evaluation/direct_llm_baseline.py",
-        "model": "provider default (openai/gpt-oss-120b via Groq)",
+        "model": "openai/gpt-oss-120b",
+        "provider": PROVIDER,
+        "fallback": FALLBACK,
         "token_budget": TOKEN_BUDGET,
         "tokens_spent_estimated": spent,
         "token_note": "ESTIMATED from document size; ProviderResult does not surface usage.",

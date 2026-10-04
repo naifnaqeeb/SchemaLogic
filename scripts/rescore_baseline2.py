@@ -56,6 +56,12 @@ RUN_COMMIT = {
 }
 
 
+
+# --provider=<groq|openrouter> (default groq) and --no-fallback (experiments: never fall back to
+# another provider, so every answer comes from the provider recorded). Defaults are unchanged.
+PROVIDER = next((a.split("=", 1)[1] for a in sys.argv[1:] if a.startswith("--provider=")), "groq")
+FALLBACK = "--no-fallback" not in sys.argv[1:]
+
 def _earlier_answers(sid: str) -> tuple[str, dict[str, dict]] | None:
     """The most recent earlier run that completed this scheme: (file, {profile_id: row})."""
     found = None
@@ -120,7 +126,8 @@ def main(schemes: list[str], label: str | None = None, reuse: bool = True) -> No
                 for attempt, cap in enumerate((None, rb2.RECOVERY_MAX_TOKENS)):
                     estimate = per_call if cap is None else per_call + cap
                     rb2._pace(estimate)
-                    result = dlb.ask_direct(doc, profile, scheme_name=sid, **({} if cap is None else {"max_tokens": cap}))
+                    result = dlb.ask_direct(doc, profile, scheme_name=sid, provider=PROVIDER, fallback=FALLBACK,
+                                            **({} if cap is None else {"max_tokens": cap}))
                     spent += estimate
                     report.tokens_used += estimate
                     rb2._last.update(at=time.time(), tokens=estimate)
@@ -165,6 +172,9 @@ def main(schemes: list[str], label: str | None = None, reuse: bool = True) -> No
                       "run's (the LLM never sees the gold); only new profiles were asked. See answer_source."),
         "gold_fixes": "docs/GOLD_AUDIT_2026-10-03.md section 6",
         "label": label,
+        "model": "openai/gpt-oss-120b",
+        "provider": PROVIDER,
+        "fallback": FALLBACK,
         "token_budget": TOKEN_BUDGET,
         "tokens_spent_estimated": spent,
         "token_note": "ESTIMATED from document size; ProviderResult does not surface usage.",

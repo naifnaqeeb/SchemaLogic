@@ -31,7 +31,7 @@ from dotenv import load_dotenv
 from groq import APIError, Groq
 from pydantic import BaseModel, Field, ValidationError
 
-from schemelogic.extraction.extractor import _completion_budget
+from schemelogic.extraction.extractor import _API_ERRORS, _client_for, _completion_budget, _report_usage
 from schemelogic.schema import field_ontology
 from schemelogic.schema.models import (
     AndNode,
@@ -160,6 +160,8 @@ def run_judge(
     model: str = DEFAULT_MODEL,
     client: Groq | None = None,
     retrieved_context: str | None = None,
+    provider: str = "groq",
+    usage_sink=None,
 ) -> JudgeReport | JudgeFailure:
     """Single judge pass: re-reads the source document against the draft, scoped to the two
     confirmed failure patterns. Never returns a full Scheme — only findings + proposed patches.
@@ -169,8 +171,8 @@ def run_judge(
     already retrieved and date-filtered by the caller (this function does no retrieval itself, it
     just accepts context and cites it the same way it cites document_text). Optional and additive:
     omitting it reproduces the exact pre-Phase-4 judge behavior, so existing callers/tests are
-    unaffected."""
-    client = client or Groq(api_key=os.environ["GROQ_API_KEY"])
+    unaffected. `provider` / `usage_sink`: see extractor.extract_scheme."""
+    client = client or (Groq(api_key=os.environ["GROQ_API_KEY"]) if provider == "groq" else _client_for(provider))
     draft_json = json.dumps(draft.model_dump(mode="json", by_alias=True), indent=2, ensure_ascii=False)
     system_prompt = _judge_system_prompt()
     user_content = (
@@ -202,9 +204,10 @@ def run_judge(
                 "json_schema": {"name": "judge_report", "schema": _JUDGE_JSON_SCHEMA, "strict": False},
             },
         )
-    except APIError as exc:
+    except _API_ERRORS as exc:
         return JudgeFailure(reason="api_error", detail=str(exc))
 
+    _report_usage(usage_sink, response, "judge_report")
     content = response.choices[0].message.content
     if not content or not content.strip():
         return JudgeFailure(
@@ -297,16 +300,18 @@ def judge_and_repair(
     max_passes: int = DEFAULT_MAX_PASSES,
     min_confidence: float = DEFAULT_MIN_CONFIDENCE,
     client: Groq | None = None,
+    provider: str = "groq",
+    usage_sink=None,
 ) -> RepairResult:
     """Bounded judge -> targeted-repair loop, capped at max_passes judge calls. Stops early once
     a pass finds nothing, or finds nothing that clears the confidence bar to actually apply."""
-    client = client or Groq(api_key=os.environ["GROQ_API_KEY"])
+    client = client or (Groq(api_key=os.environ["GROQ_API_KEY"]) if provider == "groq" else _client_for(provider))
     current = draft
     judge_passes: list[dict[str, Any]] = []
     repair_log: list[dict[str, Any]] = []
 
     for pass_num in range(1, max_passes + 1):
-        judge_result = run_judge(current, document_text, model=model, client=client)
+        judge_result = run_judge(current, document_text, model=model, client=client, usage_sink=usage_sink)
         if isinstance(judge_result, JudgeFailure):
             judge_passes.append({"pass": pass_num, "failure": {"reason": judge_result.reason, "detail": judge_result.detail}})
             break
