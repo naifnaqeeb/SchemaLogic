@@ -64,4 +64,5 @@ def build_chat_response(session_id: str, state: dict) -> dict:
         "pending_question": serialize_pending_question(session),
         "current_scheme_id": state.get("current_scheme_id"),
         "current_scheme_tier": state.get("current_scheme_tier"),
+        "detected_language": state.get("language", "en"),  # multilingual stage 1: the citizen's language
     }

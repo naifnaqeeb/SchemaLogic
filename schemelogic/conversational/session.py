@@ -9,6 +9,7 @@ import re
 from dataclasses import dataclass, field
 from typing import Any
 
+from schemelogic.conversational.language import normalize_digits, yes_no
 from schemelogic.conversational.question_selector import DECLINE_REPLY, Question, select_next_question
 from schemelogic.evaluator.symbolic_engine import EvaluationResult, Verdict, evaluate
 from schemelogic.schema.field_ontology import fields_screened_by
@@ -44,8 +45,12 @@ def _parse_answer(raw: str, answer_type: str) -> Any:
             return True
         if lowered in ("no", "n", "false", "0"):
             return False
+        word = yes_no(raw)  # हाँ / नहीं / ہاں / இல்லை / haan / nahi ... (English handled above, unchanged)
+        if word is not None:
+            return word
         raise AnswerParseError(f"expected yes/no, got {raw!r}")
     if answer_type == "number":
+        raw = normalize_digits(raw)  # ४५ / ٤٥ / ௪௫ -> 45; ASCII digits are untouched
         try:
             return float(raw) if "." in raw else int(raw)
         except ValueError as exc:
@@ -59,6 +64,7 @@ class ConversationSession:
     profile: dict[str, Any] = field(default_factory=lambda: {"self": {}, "family_members": []})
     pending_question: Question | None = None
     declined: tuple[str, str] | None = None  # (member, field) the citizen chose not to disclose
+    language: str = "en"  # the citizen's language, updated on every message (multilingual stage 1)
     turns: list[dict[str, str]] = field(default_factory=list)  # {"role": "user"|"assistant", "text": ...}
 
     def _member_dict(self, member: str) -> dict[str, Any]:

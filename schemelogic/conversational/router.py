@@ -23,6 +23,7 @@ import re
 from dataclasses import dataclass
 from typing import Literal
 
+from schemelogic.conversational.language import SUPPORTED, devanagari_guess, script_language
 from schemelogic.llm.provider import ProviderFailure, chat_completion_with_fallback
 
 Intent = Literal["greeting", "search", "answer", "scheme_lookup", "eligibility_request"]
@@ -35,6 +36,11 @@ class RouterResult:
     search_query: str | None = None  # for "search": the text to run discovery search on
     target_index: int | None = None  # for "scheme_lookup": 1-based index into the shown shortlist
     provider_used: str | None = None  # None when the heuristic fallback fired, not the LLM
+    # Multilingual stage 1: the message's language ("en", "hi", "ur", "mr", "ta") and an English
+    # version of it, from the SAME call (no extra one). None english_text = no translation available
+    # (the heuristic fallback), so callers use the original text.
+    language: str = "en"
+    english_text: str | None = None
 
 
 _GREETING_WORDS = {
@@ -212,6 +218,21 @@ def _system_prompt(
     )
 
 
+_MULTILINGUAL_SUFFIX = (
+    "\n\nThe citizen's message is NOT in English (it may be Hindi, Marathi, Urdu or Tamil, in its own "
+    "script or romanised). Classify it exactly as above, and ALSO return two more keys: "
+    '"language": one of "hi", "mr", "ur", "ta" (or "en" if it is actually English), and '
+    '"english": a faithful English translation of the message. Keep numbers, names, and official '
+    "terms such as BPL, APL, SC/ST, OBC, Group D, Aadhaar, kutcha and pucca exactly as they are. "
+    'For "search", write "search_query" in English. The JSON keys and enum values stay in English.'
+)
+
+
+def _with_language(result: RouterResult, language: str, english_text: str | None) -> RouterResult:
+    result.language, result.english_text = language, english_text
+    return result
+
+
 def classify_message(
     message: str,
     *,
@@ -224,24 +245,28 @@ def classify_message(
     language: str = "en",
 ) -> RouterResult:
     shortlist_names = shortlist_names or []
+    # English (Latin script, no romanised-Hindi markers) goes through exactly the call it always did.
+    hint = script_language(message)
+    english = hint == "en"
+    fallback_language = {"deva": devanagari_guess(message)}.get(hint, hint)
+    system = _system_prompt(
+        has_pending_question, has_shortlist, pending_question_text, shortlist_names,
+        has_current_scheme, current_scheme_name, language,
+    )
     messages = [
-        {
-            "role": "system",
-            "content": _system_prompt(
-                has_pending_question, has_shortlist, pending_question_text, shortlist_names,
-                has_current_scheme, current_scheme_name, language,
-            ),
-        },
+        {"role": "system", "content": system if english else system + _MULTILINGUAL_SUFFIX},
         {"role": "user", "content": message},
     ]
     response = chat_completion_with_fallback(
-        messages, response_format={"type": "json_object"}, temperature=0.0, max_tokens=150
+        messages, response_format={"type": "json_object"}, temperature=0.0,
+        # a translation needs room the bare classification never did
+        max_tokens=150 if english else 450,
     )
     if isinstance(response, ProviderFailure):
-        return _heuristic_classify(
+        return _with_language(_heuristic_classify(
             message, has_pending_question=has_pending_question, has_shortlist=has_shortlist,
             has_current_scheme=has_current_scheme, shortlist_names=shortlist_names,
-        )
+        ), fallback_language, None)
 
     try:
         parsed = json.loads(response.content)
@@ -249,10 +274,16 @@ def classify_message(
         if intent not in _VALID_INTENTS:
             raise ValueError(f"unrecognized intent {intent!r}")
     except (json.JSONDecodeError, ValueError, AttributeError):
-        return _heuristic_classify(
+        return _with_language(_heuristic_classify(
             message, has_pending_question=has_pending_question, has_shortlist=has_shortlist,
             has_current_scheme=has_current_scheme, shortlist_names=shortlist_names,
-        )
+        ), fallback_language, None)
+
+    if english:
+        detected, english_text = "en", None  # None = use the original text (it IS English)
+    else:
+        detected = parsed.get("language") if parsed.get("language") in SUPPORTED else fallback_language
+        english_text = parsed.get("english") if isinstance(parsed.get("english"), str) and parsed["english"].strip() else None
 
     target_index = parsed.get("target_index")
     target_index = int(target_index) if isinstance(target_index, (int, float)) else None
@@ -267,4 +298,6 @@ def classify_message(
         search_query=search_query if intent == "search" else None,
         target_index=target_index if intent == "scheme_lookup" else None,
         provider_used=response.provider_used,
+        language=detected,
+        english_text=english_text,
     )

@@ -80,6 +80,7 @@ def init_state(state: State) -> None:
     state.setdefault("conversation_tier", None)
     state.setdefault("shortlist", None)
     state.setdefault("query_context", "")
+    state.setdefault("language", "en")  # the citizen's language, detected per message (multilingual stage 1)
     state.setdefault("scheme_cache", {})  # survives reset() -- see reset()'s own docstring
     # "current scheme" is separate from conversation_session/conversation_tier above: it tracks
     # whatever scheme was last selected/displayed and PERSISTS past a resolved verdict or a
@@ -155,6 +156,11 @@ def handle_user_message(state: State, raw_message: str, deps: ChatDeps) -> None:
         language=deps.language,
     )
 
+    # Follows switches: every message re-detects. The pipeline stays English internally.
+    state["language"] = result.language
+    if session is not None:
+        session.language = result.language
+
     if result.intent == "greeting":
         _handle_greeting(state)
     elif result.intent == "eligibility_request":
@@ -163,7 +169,7 @@ def handle_user_message(state: State, raw_message: str, deps: ChatDeps) -> None:
         # generic (and likely irrelevant) search for a message that isn't really search text.
         _handle_eligibility_request(state, deps)
     elif result.intent == "answer" and pending_question is not None:
-        _handle_answer(state, raw_message, deps)
+        _handle_answer(state, raw_message, deps, english_text=result.english_text)
     elif result.intent == "scheme_lookup" and shortlist:
         _handle_scheme_lookup(state, result.target_index, deps)
     elif shortlist and (name_match := router.match_shortlist_name(raw_message, _shortlist_names(shortlist))):
@@ -177,7 +183,8 @@ def handle_user_message(state: State, raw_message: str, deps: ChatDeps) -> None:
         # "search", or a misclassification with nothing to act on (e.g. "answer" but there's no
         # pending question) -- falling back to search is the safe default: worst case, a
         # confused classification still produces a useful shortlist instead of a dead end.
-        _handle_search(state, result.search_query or raw_message, deps)
+        # a non-English message searches with its English version (None for English: unchanged)
+        _handle_search(state, result.search_query or result.english_text or raw_message, deps)
 
 
 # --- greeting --------------------------------------------------------------------------------
@@ -501,13 +508,15 @@ def _declined(state: State, session: ConversationSession) -> None:
     state["conversation_tier"] = None
 
 
-def _handle_answer(state: State, raw_message: str, deps: ChatDeps) -> None:
+def _handle_answer(state: State, raw_message: str, deps: ChatDeps, english_text: str | None = None) -> None:
     session: ConversationSession = state["conversation_session"]
     q = session.pending_question
     try:
         session.apply_answer(raw_message)
     except AnswerParseError:
-        llm_result = answer_parser.parse_answer_llm(raw_message, q.prompt, q.answer_type, language=deps.language)
+        # the deterministic parse above saw the citizen's own words; the LLM fallback gets the
+        # English version when there is one (None for English: unchanged)
+        llm_result = answer_parser.parse_answer_llm(english_text or raw_message, q.prompt, q.answer_type, language=deps.language)
         if not isinstance(llm_result, AnswerParseResult):
             _say(state, "I couldn't quite understand that — could you rephrase? " + (
                 "You can also use the Yes/No buttons above." if q.quick_replies else ""
