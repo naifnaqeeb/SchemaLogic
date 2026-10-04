@@ -20,7 +20,15 @@ from typing import Any
 import re
 
 from schemelogic.evaluator.symbolic_engine import EvaluationError, EvaluationResult, Verdict, evaluate
-from schemelogic.schema.field_ontology import citizen_question_for, get_field, is_sensitive
+from schemelogic.schema.field_ontology import (
+    citizen_question_for,
+    display_label_for,
+    family_scope_for,
+    get_field,
+    household_question_for,
+    is_sensitive,
+)
+from schemelogic.schema.models import Quantifier
 from schemelogic.schema.models import Scheme
 
 
@@ -153,7 +161,39 @@ def _second_to_third_person(text: str) -> str:
     return text
 
 
-def build_question(missing: MissingField) -> Question:
+def family_wide_fields(scheme: Scheme) -> set[str]:
+    """Fields this scheme checks for the whole family (a non-self exclusion quantifier) and nowhere
+    for the applicant alone. Asked of the applicant, such a fact must be asked for the household: the
+    answer is stored on the applicant's record, which is the only one the chat fills in unless the
+    citizen described relatives, so an applicant-only question never reaches a relative's fact."""
+    family = {e.field for e in scheme.exclusions if e.quantifier != Quantifier.SELF}
+    own: set[str] = {e.field for e in scheme.exclusions if e.quantifier == Quantifier.SELF}
+
+    def walk(node: Any) -> None:
+        children = getattr(node, "and_", None) or getattr(node, "or_", None)
+        if children is not None:
+            for child in children:
+                walk(child)
+        else:
+            own.add(node.field)
+
+    walk(scheme.inclusion)
+    return family - own
+
+
+def household_question(field: str, scheme_id: str, answer_type: str) -> str:
+    """The applicant's question for a family-wide fact: the field's own household phrasing for this
+    scheme if it has one, else a plain generic one -- never an applicant-only question."""
+    specific = household_question_for(field, scheme_id)
+    if specific:
+        return specific
+    members, label = family_scope_for(scheme_id), display_label_for(field)
+    if answer_type == "number":
+        return f'What is the highest "{label}" of any one of {members}?'
+    return f'Does any one of {members} meet this: "{label}"?'
+
+
+def build_question(missing: MissingField, scheme: Scheme | None = None) -> Question:
     """Uses the ontology's own citizen_question directly (Part A, readability pass) — never the
     technical `description`. Fields the ontology doesn't know about yet (an ontology_proposed
     field from a live extraction run) get a plain, generic fallback phrasing instead of a
@@ -167,7 +207,9 @@ def build_question(missing: MissingField) -> Question:
         # conjugation only in subject position, not as the object of a preposition.
         base_question = f'Do you meet this criterion: "{label}"?' if answer_type == "boolean" else f'What is your value for "{label}"?'
 
-    if missing.member == "self":
+    if missing.member == "self" and scheme is not None and missing.field in family_wide_fields(scheme):
+        prompt = household_question(missing.field, scheme.scheme_id, answer_type)
+    elif missing.member == "self":
         prompt = base_question
     else:
         prompt = f"This next one is about one of your family members — {_second_to_third_person(base_question)}"
@@ -286,7 +328,7 @@ def _could_change_verdict(scheme: Scheme, profile: dict[str, Any], target: tuple
         return True  # can't prove it irrelevant: ask, as the structural walk alone would
 
 
-def _screened_question(missing: MissingField, profile: dict[str, Any]) -> Question:
+def _screened_question(missing: MissingField, profile: dict[str, Any], scheme: Scheme) -> Question:
     """A sensitive fact with a gentler screening question is preceded by it: an answer of No settles
     the sensitive fact without asking it (ConversationSession.apply_answer)."""
     spec = get_field(missing.field)
@@ -295,8 +337,8 @@ def _screened_question(missing: MissingField, profile: dict[str, Any]) -> Questi
         record = profile.get("self", {}) if missing.member == "self" else (
             profile.get("family_members", [])[int(missing.member[len("family_member["):-1])])
         if screen not in record:
-            return build_question(MissingField(field=screen, member=missing.member, cat=None, expected_value=True))
-    return build_question(missing)
+            return build_question(MissingField(field=screen, member=missing.member, cat=None, expected_value=True), scheme)
+    return build_question(missing, scheme)
 
 
 def select_next_question(scheme: Scheme, profile: dict[str, Any]) -> Question | None:
@@ -321,10 +363,10 @@ def select_next_question(scheme: Scheme, profile: dict[str, Any]) -> Question | 
     # a government job, five acres or a four-wheeler each settle the verdict without it).
     ordinary = [c for c in relevant if not is_sensitive(c.field)]
     if ordinary:
-        return build_question(ordinary[0])
+        return build_question(ordinary[0], scheme)
     if relevant:
-        return _screened_question(relevant[0], profile)
+        return _screened_question(relevant[0], profile, scheme)
     # No single answer can change the verdict, yet the evaluator can't decide: the fact feeding several
     # rules cancels out (KNOWN_ISSUES, "Kleene evaluation is incomplete..."). Asking the first fact
     # resolves that, and is the only way the conversation reaches the verdict every answer leads to.
-    return build_question(candidates[0])
+    return build_question(candidates[0], scheme)

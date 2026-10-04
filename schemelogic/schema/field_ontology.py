@@ -28,6 +28,7 @@ that's the "defined process," not silent proliferation.
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 
 from schemelogic.schema.models import PredicateCategory
@@ -57,6 +58,12 @@ class FieldSpec:
     # A gentler screening fact asked first: answering it False settles THIS fact as False without
     # asking it (someone who isn't a widow isn't a widow living with HIV/AIDS). Never the reverse.
     screened_by: str | None = None
+    # How the APPLICANT is asked this fact when a scheme checks it for the whole family (a non-self
+    # quantifier): the answer, stored on the applicant's record, must cover every member the scheme
+    # counts, or a relative's disqualifying fact is never asked (2026-10-04, finding 7). A template:
+    # {members} becomes the scheme's own family scope (FAMILY_SCOPE). Numeric ones ask for the
+    # HIGHEST value among them, which is exact for "any member ... more than X".
+    household_question: str | None = None
 
 
 _FIELDS: tuple[FieldSpec, ...] = (
@@ -77,6 +84,8 @@ _FIELDS: tuple[FieldSpec, ...] = (
         schemes=("PM-KISAN",),
         draft_aliases=("citizenship_status",),  # draft used citizenship_status=="NRI" (string enum, not boolean)
         citizen_question="Are you classified as a Non-Resident Indian (NRI) under Indian income tax rules?",
+        household_question="Is any one of {members} a Non-Resident Indian (NRI) under Indian income "
+                           "tax rules?",
         display_label="NRI status",
     ),
 
@@ -297,6 +306,8 @@ _FIELDS: tuple[FieldSpec, ...] = (
         "SECC's own parameter vi wording more closely than a household-aggregate figure.",
         schemes=("AB-PMJAY", "PMAY-G"),
         citizen_question="What is the monthly income, in rupees?",
+        household_question="What is the highest monthly income earned by any one of {members}, in "
+                           "rupees? (Enter 0 if none of them earns.)",
         display_label="Monthly income",
     ),
     FieldSpec(
@@ -494,6 +505,8 @@ _FIELDS: tuple[FieldSpec, ...] = (
         "Monthly pension amount, in INR.", schemes=("PM-KISAN",),
         draft_aliases=("monthly_pension",),
         citizen_question="What is your monthly pension amount, in rupees? (Enter 0 if you don't receive a pension.)",
+        household_question="What is the highest monthly pension received by any one of {members}, in "
+                           "rupees? (Enter 0 if none of them receives a pension.)",
         display_label="Monthly pension",
     ),
     FieldSpec(
@@ -701,6 +714,54 @@ def get_field(name: str) -> FieldSpec | None:
     return FIELD_ONTOLOGY.get(name)
 
 
+# Who a scheme counts as the applicant's family, in each scheme's own source wording -- filled into a
+# household_question's {members}. A scheme not listed (any AI-Checked scheme) gets _DEFAULT_SCOPE.
+FAMILY_SCOPE: dict[str, str] = {
+    # PM-KISAN Operational Guidelines, Para 3: "a family comprising of husband, wife and minor children"
+    "PM-KISAN": "you, your husband or wife, and your minor children",
+    # SECC exclusion parameter vi (PIB, 3 July 2015): "Any member of household earning more than ..."
+    "AB-PMJAY": "the members of your household",
+    # MoRD Annual Report 2024-25, p.141, parameter vi: "Any member of the family earning more than ..."
+    "PMAY-G": "the members of your family",
+}
+_DEFAULT_SCOPE = "you and the members of your family"
+
+_HOUSEHOLD_WORDS = re.compile(
+    r"\b(family|families|household|anyone|any one of|any member|members|husband|wife|spouse|children|relatives?)\b",
+    re.IGNORECASE,
+)
+
+
+def family_scope_for(scheme_id: str) -> str:
+    return FAMILY_SCOPE.get(scheme_id, _DEFAULT_SCOPE)
+
+
+def is_household_phrased(question: str) -> bool:
+    """Does the question ask about the whole family, not just the person answering?"""
+    return bool(_HOUSEHOLD_WORDS.search(question))
+
+
+def household_question_for(field: str, scheme_id: str) -> str | None:
+    """The household form of `field`'s question for this scheme, or None if there is none: the canonical
+    template filled with the scheme's family scope, a canonical question already worded for the
+    household, or a registered generated household phrasing (AI-Checked)."""
+    spec = get_field(field)
+    if spec is not None and spec.household_question:
+        return spec.household_question.format(members=family_scope_for(scheme_id))
+    if spec is not None and is_household_phrased(spec.citizen_question):
+        return spec.citizen_question
+    return _RUNTIME_HOUSEHOLD_QUESTIONS.get(field)
+
+
+def register_household_question(field: str, question: str) -> bool:
+    """Record a generated household phrasing for a non-canonical field. Rejected unless it reads as a
+    question about the family."""
+    if get_field(field) is not None or not is_household_phrased(question):
+        return False
+    _RUNTIME_HOUSEHOLD_QUESTIONS[field] = question.strip()
+    return True
+
+
 def is_sensitive(name: str) -> bool:
     spec = get_field(name)
     return spec is not None and spec.sensitive
@@ -728,6 +789,7 @@ def display_label_for(field: str) -> str:
 # the extractor its canonical vocabulary) or into all_field_names() (which the structural-F1
 # comparison treats as the known vocabulary). A canonical field's phrasing is never overridden.
 _RUNTIME_CITIZEN_QUESTIONS: dict[str, str] = {}
+_RUNTIME_HOUSEHOLD_QUESTIONS: dict[str, str] = {}  # generated household phrasings, AI-Checked fields
 
 
 def register_citizen_question(field: str, question: str) -> bool:
@@ -747,6 +809,7 @@ def registered_citizen_questions() -> dict[str, str]:
 
 def clear_registered_citizen_questions() -> None:
     _RUNTIME_CITIZEN_QUESTIONS.clear()
+    _RUNTIME_HOUSEHOLD_QUESTIONS.clear()
 
 
 def citizen_question_for(field: str) -> str | None:

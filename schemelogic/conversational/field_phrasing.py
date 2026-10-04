@@ -33,6 +33,7 @@ import json
 import re
 from pathlib import Path
 
+from schemelogic.conversational.question_selector import family_wide_fields
 from schemelogic.llm.provider import ProviderFailure, chat_completion_with_fallback
 from schemelogic.schema import field_ontology
 from schemelogic.schema.models import Scheme
@@ -78,7 +79,10 @@ def _save_disk_cache(cache: dict[str, str]) -> None:
         pass  # a cache that can't be written is a cost problem, never a correctness one
 
 
-def _system_prompt(answer_type: str, language: str = "en") -> str:
+_HOUSEHOLD_SUFFIX = "@household"  # disk-cache key suffix for a field's household phrasing
+
+
+def _system_prompt(answer_type: str, language: str = "en", household: bool = False) -> str:
     shape = {
         "boolean": 'a YES/NO question, answerable with "yes" or "no"',
         "number": "a question asking for a single number",
@@ -91,7 +95,13 @@ def _system_prompt(answer_type: str, language: str = "en") -> str:
         f"You are given an internal field name. Write {shape}, addressed to the citizen as "
         '"you", in simple language a non-specialist can answer without looking anything up.\n\n'
         "Rules:\n"
-        "- Ask only for the citizen's own fact. Never state or imply a threshold, cut-off, "
+        + (
+            "- This fact is checked for EVERY member of the citizen's family, so ask whether the "
+            "citizen OR ANY MEMBER OF THEIR FAMILY has it (for a number, ask for the highest value "
+            "among them), and say \"family\" in the question. "
+            if household else "- Ask only for the citizen's own fact. "
+        )
+        + "Never state or imply a threshold, cut-off, "
         "amount, date or eligibility consequence — you do not know them, and inventing one would "
         "be wrong.\n"
         "- Indian welfare administration terms in the field name are OFFICIAL CATEGORY NAMES, not "
@@ -154,6 +164,7 @@ def phrase_field_question(
     language: str = "en",
     cache: dict[str, str] | None = None,
     scheme_context: str | None = None,
+    household: bool = False,
 ) -> str | None:
     """A citizen-facing question for one novel `field`, or None if the caller should keep its own
     fallback phrasing. Never raises. One LLM call per uncached field.
@@ -171,8 +182,9 @@ def phrase_field_question(
         return None  # canonical fields already have a human-written question
 
     cache = _load_disk_cache() if cache is None else cache
-    if field in cache:
-        return cache[field]
+    key = field + _HOUSEHOLD_SUFFIX if household else field
+    if key in cache:
+        return cache[key]
 
     label = field.replace("_", " ").strip()
     user_lines = [f"Field name: {field}", f"Meaning (humanized): {label}"]
@@ -181,7 +193,7 @@ def phrase_field_question(
     try:
         response = chat_completion_with_fallback(
             [
-                {"role": "system", "content": _system_prompt(answer_type, language)},
+                {"role": "system", "content": _system_prompt(answer_type, language, household)},
                 {"role": "user", "content": "\n".join(user_lines)},
             ],
             temperature=0.0,
@@ -205,8 +217,10 @@ def phrase_field_question(
     candidate = (response.content or "").strip().strip('"').strip()
     if not _is_plausible_question(candidate, field, language):
         return None
+    if household and language == "en" and not field_ontology.is_household_phrased(candidate):
+        return None  # asked about the citizen alone: a relative's fact would never be asked
 
-    cache[field] = candidate
+    cache[key] = candidate
     _save_disk_cache(cache)
     return candidate
 
@@ -255,12 +269,23 @@ def ensure_questions_for_scheme(scheme: Scheme, language: str = "en") -> int:
     cache = _load_disk_cache()
     registered = 0
     context = scheme.scheme_id.replace("-", " ").strip() or None
+    family_wide = family_wide_fields(scheme)
     for field, answer_type in _novel_fields(scheme):
         question = phrase_field_question(
             field, answer_type=answer_type, language=language, cache=cache, scheme_context=context
         )
         if question and field_ontology.register_citizen_question(field, question):
             registered += 1
+        if field in family_wide:
+            # Checked for the whole family: the applicant must be asked about the household. Without
+            # a phrasing, question_selector falls back to a generic household question -- never an
+            # applicant-only one.
+            household = phrase_field_question(
+                field, answer_type=answer_type, language=language, cache=cache,
+                scheme_context=context, household=True,
+            )
+            if household and field_ontology.register_household_question(field, household):
+                registered += 1
     return registered
 
 
@@ -269,7 +294,10 @@ def preload_registered_questions() -> int:
     re-pay for phrasings it has already generated (the disk cache survives the process; the
     in-memory registry does not)."""
     registered = 0
-    for field, question in _load_disk_cache().items():
-        if field_ontology.register_citizen_question(field, question):
-            registered += 1
+    for key, question in _load_disk_cache().items():
+        if key.endswith(_HOUSEHOLD_SUFFIX):
+            ok = field_ontology.register_household_question(key[: -len(_HOUSEHOLD_SUFFIX)], question)
+        else:
+            ok = field_ontology.register_citizen_question(key, question)
+        registered += ok
     return registered

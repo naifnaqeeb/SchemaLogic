@@ -99,26 +99,46 @@ scope has the same gap within one member. `tests/test_engine_fuzz.py` prints the
 field as its condition — the only shape in which applicant scope adds a new instance. Not an error:
 such a rule can be legitimate.
 
-## Conversational flow: family facts default to "no family" (second review, finding 7 — investigated, awaiting decision)
+## [PARTLY RESOLVED 2026-10-04] Conversational flow: family facts default to "no family" (second review, finding 7)
 
 **Where**: `schemelogic/conversational/session.py` (`ConversationSession.profile` starts as
-`{"self": {}, "family_members": []}`), `question_selector.py` (asks only about members already in the
-list), `intake.py`. **What**: every chat begins with an explicit empty family, and nothing asks how
-many family members there are, so `some_family_member` / `all_family_members` / count exclusions are
-evaluated over the applicant alone unless the opening message happened to describe relatives. For
-most family-quantified fields the ontology's question to the applicant is phrased for the household
-("Did you **or a family member** pay income tax?"), and the answer, stored on the applicant, covers
-it. Three are not: `monthly_income_inr` (AB-PMJAY, PMAY-G: "What is the monthly income…?"),
-`monthly_pension_inr` and `is_nri_per_income_tax_act_1961` (PM-KISAN, applicant-only wording). For
-those, a relative's disqualifying fact is never asked, and the chat can say **eligible**.
+`{"self": {}, "family_members": []}`), `question_selector.py`, `intake.py`.
 
-**Impact of the proposed engine rule** (absent key = family unknown → undetermined for non-self
-quantifiers; `[]` = no family): measured 2026-10-04 with a patched evaluator, nothing committed.
-0 of 75 gold profiles change verdict; 1 test changes (the one pinning today's behaviour); 0 chat
-sessions change, because the chat always has the key. Starting the chat *without* the key removes
-every wrong definite answer in a simulation, but the selector then asks about `family_member[0]`,
-`[1]`, … with no way to say "no one else" — it needs a household-size question to be usable.
-Full numbers in the 2026-10-04 report.
+**What**: every chat begins with an explicit empty family and nothing asks how many family members
+there are, so `some_family_member` / `all_family_members` / count exclusions are evaluated over the
+applicant's record alone unless the opening message described relatives. For most family-quantified
+fields the applicant's question was already worded for the household ("Did you **or a family
+member** pay income tax?"), so the answer covered it. Three were not -- `monthly_income_inr`
+(AB-PMJAY, PMAY-G), `monthly_pension_inr` and `is_nri_per_income_tax_act_1961` (PM-KISAN) -- and for
+those a relative's disqualifying fact was never asked: the chat said **eligible**.
+
+**Resolved (option a, decided 2026-10-04)**: a field a scheme checks for the whole family, and nowhere
+for the applicant alone, is asked of the applicant for the household, in that scheme's own family
+definition (`FieldSpec.household_question`, `field_ontology.FAMILY_SCOPE`): PM-KISAN "you, your
+husband or wife, and your minor children" (Para 3); AB-PMJAY "the members of your household" (SECC
+parameter vi); PMAY-G "the members of your family" (MoRD p.141, vi). Numeric facts ask for the
+highest value among them, which is exact for "any member ... more than X"; a test confines that
+wording to exactly those rules. AI-Checked schemes get a household phrasing for family-wide novel
+fields, and a generic household question if none is available -- never an applicant-only one.
+`tests/test_household_questions.py` guards every gold scheme, every cached AI-Checked scheme and a
+synthetic one. Simulated chats with a truthful citizen over all 80 gold profiles: 4 wrong definite
+verdicts before (exactly those three fields), 0 after. Of the 11 an earlier simulation reported, the
+other 7 were that simulation answering household-worded questions from the applicant's record only.
+
+**Still open -- the structural follow-up**:
+- **(b) Ask household composition.** The household answer lives on the applicant's record; the
+  evaluator never sees separate members unless the citizen describes them. A household-size question
+  up front, with an absent `family_members` key meaning "family unknown" (undetermined for non-self
+  quantifiers) and `[]` meaning "no family", would represent families properly. Measured 2026-10-04
+  with a patched evaluator, nothing committed: 0 of 75 gold profiles change; the selector would need
+  a "no one else" answer, or it asks about member 0, 1, 2, ... indefinitely.
+- **Per-member exceptions collapse onto the applicant's record.** PM-KISAN's pension exclusion
+  exempts Group D employees member by member. Asked for the household, "the highest pension in the
+  family" and "is that family member Group D?" are both stored on the applicant's record, so the
+  exception is checked against one blended record: a Group D applicant whose husband draws a
+  Rs 20,000 non-Group-D pension can be exempted by her own status. The same holds for any
+  member-scoped exception on a family-wide exclusion (PM-KISAN's government-employee exclusion too).
+  Only (b) -- real per-member records -- fixes it.
 
 ## [RESOLVED 2026-10-04] Structural F1 never scores `except` clauses
 
