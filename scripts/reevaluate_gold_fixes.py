@@ -17,10 +17,10 @@ For each previously reported figure this:
      instead of silently comparing against a number it didn't regenerate;
   3. computes the CORRECTED figure from the current gold and profiles, same draft, same functions.
 
-Structural F1 note: evaluation/structural_f1.py matches exclusions on (location, field, op, value,
-quantifier) and never scores `except` clauses at all, so a fix that only adds exceptions -- AB-PMJAY's
--- cannot move it. That is a pre-existing gap in the metric, recorded in the audit doc, not something
-this script works around.
+Structural F1 note: until 2026-10-04 evaluation/structural_f1.py never scored `except` clauses, so a
+fix that only added exceptions -- AB-PMJAY's -- couldn't move it. It does now; F1 figures written by
+this script before then used the old metric. scripts/rescore_structural_f1.py re-scores every draft
+under both metrics (docs/GOLD_AUDIT_2026-10-03.md section 7.8).
 """
 
 from __future__ import annotations

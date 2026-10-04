@@ -13,6 +13,14 @@ something incorrect), standard for slot-filling evaluation. Category metrics are
 `cat` to charge them against). Gold/draft `cat` disagreements on an otherwise-matched field are
 logged separately as `category_tag_mismatches` — a distinct diagnostic from field/value
 correctness.
+
+Exceptions are scored too (since 2026-10-04; before that a changed `except` clause could never move
+the metric -- AB-PMJAY scored 1.000 before and after a fix that changed real verdicts). Each `except`
+is its own predicate at location "exception", paired through the field of the exclusion it belongs
+to, and a true positive only if its field, op, value and `except_scope` all match. They are charged
+to their own category, "exception_to_exclusion" -- the plan's C3 "exceptions-to-exclusions" -- so a
+per-category figure for exceptions measures them. A missing exception is a false negative even when
+its exclusion matched; the exclusion's own match is unaffected.
 """
 
 from __future__ import annotations
@@ -22,7 +30,8 @@ from typing import Any, Literal
 
 from schemelogic.schema.models import AndNode, Exclusion, OrNode, Predicate, PredicateCategory, Scheme
 
-Location = Literal["inclusion", "exclusion"]
+Location = Literal["inclusion", "exclusion", "exception"]
+EXCEPTION_CATEGORY = "exception_to_exclusion"  # the plan's C3 "exceptions-to-exclusions" category
 
 
 def _enum_value(x: Any) -> Any:
@@ -38,9 +47,17 @@ class FlatPredicate:
     value: Any
     quantifier: str | None  # None for inclusion predicates
     has_except: bool = False
+    parent_field: str | None = None  # location "exception": the field of the exclusion it belongs to
+    except_scope: str | None = None  # location "exception" only
+
+    def identity(self) -> tuple[str, str]:
+        """What a gold and a draft predicate are paired on: location plus field -- for an exception,
+        the field of its exclusion, so each exception is compared with the same exclusion's."""
+        return (self.location, self.parent_field if self.location == "exception" else self.field)
 
     def match_key(self) -> tuple:
-        return (self.location, self.field, self.op, repr(self.value), self.quantifier)
+        return (self.location, self.parent_field, self.field, self.op, repr(self.value),
+                self.quantifier, self.except_scope)
 
 
 def _flatten_inclusion(node: Any, out: list[FlatPredicate]) -> None:
@@ -69,10 +86,22 @@ def _flatten_exclusions(exclusions: list[Exclusion]) -> list[FlatPredicate]:
     ]
 
 
+def _flatten_exceptions(exclusions: list[Exclusion]) -> list[FlatPredicate]:
+    return [
+        FlatPredicate(
+            location="exception", field=e.except_.field, cat=EXCEPTION_CATEGORY,
+            op=_enum_value(e.except_.op), value=e.except_.value, quantifier=None,
+            parent_field=e.field, except_scope=_enum_value(e.except_scope),
+        )
+        for e in exclusions
+        if e.except_ is not None
+    ]
+
+
 def flatten_scheme(scheme: Scheme) -> list[FlatPredicate]:
     inclusion: list[FlatPredicate] = []
     _flatten_inclusion(scheme.inclusion, inclusion)
-    return inclusion + _flatten_exclusions(scheme.exclusions)
+    return inclusion + _flatten_exclusions(scheme.exclusions) + _flatten_exceptions(scheme.exclusions)
 
 
 @dataclass
@@ -115,6 +144,7 @@ class StructuralComparisonResult:
     scheme_id: str
     inclusion_diff: dict[str, list[dict[str, Any]]]
     exclusion_diff: dict[str, list[dict[str, Any]]]
+    exception_diff: dict[str, list[dict[str, Any]]]
     category_metrics: dict[str, CategoryMetrics]
     overall: CategoryMetrics
     category_tag_mismatches: list[CategoryTagMismatch]
@@ -124,6 +154,7 @@ class StructuralComparisonResult:
             "scheme_id": self.scheme_id,
             "inclusion_diff": self.inclusion_diff,
             "exclusion_diff": self.exclusion_diff,
+            "exception_diff": self.exception_diff,
             "category_metrics": {k: v.to_dict() for k, v in self.category_metrics.items()},
             "overall": self.overall.to_dict(),
             "category_tag_mismatches": [
@@ -138,24 +169,27 @@ def _predicate_summary(p: FlatPredicate) -> dict[str, Any]:
     if p.location == "exclusion":
         d["quantifier"] = p.quantifier
         d["has_except"] = p.has_except
+    if p.location == "exception":
+        d["exclusion"] = p.parent_field
+        d["except_scope"] = p.except_scope
     return d
 
 
 def _diff_location(gold_preds: list[FlatPredicate], draft_preds: list[FlatPredicate]) -> dict[str, list[dict[str, Any]]]:
-    gold_by_field = {p.field: p for p in gold_preds}
-    draft_by_field = {p.field: p for p in draft_preds}
+    gold_by_id = {p.identity(): p for p in gold_preds}
+    draft_by_id = {p.identity(): p for p in draft_preds}
 
     exact_matches, present_but_wrong, missing, hallucinated = [], [], [], []
-    for field_name, g in gold_by_field.items():
-        d = draft_by_field.get(field_name)
+    for key, g in gold_by_id.items():
+        d = draft_by_id.get(key)
         if d is None:
             missing.append(_predicate_summary(g))
         elif g.match_key() == d.match_key():
-            exact_matches.append({"field": field_name})
+            exact_matches.append({"field": key[1]})
         else:
-            present_but_wrong.append({"field": field_name, "gold": _predicate_summary(g), "draft": _predicate_summary(d)})
-    for field_name, d in draft_by_field.items():
-        if field_name not in gold_by_field:
+            present_but_wrong.append({"field": key[1], "gold": _predicate_summary(g), "draft": _predicate_summary(d)})
+    for key, d in draft_by_id.items():
+        if key not in gold_by_id:
             hallucinated.append(_predicate_summary(d))
 
     return {
@@ -168,13 +202,12 @@ def compare_schemes(gold: Scheme, draft: Scheme) -> StructuralComparisonResult:
     gold_flat = flatten_scheme(gold)
     draft_flat = flatten_scheme(draft)
 
-    gold_inclusion = [p for p in gold_flat if p.location == "inclusion"]
-    draft_inclusion = [p for p in draft_flat if p.location == "inclusion"]
-    gold_exclusion = [p for p in gold_flat if p.location == "exclusion"]
-    draft_exclusion = [p for p in draft_flat if p.location == "exclusion"]
+    def at(preds: list[FlatPredicate], location: str) -> list[FlatPredicate]:
+        return [p for p in preds if p.location == location]
 
-    inclusion_diff = _diff_location(gold_inclusion, draft_inclusion)
-    exclusion_diff = _diff_location(gold_exclusion, draft_exclusion)
+    inclusion_diff = _diff_location(at(gold_flat, "inclusion"), at(draft_flat, "inclusion"))
+    exclusion_diff = _diff_location(at(gold_flat, "exclusion"), at(draft_flat, "exclusion"))
+    exception_diff = _diff_location(at(gold_flat, "exception"), at(draft_flat, "exception"))
 
     category_metrics: dict[str, CategoryMetrics] = {}
 
@@ -183,11 +216,13 @@ def compare_schemes(gold: Scheme, draft: Scheme) -> StructuralComparisonResult:
 
     category_tag_mismatches: list[CategoryTagMismatch] = []
 
-    gold_by_field = {p.field: p for p in gold_flat}
-    draft_by_field = {p.field: p for p in draft_flat}
+    # Paired on (location, field). Keyed by field alone (as before 2026-10-04), an exception would
+    # collide with an exclusion or inclusion leaf on the same field -- AB-PMJAY's age.
+    gold_by_id = {p.identity(): p for p in gold_flat}
+    draft_by_id = {p.identity(): p for p in draft_flat}
 
-    for field_name, g in gold_by_field.items():
-        d = draft_by_field.get(field_name)
+    for key, g in gold_by_id.items():
+        d = draft_by_id.get(key)
         m = _metrics_for(g.cat)
         if d is None:
             m.fn += 1
@@ -195,18 +230,18 @@ def compare_schemes(gold: Scheme, draft: Scheme) -> StructuralComparisonResult:
             m.tp += 1
             if g.cat != d.cat:
                 category_tag_mismatches.append(
-                    CategoryTagMismatch(location=g.location, field=field_name, gold_cat=g.cat, draft_cat=d.cat)
+                    CategoryTagMismatch(location=g.location, field=key[1], gold_cat=g.cat, draft_cat=d.cat)
                 )
         else:
             m.fn += 1
             m.fp += 1
             if g.cat != d.cat:
                 category_tag_mismatches.append(
-                    CategoryTagMismatch(location=g.location, field=field_name, gold_cat=g.cat, draft_cat=d.cat)
+                    CategoryTagMismatch(location=g.location, field=key[1], gold_cat=g.cat, draft_cat=d.cat)
                 )
 
-    for field_name, d in draft_by_field.items():
-        if field_name not in gold_by_field:
+    for key, d in draft_by_id.items():
+        if key not in gold_by_id:
             _metrics_for(d.cat).fp += 1
 
     overall = CategoryMetrics(category="__overall__")
@@ -219,6 +254,7 @@ def compare_schemes(gold: Scheme, draft: Scheme) -> StructuralComparisonResult:
         scheme_id=gold.scheme_id,
         inclusion_diff=inclusion_diff,
         exclusion_diff=exclusion_diff,
+        exception_diff=exception_diff,
         category_metrics=category_metrics,
         overall=overall,
         category_tag_mismatches=category_tag_mismatches,

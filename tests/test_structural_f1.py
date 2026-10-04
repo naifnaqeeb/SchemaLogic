@@ -163,4 +163,100 @@ def test_pm_kisan_structural_f1_matches_manual_report():
     result = compare_schemes(gold, draft)
     missing_fields = {m["field"] for m in result.inclusion_diff["missing"] + result.exclusion_diff["missing"]}
     assert missing_fields == {"is_indian_citizen"}  # the one confirmed-recurring gap, per the manual report
-    assert result.overall.tp == 8  # matches the reported "8/9 exact field matches"
+    # matches the reported "8/9 exact field matches" -- the manual report predates exception scoring;
+    # the draft also gets both Group D exceptions right, which the metric now counts separately
+    assert result.overall.tp - result.category_metrics["exception_to_exclusion"].tp == 8
+    assert result.category_metrics["exception_to_exclusion"].tp == 2
+
+
+# --- exceptions are scored (2026-10-04) ------------------------------------------------------------
+# Before, a changed `except` could never move the metric: AB-PMJAY scored 1.000 before and after a gold
+# fix that changed real verdicts. Each exception is now its own predicate, paired through its
+# exclusion, charged to the C3 "exceptions-to-exclusions" category.
+
+import subprocess  # noqa: E402
+
+import pytest  # noqa: E402
+
+from schemelogic.evaluation.structural_f1 import EXCEPTION_CATEGORY  # noqa: E402
+
+_GROUP_D = {"field": "is_group_d", "op": "==", "value": True}
+
+
+def _with_exception(exception: dict | None, scope: str | None = None, field: str = "holds_office") -> Scheme:
+    data = json.loads(GOLD.model_dump_json(by_alias=True))
+    for excl in data["exclusions"]:
+        if excl["field"] == field:
+            excl["except"] = exception
+            if scope:
+                excl["except_scope"] = scope
+    return Scheme.model_validate(data)
+
+
+GOLD_WITH_EXCEPTION = _with_exception(_GROUP_D)
+
+
+def test_flatten_scheme_includes_each_exception_once():
+    flat = flatten_scheme(GOLD_WITH_EXCEPTION)
+    exceptions = [p for p in flat if p.location == "exception"]
+    assert [(p.parent_field, p.field, p.cat) for p in exceptions] == [("holds_office", "is_group_d", EXCEPTION_CATEGORY)]
+
+
+def test_identical_exceptions_are_a_true_positive():
+    result = compare_schemes(GOLD_WITH_EXCEPTION, GOLD_WITH_EXCEPTION)
+    assert result.category_metrics[EXCEPTION_CATEGORY].tp == 1
+    assert result.overall.f1 == 1.0
+    assert result.exception_diff["exact_matches"] == [{"field": "holds_office"}]
+
+
+def test_a_missing_exception_is_a_false_negative_and_the_exclusion_still_matches():
+    result = compare_schemes(GOLD_WITH_EXCEPTION, GOLD)
+    assert result.category_metrics[EXCEPTION_CATEGORY].fn == 1
+    assert result.category_metrics["political"].tp == 1  # the exclusion itself is unaffected
+    assert result.overall.f1 < 1.0
+
+
+def test_a_hallucinated_exception_is_a_false_positive():
+    result = compare_schemes(GOLD, GOLD_WITH_EXCEPTION)
+    assert result.category_metrics[EXCEPTION_CATEGORY].fp == 1
+    assert result.exception_diff["hallucinated"][0]["exclusion"] == "holds_office"
+
+
+@pytest.mark.parametrize("draft_exception,scope", [
+    ({"field": "is_group_d", "op": "==", "value": False}, None),        # wrong value
+    ({"field": "is_class_iv", "op": "==", "value": True}, None),        # wrong field
+    (_GROUP_D, "applicant"),                                            # wrong scope
+])
+def test_a_wrong_exception_counts_as_both_fp_and_fn(draft_exception, scope):
+    result = compare_schemes(GOLD_WITH_EXCEPTION, _with_exception(draft_exception, scope))
+    m = result.category_metrics[EXCEPTION_CATEGORY]
+    assert (m.tp, m.fp, m.fn) == (0, 1, 1)
+    assert result.exception_diff["present_but_wrong"][0]["field"] == "holds_office"
+
+
+def test_an_exception_is_paired_through_its_own_exclusion():
+    """The same exception on a different exclusion is not a match."""
+    result = compare_schemes(GOLD_WITH_EXCEPTION, _with_exception(_GROUP_D, field="is_wealthy"))
+    m = result.category_metrics[EXCEPTION_CATEGORY]
+    assert (m.tp, m.fp, m.fn) == (0, 1, 1)
+
+
+def test_an_exception_on_the_same_field_as_another_predicate_does_not_collide():
+    """AB-PMJAY: the inclusion and all 14 exceptions read `age`. Keyed by field alone they collapsed."""
+    gold = _with_exception({"field": "age", "op": ">=", "value": 70}, field="is_wealthy")
+    result = compare_schemes(gold, gold)
+    assert result.overall.tp == len(flatten_scheme(gold)) == 5
+    assert result.overall.f1 == 1.0
+
+
+def test_the_ab_pmjay_70_plus_fix_now_moves_the_metric():
+    """The case that exposed the gap: the 2026-10-03 fix added 14 exceptions and scored 1.000 -> 1.000."""
+    def at(ref: str) -> Scheme:
+        return Scheme.model_validate_json(subprocess.check_output(["git", "show", f"{ref}:data/gold/AB-PMJAY.json"]))
+
+    draft = Scheme.model_validate(json.loads(Path(
+        "data/extraction_runs/AB-PMJAY_gpt-oss-120b_gated_20260818T025520.json").read_text(encoding="utf-8"))["gated_extraction"])
+    before, after = compare_schemes(at("5662498"), draft), compare_schemes(at("f6571a9"), draft)  # pre-fix, post-fix
+    assert before.overall.f1 == 1.0
+    assert after.category_metrics[EXCEPTION_CATEGORY].fn == 14
+    assert after.overall.f1 < 1.0

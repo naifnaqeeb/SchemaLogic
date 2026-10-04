@@ -1,0 +1,689 @@
+{
+  "old_metric_ref": "043a8e8",
+  "old_gold_ref": "5662498",
+  "schemes_without_a_draft": [
+    "PMMVY"
+  ],
+  "rows": [
+    {
+      "scheme": "AB-PMJAY",
+      "draft_run": "AB-PMJAY_gpt-oss-120b_gated_20260818T025520.json",
+      "old_metric_snapshot_gold": {
+        "f1": 1.0,
+        "tp": 19,
+        "fp": 0,
+        "fn": 0,
+        "exceptions": null
+      },
+      "new_metric_snapshot_gold": {
+        "f1": 1.0,
+        "tp": 19,
+        "fp": 0,
+        "fn": 0,
+        "exceptions": null
+      },
+      "old_metric_current_gold": {
+        "f1": 0.9474,
+        "tp": 18,
+        "fp": 1,
+        "fn": 1,
+        "exceptions": null
+      },
+      "new_metric_current_gold": {
+        "f1": 0.6923,
+        "tp": 18,
+        "fp": 1,
+        "fn": 15,
+        "exceptions": {
+          "category": "exception_to_exclusion",
+          "tp": 0,
+          "fp": 0,
+          "fn": 14,
+          "precision": 1.0,
+          "recall": 0.0,
+          "f1": 0.0
+        }
+      }
+    },
+    {
+      "scheme": "AB-PMJAY",
+      "draft_run": "AB-PMJAY_gpt-oss-120b_judge_repair_20260818T025059.json",
+      "old_metric_snapshot_gold": {
+        "f1": 1.0,
+        "tp": 19,
+        "fp": 0,
+        "fn": 0,
+        "exceptions": null
+      },
+      "new_metric_snapshot_gold": {
+        "f1": 1.0,
+        "tp": 19,
+        "fp": 0,
+        "fn": 0,
+        "exceptions": null
+      },
+      "old_metric_current_gold": {
+        "f1": 0.9474,
+        "tp": 18,
+        "fp": 1,
+        "fn": 1,
+        "exceptions": null
+      },
+      "new_metric_current_gold": {
+        "f1": 0.6923,
+        "tp": 18,
+        "fp": 1,
+        "fn": 15,
+        "exceptions": {
+          "category": "exception_to_exclusion",
+          "tp": 0,
+          "fp": 0,
+          "fn": 14,
+          "precision": 1.0,
+          "recall": 0.0,
+          "f1": 0.0
+        }
+      }
+    },
+    {
+      "scheme": "AB-PMJAY",
+      "draft_run": "AB-PMJAY_gpt-oss-120b_judge_repair_20260818T025205.json",
+      "old_metric_snapshot_gold": {
+        "f1": 1.0,
+        "tp": 19,
+        "fp": 0,
+        "fn": 0,
+        "exceptions": null
+      },
+      "new_metric_snapshot_gold": {
+        "f1": 1.0,
+        "tp": 19,
+        "fp": 0,
+        "fn": 0,
+        "exceptions": null
+      },
+      "old_metric_current_gold": {
+        "f1": 0.9474,
+        "tp": 18,
+        "fp": 1,
+        "fn": 1,
+        "exceptions": null
+      },
+      "new_metric_current_gold": {
+        "f1": 0.6923,
+        "tp": 18,
+        "fp": 1,
+        "fn": 15,
+        "exceptions": {
+          "category": "exception_to_exclusion",
+          "tp": 0,
+          "fp": 0,
+          "fn": 14,
+          "precision": 1.0,
+          "recall": 0.0,
+          "f1": 0.0
+        }
+      }
+    },
+    {
+      "scheme": "AB-PMJAY",
+      "draft_run": "AB-PMJAY_gpt-oss-120b_judge_repair_20260818T025313.json",
+      "old_metric_snapshot_gold": {
+        "f1": 1.0,
+        "tp": 19,
+        "fp": 0,
+        "fn": 0,
+        "exceptions": null
+      },
+      "new_metric_snapshot_gold": {
+        "f1": 1.0,
+        "tp": 19,
+        "fp": 0,
+        "fn": 0,
+        "exceptions": null
+      },
+      "old_metric_current_gold": {
+        "f1": 0.9474,
+        "tp": 18,
+        "fp": 1,
+        "fn": 1,
+        "exceptions": null
+      },
+      "new_metric_current_gold": {
+        "f1": 0.6923,
+        "tp": 18,
+        "fp": 1,
+        "fn": 15,
+        "exceptions": {
+          "category": "exception_to_exclusion",
+          "tp": 0,
+          "fp": 0,
+          "fn": 14,
+          "precision": 1.0,
+          "recall": 0.0,
+          "f1": 0.0
+        }
+      }
+    },
+    {
+      "scheme": "AB-PMJAY",
+      "draft_run": "AB-PMJAY_gpt-oss-120b_ontology_20260818T025049.json",
+      "old_metric_snapshot_gold": {
+        "f1": 1.0,
+        "tp": 19,
+        "fp": 0,
+        "fn": 0,
+        "exceptions": null
+      },
+      "new_metric_snapshot_gold": {
+        "f1": 1.0,
+        "tp": 19,
+        "fp": 0,
+        "fn": 0,
+        "exceptions": null
+      },
+      "old_metric_current_gold": {
+        "f1": 0.9474,
+        "tp": 18,
+        "fp": 1,
+        "fn": 1,
+        "exceptions": null
+      },
+      "new_metric_current_gold": {
+        "f1": 0.6923,
+        "tp": 18,
+        "fp": 1,
+        "fn": 15,
+        "exceptions": {
+          "category": "exception_to_exclusion",
+          "tp": 0,
+          "fp": 0,
+          "fn": 14,
+          "precision": 1.0,
+          "recall": 0.0,
+          "f1": 0.0
+        }
+      }
+    },
+    {
+      "scheme": "IGNOAPS",
+      "draft_run": "IGNOAPS_gpt-oss-120b_judge_repair_20260818T015010.json",
+      "old_metric_snapshot_gold": {
+        "f1": 0.6667,
+        "tp": 5,
+        "fp": 4,
+        "fn": 1,
+        "exceptions": null
+      },
+      "new_metric_snapshot_gold": {
+        "f1": 0.6667,
+        "tp": 5,
+        "fp": 4,
+        "fn": 1,
+        "exceptions": null
+      },
+      "old_metric_current_gold": {
+        "f1": 0.2667,
+        "tp": 2,
+        "fp": 7,
+        "fn": 4,
+        "exceptions": null
+      },
+      "new_metric_current_gold": {
+        "f1": 0.2667,
+        "tp": 2,
+        "fp": 7,
+        "fn": 4,
+        "exceptions": null
+      }
+    },
+    {
+      "scheme": "IGNOAPS",
+      "draft_run": "IGNOAPS_gpt-oss-120b_ontology_20260818T012625.json",
+      "old_metric_snapshot_gold": {
+        "f1": 0.7143,
+        "tp": 5,
+        "fp": 3,
+        "fn": 1,
+        "exceptions": null
+      },
+      "new_metric_snapshot_gold": {
+        "f1": 0.7143,
+        "tp": 5,
+        "fp": 3,
+        "fn": 1,
+        "exceptions": null
+      },
+      "old_metric_current_gold": {
+        "f1": 0.2857,
+        "tp": 2,
+        "fp": 6,
+        "fn": 4,
+        "exceptions": null
+      },
+      "new_metric_current_gold": {
+        "f1": 0.2857,
+        "tp": 2,
+        "fp": 6,
+        "fn": 4,
+        "exceptions": null
+      }
+    },
+    {
+      "scheme": "MH-LADKI-BAHIN",
+      "draft_run": "MH-LADKI-BAHIN_gpt-oss-120b_judge_repair_20260818T015321.json",
+      "old_metric_snapshot_gold": {
+        "f1": 0.8333,
+        "tp": 10,
+        "fp": 3,
+        "fn": 1,
+        "exceptions": null
+      },
+      "new_metric_snapshot_gold": {
+        "f1": 0.7857,
+        "tp": 11,
+        "fp": 5,
+        "fn": 1,
+        "exceptions": {
+          "category": "exception_to_exclusion",
+          "tp": 0,
+          "fp": 1,
+          "fn": 1,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        }
+      },
+      "old_metric_current_gold": {
+        "f1": 0.8333,
+        "tp": 10,
+        "fp": 3,
+        "fn": 1,
+        "exceptions": null
+      },
+      "new_metric_current_gold": {
+        "f1": 0.7857,
+        "tp": 11,
+        "fp": 5,
+        "fn": 1,
+        "exceptions": {
+          "category": "exception_to_exclusion",
+          "tp": 0,
+          "fp": 1,
+          "fn": 1,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        }
+      }
+    },
+    {
+      "scheme": "MH-LADKI-BAHIN",
+      "draft_run": "MH-LADKI-BAHIN_gpt-oss-120b_ontology_20260818T013129.json",
+      "old_metric_snapshot_gold": {
+        "f1": 0.8182,
+        "tp": 9,
+        "fp": 2,
+        "fn": 2,
+        "exceptions": null
+      },
+      "new_metric_snapshot_gold": {
+        "f1": 0.7692,
+        "tp": 10,
+        "fp": 4,
+        "fn": 2,
+        "exceptions": {
+          "category": "exception_to_exclusion",
+          "tp": 0,
+          "fp": 1,
+          "fn": 1,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        }
+      },
+      "old_metric_current_gold": {
+        "f1": 0.8182,
+        "tp": 9,
+        "fp": 2,
+        "fn": 2,
+        "exceptions": null
+      },
+      "new_metric_current_gold": {
+        "f1": 0.7692,
+        "tp": 10,
+        "fp": 4,
+        "fn": 2,
+        "exceptions": {
+          "category": "exception_to_exclusion",
+          "tp": 0,
+          "fp": 1,
+          "fn": 1,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        }
+      }
+    },
+    {
+      "scheme": "PM-KISAN",
+      "draft_run": "PM-KISAN_gpt-oss-120b_judge_repair_20260818T014850.json",
+      "old_metric_snapshot_gold": {
+        "f1": 0.8,
+        "tp": 8,
+        "fp": 3,
+        "fn": 1,
+        "exceptions": null
+      },
+      "new_metric_snapshot_gold": {
+        "f1": 0.8333,
+        "tp": 10,
+        "fp": 3,
+        "fn": 1,
+        "exceptions": {
+          "category": "exception_to_exclusion",
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      },
+      "old_metric_current_gold": {
+        "f1": 0.8,
+        "tp": 8,
+        "fp": 3,
+        "fn": 1,
+        "exceptions": null
+      },
+      "new_metric_current_gold": {
+        "f1": 0.8333,
+        "tp": 10,
+        "fp": 3,
+        "fn": 1,
+        "exceptions": {
+          "category": "exception_to_exclusion",
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      }
+    },
+    {
+      "scheme": "PM-KISAN",
+      "draft_run": "PM-KISAN_gpt-oss-120b_ontology_20260818T005207.json",
+      "old_metric_snapshot_gold": {
+        "f1": 0.8889,
+        "tp": 8,
+        "fp": 1,
+        "fn": 1,
+        "exceptions": null
+      },
+      "new_metric_snapshot_gold": {
+        "f1": 0.9091,
+        "tp": 10,
+        "fp": 1,
+        "fn": 1,
+        "exceptions": {
+          "category": "exception_to_exclusion",
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      },
+      "old_metric_current_gold": {
+        "f1": 0.8889,
+        "tp": 8,
+        "fp": 1,
+        "fn": 1,
+        "exceptions": null
+      },
+      "new_metric_current_gold": {
+        "f1": 0.9091,
+        "tp": 10,
+        "fp": 1,
+        "fn": 1,
+        "exceptions": {
+          "category": "exception_to_exclusion",
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      }
+    },
+    {
+      "scheme": "PM-UJJWALA-2.0",
+      "draft_run": "PM-UJJWALA-2.0_gpt-oss-120b_gated_20260818T033601.json",
+      "old_metric_snapshot_gold": {
+        "f1": 0.963,
+        "tp": 13,
+        "fp": 0,
+        "fn": 1,
+        "exceptions": null
+      },
+      "new_metric_snapshot_gold": {
+        "f1": 0.963,
+        "tp": 13,
+        "fp": 0,
+        "fn": 1,
+        "exceptions": null
+      },
+      "old_metric_current_gold": {
+        "f1": 1.0,
+        "tp": 13,
+        "fp": 0,
+        "fn": 0,
+        "exceptions": null
+      },
+      "new_metric_current_gold": {
+        "f1": 1.0,
+        "tp": 13,
+        "fp": 0,
+        "fn": 0,
+        "exceptions": null
+      }
+    },
+    {
+      "scheme": "PM-UJJWALA-2.0",
+      "draft_run": "PM-UJJWALA-2.0_gpt-oss-120b_judge_repair_20260818T033450.json",
+      "old_metric_snapshot_gold": {
+        "f1": 0.963,
+        "tp": 13,
+        "fp": 0,
+        "fn": 1,
+        "exceptions": null
+      },
+      "new_metric_snapshot_gold": {
+        "f1": 0.963,
+        "tp": 13,
+        "fp": 0,
+        "fn": 1,
+        "exceptions": null
+      },
+      "old_metric_current_gold": {
+        "f1": 1.0,
+        "tp": 13,
+        "fp": 0,
+        "fn": 0,
+        "exceptions": null
+      },
+      "new_metric_current_gold": {
+        "f1": 1.0,
+        "tp": 13,
+        "fp": 0,
+        "fn": 0,
+        "exceptions": null
+      }
+    },
+    {
+      "scheme": "PM-UJJWALA-2.0",
+      "draft_run": "PM-UJJWALA-2.0_gpt-oss-120b_ontology_20260818T033301.json",
+      "old_metric_snapshot_gold": {
+        "f1": 0.88,
+        "tp": 11,
+        "fp": 0,
+        "fn": 3,
+        "exceptions": null
+      },
+      "new_metric_snapshot_gold": {
+        "f1": 0.88,
+        "tp": 11,
+        "fp": 0,
+        "fn": 3,
+        "exceptions": null
+      },
+      "old_metric_current_gold": {
+        "f1": 0.9167,
+        "tp": 11,
+        "fp": 0,
+        "fn": 2,
+        "exceptions": null
+      },
+      "new_metric_current_gold": {
+        "f1": 0.9167,
+        "tp": 11,
+        "fp": 0,
+        "fn": 2,
+        "exceptions": null
+      }
+    },
+    {
+      "scheme": "PMAY-G",
+      "draft_run": "PMAY-G_gpt-oss-120b_gated_20260818T031608.json",
+      "old_metric_snapshot_gold": {
+        "f1": 0.8571,
+        "tp": 12,
+        "fp": 2,
+        "fn": 2,
+        "exceptions": null
+      },
+      "new_metric_snapshot_gold": {
+        "f1": 0.8571,
+        "tp": 12,
+        "fp": 2,
+        "fn": 2,
+        "exceptions": null
+      },
+      "old_metric_current_gold": {
+        "f1": 0.5517,
+        "tp": 8,
+        "fp": 6,
+        "fn": 7,
+        "exceptions": null
+      },
+      "new_metric_current_gold": {
+        "f1": 0.5517,
+        "tp": 8,
+        "fp": 6,
+        "fn": 7,
+        "exceptions": null
+      }
+    },
+    {
+      "scheme": "PMAY-G",
+      "draft_run": "PMAY-G_gpt-oss-120b_gated_20260818T031713.json",
+      "old_metric_snapshot_gold": {
+        "f1": 0.8571,
+        "tp": 12,
+        "fp": 2,
+        "fn": 2,
+        "exceptions": null
+      },
+      "new_metric_snapshot_gold": {
+        "f1": 0.8571,
+        "tp": 12,
+        "fp": 2,
+        "fn": 2,
+        "exceptions": null
+      },
+      "old_metric_current_gold": {
+        "f1": 0.5517,
+        "tp": 8,
+        "fp": 6,
+        "fn": 7,
+        "exceptions": null
+      },
+      "new_metric_current_gold": {
+        "f1": 0.5517,
+        "tp": 8,
+        "fp": 6,
+        "fn": 7,
+        "exceptions": null
+      }
+    },
+    {
+      "scheme": "PMAY-G",
+      "draft_run": "PMAY-G_gpt-oss-120b_judge_repair_20260818T031455.json",
+      "old_metric_snapshot_gold": {
+        "f1": 0.8276,
+        "tp": 12,
+        "fp": 3,
+        "fn": 2,
+        "exceptions": null
+      },
+      "new_metric_snapshot_gold": {
+        "f1": 0.8276,
+        "tp": 12,
+        "fp": 3,
+        "fn": 2,
+        "exceptions": null
+      },
+      "old_metric_current_gold": {
+        "f1": 0.5333,
+        "tp": 8,
+        "fp": 7,
+        "fn": 7,
+        "exceptions": null
+      },
+      "new_metric_current_gold": {
+        "f1": 0.5333,
+        "tp": 8,
+        "fp": 7,
+        "fn": 7,
+        "exceptions": null
+      }
+    },
+    {
+      "scheme": "PMAY-G",
+      "draft_run": "PMAY-G_gpt-oss-120b_ontology_20260818T031252.json",
+      "old_metric_snapshot_gold": {
+        "f1": 0.8571,
+        "tp": 12,
+        "fp": 2,
+        "fn": 2,
+        "exceptions": null
+      },
+      "new_metric_snapshot_gold": {
+        "f1": 0.8571,
+        "tp": 12,
+        "fp": 2,
+        "fn": 2,
+        "exceptions": null
+      },
+      "old_metric_current_gold": {
+        "f1": 0.5517,
+        "tp": 8,
+        "fp": 6,
+        "fn": 7,
+        "exceptions": null
+      },
+      "new_metric_current_gold": {
+        "f1": 0.5517,
+        "tp": 8,
+        "fp": 6,
+        "fn": 7,
+        "exceptions": null
+      }
+    }
+  ]
+}

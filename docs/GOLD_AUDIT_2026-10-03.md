@@ -735,7 +735,7 @@ These earlier statements should no longer be cited:
    carve-out reading chosen in §6.4. Treat it as a hypothesis with two supporting cases, not a
    finding.
 
-5. **The exception gap in structural F1 matters for the C3 claims.** The metric matches exclusions
+5. **The exception gap in structural F1 matters for the C3 claims.** *(Fixed 2026-10-04 — §7.8.)* The metric matches exclusions
    without looking at their `except` clauses, so it scored AB-PMJAY 1.000 before and after a fix
    that changed real verdicts. Any per-category F1 claim about exceptions-to-exclusions currently
    rests on a metric that doesn't measure them. Logged in `KNOWN_ISSUES.md`.
@@ -829,3 +829,61 @@ fields, and none of the four new ones.
 
 The harmful false positives are the four new criteria (the LLM's document doesn't have them); the
 false negatives are the refrigerator and landline (its document still has them).
+
+### 7.8 Structural F1 now scores exceptions
+
+*2026-10-04. Fixes §7.5 point 5.*
+
+**Change** (`schemelogic/evaluation/structural_f1.py`). Each `except` is its own predicate, paired
+through the exclusion it belongs to, and a true positive only if its field, operator, value and
+`except_scope` all match. Exceptions are charged to their own category, `exception_to_exclusion` —
+the plan's C3 "exceptions-to-exclusions" — so a per-category figure for exceptions now measures them.
+A missing exception is a false negative even when its exclusion matched. Predicates are also now
+paired on (location, field) rather than field alone: keyed by field, an exception would collide with
+an exclusion or inclusion leaf on the same field (AB-PMJAY's `age`). That also corrects a
+pre-existing collision in one MH-LADKI-BAHIN draft, which uses `family_annual_income_inr` and
+`marital_status` in both its inclusion and its exclusions — the old metric let the exclusion copy
+overwrite the inclusion copy.
+
+**Checked.** On all 19 draft/gold pairs on disk, every non-exception number is identical to the old
+metric except those two MH-LADKI-BAHIN drafts (the collision). New tests pin missing, hallucinated,
+wrong-value, wrong-field, wrong-scope and wrong-exclusion exceptions, and that AB-PMJAY's 2026-10-03
+fix — 1.000 → 1.000 under the old metric — now moves it.
+
+**Re-run on all 7 schemes** (`scripts/rescore_structural_f1.py` →
+`data/extraction_runs/structural_f1_rescore_2026-10-04.json`). Each draft scored four ways; the
+gate-approved or ontology draft shown, the rest are in the file:
+
+| Scheme (draft) | Old metric, audit gold | New metric, audit gold | Old metric, current gold | **New metric, current gold** | Exceptions now (tp/fp/fn) |
+|---|---|---|---|---|---|
+| AB-PMJAY (gated) | 1.000 | 1.000 | 0.947 | **0.692** | 0/0/14 |
+| IGNOAPS (ontology) | 0.714 | 0.714 | 0.286 | **0.286** | none in either |
+| MH-LADKI-BAHIN (ontology) | 0.818 | 0.769 | 0.818 | **0.769** | 0/1/1 |
+| PM-KISAN (ontology) | 0.889 | 0.909 | 0.889 | **0.909** | 2/0/0 |
+| PM-UJJWALA-2.0 (gated) | 0.963 | 0.963 | 1.000 | **1.000** | none in either |
+| PMAY-G (gated) | 0.857 | 0.857 | 0.552 | **0.552** | none in either |
+| PMMVY | — | — | — | — | never extracted: nothing to score |
+
+- **AB-PMJAY**: the draft has none of the 14 exceptions on the 70+ route — the shared error of
+  §7.5 point 2, now visible in the metric. 0.947 (§7.6) is superseded by **0.692**.
+- **MH-LADKI-BAHIN**: the draft misses the tractor exception on the four-wheeler exclusion and adds
+  an `employment_type` exception (outsourced, voluntary or contractual staff) on the government-
+  employee exclusion that the gold expresses in the field itself ("regular/permanent"). The collision
+  fix alone would give 0.833; scored exceptions bring it to 0.769.
+- **PM-KISAN**: the draft gets both Group D exceptions right, which now counts in its favour.
+- **IGNOAPS, PM-UJJWALA-2.0, PMAY-G**: no exceptions in gold or draft; the metric change moves
+  nothing, and the figures above are the gold fixes of §6.3, §6.4 and §6.8.
+
+**Superseded structural F1 figures** — none should be cited any longer:
+
+| Recorded | Now |
+|---|---|
+| AB-PMJAY Phase 3 check-in, 1.000 (and 0.947 in §7.6) | **0.692** |
+| PM-UJJWALA-2.0 Phase 3 check-in, 0.963 | 1.000 (gold fix; the metric change doesn't affect it) |
+| PMAY-G Phase 3 check-in, 0.857 (and 0.552 in §7.7) | 0.552 (gold fix; unchanged by the metric) |
+| PM-KISAN manual report, "8/9 exact field matches" (F1 0.889) | **0.909**: 8/9 fields plus 2/2 exceptions |
+| MH-LADKI-BAHIN ontology draft, 0.818 | **0.769** |
+| IGNOAPS 0.714 / 0.667 (never reported; §7.3) | 0.286 / 0.267 (gold fix) |
+
+Still not handled, and logged in `KNOWN_ISSUES.md`: two predicates on the same field in the same
+location (MH-LADKI-BAHIN's and PMMVY's paired `age` bounds) are still collapsed to one.
