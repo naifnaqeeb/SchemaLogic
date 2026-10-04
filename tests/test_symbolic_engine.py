@@ -604,15 +604,31 @@ def test_applicant_scope_with_all_family_members(route, applicant, members, expe
     assert evaluate(_route_scheme("all_family_members"), _household(route, applicant, *members)).verdict == expected
 
 
-# count_family_members, every operator. The defining property of a waiver: with the route present the
-# applicant can never be MORE excluded than without it -- the first review found the opposite for
-# "<", "<=" and "==" (a 70+ applicant made ineligible BECAUSE of the waiver).
-@pytest.mark.parametrize("op,n", [("<", 1), ("<=", 0), ("==", 0), ("==", 1), (">", 0), (">=", 1), (">=", 2)])
-@pytest.mark.parametrize("members", [(True,), (False,), (True, True), (False, False), (True, False)])
-def test_applicant_scope_with_count_never_makes_the_waived_applicant_worse_off(op, n, members):
+# count_family_members, every operator. The defining property of a waiver: the applicant is never
+# worse off WITH the exception than with no exception at all -- the first review found the opposite for
+# "<", "<=" and "==" (a 70+ applicant made ineligible BECAUSE of the waiver). Compared against the
+# no-exception baseline, with the route present, absent and unknown, and with missing member facts.
+_RANK = {Verdict.INELIGIBLE: 0, Verdict.UNDETERMINED: 1, Verdict.ELIGIBLE: 2}
+
+
+def _no_exception(scheme: Scheme) -> Scheme:
+    data = scheme.model_dump(mode="json", by_alias=True)
+    for excl in data["exclusions"]:
+        excl["except"] = None
+        excl["except_scope"] = "member"
+    return Scheme.model_validate(data)
+
+
+@pytest.mark.parametrize("op,n", [("<", 1), ("<=", 0), ("<=", 1), ("==", 0), ("==", 1), (">", 0), (">=", 1), (">=", 2)])
+@pytest.mark.parametrize("members", [(True,), (False,), (None,), (True, True), (False, False), (True, False), (True, None)])
+@pytest.mark.parametrize("route", [True, False, None])
+def test_applicant_scope_with_count_never_makes_the_applicant_worse_off(op, n, members, route):
     scheme = _route_scheme("count_family_members", op, n)
-    assert evaluate(scheme, _household(True, False, *members)).verdict == E  # waived: cannot fire
-    assert evaluate(scheme, _household(False, False, *members)).verdict in (E, I)  # all known -> definite
+    profile = _household(route, False, *members)
+    with_exception = evaluate(scheme, profile).verdict
+    assert _RANK[with_exception] >= _RANK[evaluate(_no_exception(scheme), profile).verdict]
+    if route is True:
+        assert with_exception == E  # waived: the exclusion cannot fire whatever the members' facts
 
 
 def test_review_reproducer_f1_count_waiver_is_not_a_trigger():
@@ -733,3 +749,108 @@ def test_selector_asks_the_applicant_not_a_family_member_for_an_applicant_scoped
     assert (question.field, question.member) == ("household_route", "self")
     asks = [m.member for m in find_missing_fields(evaluate(scheme, profile)) if m.field == "household_route"]
     assert asks == ["self"]
+
+
+# --- gaps found by the second independent review (2026-10-04, finding 9) ------------------------
+
+
+@pytest.mark.parametrize("op,n,members,expected", [
+    ("<", 1, (True,), E),          # 1 taxpayer: "< 1" can't fire whatever the route
+    ("<", 1, (False,), U),         # 0 taxpayers: fires unless the (unknown) route waives it
+    ("<", 2, (True, True), E),
+    ("<", 2, (True, None), U),     # 1 or 2 taxpayers, route unknown
+    ("<=", 0, (False,), U),
+    ("<=", 0, (True,), E),
+    ("<=", 1, (True, True), E),
+    ("<=", 1, (None,), U),         # 0 or 1 taxpayers: "<= 1" holds either way; only the route decides
+])
+def test_applicant_scope_with_count_less_than_and_unknown_route(op, n, members, expected):
+    assert evaluate(_route_scheme("count_family_members", op, n), _household(None, False, *members)).verdict == expected
+
+
+def test_applicant_scope_with_count_less_than_decides_once_the_route_is_known():
+    scheme = _route_scheme("count_family_members", "<=", 1)
+    assert evaluate(scheme, _household(False, False, None)).verdict == I
+    assert evaluate(scheme, _household(True, False, None)).verdict == E
+
+
+def test_mixed_scopes_with_no_family_members_key():
+    """Pins CURRENT behaviour: an absent family_members key is read as an empty family (finding 7 of
+    the second review questions that; this test will change if that ruling does)."""
+    member_scoped = {
+        "cat": "occupation", "quantifier": "some_family_member", "field": "govt_job", "op": "==", "value": True,
+        "except": {"field": "is_group_d", "op": "==", "value": True},
+    }
+    scheme = _route_scheme("some_family_member", extra_exclusions=(member_scoped,))
+
+    def applicant(**facts):
+        return {"self": {"is_poor": True, **facts}}
+
+    assert evaluate(scheme, applicant(pays_tax=True, household_route=True, govt_job=True, is_group_d=True)).verdict == E
+    assert evaluate(scheme, applicant(pays_tax=True, household_route=True, govt_job=True, is_group_d=False)).verdict == I
+    assert evaluate(scheme, applicant(pays_tax=True, household_route=False, govt_job=False)).verdict == I
+    assert evaluate(scheme, applicant(pays_tax=False, household_route=None, govt_job=False)).verdict == E
+
+
+def test_explicit_member_scope_without_an_exception_is_accepted_as_the_default():
+    data = _route_scheme("some_family_member").model_dump(mode="json", by_alias=True)
+    data["exclusions"][0].update({"except": None, "except_scope": "member"})
+    assert Scheme.model_validate(data).exclusions[0].except_scope.value == "member"
+
+
+def test_applicant_scope_without_an_exception_names_the_scope_in_the_error():
+    data = _route_scheme("some_family_member").model_dump(mode="json", by_alias=True)
+    data["exclusions"][0]["except"] = None
+    with pytest.raises(ValueError, match="except_scope 'applicant' requires an `except` clause"):
+        Scheme.model_validate(data)
+
+
+@pytest.mark.parametrize("bad", ["Applicant", "household", "self", "", None])
+def test_unknown_except_scope_values_are_rejected(bad):
+    data = _route_scheme("some_family_member").model_dump(mode="json", by_alias=True)
+    data["exclusions"][0]["except_scope"] = bad
+    with pytest.raises(ValueError):
+        Scheme.model_validate(data)
+
+
+def test_dump_gold_json_round_trips_and_is_idempotent():
+    import json
+    from pathlib import Path
+
+    from schemelogic.schema.models import dump_gold_json
+
+    schemes = [_route_scheme(q) for q in ("some_family_member", "all_family_members")]
+    schemes.append(_route_scheme("count_family_members", "<", 1))
+    gold_dir = Path(__file__).resolve().parents[1] / "data" / "gold"
+    schemes += [Scheme.model_validate_json(p.read_text(encoding="utf-8")) for p in sorted(gold_dir.glob("*.json"))]
+    assert len(schemes) >= 10
+    for scheme in schemes:
+        text = dump_gold_json(scheme)
+        again = Scheme.model_validate(json.loads(text))
+        assert again == scheme
+        assert dump_gold_json(again) == text
+        # the applicant scope survives the omission of defaults; the member default doesn't appear
+        assert ('"except_scope": "applicant"' in text) == any(
+            e.except_scope.value == "applicant" for e in scheme.exclusions)
+        assert '"except_scope": "member"' not in text
+
+
+def test_trace_consumers_handle_an_applicant_scoped_waiver():
+    """Under applicant scope a member row's `result` is that member's raw condition and carries no
+    `except`; the waiver is recorded once, at exclusion level. Every reader of the trace must cope:
+    the citizen explanation says "waived", not "applies to you", on an ELIGIBLE verdict."""
+    from schemelogic.annotation.rendering import trace_to_citizen_english
+    from schemelogic.conversational.phrasing import plain_template_answer
+    from schemelogic.conversational.question_selector import find_missing_fields
+
+    result = evaluate(_route_scheme("some_family_member"), _household(True, True, True, None))
+    assert result.verdict == E
+    excl = result.trace["exclusions"][0]
+    assert excl["has_except"] is True and all("except" not in m for m in excl["members"])
+    assert excl["members"][0]["result"] is True  # raw condition: the applicant DOES pay tax
+
+    text = trace_to_citizen_english(result.trace)
+    assert "waived by an exception" in text
+    assert "Applies to you" not in text
+    assert "eligible" in plain_template_answer(result).lower()
+    find_missing_fields(result)  # must not raise on rows without `except`

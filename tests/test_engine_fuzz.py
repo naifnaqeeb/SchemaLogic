@@ -22,7 +22,8 @@ Case counts are kept small enough for every run. For the full sweeps the review 
 
     SCHEMELOGIC_FUZZ_FULL=1 python -m pytest tests/test_engine_fuzz.py -q -s
 
-(40,000 preservation cases, 30,000 soundness cases). SCHEMELOGIC_FUZZ_CASES=<n> sets both explicitly.
+(40,000 preservation cases, 30,000 for each other property). SCHEMELOGIC_FUZZ_CASES=<n> sets every
+count explicitly.
 """
 
 from __future__ import annotations
@@ -42,7 +43,8 @@ from tests.reference import symbolic_engine_pre_except_scope as reference
 _FULL = os.environ.get("SCHEMELOGIC_FUZZ_FULL") == "1"
 _EXPLICIT = os.environ.get("SCHEMELOGIC_FUZZ_CASES")
 PRESERVATION_CASES = int(_EXPLICIT) if _EXPLICIT else (40_000 if _FULL else 2_000)
-SOUNDNESS_CASES = int(_EXPLICIT) if _EXPLICIT else (30_000 if _FULL else 1_500)
+SOUNDNESS_CASES = int(_EXPLICIT) if _EXPLICIT else (30_000 if _FULL else 600)  # each enumerates completions
+PROPERTY_CASES = int(_EXPLICIT) if _EXPLICIT else (30_000 if _FULL else 3_000)
 
 FIELDS = ("a", "b", "c")
 QUANTIFIERS = ("self", "some_family_member", "all_family_members", "count_family_members")
@@ -132,13 +134,18 @@ def test_member_scope_preserves_pre_except_scope_behaviour():
 
 # --- 2. soundness ------------------------------------------------------------------------------
 
-_DOMAIN = (0, 1, 2)
+# Completions range over (-1..3) while predicate constants are drawn from (0..2), so every predicate
+# can come out either way: with a (0..2) domain `a >= 0` is always true and `a < 0` never, which
+# would let an engine that GUESSES those for a missing fact pass as sound (the 2026-10-04 second
+# review built exactly that mutant, and it passed).
+_DOMAIN = (-1, 0, 1, 2, 3)
+_CONSTANTS = (0, 1, 2)
 _SOUND_OPS = ("==", "!=", ">=", "<")
-_MAX_MISSING = 7  # 3**7 = 2,187 completions per case at most
+_MAX_MISSING = 5  # 5**5 = 3,125 completions per case at most
 
 
-def _pred(rng: random.Random) -> dict:
-    return {"field": rng.choice(FIELDS), "op": rng.choice(_SOUND_OPS), "value": rng.choice(_DOMAIN)}
+def _pred(rng: random.Random, field: str | None = None) -> dict:
+    return {"field": field or rng.choice(FIELDS), "op": rng.choice(_SOUND_OPS), "value": rng.choice(_CONSTANTS)}
 
 
 def _inclusion(rng: random.Random, depth: int = 0) -> dict:
@@ -147,24 +154,27 @@ def _inclusion(rng: random.Random, depth: int = 0) -> dict:
     return {rng.choice(("and", "or")): [_inclusion(rng, depth + 1) for _ in range(rng.randint(2, 3))]}
 
 
+def _exclusion(rng: random.Random, applicant_scope: bool | None = None) -> dict:
+    """One random exclusion. applicant_scope=True forces an applicant-scoped exception; None lets the
+    scope vary (applicant only where valid, i.e. not with quantifier self)."""
+    quantifier = rng.choice(QUANTIFIERS[1:] if applicant_scope else QUANTIFIERS)
+    excl = {"cat": "economic", "quantifier": quantifier, **_pred(rng)}
+    if applicant_scope or rng.random() < 0.75:
+        excl["except"] = _pred(rng)
+        if applicant_scope or (quantifier != "self" and rng.random() < 0.6):
+            excl["except_scope"] = "applicant"
+    if quantifier == "count_family_members":
+        excl["count_op"], excl["count"] = rng.choice(COUNT_OPS), rng.randint(0, 3)
+    return excl
+
+
 def _any_scope_scheme(rng: random.Random) -> dict:
-    exclusions = []
-    for _ in range(rng.randint(1, 3)):
-        quantifier = rng.choice(QUANTIFIERS)
-        excl = {"cat": "economic", "quantifier": quantifier, **_pred(rng)}
-        if rng.random() < 0.75:
-            excl["except"] = _pred(rng)
-            if quantifier != "self" and rng.random() < 0.6:
-                excl["except_scope"] = "applicant"
-        if quantifier == "count_family_members":
-            excl["count_op"], excl["count"] = rng.choice(COUNT_OPS), rng.randint(0, 3)
-        exclusions.append(excl)
-    return _scheme(_inclusion(rng), exclusions)
+    return _scheme(_inclusion(rng), [_exclusion(rng) for _ in range(rng.randint(1, 3))])
 
 
-def _partial_profile(rng: random.Random) -> dict:
+def _partial_profile(rng: random.Random, present: float = 0.75) -> dict:
     def member():
-        return {f: rng.choice(_DOMAIN) for f in FIELDS if rng.random() < 0.75}
+        return {f: rng.choice(_DOMAIN) for f in FIELDS if rng.random() < present}
 
     profile: dict = {}
     if rng.random() < 0.9:
@@ -222,27 +232,118 @@ def test_definite_verdicts_are_sound_over_every_completion_of_missing_facts():
     assert not unsound, f"definite verdict contradicted by a completion of the missing facts: {unsound[:2]}"
 
 
-def _nontrivial_pred(rng: random.Random, field: str) -> dict:
-    """A predicate neither always true nor always false over _DOMAIN. `b >= 0` and `b < 0` are
-    decided by the test's value domain alone, which the engine cannot know -- they'd show up as
-    spurious 'incompleteness'."""
-    op = rng.choice(_SOUND_OPS)
-    value = rng.choice((1, 2)) if op in (">=", "<") else rng.choice(_DOMAIN)
-    return {"field": field, "op": op, "value": value}
+# --- 3. intended semantics, stated independently -------------------------------------------------
+# The soundness check judges completions with the engine itself, so an engine that is consistently
+# WRONG -- say, reading the applicant's waiver off family_members[0] -- passes it. This is a separate,
+# deliberately naive two-valued statement of what the rules mean, compared on complete profiles.
+
+_TWO_VALUED_OPS = {"==": lambda a, b: a == b, "!=": lambda a, b: a != b,
+                   ">=": lambda a, b: a >= b, "<": lambda a, b: a < b}
+_COUNT_CMP = {"<": lambda n, k: n < k, "<=": lambda n, k: n <= k, "==": lambda n, k: n == k,
+              ">": lambda n, k: n > k, ">=": lambda n, k: n >= k}
 
 
+def _holds(pred: dict, record: dict) -> bool:
+    return _TWO_VALUED_OPS[pred["op"]](record[pred["field"]], pred["value"])
+
+
+def _reference_inclusion(node: dict, record: dict) -> bool:
+    if "and" in node:
+        return all(_reference_inclusion(c, record) for c in node["and"])
+    if "or" in node:
+        return any(_reference_inclusion(c, record) for c in node["or"])
+    return _holds(node, record)
+
+
+def _reference_excluded(excl: dict, profile: dict) -> bool:
+    """A rule looks at the applicant, or at the applicant and the family: does anyone / everyone /
+    how many of them meet the condition. A member-scoped exception exempts the person it holds for;
+    an applicant-scoped exception waives the whole rule when it holds for the applicant."""
+    applicant, family = profile["self"], profile["family_members"]
+    quantifier = excl.get("quantifier", "self")
+    people = [applicant] if quantifier == "self" else [applicant, *family]
+    exception, scope = excl.get("except"), excl.get("except_scope", "member")
+
+    def counts(person: dict) -> bool:
+        return _holds(excl, person) and not (exception and scope == "member" and _holds(exception, person))
+
+    hits = [counts(p) for p in people]
+    if quantifier == "all_family_members":
+        fires = all(hits)
+    elif quantifier == "count_family_members":
+        fires = _COUNT_CMP[excl["count_op"]](sum(hits), excl["count"])
+    else:
+        fires = any(hits)
+    return fires and not (exception and scope == "applicant" and _holds(exception, applicant))
+
+
+def _reference_verdict(data: dict, profile: dict) -> engine.Verdict:
+    excluded = any(_reference_excluded(e, profile) for e in data["exclusions"])
+    eligible = _reference_inclusion(data["inclusion"], profile["self"]) and not excluded
+    return engine.Verdict.ELIGIBLE if eligible else engine.Verdict.INELIGIBLE
+
+
+def test_engine_matches_an_independent_two_valued_reference_on_complete_profiles():
+    rng = random.Random(13)
+    mismatches = []
+    for _ in range(PROPERTY_CASES):
+        data, profile = _any_scope_scheme(rng), _partial_profile(rng, present=1.0)
+        profile.setdefault("self", {f: rng.choice(_DOMAIN) for f in FIELDS})
+        profile.setdefault("family_members", [])
+        got = engine.evaluate(Scheme.model_validate(data), profile).verdict
+        want = _reference_verdict(data, profile)
+        if got != want:
+            mismatches.append((data, profile, got, want))
+    print(f"\n[reference] {PROPERTY_CASES:,} complete profiles, {len(mismatches)} mismatches")
+    assert not mismatches, f"engine disagrees with the two-valued reference: {mismatches[:2]}"
+
+
+# --- 4. a waiver never makes anyone worse off ---------------------------------------------------
+
+_RANK = {engine.Verdict.INELIGIBLE: 0, engine.Verdict.UNDETERMINED: 1, engine.Verdict.ELIGIBLE: 2}
+
+
+def _without_exceptions(data: dict) -> dict:
+    data = copy.deepcopy(data)
+    for excl in data["exclusions"]:
+        excl.pop("except", None)
+        excl.pop("except_scope", None)
+    return data
+
+
+def test_applicant_scoped_exception_never_makes_a_verdict_worse_than_no_exception():
+    """The defining property of a waiver, against the no-exception baseline and with missing facts:
+    never ELIGIBLE -> UNDETERMINED/INELIGIBLE, never UNDETERMINED -> INELIGIBLE."""
+    rng = random.Random(17)
+    worse = []
+    for _ in range(PROPERTY_CASES):
+        data = _scheme(_inclusion(rng), [_exclusion(rng, applicant_scope=True) for _ in range(rng.randint(1, 2))])
+        profile = _partial_profile(rng)
+        with_exception = engine.evaluate(Scheme.model_validate(data), profile).verdict
+        baseline = engine.evaluate(Scheme.model_validate(_without_exceptions(data)), profile).verdict
+        if _RANK[with_exception] < _RANK[baseline]:
+            worse.append((data, profile, baseline, with_exception))
+    print(f"\n[no worse off] {PROPERTY_CASES:,} cases, {len(worse)} made worse by the exception")
+    assert not worse, worse[:2]
+
+
+# --- 5. completeness where it is achievable ------------------------------------------------------
+
+
+@pytest.mark.parametrize("quantifier", ["some_family_member", "all_family_members", "count_family_members"])
 @pytest.mark.parametrize("seed", [11, 23])
-def test_applicant_scope_count_quantifiers_are_never_incomplete_on_disjoint_fields(seed):
-    """The specific incompleteness the review found -- count quantifiers under applicant scope treating
-    the members' shared waiver as independent unknowns -- is fixed. With the exclusion, its exception
-    and the inclusion on DISJOINT fields (so the pre-existing shared-field gap can't occur), every
-    undetermined verdict must be genuinely open."""
+def test_applicant_scope_is_complete_when_condition_exception_and_inclusion_use_disjoint_fields(quantifier, seed):
+    """The incompleteness the first review found -- count quantifiers under applicant scope treating the
+    members' shared waiver as independent unknowns -- is fixed. With the exclusion, its exception and
+    the inclusion on DISJOINT fields (so the pre-existing shared-field gap can't occur), every
+    undetermined verdict must be genuinely open, for every family quantifier."""
     rng = random.Random(seed)
     checked = 0
     for _ in range(300 if not _FULL else 3_000):
-        excl = {"cat": "economic", "quantifier": "count_family_members", **_nontrivial_pred(rng, "a"),
-                "except": _nontrivial_pred(rng, "b"), "except_scope": "applicant",
-                "count_op": rng.choice(COUNT_OPS), "count": rng.randint(0, 3)}
+        excl = {"cat": "economic", "quantifier": quantifier, **_pred(rng, "a"),
+                "except": _pred(rng, "b"), "except_scope": "applicant"}
+        if quantifier == "count_family_members":
+            excl.update(count_op=rng.choice(COUNT_OPS), count=rng.randint(0, 3))
         scheme = Scheme.model_validate(_scheme({"cat": "economic", "field": "c", "op": "==", "value": 1}, [excl]))
         profile = _partial_profile(rng)
         profile.setdefault("self", {})["c"] = 1  # inclusion met: the verdict turns on the exclusion

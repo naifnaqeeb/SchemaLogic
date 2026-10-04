@@ -140,8 +140,9 @@ class Exclusion(Predicate):
 
     @model_validator(mode="after")
     def _validate_except_scope(self) -> "Exclusion":
+        # An explicit "member" with no exception is accepted: it is the default, and says nothing.
         if self.except_scope != ExceptScope.MEMBER and self.except_ is None:
-            raise ValueError("except_scope is only meaningful when an `except` clause is present")
+            raise ValueError(f"except_scope '{self.except_scope.value}' requires an `except` clause")
         if self.except_scope == ExceptScope.APPLICANT and self.quantifier == Quantifier.SELF:
             # A self-quantified exclusion only ever reads the applicant, so applicant scope changes
             # nothing -- accepting it would only hide an authoring or extraction mistake.
