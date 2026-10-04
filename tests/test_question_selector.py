@@ -353,10 +353,10 @@ def _partial_profiles(sid: str, rng: random.Random, per_profile: int):
         for _ in range(per_profile):
             p = {"self": dict(profile.get("self", {})),
                  "family_members": [dict(m) for m in profile.get("family_members", [])] or [{}]}
-            for f in applicant_fields:
+            for f in sorted(applicant_fields):  # sorted: set order varies with hash randomization
                 p["self"].setdefault(f, rng.choice(_candidate_values(scheme, f)))
             for member in p["family_members"]:
-                for f in family_fields:
+                for f in sorted(family_fields):
                     member.setdefault(f, rng.choice(_candidate_values(scheme, f)))
             facts = [("self", f) for f in p["self"]] + [
                 (f"family_member[{i}]", f) for i, m in enumerate(p["family_members"]) for f in m]
@@ -379,7 +379,10 @@ def test_every_question_could_change_the_verdict_and_none_that_could_is_withheld
         offered = {(m.member, m.field) for m in find_missing_fields(result)}
         relevant = {s for s in slots if _relevant(scheme, profile, slots, s)}
         question = select_next_question(scheme, profile)
-        assert (question.member, question.field) in relevant, ("asked an irrelevant question", profile, question)
+        # a screening question ("Are you a widow?") stands in for the sensitive fact it can settle
+        asked_about = {(question.member, question.field)} | {
+            (question.member, f) for f in fields_screened_by(question.field)}
+        assert asked_about & relevant, ("asked an irrelevant question", profile, question)
         assert relevant <= offered, ("withheld a relevant question", relevant - offered, profile)
         checked += 1
     assert checked >= 5, checked
@@ -390,7 +393,7 @@ def test_every_question_could_change_the_verdict_and_none_that_could_is_withheld
 # only of an applicant it could apply to (60+, no BPL card, clear of the carve-out's three criteria, and
 # a widow -- asked first, gently), and "Prefer not to say" leaves the fact unknown: never a verdict.
 
-from schemelogic.schema.field_ontology import is_sensitive  # noqa: E402
+from schemelogic.schema.field_ontology import fields_screened_by, is_sensitive  # noqa: E402
 
 _SENSITIVE = "is_widow_suffering_from_aids"
 _IGNOAPS_FACTS = {

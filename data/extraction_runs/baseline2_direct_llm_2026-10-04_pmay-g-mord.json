@@ -1,0 +1,145 @@
+{
+  "run": "baseline2_direct_llm (re-scored against corrected gold)",
+  "date": "2026-10-04",
+  "methodology_module": "schemelogic/evaluation/direct_llm_baseline.py",
+  "rescoring": "Answers reused verbatim wherever a profile's facts are byte-identical to an earlier run's (the LLM never sees the gold); only new profiles were asked. See answer_source.",
+  "gold_fixes": "docs/GOLD_AUDIT_2026-10-03.md section 6",
+  "label": "pmay-g-mord",
+  "token_budget": 35000,
+  "tokens_spent_estimated": 25928,
+  "token_note": "ESTIMATED from document size; ProviderResult does not surface usage.",
+  "schemes_completed": [
+    "PMAY-G"
+  ],
+  "schemes_not_attempted": [],
+  "stopped_reason": null,
+  "reports": [
+    {
+      "scheme_id": "PMAY-G",
+      "n_profiles": 14,
+      "agreement_rate": 0.5714285714285714,
+      "harmful_positive_rate": 0.2857142857142857,
+      "counts": {
+        "agree": 8,
+        "false_negative": 2,
+        "false_positive_vs_ineligible": 4
+      },
+      "tokens_used": 25928,
+      "failures": [],
+      "comparisons": [
+        {
+          "profile_id": "eligible_baseline",
+          "baseline_verdict": "eligible",
+          "evaluator_verdict": "eligible",
+          "relation": "agree",
+          "baseline_reason": "Applicant lives in a kutcha house with two rooms and satisfies no exclusion criteria.",
+          "answer_source": "new_llm_call"
+        },
+        {
+          "profile_id": "income_over_ceiling",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "agree",
+          "baseline_reason": "The household’s total monthly income exceeds the Rs.15,000 limit (a family member earns Rs.20,000), triggering an exclusion criterion.",
+          "answer_source": "new_llm_call"
+        },
+        {
+          "profile_id": "missing_housing_status_undetermined",
+          "baseline_verdict": "unsure",
+          "evaluator_verdict": "undetermined_missing_facts",
+          "relation": "agree",
+          "baseline_reason": "The applicant meets all exclusion criteria, but the document does not provide information on whether the household is houseless or lives in a kuccha house, which is required for eligibility.",
+          "answer_source": "new_llm_call"
+        },
+        {
+          "profile_id": "secc_automatically_included_regardless_of_housing",
+          "baseline_verdict": "eligible",
+          "evaluator_verdict": "eligible",
+          "relation": "agree",
+          "baseline_reason": "Applicant is automatically included under compulsory inclusion criteria and meets none of the exclusion criteria.",
+          "answer_source": "new_llm_call"
+        },
+        {
+          "profile_id": "refrigerator",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "eligible",
+          "relation": "false_negative",
+          "baseline_reason": "Applicant owns a refrigerator, which is listed as an exclusion criterion for PMAY‑G.",
+          "answer_source": "new_llm_call"
+        },
+        {
+          "profile_id": "landline_phone",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "eligible",
+          "relation": "false_negative",
+          "baseline_reason": "The applicant owns a landline phone, which is listed as an exclusion criterion for PMAY‑G.",
+          "answer_source": "new_llm_call"
+        },
+        {
+          "profile_id": "irrigated_land_over_threshold",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "agree",
+          "baseline_reason": "Applicant owns more than 2.5 acres of irrigated land, which is an exclusion criterion.",
+          "answer_source": "new_llm_call"
+        },
+        {
+          "profile_id": "mechanized_agri_equipment",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "agree",
+          "baseline_reason": "The household meets the basic eligibility (kutcha house with 2 rooms) but is excluded because it owns mechanised three- or four-wheeler agricultural equipment, which is an exclusion criterion.",
+          "answer_source": "new_llm_call"
+        },
+        {
+          "profile_id": "non_agricultural_enterprise",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "agree",
+          "baseline_reason": "The applicant owns a non‑agricultural enterprise registered with the government, which is listed as an exclusion criterion for PMAY‑G.",
+          "answer_source": "new_llm_call"
+        },
+        {
+          "profile_id": "income_tax_family_member",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "agree",
+          "baseline_reason": "A family member pays income tax, which is an exclusion criterion for PMAY‑G.",
+          "answer_source": "new_llm_call"
+        },
+        {
+          "profile_id": "professional_tax_family_member",
+          "baseline_verdict": "eligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "false_positive_vs_ineligible",
+          "baseline_reason": "The household lives in a kutcha house with two rooms, meeting the inclusion criteria, and does not meet any of the exclusion conditions (income below Rs.15,000, no prohibited assets, no govt employment, etc.).",
+          "answer_source": "new_llm_call"
+        },
+        {
+          "profile_id": "unirrigated_land_five_acres",
+          "baseline_verdict": "eligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "false_positive_vs_ineligible",
+          "baseline_reason": "Applicant lives in a kutcha house with two rooms and satisfies no exclusion criteria.",
+          "answer_source": "new_llm_call"
+        },
+        {
+          "profile_id": "irrigated_land_exactly_two_and_a_half_acres",
+          "baseline_verdict": "eligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "false_positive_vs_ineligible",
+          "baseline_reason": "The household lives in a kutcha house with two rooms, meeting the inclusion criteria, and does not meet any of the listed exclusion conditions.",
+          "answer_source": "new_llm_call"
+        },
+        {
+          "profile_id": "kutcha_house_with_three_rooms",
+          "baseline_verdict": "eligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "false_positive_vs_ineligible",
+          "baseline_reason": "The applicant lives in a kutcha house (non‑pucca walls/roof) and meets no exclusion criteria, so they satisfy the eligibility conditions.",
+          "answer_source": "new_llm_call"
+        }
+      ]
+    }
+  ]
+}

@@ -55,6 +55,9 @@ FIGURES = [
     ("IGNOAPS", "outcome equivalence, post judge+repair",
      "IGNOAPS_gpt-oss-120b_judge_repair_20260818T015010.json", "repaired_scheme",
      "IGNOAPS_gpt-oss-120b_post_repair_outcome_equivalence_20260818T015448.json"),
+    ("PMAY-G", "Phase 3 check-in, gate-approved draft",
+     "PMAY-G_gpt-oss-120b_gated_20260818T031713.json", "gated_extraction",
+     "PMAY-G_phase3_checkin_20260818T031817.json"),
 ]
 
 

@@ -301,7 +301,7 @@ _FIELDS: tuple[FieldSpec, ...] = (
     ),
     FieldSpec(
         "paid_professional_tax", PredicateCategory.ECONOMIC, "boolean",
-        "Family member pays professional tax (SECC exclusion parameter viii).", schemes=("AB-PMJAY",),
+        "Family member pays professional tax (SECC exclusion parameter viii).", schemes=("AB-PMJAY", "PMAY-G"),
         citizen_question="Does your family pay professional tax?",
         display_label="Professional tax payment",
     ),
@@ -315,14 +315,14 @@ _FIELDS: tuple[FieldSpec, ...] = (
     FieldSpec(
         "owns_refrigerator", PredicateCategory.ECONOMIC, "boolean",
         "Household owns a refrigerator (SECC exclusion parameter x).",
-        schemes=("AB-PMJAY", "PMAY-G"),
+        schemes=("AB-PMJAY",),  # deleted from PMAY-G by the Union Cabinet (MoRD Annual Report 2024-25)
         citizen_question="Does your household own a refrigerator?",
         display_label="Refrigerator ownership",
     ),
     FieldSpec(
         "owns_landline_phone", PredicateCategory.ECONOMIC, "boolean",
         "Household owns a landline phone (SECC exclusion parameter xi).",
-        schemes=("AB-PMJAY", "PMAY-G"),
+        schemes=("AB-PMJAY",),  # deleted from PMAY-G by the Union Cabinet (MoRD Annual Report 2024-25)
         citizen_question="Does your household own a landline telephone?",
         display_label="Landline phone ownership",
     ),
@@ -344,10 +344,12 @@ _FIELDS: tuple[FieldSpec, ...] = (
         "an unstated qualifier. Genuine uncertainty: PMAY-G draws its exclusion parameters from "
         "the same SECC 2011 set as AB-PMJAY, so the actual notification may carry the same "
         "compound wording — the backgrounder used to verify this is a PR summary, not the "
-        "verbatim numbered official list, which could not be retrieved.",
-        schemes=("PMAY-G",),
-        citizen_question="Does your household own more than 2.5 acres of irrigated land?",
-        display_label="Irrigated land ownership (>2.5 acres)",
+        "verbatim numbered official list, which could not be retrieved. RETIRED for PMAY-G "
+        "2026-10-04 in favor of irrigated_land_acres >= 2.5: the MoRD Annual Report 2024-25 says "
+        "'2.5 acres or more' (docs/GOLD_AUDIT_2026-10-03.md section 6.8). Kept for traceability.",
+        schemes=(),
+        citizen_question="(Retired field — replaced by irrigated_land_acres; not asked directly.)",
+        display_label="Irrigated land ownership (>2.5 acres, retired field)",
     ),
     FieldSpec(
         "owns_5_or_more_acres_irrigated_land_two_or_more_crop_seasons", PredicateCategory.ECONOMIC, "boolean",
@@ -523,9 +525,37 @@ _FIELDS: tuple[FieldSpec, ...] = (
     ),
     FieldSpec(
         "owns_pucca_house", PredicateCategory.ECONOMIC, "boolean",
-        "Household already owns a pucca (permanent) house.", schemes=("PMAY-G",),
-        citizen_question="Does your household already own a pucca (permanent) house?",
-        display_label="Pucca house ownership",
+        "Household already owns a pucca (permanent) house. RETIRED for PMAY-G 2026-10-04 in favor "
+        "of house_has_pucca_roof_or_wall and house_room_count, the MoRD Annual Report 2024-25's "
+        "Step 1 filter (docs/GOLD_AUDIT_2026-10-03.md section 6.8). Kept for traceability.",
+        schemes=(),
+        citizen_question="(Retired field — replaced by the house's roof, walls and room count; not asked directly.)",
+        display_label="Pucca house ownership (retired field)",
+    ),
+    FieldSpec(
+        "house_has_pucca_roof_or_wall", PredicateCategory.ECONOMIC, "boolean",
+        "The household's house has a pucca (permanent) roof and/or pucca walls.", schemes=("PMAY-G",),
+        citizen_question="Does your house have a pucca (permanent) roof, or pucca walls, made of brick, "
+                         "stone, cement or concrete?",
+        display_label="Pucca roof or walls",
+    ),
+    FieldSpec(
+        "house_room_count", PredicateCategory.ECONOMIC, "number",
+        "Number of rooms in the household's house (0 if houseless).", schemes=("PMAY-G",),
+        citizen_question="How many rooms does your house have? (Enter 0 if you have no house.)",
+        display_label="Rooms in the house",
+    ),
+    FieldSpec(
+        "irrigated_land_acres", PredicateCategory.ECONOMIC, "number",
+        "Irrigated land the household owns, in acres.", schemes=("PMAY-G",),
+        citizen_question="How many acres of irrigated land does your household own? (Enter 0 if none.)",
+        display_label="Irrigated land (acres)",
+    ),
+    FieldSpec(
+        "unirrigated_land_acres", PredicateCategory.ECONOMIC, "number",
+        "Unirrigated land the household owns, in acres.", schemes=("PMAY-G",),
+        citizen_question="How many acres of unirrigated (rain-fed) land does your household own? (Enter 0 if none.)",
+        display_label="Unirrigated land (acres)",
     ),
     FieldSpec(
         "is_aay_beneficiary", PredicateCategory.ECONOMIC, "boolean",

@@ -420,12 +420,19 @@ def _pmayg_base_profile() -> dict:
             "owns_pucca_house": False,
             "monthly_income_inr": 5000,
             "paid_income_tax_last_assessment_year": False,
+            # MoRD Annual Report 2024-25 criteria (gold fix 2026-10-04)
+            "house_has_pucca_roof_or_wall": False,
+            "house_room_count": 2,
+            "irrigated_land_acres": 0,
+            "unirrigated_land_acres": 0,
+            "paid_professional_tax": False,
         },
         "family_members": [
             {
                 "is_govt_employee": False,
                 "monthly_income_inr": 5000,
                 "paid_income_tax_last_assessment_year": False,
+                "paid_professional_tax": False,
             }
         ],
     }
@@ -457,21 +464,60 @@ def test_pmayg_secc_automatically_included_regardless_of_housing_is_eligible():
     assert evaluate(PMAY_G_SCHEME, profile).verdict == Verdict.ELIGIBLE
 
 
-def test_pmayg_refrigerator_is_ineligible():
+# --- PMAY-G against the MoRD Annual Report 2024-25 (gold fix, 2026-10-04) -------------------------
+# The report (p.141) gives the revised automatic exclusion criteria of the scheme's new phase: a Step 1
+# pucca-house filter, then any one of 10 parameters. "As per the Union Cabinet approval, the provisions
+# with regard to mechanised two-wheelers, mechanised fishing boats, landline phones and refrigerators
+# have been deleted." See docs/GOLD_AUDIT_2026-10-03.md section 6.8.
+
+
+def test_pmayg_a_refrigerator_no_longer_excludes():
     profile = _pmayg_base_profile()
     profile["self"]["owns_refrigerator"] = True
-    assert evaluate(PMAY_G_SCHEME, profile).verdict == Verdict.INELIGIBLE
+    assert evaluate(PMAY_G_SCHEME, profile).verdict == Verdict.ELIGIBLE
 
 
-def test_pmayg_landline_phone_is_ineligible():
+def test_pmayg_a_landline_phone_no_longer_excludes():
     profile = _pmayg_base_profile()
     profile["self"]["owns_landline_phone"] = True
+    assert evaluate(PMAY_G_SCHEME, profile).verdict == Verdict.ELIGIBLE
+
+
+def test_pmayg_paying_professional_tax_excludes():
+    """viii. Paying professional tax -- missing from the old gold."""
+    profile = _pmayg_base_profile()
+    profile["family_members"][0]["paid_professional_tax"] = True
     assert evaluate(PMAY_G_SCHEME, profile).verdict == Verdict.INELIGIBLE
 
 
-def test_pmayg_irrigated_land_over_threshold_is_ineligible():
+@pytest.mark.parametrize("acres,expected", [(4.9, Verdict.ELIGIBLE), (5, Verdict.INELIGIBLE), (8, Verdict.INELIGIBLE)])
+def test_pmayg_five_acres_or_more_of_unirrigated_land_excludes(acres, expected):
+    """x. Own 5 acres or more of unirrigated land -- missing from the old gold."""
     profile = _pmayg_base_profile()
-    profile["self"]["owns_gt_2_5_acres_irrigated_land"] = True
+    profile["self"]["unirrigated_land_acres"] = acres
+    assert evaluate(PMAY_G_SCHEME, profile).verdict == expected
+
+
+@pytest.mark.parametrize("acres,expected", [(2.4, Verdict.ELIGIBLE), (2.5, Verdict.INELIGIBLE), (3, Verdict.INELIGIBLE)])
+def test_pmayg_two_and_a_half_acres_or_more_of_irrigated_land_excludes(acres, expected):
+    """ix. Own 2.5 acres OR MORE of irrigated land -- the old gold's boolean said 'more than'."""
+    profile = _pmayg_base_profile()
+    profile["self"]["irrigated_land_acres"] = acres
+    assert evaluate(PMAY_G_SCHEME, profile).verdict == expected
+
+
+@pytest.mark.parametrize("rooms,expected", [(0, Verdict.ELIGIBLE), (2, Verdict.ELIGIBLE), (3, Verdict.INELIGIBLE)])
+def test_pmayg_step_one_filters_houses_with_more_than_two_rooms(rooms, expected):
+    profile = _pmayg_base_profile()
+    profile["self"]["house_room_count"] = rooms
+    assert evaluate(PMAY_G_SCHEME, profile).verdict == expected
+
+
+def test_pmayg_step_one_filters_a_pucca_roof_or_wall_not_only_a_fully_pucca_house():
+    """'pucca roof and/or pucca wall': one pucca element is enough. The old gold asked only whether the
+    household owns a pucca house."""
+    profile = _pmayg_base_profile()
+    profile["self"]["house_has_pucca_roof_or_wall"] = True
     assert evaluate(PMAY_G_SCHEME, profile).verdict == Verdict.INELIGIBLE
 
 

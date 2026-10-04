@@ -351,6 +351,10 @@ PMAY_G = {
     # uses — see that field's ontology docstring. Kept flagged_for_review=True and confidence
     # below AB-PMJAY's for this reason, even though every individual fact here IS sourced from an
     # official PIB document (not secondary-aggregator-only, unlike the prior draft).
+    #
+    # SUPERSEDED for the exclusions 2026-10-04: they now follow the MoRD Annual Report 2024-25, p.141
+    # (a primary source -- see the source_clause and docs/GOLD_AUDIT_2026-10-03.md section 6.8). The
+    # inclusion side is still from the PIB backgrounder, so confidence and the review flag are unchanged.
     "scheme_id": "PMAY-G",
     "unit_of_eligibility": "family",
     "inclusion": {
@@ -361,83 +365,19 @@ PMAY_G = {
         ]
     },
     "exclusions": [
-        {
-            "cat": "occupation",
-            "quantifier": "some_family_member",
-            "field": "is_govt_employee",
-            "op": "==",
-            "value": True,
-        },
-        {
-            "cat": "economic",
-            "quantifier": "self",
-            "field": "owns_non_agricultural_enterprise_registered_with_govt",
-            "op": "==",
-            "value": True,
-        },
-        {
-            "cat": "economic",
-            "quantifier": "self",
-            "field": "kisan_credit_card_limit_inr",
-            "op": ">=",
-            "value": 50000,
-        },
-        {
-            "cat": "economic",
-            "quantifier": "some_family_member",
-            "field": "monthly_income_inr",
-            "op": ">",
-            "value": 15000,
-        },
-        {
-            "cat": "economic",
-            "quantifier": "some_family_member",
-            "field": "paid_income_tax_last_assessment_year",
-            "op": "==",
-            "value": True,
-        },
-        {
-            "cat": "economic",
-            "quantifier": "self",
-            "field": "owns_refrigerator",
-            "op": "==",
-            "value": True,
-        },
-        {
-            "cat": "economic",
-            "quantifier": "self",
-            "field": "owns_landline_phone",
-            "op": "==",
-            "value": True,
-        },
-        {
-            "cat": "economic",
-            "quantifier": "self",
-            "field": "owns_gt_2_5_acres_irrigated_land",
-            "op": "==",
-            "value": True,
-        },
-        {
-            "cat": "economic",
-            "quantifier": "self",
-            "field": "owns_motorised_three_or_four_wheeler",
-            "op": "==",
-            "value": True,
-        },
-        {
-            "cat": "economic",
-            "quantifier": "self",
-            "field": "owns_mechanized_agricultural_equipment_3_or_4_wheeler",
-            "op": "==",
-            "value": True,
-        },
-        {
-            "cat": "economic",
-            "quantifier": "self",
-            "field": "owns_pucca_house",
-            "op": "==",
-            "value": True,
-        },
+        # MoRD Annual Report 2024-25, p.141 (gold fix 2026-10-04): Step 1 pucca filter, then i-x.
+        {"cat": "economic", "quantifier": "self", "field": "house_has_pucca_roof_or_wall", "op": "==", "value": True},
+        {"cat": "economic", "quantifier": "self", "field": "house_room_count", "op": ">", "value": 2},
+        {"cat": "economic", "quantifier": "self", "field": "owns_motorised_three_or_four_wheeler", "op": "==", "value": True},
+        {"cat": "economic", "quantifier": "self", "field": "owns_mechanized_agricultural_equipment_3_or_4_wheeler", "op": "==", "value": True},
+        {"cat": "economic", "quantifier": "self", "field": "kisan_credit_card_limit_inr", "op": ">=", "value": 50000},
+        {"cat": "occupation", "quantifier": "some_family_member", "field": "is_govt_employee", "op": "==", "value": True},
+        {"cat": "economic", "quantifier": "self", "field": "owns_non_agricultural_enterprise_registered_with_govt", "op": "==", "value": True},
+        {"cat": "economic", "quantifier": "some_family_member", "field": "monthly_income_inr", "op": ">", "value": 15000},
+        {"cat": "economic", "quantifier": "some_family_member", "field": "paid_income_tax_last_assessment_year", "op": "==", "value": True},
+        {"cat": "economic", "quantifier": "some_family_member", "field": "paid_professional_tax", "op": "==", "value": True},
+        {"cat": "economic", "quantifier": "self", "field": "irrigated_land_acres", "op": ">=", "value": 2.5},
+        {"cat": "economic", "quantifier": "self", "field": "unirrigated_land_acres", "op": ">=", "value": 5},
     ],
     "temporal_validity": {
         "valid_from": "2024-09-11",
@@ -467,32 +407,58 @@ PMAY_G = {
         "source_clause": (
             "VERIFIED against a PIB Research Unit backgrounder (19 Nov 2024) and corroborating "
             "contemporaneous news coverage (see file header) — a real improvement over the prior "
-            "hand-authored-from-secondary-sources draft, but NOT to AB-PMJAY's confidence level: "
-            "the actual verbatim numbered MoRD/Cabinet exclusion notification could not be "
-            "retrieved (pib.gov.in blocks direct fetch), so this is reconstructed from an official "
-            "PR summary rather than the primary notification text itself. Inclusion: "
-            "is_houseless and lives_in_kutcha_house directly quoted ('Houseless Households: All "
-            "households without any shelter'; 'Households with Kuccha Houses: ... kuccha walls "
-            "and kuccha roofs or houses with zero, one, or two rooms as per SECC 2011'). "
-            "is_secc_automatically_included reused from AB-PMJAY's ontology entry — PMAY-G's own "
-            "'Compulsory Inclusion Criteria' list (destitute/alms, manual scavengers, primitive "
-            "tribal groups, legally released bonded laborers) is the same underlying SECC "
-            "automatic-inclusion parameter set minus the shelterless case, which is separately "
-            "covered here by is_houseless. NOT modeled: the deprivation-score PRIORITY/ranking "
-            "parameters (no adult 16-59, female-headed no adult male, no literate adult >25, "
-            "disabled member no able-bodied adult, landless manual-labour household) — these rank "
-            "among the already-eligible pool for scarce allocation, not a binary eligibility "
-            "gate, so out of scope for this project's eligible/ineligible schema, same shape as "
-            "AB-PMJAY's and MH-LADKI-BAHIN's other unmodeled selection/priority rules. Exclusions: "
-            "kisan_credit_card_limit_inr op='>=' (PIB's own wording is 'credit limit of Rs.50,000 "
-            "or above' — note this is op='>=' here, UNLIKE AB-PMJAY's same field where the source "
-            "wording 'over Rs.50,000' meant strict '>'; the two schemes' primary wording genuinely "
-            "differs on this operator, don't assume they match). monthly_income_inr reclassified "
-            "from a self-scoped monthly_household_income_inr field to the shared, "
-            "some_family_member-scoped monthly_income_inr field (see ontology docstring). "
-            "owns_gt_2_5_acres_irrigated_land is a new, deliberately SEPARATE (simpler, no "
-            "irrigation-equipment qualifier) field from AB-PMJAY's compound version — flagged "
-            "uncertainty, see its ontology docstring."
+            "hand-authored-from-secondary-sources draft, but NOT to AB-PMJAY's confidence level: the "
+            "actual verbatim numbered MoRD/Cabinet exclusion notification could not be retrieved "
+            "(pib.gov.in blocks direct fetch), so this is reconstructed from an official PR summary "
+            "rather than the primary notification text itself. Inclusion: is_houseless and "
+            "lives_in_kutcha_house directly quoted ('Houseless Households: All households without "
+            "any shelter'; 'Households with Kuccha Houses: ... kuccha walls and kuccha roofs or "
+            "houses with zero, one, or two rooms as per SECC 2011'). is_secc_automatically_included "
+            "reused from AB-PMJAY's ontology entry — PMAY-G's own 'Compulsory Inclusion Criteria' "
+            "list (destitute/alms, manual scavengers, primitive tribal groups, legally released "
+            "bonded laborers) is the same underlying SECC automatic-inclusion parameter set minus "
+            "the shelterless case, which is separately covered here by is_houseless. NOT modeled: "
+            "the deprivation-score PRIORITY/ranking parameters (no adult 16-59, female-headed no "
+            "adult male, no literate adult >25, disabled member no able-bodied adult, landless "
+            "manual-labour household) — these rank among the already-eligible pool for scarce "
+            "allocation, not a binary eligibility gate, so out of scope for this project's "
+            "eligible/ineligible schema, same shape as AB-PMJAY's and MH-LADKI-BAHIN's other "
+            "unmodeled selection/priority rules. Exclusions: kisan_credit_card_limit_inr op='>=' "
+            "(PIB's own wording is 'credit limit of Rs.50,000 or above' — note this is op='>=' here, "
+            "UNLIKE AB-PMJAY's same field where the source wording 'over Rs.50,000' meant strict "
+            "'>'; the two schemes' primary wording genuinely differs on this operator, don't assume "
+            "they match). monthly_income_inr reclassified from a self-scoped "
+            "monthly_household_income_inr field to the shared, some_family_member-scoped "
+            "monthly_income_inr field (see ontology docstring). owns_gt_2_5_acres_irrigated_land is "
+            "a new, deliberately SEPARATE (simpler, no irrigation-equipment qualifier) field from "
+            "AB-PMJAY's compound version — flagged uncertainty, see its ontology docstring. GOLD "
+            "CHANGE 2026-10-04 (docs/GOLD_AUDIT_2026-10-03.md section 6.8), SUPERSEDING the "
+            "exclusion notes above: the exclusions are now taken from a primary source, the Ministry "
+            "of Rural Development Annual Report 2024-25 (p.141, 'revised automatic exclusion "
+            "criteria under the new phase of the PMAY-G'; the PDF is filed as "
+            "data/raw_documents/IGNOAPS_primary.pdf because the IGNOAPS gold cites its NSAP pages). "
+            "Step 1: 'All households living in houses with pucca roof and/or pucca wall and "
+            "households living in houses with more than 2 rooms are filtered out' -- now two "
+            "exclusions, house_has_pucca_roof_or_wall and house_room_count > 2, replacing "
+            "owns_pucca_house (which asked only about a fully pucca house). Step 2, 'any one of the "
+            "10 parameters': i motorised three/four-wheeler; ii mechanised three/four-wheeler "
+            "agricultural equipment; iii Kisan Credit Card limit of Rs 50,000 or above; iv "
+            "'Household with any member as a Government employee'; v non-agricultural enterprise "
+            "registered with the Government; vi 'Any member of the family earning more than "
+            "Rs.15,000 per month'; vii paying income tax; viii paying professional tax (ADDED, "
+            "missing before); ix 'Own 2.5 acres or more of irrigated land' (now irrigated_land_acres "
+            ">= 2.5, replacing the boolean owns_gt_2_5_acres_irrigated_land, which said 'more "
+            "than'); x 'Own 5 acres or more of unirrigated land' (ADDED as unirrigated_land_acres >= "
+            "5). REMOVED owns_refrigerator and owns_landline_phone: 'As per the Union Cabinet "
+            "approval, the provisions with regard to mechanised two-wheelers, mechanised fishing "
+            "boats, landline phones and refrigerators have been deleted.' This also settles the old "
+            "'11 vs 10' count: the pucca filter is Step 1, not one of the 10. Quantifiers follow the "
+            "report's wording: 'any member' items (iv, vi) are some_family_member; household assets "
+            "and holdings are household facts on the applicant's record; the two 'paying ... tax' "
+            "items are some_family_member, as income tax already was. Still open: whether the Step 1 "
+            "filter and Step 2 exclusions apply to compulsory-inclusion households (the gold applies "
+            "them to every route, as before); and the inclusion side is still sourced from the PIB "
+            "backgrounder, not this report."
         ),
         "flagged_for_review": True,
     },

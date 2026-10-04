@@ -1,0 +1,92 @@
+{
+  "old_ref": "68c186e",
+  "rows": [
+    {
+      "scheme": "PMAY-G",
+      "figure": "Phase 3 check-in, gate-approved draft",
+      "draft_run": "PMAY-G_gpt-oss-120b_gated_20260818T031713.json",
+      "recorded_in": "PMAY-G_phase3_checkin_20260818T031817.json",
+      "outcome_equivalence": {
+        "recorded": {
+          "n_profiles": 10,
+          "agreement_rate": 0.9,
+          "false_positive_eligible_rate": 0.1,
+          "false_negative_eligible_rate": 0.0,
+          "other_mismatch_rate": 0.0
+        },
+        "reproduced_pre_fix": {
+          "n_profiles": 10,
+          "agreement_rate": 0.9,
+          "false_positive_eligible_rate": 0.1,
+          "false_negative_eligible_rate": 0.0,
+          "other_mismatch_rate": 0.0
+        },
+        "reproduced_matches_recorded": true,
+        "corrected": {
+          "n_profiles": 14,
+          "agreement_rate": 0.5,
+          "false_positive_eligible_rate": 0.35714285714285715,
+          "false_negative_eligible_rate": 0.14285714285714285,
+          "other_mismatch_rate": 0.0
+        }
+      },
+      "structural_f1": {
+        "recorded": 0.8571,
+        "reproduced_pre_fix": 0.8571428571428571,
+        "reproduced_matches_recorded": true,
+        "corrected": 0.5517241379310344
+      },
+      "corrected_disagreements": [
+        {
+          "profile_id": "income_over_ceiling",
+          "gold_verdict": "ineligible",
+          "draft_verdict": "eligible",
+          "agree": false,
+          "disagreement_type": "false_positive_eligible"
+        },
+        {
+          "profile_id": "refrigerator",
+          "gold_verdict": "eligible",
+          "draft_verdict": "ineligible",
+          "agree": false,
+          "disagreement_type": "false_negative_eligible"
+        },
+        {
+          "profile_id": "landline_phone",
+          "gold_verdict": "eligible",
+          "draft_verdict": "ineligible",
+          "agree": false,
+          "disagreement_type": "false_negative_eligible"
+        },
+        {
+          "profile_id": "professional_tax_family_member",
+          "gold_verdict": "ineligible",
+          "draft_verdict": "eligible",
+          "agree": false,
+          "disagreement_type": "false_positive_eligible"
+        },
+        {
+          "profile_id": "unirrigated_land_five_acres",
+          "gold_verdict": "ineligible",
+          "draft_verdict": "eligible",
+          "agree": false,
+          "disagreement_type": "false_positive_eligible"
+        },
+        {
+          "profile_id": "irrigated_land_exactly_two_and_a_half_acres",
+          "gold_verdict": "ineligible",
+          "draft_verdict": "eligible",
+          "agree": false,
+          "disagreement_type": "false_positive_eligible"
+        },
+        {
+          "profile_id": "kutcha_house_with_three_rooms",
+          "gold_verdict": "ineligible",
+          "draft_verdict": "eligible",
+          "agree": false,
+          "disagreement_type": "false_positive_eligible"
+        }
+      ]
+    }
+  ]
+}

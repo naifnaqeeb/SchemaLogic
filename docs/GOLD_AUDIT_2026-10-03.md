@@ -235,7 +235,7 @@ So the "11 vs 10" puzzle is real but its answer is four concrete gold errors, no
 | `owns_pucca_house` | Step 1 filter: pucca roof **and/or** wall, or >2 rooms | a pre-filter, not one of the 10 — explains the count; definition broader than the gold field |
 
 The two wrong exclusions produce a wrong "ineligible" for households owning a refrigerator or a
-landline. **Not fixed in this pass**: PMAY-G was scoped as document-only, and whether to adopt the
+landline. **Fixed 2026-10-04 — §6.8.** *Originally:* **Not fixed in this pass**: PMAY-G was scoped as document-only, and whether to adopt the
 annual report as the authoritative source is a decision for the gold owner. Logged in
 `KNOWN_ISSUES.md` with this resolution path.
 
@@ -566,6 +566,55 @@ same verdict under old and new gold; only the new profile changes:
 answering), and the §5.1 top-up for 70+ members of families already covered — a benefit amount, not
 an eligibility rule.
 
+### 6.8 PMAY-G — exclusions taken from the MoRD Annual Report 2024-25
+
+*2026-10-04. Resolves §4: the annual report is adopted as PMAY-G's source for its exclusions.*
+
+**Source.** Ministry of Rural Development Annual Report 2024-25, p.141, "revised automatic exclusion
+criteria under the new phase of the PMAY-G" (quoted in §4), and the sentence before it: *"As per the
+Union Cabinet approval, the provisions with regard to mechanised two-wheelers, mechanised fishing
+boats, landline phones and refrigerators have been deleted."* Re-read from the PDF for this fix.
+
+**Change.** The 11 exclusions become 12, in the report's order:
+
+| Report | Gold before | Gold after |
+|---|---|---|
+| Step 1: pucca roof and/or pucca wall | `owns_pucca_house` (a fully pucca house) | `house_has_pucca_roof_or_wall == true` |
+| Step 1: more than 2 rooms | *(absent)* | `house_room_count > 2` |
+| i–vii | as before | unchanged (same fields, operators, quantifiers) |
+| viii. Paying professional tax | *(absent)* | `paid_professional_tax` (`some_family_member`, like income tax) |
+| ix. 2.5 acres **or more** irrigated | `owns_gt_2_5_acres_irrigated_land` ("more than") | `irrigated_land_acres >= 2.5` |
+| x. 5 acres or more unirrigated | *(absent)* | `unirrigated_land_acres >= 5` |
+| *(deleted by the Cabinet)* | `owns_refrigerator`, `owns_landline_phone` | **removed** |
+
+Quantifiers follow the report's wording: "any member" items (iv, vi) are `some_family_member`;
+household assets and holdings are household facts on the applicant's record; the two "paying … tax"
+items are `some_family_member`, as income tax already was. The "11 vs 10" count is explained: the
+pucca filter is Step 1, not one of the 10. `owns_pucca_house` and `owns_gt_2_5_acres_irrigated_land`
+are retired in the ontology; four fields are new. The extraction prompt is 427 characters shorter.
+
+**Protocol.** Tests first, against the old gold: refrigerator and landline no longer exclude;
+professional tax excludes; 5 acres unirrigated excludes (4.9 doesn't); exactly 2.5 acres irrigated
+excludes (2.4 doesn't); 3 rooms excludes (2 doesn't); a pucca roof or wall alone excludes. 9 failed
+before the fix, all pass after.
+
+**Profiles.** Every profile now carries the report's facts alongside the old ones, so the old gold can
+still be evaluated beside the new. Four profiles added, one per new criterion. Old vs new:
+
+| Profile | Old gold | New gold |
+|---|---|---|
+| `refrigerator` | ineligible | **eligible** |
+| `landline_phone` | ineligible | **eligible** |
+| *new* `professional_tax_family_member` | eligible | **ineligible** |
+| *new* `unirrigated_land_five_acres` | eligible | **ineligible** |
+| *new* `irrigated_land_exactly_two_and_a_half_acres` | eligible | **ineligible** |
+| *new* `kutcha_house_with_three_rooms` | eligible | **ineligible** |
+| the other 8 | unchanged | unchanged |
+
+**Still open.** Whether Step 1 and the 10 parameters apply to compulsory-inclusion households (the gold
+applies every exclusion to every route, as before). The inclusion side is still sourced from the PIB
+backgrounder; confidence (0.75) and the review flag are unchanged for that reason.
+
 ## 7. Superseded figures
 
 Every figure below that the fixes touched, recomputed on 2026-10-04. Reproducible:
@@ -646,6 +695,9 @@ These earlier statements should no longer be cited:
 | AB-PMJAY extraction draft: 100% outcome agreement with gold | **Superseded** by 80.0% — the 100% was a shared error (§7.5) — and then by 72.7% after the §6.7 re-encoding (§7.6). |
 | Baseline 2: 90.7% agreement, **0.0% harmful false positives**, 6.7% false negatives (n=75) | **Superseded** by 89.5% / **1.3%** / 6.6% (n=76) after the §6.7 re-encoding (§7.6). |
 | AB-PMJAY structural F1 1.000 | **Superseded** by 0.947 (§7.6). |
+| PMAY-G extraction draft: 90.0% outcome agreement, structural F1 0.857 | **Superseded** by 50.0% / 0.552 against the MoRD-sourced gold (§7.7) — mostly a source gap, see the caveat there. |
+| Baseline 2: 89.5% agreement, 1.3% harmful FP, 6.6% FN (n=76) | **Superseded** by 82.5% / 6.2% / 8.8% (n=80) (§7.7). |
+| PMAY-G Baseline 2: 100% agreement | **Superseded** by 57.1% (§7.7). |
 
 ### 7.5 What the corrections show
 
@@ -734,3 +786,46 @@ still doesn't score `except` clauses (`KNOWN_ISSUES.md`), so this figure reflect
 the direct LLM, the extraction draft and the original gold. That is a third instance of the pattern
 in §7.5 point 2: the scope of a rule (who the cover reaches) read too broadly in all three sources,
 and caught only by checking the primary text.
+
+### 7.7 PMAY-G after the MoRD re-sourcing (§6.8)
+
+"Old" is the gold immediately before §6.8 (commit `68c186e`; PMAY-G's gold was unchanged since the
+audit snapshot). Reproduced before comparing: outcome equivalence 90.0% and structural F1 0.857, both
+exactly as recorded at the Phase 3 check-in. Offline figures:
+`gold_fix_reevaluation_2026-10-04_PMAY-G_vs_68c186e.json`.
+
+**Read these figures with one caveat.** Both the extraction draft and Baseline 2's LLM were given
+`data/raw_documents/PMAY-G.md` — the PIB-based compilation the old gold was built from. It still lists
+the refrigerator and landline exclusions and has neither professional tax, unirrigated land, the
+"or more" wording nor the room count. So every new disagreement below is the comparison system
+faithfully applying an outdated source, not a reasoning error. They measure the source gap, and would
+largely disappear if the report's p.141 text were added to that document — a change to what both
+systems are shown, so left for a decision.
+
+**Outcome equivalence — extraction draft vs gold.**
+
+| Figure | n | Agree | FP (eligible) | FN (eligible) |
+|---|---|---|---|---|
+| PMAY-G, Phase 3 check-in | 10 → 14 | 90.0% → **50.0%** | 10.0% → **35.7%** | 0.0% → **14.3%** |
+
+The one pre-existing disagreement (`income_over_ceiling`) is unchanged; the six new ones are the six
+profiles whose verdict the fix changed, each matching the old gold.
+
+**Structural F1.** 0.857 → **0.552**: the draft has the two deleted exclusions, the two retired
+fields, and none of the four new ones.
+
+**Baseline 2.** Every profile's facts changed, so all 14 were asked live (~25.9k tokens estimated;
+`baseline2_direct_llm_2026-10-04_pmay-g-mord.json`). The 10 re-asked profiles gave identical answers.
+
+| PMAY-G | n | Agree | Harmful FP | FN |
+|---|---|---|---|---|
+| Before §6.8 | 10 | 100.0% | 0.0% | 0.0% |
+| After §6.8 | 14 | **57.1%** | **28.6%** | **14.3%** |
+
+| Baseline 2, all 7 schemes | n | Agree | Harmful FP | FN | Over-cautious |
+|---|---|---|---|---|---|
+| After §6.7 | 76 | 89.5% | 1.3% | 6.6% | 1.3% |
+| After §6.8 | 80 | **82.5%** | **6.2%** | **8.8%** | 1.2% |
+
+The harmful false positives are the four new criteria (the LLM's document doesn't have them); the
+false negatives are the refrigerator and landline (its document still has them).

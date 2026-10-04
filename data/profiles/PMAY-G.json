@@ -1,6 +1,5 @@
 {
-  "_note": "Synthetic family profiles for PMAY-G outcome-equivalence testing (plan Section 6, 'profile test suites'). Mirrors the scenarios in tests/test_gold_schemes.py's PMAY-G section (_pmayg_base_profile + variant tests). Uses gold's canonical field names only (schema/field_ontology.py).",
-
+  "_note": "Synthetic family profiles for PMAY-G outcome-equivalence testing (plan Section 6, 'profile test suites'). Mirrors the scenarios in tests/test_gold_schemes.py's PMAY-G section (_pmayg_base_profile + variant tests). Uses gold's canonical field names only (schema/field_ontology.py). 2026-10-04: the exclusions now follow the MoRD Annual Report 2024-25 (gold fix, docs/GOLD_AUDIT_2026-10-03.md section 6.8); profiles carry its facts (pucca roof/wall, room count, land in acres, professional tax) alongside the old ones, so the pre-fix gold can still be evaluated beside the new.",
   "eligible_baseline": {
     "_comment": "Kutcha house, no disqualifiers -> eligible.",
     "self": {
@@ -17,17 +16,22 @@
       "owns_mechanized_agricultural_equipment_3_or_4_wheeler": false,
       "owns_pucca_house": false,
       "monthly_income_inr": 5000,
-      "paid_income_tax_last_assessment_year": false
+      "paid_income_tax_last_assessment_year": false,
+      "house_has_pucca_roof_or_wall": false,
+      "house_room_count": 2,
+      "irrigated_land_acres": 0,
+      "unirrigated_land_acres": 0,
+      "paid_professional_tax": false
     },
     "family_members": [
       {
         "is_govt_employee": false,
         "monthly_income_inr": 5000,
-        "paid_income_tax_last_assessment_year": false
+        "paid_income_tax_last_assessment_year": false,
+        "paid_professional_tax": false
       }
     ]
   },
-
   "income_over_ceiling": {
     "_comment": "Family member earns > Rs. 15,000/month -> excluded.",
     "self": {
@@ -44,17 +48,22 @@
       "owns_mechanized_agricultural_equipment_3_or_4_wheeler": false,
       "owns_pucca_house": false,
       "monthly_income_inr": 5000,
-      "paid_income_tax_last_assessment_year": false
+      "paid_income_tax_last_assessment_year": false,
+      "house_has_pucca_roof_or_wall": false,
+      "house_room_count": 2,
+      "irrigated_land_acres": 0,
+      "unirrigated_land_acres": 0,
+      "paid_professional_tax": false
     },
     "family_members": [
       {
         "is_govt_employee": false,
         "monthly_income_inr": 20000,
-        "paid_income_tax_last_assessment_year": false
+        "paid_income_tax_last_assessment_year": false,
+        "paid_professional_tax": false
       }
     ]
   },
-
   "missing_housing_status_undetermined": {
     "_comment": "No housing-status fact known at all -> undetermined, not silently guessed.",
     "self": {
@@ -68,17 +77,20 @@
       "owns_mechanized_agricultural_equipment_3_or_4_wheeler": false,
       "owns_pucca_house": false,
       "monthly_income_inr": 5000,
-      "paid_income_tax_last_assessment_year": false
+      "paid_income_tax_last_assessment_year": false,
+      "irrigated_land_acres": 0,
+      "unirrigated_land_acres": 0,
+      "paid_professional_tax": false
     },
     "family_members": [
       {
         "is_govt_employee": false,
         "monthly_income_inr": 5000,
-        "paid_income_tax_last_assessment_year": false
+        "paid_income_tax_last_assessment_year": false,
+        "paid_professional_tax": false
       }
     ]
   },
-
   "secc_automatically_included_regardless_of_housing": {
     "_comment": "Destitute/manual-scavenger/etc category -> eligible even without kutcha-house status.",
     "self": {
@@ -95,19 +107,24 @@
       "owns_mechanized_agricultural_equipment_3_or_4_wheeler": false,
       "owns_pucca_house": false,
       "monthly_income_inr": 5000,
-      "paid_income_tax_last_assessment_year": false
+      "paid_income_tax_last_assessment_year": false,
+      "house_has_pucca_roof_or_wall": false,
+      "house_room_count": 2,
+      "irrigated_land_acres": 0,
+      "unirrigated_land_acres": 0,
+      "paid_professional_tax": false
     },
     "family_members": [
       {
         "is_govt_employee": false,
         "monthly_income_inr": 5000,
-        "paid_income_tax_last_assessment_year": false
+        "paid_income_tax_last_assessment_year": false,
+        "paid_professional_tax": false
       }
     ]
   },
-
   "refrigerator": {
-    "_comment": "Owns a refrigerator -> excluded.",
+    "_comment": "Owns a refrigerator -> excluded under the old gold. Gold fix 2026-10-04: the Union Cabinet deleted this exclusion (MoRD Annual Report 2024-25) -> eligible.",
     "self": {
       "is_houseless": false,
       "lives_in_kutcha_house": true,
@@ -122,19 +139,24 @@
       "owns_mechanized_agricultural_equipment_3_or_4_wheeler": false,
       "owns_pucca_house": false,
       "monthly_income_inr": 5000,
-      "paid_income_tax_last_assessment_year": false
+      "paid_income_tax_last_assessment_year": false,
+      "house_has_pucca_roof_or_wall": false,
+      "house_room_count": 2,
+      "irrigated_land_acres": 0,
+      "unirrigated_land_acres": 0,
+      "paid_professional_tax": false
     },
     "family_members": [
       {
         "is_govt_employee": false,
         "monthly_income_inr": 5000,
-        "paid_income_tax_last_assessment_year": false
+        "paid_income_tax_last_assessment_year": false,
+        "paid_professional_tax": false
       }
     ]
   },
-
   "landline_phone": {
-    "_comment": "Owns a landline phone -> excluded.",
+    "_comment": "Owns a landline phone -> excluded under the old gold. Gold fix 2026-10-04: the Union Cabinet deleted this exclusion (MoRD Annual Report 2024-25) -> eligible.",
     "self": {
       "is_houseless": false,
       "lives_in_kutcha_house": true,
@@ -149,17 +171,22 @@
       "owns_mechanized_agricultural_equipment_3_or_4_wheeler": false,
       "owns_pucca_house": false,
       "monthly_income_inr": 5000,
-      "paid_income_tax_last_assessment_year": false
+      "paid_income_tax_last_assessment_year": false,
+      "house_has_pucca_roof_or_wall": false,
+      "house_room_count": 2,
+      "irrigated_land_acres": 0,
+      "unirrigated_land_acres": 0,
+      "paid_professional_tax": false
     },
     "family_members": [
       {
         "is_govt_employee": false,
         "monthly_income_inr": 5000,
-        "paid_income_tax_last_assessment_year": false
+        "paid_income_tax_last_assessment_year": false,
+        "paid_professional_tax": false
       }
     ]
   },
-
   "irrigated_land_over_threshold": {
     "_comment": "Owns > 2.5 acres irrigated land -> excluded.",
     "self": {
@@ -176,17 +203,22 @@
       "owns_mechanized_agricultural_equipment_3_or_4_wheeler": false,
       "owns_pucca_house": false,
       "monthly_income_inr": 5000,
-      "paid_income_tax_last_assessment_year": false
+      "paid_income_tax_last_assessment_year": false,
+      "house_has_pucca_roof_or_wall": false,
+      "house_room_count": 2,
+      "irrigated_land_acres": 3,
+      "unirrigated_land_acres": 0,
+      "paid_professional_tax": false
     },
     "family_members": [
       {
         "is_govt_employee": false,
         "monthly_income_inr": 5000,
-        "paid_income_tax_last_assessment_year": false
+        "paid_income_tax_last_assessment_year": false,
+        "paid_professional_tax": false
       }
     ]
   },
-
   "mechanized_agri_equipment": {
     "_comment": "Owns mechanized 3-4 wheeler agricultural equipment -> excluded.",
     "self": {
@@ -203,17 +235,22 @@
       "owns_mechanized_agricultural_equipment_3_or_4_wheeler": true,
       "owns_pucca_house": false,
       "monthly_income_inr": 5000,
-      "paid_income_tax_last_assessment_year": false
+      "paid_income_tax_last_assessment_year": false,
+      "house_has_pucca_roof_or_wall": false,
+      "house_room_count": 2,
+      "irrigated_land_acres": 0,
+      "unirrigated_land_acres": 0,
+      "paid_professional_tax": false
     },
     "family_members": [
       {
         "is_govt_employee": false,
         "monthly_income_inr": 5000,
-        "paid_income_tax_last_assessment_year": false
+        "paid_income_tax_last_assessment_year": false,
+        "paid_professional_tax": false
       }
     ]
   },
-
   "non_agricultural_enterprise": {
     "_comment": "Owns a non-agricultural enterprise registered with the government -> excluded.",
     "self": {
@@ -230,17 +267,22 @@
       "owns_mechanized_agricultural_equipment_3_or_4_wheeler": false,
       "owns_pucca_house": false,
       "monthly_income_inr": 5000,
-      "paid_income_tax_last_assessment_year": false
+      "paid_income_tax_last_assessment_year": false,
+      "house_has_pucca_roof_or_wall": false,
+      "house_room_count": 2,
+      "irrigated_land_acres": 0,
+      "unirrigated_land_acres": 0,
+      "paid_professional_tax": false
     },
     "family_members": [
       {
         "is_govt_employee": false,
         "monthly_income_inr": 5000,
-        "paid_income_tax_last_assessment_year": false
+        "paid_income_tax_last_assessment_year": false,
+        "paid_professional_tax": false
       }
     ]
   },
-
   "income_tax_family_member": {
     "_comment": "Family member paid income tax last assessment year -> excluded.",
     "self": {
@@ -257,13 +299,147 @@
       "owns_mechanized_agricultural_equipment_3_or_4_wheeler": false,
       "owns_pucca_house": false,
       "monthly_income_inr": 5000,
-      "paid_income_tax_last_assessment_year": false
+      "paid_income_tax_last_assessment_year": false,
+      "house_has_pucca_roof_or_wall": false,
+      "house_room_count": 2,
+      "irrigated_land_acres": 0,
+      "unirrigated_land_acres": 0,
+      "paid_professional_tax": false
     },
     "family_members": [
       {
         "is_govt_employee": false,
         "monthly_income_inr": 5000,
-        "paid_income_tax_last_assessment_year": true
+        "paid_income_tax_last_assessment_year": true,
+        "paid_professional_tax": false
+      }
+    ]
+  },
+  "professional_tax_family_member": {
+    "_comment": "Gold fix 2026-10-04 (MoRD Annual Report 2024-25, p.141): 'viii. Paying professional tax' -- a family member pays it -> excluded. Old gold had no such exclusion: eligible.",
+    "self": {
+      "is_houseless": false,
+      "lives_in_kutcha_house": true,
+      "is_secc_automatically_included": false,
+      "is_govt_employee": false,
+      "owns_non_agricultural_enterprise_registered_with_govt": false,
+      "kisan_credit_card_limit_inr": 0,
+      "owns_refrigerator": false,
+      "owns_landline_phone": false,
+      "owns_gt_2_5_acres_irrigated_land": false,
+      "owns_motorised_three_or_four_wheeler": false,
+      "owns_mechanized_agricultural_equipment_3_or_4_wheeler": false,
+      "owns_pucca_house": false,
+      "monthly_income_inr": 5000,
+      "paid_income_tax_last_assessment_year": false,
+      "house_has_pucca_roof_or_wall": false,
+      "house_room_count": 2,
+      "irrigated_land_acres": 0,
+      "unirrigated_land_acres": 0,
+      "paid_professional_tax": false
+    },
+    "family_members": [
+      {
+        "is_govt_employee": false,
+        "monthly_income_inr": 5000,
+        "paid_income_tax_last_assessment_year": false,
+        "paid_professional_tax": true
+      }
+    ]
+  },
+  "unirrigated_land_five_acres": {
+    "_comment": "Gold fix 2026-10-04 (MoRD Annual Report 2024-25, p.141): 'x. Own 5 acres or more of unirrigated land' -> excluded. Old gold had no such exclusion: eligible.",
+    "self": {
+      "is_houseless": false,
+      "lives_in_kutcha_house": true,
+      "is_secc_automatically_included": false,
+      "is_govt_employee": false,
+      "owns_non_agricultural_enterprise_registered_with_govt": false,
+      "kisan_credit_card_limit_inr": 0,
+      "owns_refrigerator": false,
+      "owns_landline_phone": false,
+      "owns_gt_2_5_acres_irrigated_land": false,
+      "owns_motorised_three_or_four_wheeler": false,
+      "owns_mechanized_agricultural_equipment_3_or_4_wheeler": false,
+      "owns_pucca_house": false,
+      "monthly_income_inr": 5000,
+      "paid_income_tax_last_assessment_year": false,
+      "house_has_pucca_roof_or_wall": false,
+      "house_room_count": 2,
+      "irrigated_land_acres": 0,
+      "unirrigated_land_acres": 5,
+      "paid_professional_tax": false
+    },
+    "family_members": [
+      {
+        "is_govt_employee": false,
+        "monthly_income_inr": 5000,
+        "paid_income_tax_last_assessment_year": false,
+        "paid_professional_tax": false
+      }
+    ]
+  },
+  "irrigated_land_exactly_two_and_a_half_acres": {
+    "_comment": "Gold fix 2026-10-04 (MoRD Annual Report 2024-25, p.141): 'ix. Own 2.5 acres or more of irrigated land': exactly 2.5 -> excluded. Old gold's boolean said 'more than 2.5' (false here): eligible.",
+    "self": {
+      "is_houseless": false,
+      "lives_in_kutcha_house": true,
+      "is_secc_automatically_included": false,
+      "is_govt_employee": false,
+      "owns_non_agricultural_enterprise_registered_with_govt": false,
+      "kisan_credit_card_limit_inr": 0,
+      "owns_refrigerator": false,
+      "owns_landline_phone": false,
+      "owns_gt_2_5_acres_irrigated_land": false,
+      "owns_motorised_three_or_four_wheeler": false,
+      "owns_mechanized_agricultural_equipment_3_or_4_wheeler": false,
+      "owns_pucca_house": false,
+      "monthly_income_inr": 5000,
+      "paid_income_tax_last_assessment_year": false,
+      "house_has_pucca_roof_or_wall": false,
+      "house_room_count": 2,
+      "irrigated_land_acres": 2.5,
+      "unirrigated_land_acres": 0,
+      "paid_professional_tax": false
+    },
+    "family_members": [
+      {
+        "is_govt_employee": false,
+        "monthly_income_inr": 5000,
+        "paid_income_tax_last_assessment_year": false,
+        "paid_professional_tax": false
+      }
+    ]
+  },
+  "kutcha_house_with_three_rooms": {
+    "_comment": "Gold fix 2026-10-04 (MoRD Annual Report 2024-25, p.141): Step 1 filters out 'households living in houses with more than 2 rooms': a 3-room kutcha house -> excluded. Old gold asked only about owning a pucca house: eligible.",
+    "self": {
+      "is_houseless": false,
+      "lives_in_kutcha_house": true,
+      "is_secc_automatically_included": false,
+      "is_govt_employee": false,
+      "owns_non_agricultural_enterprise_registered_with_govt": false,
+      "kisan_credit_card_limit_inr": 0,
+      "owns_refrigerator": false,
+      "owns_landline_phone": false,
+      "owns_gt_2_5_acres_irrigated_land": false,
+      "owns_motorised_three_or_four_wheeler": false,
+      "owns_mechanized_agricultural_equipment_3_or_4_wheeler": false,
+      "owns_pucca_house": false,
+      "monthly_income_inr": 5000,
+      "paid_income_tax_last_assessment_year": false,
+      "house_has_pucca_roof_or_wall": false,
+      "house_room_count": 3,
+      "irrigated_land_acres": 0,
+      "unirrigated_land_acres": 0,
+      "paid_professional_tax": false
+    },
+    "family_members": [
+      {
+        "is_govt_employee": false,
+        "monthly_income_inr": 5000,
+        "paid_income_tax_last_assessment_year": false,
+        "paid_professional_tax": false
       }
     ]
   }

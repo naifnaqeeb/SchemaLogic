@@ -239,7 +239,7 @@ with a citizen question that asks it that way.
 
 **Status**: Open, document-only (no primary source on hand).
 
-## Gold: PMAY-G exclusions — a primary source now contradicts the gold
+## [RESOLVED 2026-10-04] Gold: PMAY-G exclusions — a primary source now contradicts the gold
 
 **Where**: `data/gold/PMAY-G.json` exclusions.
 
@@ -270,7 +270,9 @@ missing ones, correct the operator, re-model the pucca pre-filter, and align qua
 report's wording. Worth also saving the PMAY-G pages under a PMAY-G name, so the next audit finds
 them where it looks.
 
-**Status**: Open, document-only by decision for this pass, although a primary source is now on hand.
+**Status**: **Resolved 2026-10-04.** The MoRD Annual Report 2024-25 is adopted for PMAY-G's exclusions: refrigerator and landline removed; professional tax and 5+ acres unirrigated added; irrigated land now `irrigated_land_acres >= 2.5`; the Step 1 pucca filter modelled as a pucca roof or wall, or more than 2 rooms (`docs/GOLD_AUDIT_2026-10-03.md` §6.8). Quantifiers already matched the report's wording. Still open: whether the exclusions apply to compulsory-inclusion households, and the inclusion side is still PIB-sourced.
+
+**Follow-up (decision needed)**: `data/raw_documents/PMAY-G.md` — the document the extraction draft and Baseline 2 are given — is the PIB-based compilation and still lists the deleted exclusions. Against the corrected gold both comparisons now mostly measure that source gap (§7.7). Adding the report's p.141 text to it (and saving those pages under a PMAY-G name) would let them be re-run against the source the gold follows.
 
 ## Gold: MH-LADKI-BAHIN's MP/MLA exclusion uses a broader field
 
