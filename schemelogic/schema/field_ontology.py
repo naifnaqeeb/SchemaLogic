@@ -171,7 +171,7 @@ _FIELDS: tuple[FieldSpec, ...] = (
         "is_sc_st", PredicateCategory.DEMOGRAPHIC, "boolean",
         "Applicant's household is Scheduled Caste (SC) or Scheduled Tribe (ST) — one of Ujjwala "
         "2.0's added inclusion categories, separate from PMAY-G beneficiary status.",
-        schemes=("PM-UJJWALA-2.0",),
+        schemes=("PM-UJJWALA-2.0", "PMMVY"),
         citizen_question="Does your household belong to a Scheduled Caste (SC) or Scheduled Tribe (ST)?",
         display_label="SC/ST status",
     ),
@@ -464,7 +464,7 @@ _FIELDS: tuple[FieldSpec, ...] = (
     ),
     FieldSpec(
         "owns_four_wheeler", PredicateCategory.ECONOMIC, "boolean",
-        "Family owns a private four-wheeler.", schemes=("MH-LADKI-BAHIN",),
+        "Family owns a private four-wheeler.", schemes=("IGNOAPS", "MH-LADKI-BAHIN"),
         citizen_question="Does your family own a private four-wheeler, such as a car or SUV?",
         display_label="Four-wheeler ownership",
     ),
@@ -492,13 +492,12 @@ _FIELDS: tuple[FieldSpec, ...] = (
     ),
     FieldSpec(
         "family_agricultural_land_acres", PredicateCategory.ECONOMIC, "number",
-        "Combined agricultural landholding of the family, in acres. Retained in the ontology "
-        "as a documentation/traceability target for temporal_validity.supersedes.retired_predicate "
-        "references (Predicate typing isn't enforced inside that dict) — not currently used as a "
-        "live predicate in any gold scheme.",
-        schemes=(),
-        citizen_question="(Retired field — not asked directly; kept only for internal traceability.)",
-        display_label="Family agricultural landholding (retired field)",
+        "Combined agricultural landholding of the family, in acres. Live again since 2026-10-03: "
+        "IGNOAPS's AIDS-widow carve-out requires 'owning five acres of land or more' to be false "
+        "(NSAP Para 2.4.3). Also the target of MH-LADKI-BAHIN's supersedes.retired_predicate.",
+        schemes=("IGNOAPS",),
+        citizen_question="How many acres of land do you and your family own in total? (Enter 0 if none.)",
+        display_label="Family landholding (acres)",
     ),
     FieldSpec(
         "monthly_pension_inr", PredicateCategory.ECONOMIC, "number",
@@ -615,7 +614,7 @@ _FIELDS: tuple[FieldSpec, ...] = (
         "is_govt_employee_with_separate_health_scheme field during AB-PMJAY's primary-source "
         "re-verification (2026-08) — that qualifier wasn't literally in the SECC exclusion "
         "wording, and this field already existed for PMAY-G, so reused rather than duplicated.",
-        schemes=("PMAY-G", "AB-PMJAY"),
+        schemes=("AB-PMJAY", "IGNOAPS", "PMAY-G"),
         citizen_question="Is any family member a government employee?",
         display_label="Government employment status",
     ),
@@ -645,7 +644,7 @@ _FIELDS: tuple[FieldSpec, ...] = (
         "holds_constitutional_or_political_post", PredicateCategory.POLITICAL, "boolean",
         "Family member holds/held a constitutional post, or an elected political office "
         "(Minister/MP/MLA/MLC/Mayor/District Panchayat Chairperson).",
-        schemes=("PM-KISAN",),
+        schemes=("MH-LADKI-BAHIN", "PM-KISAN"),
         draft_aliases=("holds_constitutional_post", "holds_political_office"),  # draft split into two
         citizen_question="Does any family member hold or has held a constitutional post or elected political office, such as Minister, MP, MLA, MLC, or Mayor?",
         display_label="Constitutional or elected political post",

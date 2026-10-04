@@ -48,3 +48,37 @@ def test_ontology_proposed_defaults_false_and_is_settable():
         {"field": "brand_new_field", "op": "==", "value": True, "ontology_proposed": True}
     )
     assert p2.ontology_proposed is True
+
+
+def test_every_field_a_gold_scheme_reads_is_live_and_lists_that_scheme():
+    """A retired field (schemes=()) carries a placeholder citizen_question -- until 2026-10-04 the
+    IGNOAPS chat asked citizens "(Retired field — not asked directly; kept only for internal
+    traceability.)" -- and is hidden from extraction. A gold scheme may only read live fields."""
+    import json
+    from pathlib import Path
+
+    from schemelogic.schema.field_ontology import get_field
+    from schemelogic.schema.models import Scheme
+
+    for path in sorted((Path(__file__).resolve().parents[1] / "data" / "gold").glob("*.json")):
+        scheme = Scheme.model_validate(json.loads(path.read_text(encoding="utf-8")))
+        fields: set[str] = set()
+
+        def walk(node):
+            children = getattr(node, "and_", None) or getattr(node, "or_", None)
+            if children is not None:
+                for child in children:
+                    walk(child)
+            else:
+                fields.add(node.field)
+
+        walk(scheme.inclusion)
+        for e in scheme.exclusions:
+            fields.add(e.field)
+            if e.except_ is not None:
+                fields.add(e.except_.field)
+        for field in fields:
+            spec = get_field(field)
+            assert spec is not None, (scheme.scheme_id, field)
+            assert scheme.scheme_id in spec.schemes, (scheme.scheme_id, field, spec.schemes)
+            assert "Retired field" not in spec.citizen_question, (scheme.scheme_id, field)
