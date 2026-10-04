@@ -175,23 +175,49 @@ def _predicate_summary(p: FlatPredicate) -> dict[str, Any]:
     return d
 
 
-def _diff_location(gold_preds: list[FlatPredicate], draft_preds: list[FlatPredicate]) -> dict[str, list[dict[str, Any]]]:
-    gold_by_id = {p.identity(): p for p in gold_preds}
-    draft_by_id = {p.identity(): p for p in draft_preds}
+Pairing = list[tuple[FlatPredicate | None, FlatPredicate | None]]
 
+
+def _pair(gold_preds: list[FlatPredicate], draft_preds: list[FlatPredicate]) -> Pairing:
+    """Pair gold with draft predicates sharing an identity (location + field), as MULTISETS: two
+    predicates on one field in one place -- a lower and an upper age bound -- are two predicates, not
+    one. Within an identity, exact matches pair first, then the remainder pair in order (a wrong
+    value: both a false negative and a false positive); what's left over is missing (gold only) or
+    hallucinated (draft only). Before 2026-10-04 a dict keyed by identity kept only the last
+    predicate of each field and silently dropped the others."""
+    by_id: dict[tuple[str, str], tuple[list[FlatPredicate], list[FlatPredicate]]] = {}
+    for g in gold_preds:
+        by_id.setdefault(g.identity(), ([], []))[0].append(g)
+    for d in draft_preds:
+        by_id.setdefault(d.identity(), ([], []))[1].append(d)
+
+    pairs: Pairing = []
+    for gold_list, draft_list in by_id.values():
+        gold_left, draft_left = list(gold_list), list(draft_list)
+        for g in list(gold_left):
+            match = next((d for d in draft_left if d.match_key() == g.match_key()), None)
+            if match is not None:
+                pairs.append((g, match))
+                gold_left.remove(g)
+                draft_left.remove(match)
+        while gold_left and draft_left:
+            pairs.append((gold_left.pop(0), draft_left.pop(0)))
+        pairs.extend((g, None) for g in gold_left)
+        pairs.extend((None, d) for d in draft_left)
+    return pairs
+
+
+def _diff_location(gold_preds: list[FlatPredicate], draft_preds: list[FlatPredicate]) -> dict[str, list[dict[str, Any]]]:
     exact_matches, present_but_wrong, missing, hallucinated = [], [], [], []
-    for key, g in gold_by_id.items():
-        d = draft_by_id.get(key)
+    for g, d in _pair(gold_preds, draft_preds):
         if d is None:
             missing.append(_predicate_summary(g))
-        elif g.match_key() == d.match_key():
-            exact_matches.append({"field": key[1]})
-        else:
-            present_but_wrong.append({"field": key[1], "gold": _predicate_summary(g), "draft": _predicate_summary(d)})
-    for key, d in draft_by_id.items():
-        if key not in gold_by_id:
+        elif g is None:
             hallucinated.append(_predicate_summary(d))
-
+        elif g.match_key() == d.match_key():
+            exact_matches.append({"field": g.identity()[1]})
+        else:
+            present_but_wrong.append({"field": g.identity()[1], "gold": _predicate_summary(g), "draft": _predicate_summary(d)})
     return {
         "exact_matches": exact_matches, "present_but_wrong": present_but_wrong,
         "missing": missing, "hallucinated": hallucinated,
@@ -216,33 +242,25 @@ def compare_schemes(gold: Scheme, draft: Scheme) -> StructuralComparisonResult:
 
     category_tag_mismatches: list[CategoryTagMismatch] = []
 
-    # Paired on (location, field). Keyed by field alone (as before 2026-10-04), an exception would
-    # collide with an exclusion or inclusion leaf on the same field -- AB-PMJAY's age.
-    gold_by_id = {p.identity(): p for p in gold_flat}
-    draft_by_id = {p.identity(): p for p in draft_flat}
-
-    for key, g in gold_by_id.items():
-        d = draft_by_id.get(key)
+    # Paired on (location, field) as multisets -- see _pair. Keyed by field alone (before 2026-10-04),
+    # an exception collided with an exclusion or inclusion leaf on the same field (AB-PMJAY's age).
+    for g, d in _pair(gold_flat, draft_flat):
+        if g is None:
+            _metrics_for(d.cat).fp += 1
+            continue
         m = _metrics_for(g.cat)
         if d is None:
             m.fn += 1
-        elif g.match_key() == d.match_key():
+            continue
+        if g.match_key() == d.match_key():
             m.tp += 1
-            if g.cat != d.cat:
-                category_tag_mismatches.append(
-                    CategoryTagMismatch(location=g.location, field=key[1], gold_cat=g.cat, draft_cat=d.cat)
-                )
         else:
             m.fn += 1
             m.fp += 1
-            if g.cat != d.cat:
-                category_tag_mismatches.append(
-                    CategoryTagMismatch(location=g.location, field=key[1], gold_cat=g.cat, draft_cat=d.cat)
-                )
-
-    for key, d in draft_by_id.items():
-        if key not in gold_by_id:
-            _metrics_for(d.cat).fp += 1
+        if g.cat != d.cat:
+            category_tag_mismatches.append(
+                CategoryTagMismatch(location=g.location, field=g.identity()[1], gold_cat=g.cat, draft_cat=d.cat)
+            )
 
     overall = CategoryMetrics(category="__overall__")
     for m in category_metrics.values():

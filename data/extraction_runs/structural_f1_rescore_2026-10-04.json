@@ -280,8 +280,8 @@
         "exceptions": null
       },
       "new_metric_snapshot_gold": {
-        "f1": 0.7857,
-        "tp": 11,
+        "f1": 0.8,
+        "tp": 12,
         "fp": 5,
         "fn": 1,
         "exceptions": {
@@ -302,8 +302,8 @@
         "exceptions": null
       },
       "new_metric_current_gold": {
-        "f1": 0.7857,
-        "tp": 11,
+        "f1": 0.8,
+        "tp": 12,
         "fp": 5,
         "fn": 1,
         "exceptions": {
@@ -328,8 +328,8 @@
         "exceptions": null
       },
       "new_metric_snapshot_gold": {
-        "f1": 0.7692,
-        "tp": 10,
+        "f1": 0.7857,
+        "tp": 11,
         "fp": 4,
         "fn": 2,
         "exceptions": {
@@ -350,8 +350,8 @@
         "exceptions": null
       },
       "new_metric_current_gold": {
-        "f1": 0.7692,
-        "tp": 10,
+        "f1": 0.7857,
+        "tp": 11,
         "fp": 4,
         "fn": 2,
         "exceptions": {

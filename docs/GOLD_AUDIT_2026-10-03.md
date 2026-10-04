@@ -860,7 +860,7 @@ gate-approved or ontology draft shown, the rest are in the file:
 |---|---|---|---|---|---|
 | AB-PMJAY (gated) | 1.000 | 1.000 | 0.947 | **0.692** | 0/0/14 |
 | IGNOAPS (ontology) | 0.714 | 0.714 | 0.286 | **0.286** | none in either |
-| MH-LADKI-BAHIN (ontology) | 0.818 | 0.769 | 0.818 | **0.769** | 0/1/1 |
+| MH-LADKI-BAHIN (ontology) | 0.818 | 0.786 | 0.818 | **0.786** | 0/1/1 |
 | PM-KISAN (ontology) | 0.889 | 0.909 | 0.889 | **0.909** | 2/0/0 |
 | PM-UJJWALA-2.0 (gated) | 0.963 | 0.963 | 1.000 | **1.000** | none in either |
 | PMAY-G (gated) | 0.857 | 0.857 | 0.552 | **0.552** | none in either |
@@ -871,7 +871,8 @@ gate-approved or ontology draft shown, the rest are in the file:
 - **MH-LADKI-BAHIN**: the draft misses the tractor exception on the four-wheeler exclusion and adds
   an `employment_type` exception (outsourced, voluntary or contractual staff) on the government-
   employee exclusion that the gold expresses in the field itself ("regular/permanent"). The collision
-  fix alone would give 0.833; scored exceptions bring it to 0.769.
+  fix alone would give 0.833; scored exceptions bring it to 0.769, and scoring both of its `age`
+  bounds (below) to **0.786**.
 - **PM-KISAN**: the draft gets both Group D exceptions right, which now counts in its favour.
 - **IGNOAPS, PM-UJJWALA-2.0, PMAY-G**: no exceptions in gold or draft; the metric change moves
   nothing, and the figures above are the gold fixes of §6.3, §6.4 and §6.8.
@@ -884,11 +885,14 @@ gate-approved or ontology draft shown, the rest are in the file:
 | PM-UJJWALA-2.0 Phase 3 check-in, 0.963 | 1.000 (gold fix; the metric change doesn't affect it) |
 | PMAY-G Phase 3 check-in, 0.857 (and 0.552 in §7.7) | 0.552 (gold fix; unchanged by the metric) |
 | PM-KISAN manual report, "8/9 exact field matches" (F1 0.889) | **0.909**: 8/9 fields plus 2/2 exceptions |
-| MH-LADKI-BAHIN ontology draft, 0.818 | **0.769** |
+| MH-LADKI-BAHIN ontology draft, 0.818 | **0.786** |
 | IGNOAPS 0.714 / 0.667 (never reported; §7.3) | 0.286 / 0.267 (gold fix) |
 
-Still not handled, and logged in `KNOWN_ISSUES.md`: two predicates on the same field in the same
-location (MH-LADKI-BAHIN's and PMMVY's paired `age` bounds) are still collapsed to one.
+Two predicates on the same field in the same location (MH-LADKI-BAHIN's and PMMVY's paired `age`
+bounds) were still collapsed to one when this section was first written; fixed the same day —
+predicates are now paired as multisets per (location, field), exact matches first. Only
+MH-LADKI-BAHIN's figures move (ontology draft 0.769 → 0.786, judge+repair 0.786 → 0.800); the table
+above shows the final values.
 
 ### 7.9 PMAY-G, a temporal-maintenance case: extraction from a stale official document
 

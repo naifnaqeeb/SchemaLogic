@@ -260,3 +260,33 @@ def test_the_ab_pmjay_70_plus_fix_now_moves_the_metric():
     assert before.overall.f1 == 1.0
     assert after.category_metrics[EXCEPTION_CATEGORY].fn == 14
     assert after.overall.f1 < 1.0
+
+
+# --- two predicates on one field in one place are two predicates (2026-10-04) ------------------------
+
+
+def _with_age_bounds(*bounds: tuple[str, int]) -> Scheme:
+    data = json.loads(GOLD.model_dump_json(by_alias=True))
+    data["inclusion"] = {"and": [{"cat": "demographic", "field": "age", "op": op, "value": v} for op, v in bounds]
+                         + [{"cat": "citizenship", "field": "is_citizen", "op": "==", "value": True}]}
+    return Scheme.model_validate(data)
+
+
+def test_a_lower_and_an_upper_bound_on_one_field_are_both_scored():
+    gold = _with_age_bounds((">=", 21), ("<=", 65))
+    result = compare_schemes(gold, gold)
+    assert result.category_metrics["demographic"].tp == 2  # a dict keyed by field kept only one
+    assert len(result.inclusion_diff["exact_matches"]) == 3
+
+
+def test_one_wrong_bound_is_one_wrong_value_and_the_right_one_still_matches():
+    result = compare_schemes(_with_age_bounds((">=", 21), ("<=", 65)), _with_age_bounds(("<=", 65), (">=", 18)))
+    m = result.category_metrics["demographic"]
+    assert (m.tp, m.fp, m.fn) == (1, 1, 1)  # order in the draft doesn't matter: exact matches pair first
+
+
+def test_a_missing_and_an_extra_bound_on_the_same_field():
+    m = compare_schemes(_with_age_bounds((">=", 21), ("<=", 65)), _with_age_bounds((">=", 21))).category_metrics["demographic"]
+    assert (m.tp, m.fp, m.fn) == (1, 0, 1)
+    m = compare_schemes(_with_age_bounds((">=", 21)), _with_age_bounds((">=", 21), ("<=", 65))).category_metrics["demographic"]
+    assert (m.tp, m.fp, m.fn) == (1, 1, 0)

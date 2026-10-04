@@ -163,13 +163,13 @@ re-derive them alongside the change.
 
 **Status**: **Resolved 2026-10-04.** Each exception is now its own predicate, paired through its exclusion and charged to an `exception_to_exclusion` category (the plan's C3 "exceptions-to-exclusions"); predicates are paired on (location, field), which also corrected a collision in one MH-LADKI-BAHIN draft. Re-run on all 7 schemes, with superseded figures listed: `docs/GOLD_AUDIT_2026-10-03.md` §7.8. AB-PMJAY's gate-approved draft now scores 0.692 (0/14 exceptions).
 
-## Structural F1 collapses two predicates on the same field in the same location
+## [RESOLVED 2026-10-04] Structural F1 collapses two predicates on the same field in the same location
 
 **Where**: `schemelogic/evaluation/structural_f1.py`, `_diff_location` / `compare_schemes` (pairing by `identity()`).
 
 **What**: predicates are paired on (location, field), so two predicates on one field in the same place — a lower and an upper age bound (MH-LADKI-BAHIN; PMMVY's `age >= 18`, `age <= 55`, `age >= 19`) — collapse to the last one, and the others are never scored. Pre-existing (before 2026-10-04 the key was the field alone, which was worse). No figure on record involves PMMVY, which was never extracted; MH-LADKI-BAHIN's drafts carry both bounds too, so its figures count one bound pair instead of two.
 
-**Suggested fix**: pair predicates as multisets per (location, field) — match each gold predicate to an equal draft predicate first, then pair the remainder as wrong values. Changes MH-LADKI-BAHIN's figure, so re-run `scripts/rescore_structural_f1.py` with it.
+**Status**: **Resolved 2026-10-04** — predicates are paired as multisets per (location, field): exact matches first, then the remainder as wrong values, leftovers missing or hallucinated. Only MH-LADKI-BAHIN's figures moved: ontology draft 0.769 → 0.786, judge+repair 0.786 → 0.800 (`docs/GOLD_AUDIT_2026-10-03.md` §7.8).
 
 ## [RESOLVED 2026-10-04] Question selector asks about branches that are already decided
 
