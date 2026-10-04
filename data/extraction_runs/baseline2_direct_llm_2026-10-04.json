@@ -1,0 +1,419 @@
+{
+  "run": "baseline2_direct_llm (re-scored against corrected gold)",
+  "date": "2026-10-04",
+  "methodology_module": "schemelogic/evaluation/direct_llm_baseline.py",
+  "rescoring": "Answers reused verbatim wherever a profile's facts are byte-identical to an earlier run's (the LLM never sees the gold); only new profiles were asked. See answer_source.",
+  "gold_fixes": "docs/GOLD_AUDIT_2026-10-03.md section 6",
+  "token_budget": 30000,
+  "tokens_spent_estimated": 23890,
+  "token_note": "ESTIMATED from document size; ProviderResult does not surface usage.",
+  "schemes_completed": [
+    "AB-PMJAY",
+    "PMMVY",
+    "PM-UJJWALA-2.0",
+    "IGNOAPS"
+  ],
+  "schemes_not_attempted": [],
+  "stopped_reason": null,
+  "reports": [
+    {
+      "scheme_id": "AB-PMJAY",
+      "n_profiles": 10,
+      "agreement_rate": 0.8,
+      "harmful_positive_rate": 0.0,
+      "counts": {
+        "agree": 8,
+        "false_negative": 2
+      },
+      "tokens_used": 12868,
+      "failures": [],
+      "comparisons": [
+        {
+          "profile_id": "eligible_baseline",
+          "baseline_verdict": "eligible",
+          "evaluator_verdict": "eligible",
+          "relation": "agree",
+          "baseline_reason": "The household is identified as SECC‑deprived (meeting one of the six inclusion criteria) and does not trigger any of the 14 exclusion parameters.",
+          "answer_source": "reused from baseline2_direct_llm_2026-10-03.json"
+        },
+        {
+          "profile_id": "income_tax_family_member",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "agree",
+          "baseline_reason": "A household member pays income tax, which triggers an automatic exclusion under the SECC criteria.",
+          "answer_source": "reused from baseline2_direct_llm_2026-10-03.json"
+        },
+        {
+          "profile_id": "missing_deprivation_and_age_data_undetermined",
+          "baseline_verdict": "unsure",
+          "evaluator_verdict": "undetermined_missing_facts",
+          "relation": "agree",
+          "baseline_reason": "The applicant’s data does not indicate whether they meet any of the six rural deprivation criteria, urban occupational categories, senior‑citizen status, or automatic inclusion conditions, so eligibility cannot be determined.",
+          "answer_source": "reused from baseline2_direct_llm_2026-10-03.json"
+        },
+        {
+          "profile_id": "seventy_plus_eligible_regardless_of_secc",
+          "baseline_verdict": "eligible",
+          "evaluator_verdict": "eligible",
+          "relation": "agree",
+          "baseline_reason": "The family includes a member aged 70 or above, which makes the household eligible under the senior‑citizen expansion, and none of the automatic exclusion criteria are met.",
+          "answer_source": "reused from baseline2_direct_llm_2026-10-03.json"
+        },
+        {
+          "profile_id": "mechanized_agri_equipment",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "agree",
+          "baseline_reason": "The household owns mechanized 3-4 wheeler agricultural equipment, which is an automatic exclusion criterion under the scheme.",
+          "answer_source": "reused from baseline2_direct_llm_2026-10-03.json"
+        },
+        {
+          "profile_id": "monthly_income_over_threshold",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "agree",
+          "baseline_reason": "A family member earns more than Rs 10,000 per month, which triggers the automatic exclusion clause despite the household being SECC‑deprived.",
+          "answer_source": "reused from baseline2_direct_llm_2026-10-03.json"
+        },
+        {
+          "profile_id": "refrigerator",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "agree",
+          "baseline_reason": "The household owns a refrigerator, which triggers automatic exclusion under the scheme's exclusion list.",
+          "answer_source": "reused from baseline2_direct_llm_2026-10-03.json"
+        },
+        {
+          "profile_id": "compound_irrigated_land_exclusion",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "agree",
+          "baseline_reason": "The household owns more than 2.5 acres of irrigated land with irrigation equipment, which triggers an automatic exclusion under the scheme.",
+          "answer_source": "reused from baseline2_direct_llm_2026-10-03.json"
+        },
+        {
+          "profile_id": "seventy_plus_household_refrigerator_and_landline",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "eligible",
+          "relation": "false_negative",
+          "baseline_reason": "The household owns a refrigerator, which is listed among the automatic exclusion criteria, disqualifying it despite having a senior citizen member.",
+          "answer_source": "new_llm_call"
+        },
+        {
+          "profile_id": "seventy_plus_family_member_pays_income_tax",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "eligible",
+          "relation": "false_negative",
+          "baseline_reason": "A household is automatically excluded if any member earns more than Rs. 10,000 per month; a family member earns Rs. 25,000, triggering exclusion despite the senior citizen inclusion.",
+          "answer_source": "new_llm_call"
+        }
+      ]
+    },
+    {
+      "scheme_id": "PMMVY",
+      "n_profiles": 12,
+      "agreement_rate": 1.0,
+      "harmful_positive_rate": 0.0,
+      "counts": {
+        "agree": 12
+      },
+      "tokens_used": 3514,
+      "failures": [],
+      "comparisons": [
+        {
+          "profile_id": "eligible_baseline",
+          "baseline_verdict": "eligible",
+          "evaluator_verdict": "eligible",
+          "relation": "agree",
+          "baseline_reason": "Applicant is 25 years old, pregnant with her first child, and belongs to a BPL household (family income < 8 lakh), satisfying the age, child order, and category eligibility criteria.",
+          "answer_source": "reused from baseline2_direct_llm_2026-10-03.json"
+        },
+        {
+          "profile_id": "second_child_boy_ineligible",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "agree",
+          "baseline_reason": "The applicant's child is the second child and not a girl; PMMVY only covers the first child or a second child if it is a girl.",
+          "answer_source": "reused from baseline2_direct_llm_2026-10-03.json"
+        },
+        {
+          "profile_id": "second_child_girl_eligible",
+          "baseline_verdict": "eligible",
+          "evaluator_verdict": "eligible",
+          "relation": "agree",
+          "baseline_reason": "The applicant is 25 years old, belongs to a BPL household (family income ₹2  lakh < ₹8  lakh), and is pregnant with her second living child who is a girl, satisfying the PMMVY 2.0 eligibility for the second child.",
+          "answer_source": "reused from baseline2_direct_llm_2026-10-03.json"
+        },
+        {
+          "profile_id": "third_child_ineligible",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "agree",
+          "baseline_reason": "The scheme covers only the first living child, or the second if it is a girl; the applicant’s pregnancy is for her third child, making her ineligible despite meeting other criteria.",
+          "answer_source": "reused from baseline2_direct_llm_2026-10-03.json"
+        },
+        {
+          "profile_id": "under_18_ineligible",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "agree",
+          "baseline_reason": "Applicant is only 16 years old, below the minimum age of 18 years 7 months required at the time of childbirth.",
+          "answer_source": "reused from baseline2_direct_llm_2026-10-03.json"
+        },
+        {
+          "profile_id": "over_55_ineligible",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "agree",
+          "baseline_reason": "Applicant is 60 years old, exceeding the maximum age limit of 55 years for eligibility.",
+          "answer_source": "reused from baseline2_direct_llm_2026-10-03.json"
+        },
+        {
+          "profile_id": "no_category_membership_ineligible",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "agree",
+          "baseline_reason": "The applicant meets the age requirement but does not belong to any of the listed eligible categories (SC/ST, disability, BPL, PM-JAY, e‑Shram, PM‑Kisan, MGNREGA, income <8 L, frontline worker, NFSA ration card, or other notified vulnerable groups).",
+          "answer_source": "reused from baseline2_direct_llm_2026-10-03.json"
+        },
+        {
+          "profile_id": "ab_pmjay_beneficiary_alone_eligible",
+          "baseline_verdict": "eligible",
+          "evaluator_verdict": "eligible",
+          "relation": "agree",
+          "baseline_reason": "The applicant meets the age requirement, qualifies under the Ayushman Bharat PM‑JAY beneficiary category, and is applying for the first child, which is covered by the scheme.",
+          "answer_source": "reused from baseline2_direct_llm_2026-10-03.json"
+        },
+        {
+          "profile_id": "income_based_eligibility_alone_eligible",
+          "baseline_verdict": "eligible",
+          "evaluator_verdict": "eligible",
+          "relation": "agree",
+          "baseline_reason": "Applicant is 25 years old, pregnant with her first child, and her family income (₹7.5 lakh) is below the ₹8 lakh threshold, satisfying the category eligibility.",
+          "answer_source": "reused from baseline2_direct_llm_2026-10-03.json"
+        },
+        {
+          "profile_id": "missing_parity_data_undetermined",
+          "baseline_verdict": "unsure",
+          "evaluator_verdict": "undetermined_missing_facts",
+          "relation": "agree",
+          "baseline_reason": "Applicant meets age and category criteria, but it is unclear whether the child is the first living child (required for eligibility when the child is a boy).",
+          "answer_source": "reused from baseline2_direct_llm_2026-10-03.json"
+        },
+        {
+          "profile_id": "eighteen_years_three_months_below_floor",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "agree",
+          "baseline_reason": "The applicant is only 18 years 3 months old, which is below the minimum age requirement of 18 years 7 months at the time of childbirth.",
+          "answer_source": "new_llm_call"
+        },
+        {
+          "profile_id": "eighteen_years_seven_months_at_floor",
+          "baseline_verdict": "eligible",
+          "evaluator_verdict": "eligible",
+          "relation": "agree",
+          "baseline_reason": "Applicant meets the minimum age (18 years 7 months), qualifies under the BPL household category, and is applying for her first child, which is covered by PMMVY.",
+          "answer_source": "new_llm_call"
+        }
+      ]
+    },
+    {
+      "scheme_id": "PM-UJJWALA-2.0",
+      "n_profiles": 9,
+      "agreement_rate": 1.0,
+      "harmful_positive_rate": 0.0,
+      "counts": {
+        "agree": 9
+      },
+      "tokens_used": 0,
+      "failures": [],
+      "comparisons": [
+        {
+          "profile_id": "eligible_baseline",
+          "baseline_verdict": "eligible",
+          "evaluator_verdict": "eligible",
+          "relation": "agree",
+          "baseline_reason": "Applicant is an adult woman from a BPL household with no existing LPG connection, satisfying the scheme’s eligibility criteria.",
+          "answer_source": "reused from baseline2_direct_llm_2026-10-03.json"
+        },
+        {
+          "profile_id": "already_has_lpg_connection",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "agree",
+          "baseline_reason": "The applicant meets the gender, age, and BPL criteria, but the household already has an LPG connection, which disqualifies them.",
+          "answer_source": "reused from baseline2_direct_llm_2026-10-03.json"
+        },
+        {
+          "profile_id": "no_category_membership_undetermined",
+          "baseline_verdict": "unsure",
+          "evaluator_verdict": "undetermined_missing_facts",
+          "relation": "agree",
+          "baseline_reason": "The applicant meets gender, age, and no existing LPG criteria, but the scheme requires proof of a poor household or belonging to listed categories, which is not provided.",
+          "answer_source": "reused from baseline2_direct_llm_2026-10-03.json"
+        },
+        {
+          "profile_id": "sc_st_alone",
+          "baseline_verdict": "eligible",
+          "evaluator_verdict": "eligible",
+          "relation": "agree",
+          "baseline_reason": "The applicant is an adult woman from an SC/ST household, which is one of the qualifying categories, and the household has no existing LPG connection.",
+          "answer_source": "reused from baseline2_direct_llm_2026-10-03.json"
+        },
+        {
+          "profile_id": "pmay_g_beneficiary_alone",
+          "baseline_verdict": "eligible",
+          "evaluator_verdict": "eligible",
+          "relation": "agree",
+          "baseline_reason": "She is an adult woman, a PMAY‑G beneficiary (one of the Ujjwala 2.0 categories), and has no existing LPG connection.",
+          "answer_source": "reused from baseline2_direct_llm_2026-10-03.json"
+        },
+        {
+          "profile_id": "self_declaration_fallback",
+          "baseline_verdict": "eligible",
+          "evaluator_verdict": "eligible",
+          "relation": "agree",
+          "baseline_reason": "The applicant is an adult woman, meets the 14‑point self‑declaration for a poor household, and the household has no existing LPG connection, satisfying the scheme’s criteria.",
+          "answer_source": "reused from baseline2_direct_llm_2026-10-03.json"
+        },
+        {
+          "profile_id": "not_a_woman_ineligible",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "agree",
+          "baseline_reason": "The scheme requires the applicant to be an adult woman, but the applicant is not a woman.",
+          "answer_source": "reused from baseline2_direct_llm_2026-10-03.json"
+        },
+        {
+          "profile_id": "minor_ineligible",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "agree",
+          "baseline_reason": "The scheme requires the applicant to be an adult woman, but the applicant is only 15 years old.",
+          "answer_source": "reused from baseline2_direct_llm_2026-10-03.json"
+        },
+        {
+          "profile_id": "non_citizen_not_excluded_by_source",
+          "baseline_verdict": "eligible",
+          "evaluator_verdict": "eligible",
+          "relation": "agree",
+          "baseline_reason": "The applicant is an adult woman from a BPL household with no existing LPG connection, satisfying the scheme's eligibility criteria.",
+          "answer_source": "reused from baseline2_direct_llm_2026-10-03.json (as 'non_citizen_ineligible')"
+        }
+      ]
+    },
+    {
+      "scheme_id": "IGNOAPS",
+      "n_profiles": 12,
+      "agreement_rate": 0.6666666666666666,
+      "harmful_positive_rate": 0.0,
+      "counts": {
+        "agree": 8,
+        "other": 1,
+        "false_negative": 3
+      },
+      "tokens_used": 7508,
+      "failures": [],
+      "comparisons": [
+        {
+          "profile_id": "eligible_baseline",
+          "baseline_verdict": "eligible",
+          "evaluator_verdict": "eligible",
+          "relation": "agree",
+          "baseline_reason": "Applicant is 65 years old, belongs to a BPL household, and does not meet any exclusion criteria (no government job, no ≥5 acres land, no four-wheeler).",
+          "answer_source": "reused from baseline2_direct_llm_2026-09-19.json"
+        },
+        {
+          "profile_id": "under_60",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "agree",
+          "baseline_reason": "The applicant is 45 years old, below the required minimum age of 60 for IGNOAPS.",
+          "answer_source": "reused from baseline2_direct_llm_2026-09-19.json"
+        },
+        {
+          "profile_id": "not_bpl",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "undetermined_missing_facts",
+          "relation": "other",
+          "baseline_reason": "The scheme requires the applicant to belong to a Below Poverty Line (BPL) household, which the applicant does not meet.",
+          "answer_source": "reused from baseline2_direct_llm_2026-09-19.json"
+        },
+        {
+          "profile_id": "has_family_support",
+          "baseline_verdict": "eligible",
+          "evaluator_verdict": "eligible",
+          "relation": "agree",
+          "baseline_reason": "Applicant is 65, belongs to a BPL household, and does not meet any exclusion criteria (no government job, no ≥5 acres land, no four‑wheeler).",
+          "answer_source": "reused from baseline2_direct_llm_2026-09-19.json"
+        },
+        {
+          "profile_id": "govt_employee",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "eligible",
+          "relation": "false_negative",
+          "baseline_reason": "Applicant is a government employee, which is an exclusion criterion for IGNOAPS.",
+          "answer_source": "reused from baseline2_direct_llm_2026-09-19.json"
+        },
+        {
+          "profile_id": "five_acres_land",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "eligible",
+          "relation": "false_negative",
+          "baseline_reason": "Although the applicant is over 60 and belongs to a BPL household, they own five acres of land, which meets the exclusion criterion of owning five acres or more.",
+          "answer_source": "reused from baseline2_direct_llm_2026-09-19.json"
+        },
+        {
+          "profile_id": "owns_four_wheeler",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "eligible",
+          "relation": "false_negative",
+          "baseline_reason": "Applicant owns a four-wheeler, which is an exclusion criterion for IGNOAPS.",
+          "answer_source": "reused from baseline2_direct_llm_2026-09-19.json"
+        },
+        {
+          "profile_id": "missing_support_data",
+          "baseline_verdict": "eligible",
+          "evaluator_verdict": "eligible",
+          "relation": "agree",
+          "baseline_reason": "Applicant is 65 years old, belongs to a BPL household, and does not fall under any exclusion criteria (no government job, no ≥5 acres land, no four‑wheeler).",
+          "answer_source": "reused from baseline2_direct_llm_2026-09-19.json"
+        },
+        {
+          "profile_id": "not_bpl_not_aids_widow",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "agree",
+          "baseline_reason": "Applicant is not from a BPL household and does not qualify under the special exception for widows with AIDS.",
+          "answer_source": "new_llm_call"
+        },
+        {
+          "profile_id": "aids_widow_non_bpl_clear_of_criteria",
+          "baseline_verdict": "eligible",
+          "evaluator_verdict": "eligible",
+          "relation": "agree",
+          "baseline_reason": "The applicant is 65 years old and a widow suffering from AIDS; although not BPL, the scheme expressly permits such widows if they have no government job, own less than five acres and no four‑wheeler, which she satisfies.",
+          "answer_source": "new_llm_call"
+        },
+        {
+          "profile_id": "aids_widow_non_bpl_owns_four_wheeler",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "agree",
+          "baseline_reason": "Although the applicant is a 65‑year‑old widow with AIDS, she owns a four‑wheeler, which is an exclusion criterion, and she is not from a BPL household.",
+          "answer_source": "new_llm_call"
+        },
+        {
+          "profile_id": "missing_bpl_status_undetermined",
+          "baseline_verdict": "unsure",
+          "evaluator_verdict": "undetermined_missing_facts",
+          "relation": "agree",
+          "baseline_reason": "Applicant meets the age requirement but the scheme requires the person to be Below Poverty Line, which is not provided.",
+          "answer_source": "new_llm_call"
+        }
+      ]
+    }
+  ]
+}

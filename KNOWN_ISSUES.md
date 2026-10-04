@@ -27,6 +27,27 @@ member triggered the exclusion and yields "undetermined" — including for a hou
 member at all, which was previously, correctly, "ineligible". Full record and the tests that forced
 the design: `docs/GOLD_AUDIT_2026-10-03.md` §6.1.
 
+## Structural F1 never scores `except` clauses
+
+**Where**: `schemelogic/evaluation/structural_f1.py` — `FlatPredicate.match_key()` is
+`(location, field, op, value, quantifier)`. `has_except` is recorded but not compared, and the
+exception's own field/op/value and its `except_scope` are never examined.
+
+**What**: a draft that drops an exception, has the wrong one, or scopes it wrongly scores the same as
+one that gets it right. Concretely, AB-PMJAY's structural F1 is 1.000 both before and after the
+2026-10-03 fix, which added 14 exceptions and changed real verdicts. Exceptions-to-exclusions is one
+of the plan's headline C3 failure categories, so any per-category F1 claim about them currently rests
+on a metric that doesn't measure them.
+
+**Found**: re-deriving figures after the gold fixes, 2026-10-04 (`docs/GOLD_AUDIT_2026-10-03.md` §7.3).
+
+**Suggested fix**: score each `except` as its own predicate (location `exception`, keyed on the parent
+exclusion's field plus the exception's field/op/value/scope), so a missing or wrong exception
+produces a false negative or false positive in its own right. That changes reported F1 figures, so
+re-derive them alongside the change.
+
+**Status**: Open as of 2026-10-04.
+
 ## Question selector asks about branches that are already decided
 
 **Where**: `schemelogic/conversational/question_selector.py`, `_walk_inclusion()` /

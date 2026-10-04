@@ -464,6 +464,123 @@ depends on, which `missing_support_data` no longer is.
 
 ## 7. Superseded figures
 
-*Old and corrected numbers, side by side, once the fixes are re-evaluated.*
+Every figure below that the fixes touched, recomputed on 2026-10-04. Reproducible:
+`scripts/reevaluate_gold_fixes.py` (outcome equivalence, structural F1 — offline),
+`scripts/rescore_baseline2.py` and `scripts/summarize_baseline2.py` (Baseline 2).
 
-(pending)
+**How "old" was verified.** Each old outcome-equivalence and structural-F1 figure was *reproduced*
+from the pre-fix gold and profiles, read out of git at the audit snapshot `5662498`, before being
+compared. All of them reproduced exactly (F1 at the 4-decimal precision it was recorded at), so the
+corrected numbers come from the same drafts and the same functions — only the gold and profile
+suites differ.
+
+**How Baseline 2 was re-scored.** Its LLM is shown the scheme document and the profile facts, never
+the gold. For the 35 profiles whose facts are byte-identical to an earlier run (checked against that
+run's commit, including the renamed PM-UJJWALA profile), the stored answer was reused and re-scored
+against the corrected gold; only the 8 new profiles were asked live (~23.9k tokens, estimated). Each
+row records its `answer_source`.
+
+### 7.1 Baseline 2 — direct-LLM eligibility answering
+
+| Scheme | Old n | Old agree | Old harmful FP | Old FN | | New n | New agree | New harmful FP | New FN |
+|---|---|---|---|---|---|---|---|---|---|
+| AB-PMJAY | 8 | 100.0% | 0.0% | 0.0% | → | 10 | **80.0%** | 0.0% | **20.0%** |
+| IGNOAPS | 8 | 75.0% | 25.0% | 0.0% | → | 12 | **66.7%** | **0.0%** | **25.0%** |
+| PM-UJJWALA-2.0 | 9 | 88.9% | 11.1% | 0.0% | → | 9 | **100.0%** | **0.0%** | 0.0% |
+| PMMVY | 10 | 100.0% | 0.0% | 0.0% | → | 12 | 100.0% | 0.0% | 0.0% |
+| PM-KISAN | 12 | 91.7% | 0.0% | 0.0% | | 12 | 91.7% | 0.0% | 0.0% *(unchanged)* |
+| MH-LADKI-BAHIN | 10 | 100.0% | 0.0% | 0.0% | | 10 | 100.0% | 0.0% | 0.0% *(unchanged)* |
+| PMAY-G | 10 | 100.0% | 0.0% | 0.0% | | 10 | 100.0% | 0.0% | 0.0% *(unchanged)* |
+| **Aggregate** | **67** | **94.0%** | **4.5%** | **0.0%** | → | **75** | **90.7%** | **0.0%** | **6.7%** |
+| *excl. contested* | *66* | *95.5%* | *3.0%* | *0.0%* | | *—* | *(no contested rows remain)* | | |
+
+New breakdown: 68 agree, 5 false negative, 1 over-cautious (PM-KISAN, unchanged), 1 other (IGNOAPS
+`not_bpl`: LLM "ineligible", gold now undetermined because the carve-out's fact is absent).
+
+**Silent default on missing information** — every profile on which the evaluator returns
+undetermined:
+
+| | Old | New |
+|---|---|---|
+| Profiles where the rules couldn't decide | 7 | 8 |
+| LLM answered "unsure" (correct deferral) | 6 | 7 |
+| **LLM answered "eligible" anyway** | **1 (IGNOAPS)** | **0** |
+| LLM answered "ineligible" anyway | 0 | 1 (IGNOAPS `not_bpl`) |
+
+### 7.2 Outcome equivalence — extraction draft vs gold
+
+| Figure | n | Agree | FP (eligible) | FN (eligible) | Other |
+|---|---|---|---|---|---|
+| AB-PMJAY, Phase 3 check-in | 8 → 10 | 100.0% → **80.0%** | 0.0% → 0.0% | 0.0% → **20.0%** | 0.0% → 0.0% |
+| PM-UJJWALA-2.0, Phase 3 check-in | 9 → 9 | 88.9% → **100.0%** | 11.1% → **0.0%** | 0.0% → 0.0% | 0.0% → 0.0% |
+| IGNOAPS, ontology draft (pre-repair) | 8 → 12 | 62.5% → **58.3%** | 12.5% → **0.0%** | 0.0% → **25.0%** | 25.0% → 16.7% |
+| IGNOAPS, post judge+repair | 8 → 12 | 62.5% → **33.3%** | 0.0% → 0.0% | 0.0% → **25.0%** | 37.5% → 41.7% |
+
+PMMVY was never extracted, so it has no outcome-equivalence figure to supersede.
+
+### 7.3 Structural F1
+
+| Figure | Old (recorded) | New |
+|---|---|---|
+| AB-PMJAY, Phase 3 check-in | 1.000 | 1.000 — **blind to the fix**: the metric never scores `except` clauses |
+| PM-UJJWALA-2.0, Phase 3 check-in | 0.963 | **1.000** |
+| PM-UJJWALA-2.0, citizenship-category F1 | 0.0 (fn = 1) | **category no longer present** — the "miss" was the unsourced predicate |
+| IGNOAPS (either draft) | never reported | 0.286 / 0.267 *(pre-fix would have been 0.714 / 0.667; reported here for completeness, not superseding anything)* |
+
+### 7.4 Superseded claims
+
+These earlier statements should no longer be cited:
+
+| Earlier claim | Status |
+|---|---|
+| Baseline 2: 94.0% agreement, **4.5% harmful false positives**, 0% false negatives (n=67) | **Superseded** by 90.7% / **0.0%** / **6.7%** (n=75). |
+| "Every harmful Baseline 2 error rests on contested or unsourced gold" | **Confirmed and now resolved**: with that gold corrected, there are none. |
+| IGNOAPS as an example of the LLM **silently defaulting to "eligible"** on missing information | **Withdrawn.** It was an artifact of the doubted family-support predicate. On corrected gold the LLM never defaulted to eligible (0/8). |
+| "The direct baseline handled exception clauses correctly" (2026-09-19) | **Narrowed.** True of *member-level* exceptions stated next to their exclusion (PM-KISAN Group D, MH-LADKI-BAHIN tractor). False of *route-level* exemptions stated elsewhere in the document (AB-PMJAY 70+) — see §7.5. |
+| PM-UJJWALA extractor citizenship miss (F1 0.0) | **Withdrawn** — gold-side, the predicate was unsourced. |
+| "Preambular / implied-fact miss" recurring 4 times | **Superseded** by 1 of 4 (§5). |
+| AB-PMJAY extraction draft: 100% outcome agreement with gold | **Superseded** by 80.0% — the 100% was a shared error (§7.5). |
+
+### 7.5 What the corrections show
+
+1. **Baseline 2's errors switched direction.** On the old gold, its errors looked like the harmful
+   false positives the project's framing is built around, including one apparent silent default. On
+   corrected gold it has **no** false positives and **five false negatives**: in every one, it
+   applied an exclusion to someone the source exempts. That is still a harm — a wrongly denied
+   benefit — and the plan's harm-weighted framing (C5) counts both directions. But it is a different
+   claim from the one previously made, and the paper should make this one.
+
+2. **The baseline, the extractor and the original gold all made the same errors.** The AB-PMJAY
+   extraction draft denies the 70+ senior with a refrigerator exactly as the old gold did and as
+   Baseline 2 does. All three IGNOAPS sources of judgement — draft, gold, baseline — applied the
+   carve-out criteria to everyone. So the failure isn't "LLM versus symbolic". The same misreading of
+   compositional scope — which applicants an exclusion applies to — occurred in an LLM answering
+   directly, an LLM extracting rules, and a human-verified gold. The symbolic layer evaluated the
+   wrong rule faithfully; what caught it was checking the rule against primary text.
+
+3. **Gold-vs-draft agreement cannot detect an error both share.** AB-PMJAY's 100% outcome
+   agreement was two systems agreeing on a mistake. For IGNOAPS it was worse than coincidence: its
+   `source_clause` records that the three criteria were *added to the gold because an extraction run
+   proposed them*, and calls that "the draft-extraction catching a real annotation gap". The
+   extractor's mis-scoped reading entered the gold through the draft-then-verify workflow, and the
+   gold then "confirmed" the extractor. Plan §6.5's workflow guards against the annotator
+   rubber-stamping a draft; it doesn't guard against the annotator being *persuaded* by one. An
+   independent source check before accepting a draft-proposed predicate would have.
+
+4. **Where compositional logic actually breaks — a sharper, smaller claim.** Member-level exceptions
+   stated beside their exclusion ("…excluding Group D employees") were read correctly everywhere.
+   Route-level exemptions stated in a *different section* from the exclusions they override (AB-PMJAY:
+   the 70+ expansion is a separate guideline from the SECC list) were missed by every system,
+   human included. That is consistent with the plan's thesis that exceptions are where things break,
+   but it rests on two schemes, and three of the five false negatives (IGNOAPS) depend on the
+   carve-out reading chosen in §6.4. Treat it as a hypothesis with two supporting cases, not a
+   finding.
+
+5. **The exception gap in structural F1 matters for the C3 claims.** The metric matches exclusions
+   without looking at their `except` clauses, so it scored AB-PMJAY 1.000 before and after a fix
+   that changed real verdicts. Any per-category F1 claim about exceptions-to-exclusions currently
+   rests on a metric that doesn't measure them. Logged in `KNOWN_ISSUES.md`.
+
+6. **None of this is a large sample.** 75 profiles, 7 schemes; every rate above moves by several
+   points with a single row. The direction of these findings is well supported; the magnitudes are
+   not.

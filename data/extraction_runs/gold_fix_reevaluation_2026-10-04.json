@@ -1,0 +1,261 @@
+{
+  "old_ref": "5662498",
+  "rows": [
+    {
+      "scheme": "AB-PMJAY",
+      "figure": "Phase 3 check-in, gate-approved draft",
+      "draft_run": "AB-PMJAY_gpt-oss-120b_gated_20260818T025520.json",
+      "recorded_in": "AB-PMJAY_phase3_checkin_20260818T025948.json",
+      "outcome_equivalence": {
+        "recorded": {
+          "n_profiles": 8,
+          "agreement_rate": 1.0,
+          "false_positive_eligible_rate": 0.0,
+          "false_negative_eligible_rate": 0.0,
+          "other_mismatch_rate": 0.0
+        },
+        "reproduced_pre_fix": {
+          "n_profiles": 8,
+          "agreement_rate": 1.0,
+          "false_positive_eligible_rate": 0.0,
+          "false_negative_eligible_rate": 0.0,
+          "other_mismatch_rate": 0.0
+        },
+        "reproduced_matches_recorded": true,
+        "corrected": {
+          "n_profiles": 10,
+          "agreement_rate": 0.8,
+          "false_positive_eligible_rate": 0.0,
+          "false_negative_eligible_rate": 0.2,
+          "other_mismatch_rate": 0.0
+        }
+      },
+      "structural_f1": {
+        "recorded": 1.0,
+        "reproduced_pre_fix": 1.0,
+        "reproduced_matches_recorded": true,
+        "corrected": 1.0
+      },
+      "corrected_disagreements": [
+        {
+          "profile_id": "seventy_plus_household_refrigerator_and_landline",
+          "gold_verdict": "eligible",
+          "draft_verdict": "ineligible",
+          "agree": false,
+          "disagreement_type": "false_negative_eligible"
+        },
+        {
+          "profile_id": "seventy_plus_family_member_pays_income_tax",
+          "gold_verdict": "eligible",
+          "draft_verdict": "ineligible",
+          "agree": false,
+          "disagreement_type": "false_negative_eligible"
+        }
+      ]
+    },
+    {
+      "scheme": "PM-UJJWALA-2.0",
+      "figure": "Phase 3 check-in, gate-approved draft",
+      "draft_run": "PM-UJJWALA-2.0_gpt-oss-120b_gated_20260818T033601.json",
+      "recorded_in": "PM-UJJWALA-2.0_phase3_checkin_20260818T033654.json",
+      "outcome_equivalence": {
+        "recorded": {
+          "n_profiles": 9,
+          "agreement_rate": 0.8888888888888888,
+          "false_positive_eligible_rate": 0.1111111111111111,
+          "false_negative_eligible_rate": 0.0,
+          "other_mismatch_rate": 0.0
+        },
+        "reproduced_pre_fix": {
+          "n_profiles": 9,
+          "agreement_rate": 0.8888888888888888,
+          "false_positive_eligible_rate": 0.1111111111111111,
+          "false_negative_eligible_rate": 0.0,
+          "other_mismatch_rate": 0.0
+        },
+        "reproduced_matches_recorded": true,
+        "corrected": {
+          "n_profiles": 9,
+          "agreement_rate": 1.0,
+          "false_positive_eligible_rate": 0.0,
+          "false_negative_eligible_rate": 0.0,
+          "other_mismatch_rate": 0.0
+        }
+      },
+      "structural_f1": {
+        "recorded": 0.963,
+        "reproduced_pre_fix": 0.962962962962963,
+        "reproduced_matches_recorded": true,
+        "corrected": 1.0
+      },
+      "corrected_disagreements": []
+    },
+    {
+      "scheme": "IGNOAPS",
+      "figure": "outcome equivalence, ontology draft (pre-repair)",
+      "draft_run": "IGNOAPS_gpt-oss-120b_ontology_20260818T012625.json",
+      "recorded_in": "IGNOAPS_gpt-oss-120b_outcome_equivalence_20260818T013510.json",
+      "outcome_equivalence": {
+        "recorded": {
+          "n_profiles": 8,
+          "agreement_rate": 0.625,
+          "false_positive_eligible_rate": 0.125,
+          "false_negative_eligible_rate": 0.0,
+          "other_mismatch_rate": 0.25
+        },
+        "reproduced_pre_fix": {
+          "n_profiles": 8,
+          "agreement_rate": 0.625,
+          "false_positive_eligible_rate": 0.125,
+          "false_negative_eligible_rate": 0.0,
+          "other_mismatch_rate": 0.25
+        },
+        "reproduced_matches_recorded": true,
+        "corrected": {
+          "n_profiles": 12,
+          "agreement_rate": 0.5833333333333334,
+          "false_positive_eligible_rate": 0.0,
+          "false_negative_eligible_rate": 0.25,
+          "other_mismatch_rate": 0.16666666666666666
+        }
+      },
+      "structural_f1": {
+        "recorded": null,
+        "reproduced_pre_fix": 0.7142857142857143,
+        "reproduced_matches_recorded": false,
+        "corrected": 0.28571428571428575
+      },
+      "corrected_disagreements": [
+        {
+          "profile_id": "govt_employee",
+          "gold_verdict": "eligible",
+          "draft_verdict": "ineligible",
+          "agree": false,
+          "disagreement_type": "false_negative_eligible"
+        },
+        {
+          "profile_id": "five_acres_land",
+          "gold_verdict": "eligible",
+          "draft_verdict": "ineligible",
+          "agree": false,
+          "disagreement_type": "false_negative_eligible"
+        },
+        {
+          "profile_id": "owns_four_wheeler",
+          "gold_verdict": "eligible",
+          "draft_verdict": "ineligible",
+          "agree": false,
+          "disagreement_type": "false_negative_eligible"
+        },
+        {
+          "profile_id": "not_bpl_not_aids_widow",
+          "gold_verdict": "ineligible",
+          "draft_verdict": "undetermined_missing_facts",
+          "agree": false,
+          "disagreement_type": "other_mismatch"
+        },
+        {
+          "profile_id": "aids_widow_non_bpl_clear_of_criteria",
+          "gold_verdict": "eligible",
+          "draft_verdict": "undetermined_missing_facts",
+          "agree": false,
+          "disagreement_type": "other_mismatch"
+        }
+      ]
+    },
+    {
+      "scheme": "IGNOAPS",
+      "figure": "outcome equivalence, post judge+repair",
+      "draft_run": "IGNOAPS_gpt-oss-120b_judge_repair_20260818T015010.json",
+      "recorded_in": "IGNOAPS_gpt-oss-120b_post_repair_outcome_equivalence_20260818T015448.json",
+      "outcome_equivalence": {
+        "recorded": {
+          "n_profiles": 8,
+          "agreement_rate": 0.625,
+          "false_positive_eligible_rate": 0.0,
+          "false_negative_eligible_rate": 0.0,
+          "other_mismatch_rate": 0.375
+        },
+        "reproduced_pre_fix": {
+          "n_profiles": 8,
+          "agreement_rate": 0.625,
+          "false_positive_eligible_rate": 0.0,
+          "false_negative_eligible_rate": 0.0,
+          "other_mismatch_rate": 0.375
+        },
+        "reproduced_matches_recorded": true,
+        "corrected": {
+          "n_profiles": 12,
+          "agreement_rate": 0.3333333333333333,
+          "false_positive_eligible_rate": 0.0,
+          "false_negative_eligible_rate": 0.25,
+          "other_mismatch_rate": 0.4166666666666667
+        }
+      },
+      "structural_f1": {
+        "recorded": null,
+        "reproduced_pre_fix": 0.6666666666666667,
+        "reproduced_matches_recorded": false,
+        "corrected": 0.26666666666666666
+      },
+      "corrected_disagreements": [
+        {
+          "profile_id": "eligible_baseline",
+          "gold_verdict": "eligible",
+          "draft_verdict": "undetermined_missing_facts",
+          "agree": false,
+          "disagreement_type": "other_mismatch"
+        },
+        {
+          "profile_id": "has_family_support",
+          "gold_verdict": "eligible",
+          "draft_verdict": "undetermined_missing_facts",
+          "agree": false,
+          "disagreement_type": "other_mismatch"
+        },
+        {
+          "profile_id": "govt_employee",
+          "gold_verdict": "eligible",
+          "draft_verdict": "ineligible",
+          "agree": false,
+          "disagreement_type": "false_negative_eligible"
+        },
+        {
+          "profile_id": "five_acres_land",
+          "gold_verdict": "eligible",
+          "draft_verdict": "ineligible",
+          "agree": false,
+          "disagreement_type": "false_negative_eligible"
+        },
+        {
+          "profile_id": "owns_four_wheeler",
+          "gold_verdict": "eligible",
+          "draft_verdict": "ineligible",
+          "agree": false,
+          "disagreement_type": "false_negative_eligible"
+        },
+        {
+          "profile_id": "missing_support_data",
+          "gold_verdict": "eligible",
+          "draft_verdict": "undetermined_missing_facts",
+          "agree": false,
+          "disagreement_type": "other_mismatch"
+        },
+        {
+          "profile_id": "not_bpl_not_aids_widow",
+          "gold_verdict": "ineligible",
+          "draft_verdict": "undetermined_missing_facts",
+          "agree": false,
+          "disagreement_type": "other_mismatch"
+        },
+        {
+          "profile_id": "aids_widow_non_bpl_clear_of_criteria",
+          "gold_verdict": "eligible",
+          "draft_verdict": "undetermined_missing_facts",
+          "agree": false,
+          "disagreement_type": "other_mismatch"
+        }
+      ]
+    }
+  ]
+}

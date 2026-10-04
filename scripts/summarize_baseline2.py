@@ -29,12 +29,11 @@ UNDETERMINED = "undetermined_missing_facts"
 # Rows whose GOLD verdict is itself in question, reported both with and without them rather than
 # silently kept or silently dropped. Each entry must point at the KNOWN_ISSUES.md entry explaining
 # it -- this is not a place to quietly discard results that look bad.
-CONTESTED = {
-    # Gold's is_indian_citizen predicate has no recorded source and the source document never
-    # mentions citizenship. KNOWN_ISSUES.md: "Gold: PM-UJJWALA-2.0's citizenship predicate has no
-    # recorded source".
-    ("PM-UJJWALA-2.0", "non_citizen_ineligible"),
-}
+CONTESTED: set[tuple[str, str]] = set()
+# Was {("PM-UJJWALA-2.0", "non_citizen_ineligible")} until 2026-10-03, when the gold's unsourced
+# is_indian_citizen predicate was removed (docs/GOLD_AUDIT_2026-10-03.md section 6.3) and the profile
+# renamed non_citizen_not_excluded_by_source. The row is no longer contested: the gold it is scored
+# against is now sourced. The mechanism stays for the next case.
 
 
 def load_reports() -> dict[str, dict]:
@@ -114,6 +113,13 @@ def main() -> None:
     print(f"  LLM said ineligible anyway     : {llm_said['ineligible']}/{m} {pct(llm_said['ineligible'], m)}")
     silent = sorted({s for s, c in undetermined if c["baseline_verdict"] == "eligible"})
     print(f"  schemes where the silent default occurred: {silent or 'none'}")
+
+    sources = Counter(
+        "new LLM call" if c.get("answer_source") == "new_llm_call"
+        else ("reused (re-scored against corrected gold)" if c.get("answer_source") else "original run")
+        for _, c in all_rows
+    )
+    print(f"\nwhere each answer came from: {dict(sources)}")
 
     recovered = sum(1 for _, c in all_rows if c.get("recovered_with_higher_max_tokens"))
     print(f"\nrows recovered from json_validate_failed at a higher completion cap: {recovered}")
