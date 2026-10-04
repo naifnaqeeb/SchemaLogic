@@ -59,6 +59,7 @@ export interface PendingQuestion {
   answer_type: "boolean" | "number" | "text";
   prompt: string;
   quick_replies: string[] | null;
+  allows_decline?: boolean; // sensitive fact: "Prefer not to say" is among quick_replies
 }
 
 export interface ChatResponse {

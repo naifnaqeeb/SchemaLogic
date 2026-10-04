@@ -20,7 +20,7 @@ from typing import Any
 import re
 
 from schemelogic.evaluator.symbolic_engine import EvaluationError, EvaluationResult, Verdict, evaluate
-from schemelogic.schema.field_ontology import citizen_question_for
+from schemelogic.schema.field_ontology import citizen_question_for, get_field, is_sensitive
 from schemelogic.schema.models import Scheme
 
 
@@ -39,6 +39,10 @@ class Question:
     answer_type: str  # "boolean" | "number" | "text"
     prompt: str
     quick_replies: tuple[str, ...] | None  # ("Yes", "No") for boolean, else None
+    allows_decline: bool = False  # a sensitive fact: "Prefer not to say" is a valid answer
+
+
+DECLINE_REPLY = "Prefer not to say"
 
 
 # Only UNDETERMINED nodes are descended into. Under Kleene logic a node already True or False stays so
@@ -169,9 +173,12 @@ def build_question(missing: MissingField) -> Question:
         prompt = f"This next one is about one of your family members — {_second_to_third_person(base_question)}"
 
     quick_replies: tuple[str, ...] | None = ("Yes", "No") if answer_type == "boolean" else None
+    allows_decline = is_sensitive(missing.field)
+    if allows_decline:
+        quick_replies = (*(quick_replies or ()), DECLINE_REPLY)
     return Question(
         field=missing.field, member=missing.member, answer_type=answer_type,
-        prompt=prompt, quick_replies=quick_replies,
+        prompt=prompt, quick_replies=quick_replies, allows_decline=allows_decline,
     )
 
 
@@ -279,6 +286,19 @@ def _could_change_verdict(scheme: Scheme, profile: dict[str, Any], target: tuple
         return True  # can't prove it irrelevant: ask, as the structural walk alone would
 
 
+def _screened_question(missing: MissingField, profile: dict[str, Any]) -> Question:
+    """A sensitive fact with a gentler screening question is preceded by it: an answer of No settles
+    the sensitive fact without asking it (ConversationSession.apply_answer)."""
+    spec = get_field(missing.field)
+    screen = spec.screened_by if spec is not None else None
+    if screen is not None:
+        record = profile.get("self", {}) if missing.member == "self" else (
+            profile.get("family_members", [])[int(missing.member[len("family_member["):-1])])
+        if screen not in record:
+            return build_question(MissingField(field=screen, member=missing.member, cat=None, expected_value=True))
+    return build_question(missing)
+
+
 def select_next_question(scheme: Scheme, profile: dict[str, Any]) -> Question | None:
     """Returns None once the profile already has enough information for a definite verdict
     (ELIGIBLE or INELIGIBLE) — the caller should stop asking questions and move to the final
@@ -295,9 +315,15 @@ def select_next_question(scheme: Scheme, profile: dict[str, Any]) -> Question | 
             f"for scheme {scheme.scheme_id!r} — evaluator/trace-walker mismatch"
         )
     candidates = list(dict.fromkeys(missing))  # the same fact can be offered by several rules
-    for candidate in candidates:
-        if _could_change_verdict(scheme, profile, (candidate.member, candidate.field)):
-            return build_question(candidate)
+    relevant = [c for c in candidates if _could_change_verdict(scheme, profile, (c.member, c.field))]
+    # A sensitive fact is asked only when it is the one still deciding: every other fact that could
+    # change the verdict is asked first, and any of them may make it irrelevant (IGNOAPS: a BPL card,
+    # a government job, five acres or a four-wheeler each settle the verdict without it).
+    ordinary = [c for c in relevant if not is_sensitive(c.field)]
+    if ordinary:
+        return build_question(ordinary[0])
+    if relevant:
+        return _screened_question(relevant[0], profile)
     # No single answer can change the verdict, yet the evaluator can't decide: the fact feeding several
     # rules cancels out (KNOWN_ISSUES, "Kleene evaluation is incomplete..."). Asking the first fact
     # resolves that, and is the only way the conversation reaches the verdict every answer leads to.

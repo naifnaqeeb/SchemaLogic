@@ -383,3 +383,111 @@ def test_every_question_could_change_the_verdict_and_none_that_could_is_withheld
         assert relevant <= offered, ("withheld a relevant question", relevant - offered, profile)
         checked += 1
     assert checked >= 5, checked
+
+
+# --- the IGNOAPS sensitive question (decided 2026-10-04) -------------------------------------------
+# "Are you living with HIV or AIDS?" is asked only when it is the one fact still deciding the verdict,
+# only of an applicant it could apply to (60+, no BPL card, clear of the carve-out's three criteria, and
+# a widow -- asked first, gently), and "Prefer not to say" leaves the fact unknown: never a verdict.
+
+from schemelogic.schema.field_ontology import is_sensitive  # noqa: E402
+
+_SENSITIVE = "is_widow_suffering_from_aids"
+_IGNOAPS_FACTS = {
+    "age": (59, 60, 72), "is_bpl_household": (True, False), "is_govt_employee": (True, False),
+    "family_agricultural_land_acres": (2, 5), "owns_four_wheeler": (True, False), "is_widow": (True, False),
+    _SENSITIVE: (True, False),
+}
+
+
+def _ignoaps_households():
+    keys = list(_IGNOAPS_FACTS)
+    for values in itertools.product(*_IGNOAPS_FACTS.values()):
+        facts = dict(zip(keys, values))
+        if facts[_SENSITIVE] and not facts["is_widow"]:
+            continue  # not a widow -> not a widow living with HIV/AIDS
+        yield facts
+
+
+def _could_apply(facts: dict) -> bool:
+    return (facts["age"] >= 60 and not facts["is_bpl_household"] and not facts["is_govt_employee"]
+            and facts["family_agricultural_land_acres"] < 5 and not facts["owns_four_wheeler"])
+
+
+def test_the_sensitive_question_is_asked_only_as_the_deciding_fact_of_an_applicant_it_could_apply_to():
+    scheme = _gold("IGNOAPS")
+    asked_for = []
+    for facts in _ignoaps_households():
+        session = ConversationSession(scheme=scheme)
+        sequence = []
+        for _ in range(20):
+            q = session.advance()
+            if q is None:
+                break
+            sequence.append(q.field)
+            if q.field == _SENSITIVE:
+                assert q.allows_decline and q.quick_replies == ("Yes", "No", "Prefer not to say")
+                # the deciding fact: every answer to it gives a definite verdict, and they differ
+                outcomes = {evaluate(scheme, {"self": {**session.profile["self"], _SENSITIVE: v}}).verdict
+                            for v in (True, False)}
+                assert outcomes == {Verdict.ELIGIBLE, Verdict.INELIGIBLE}, (facts, sequence)
+                assert sequence[-2] == "is_widow"  # screened first, gently
+            else:
+                assert not q.allows_decline
+            session.apply_answer("yes" if facts[q.field] is True else "no" if facts[q.field] is False else str(facts[q.field]))
+        assert session.current_result().verdict != Verdict.UNDETERMINED
+        if _SENSITIVE in sequence:
+            asked_for.append(facts)
+        else:
+            assert not (_could_apply(facts) and facts["is_widow"]), facts
+        if "is_widow" in sequence:
+            assert _could_apply(facts), ("screening asked of someone the carve-out can't reach", facts)
+    assert asked_for and all(_could_apply(f) and f["is_widow"] for f in asked_for)
+
+
+def test_answering_not_a_widow_settles_the_sensitive_fact_without_asking_it():
+    session = ConversationSession(scheme=_gold("IGNOAPS"))
+    answers = {"age": "65", "is_bpl_household": "no", "is_govt_employee": "no",
+               "family_agricultural_land_acres": "1", "owns_four_wheeler": "no", "is_widow": "no"}
+    asked = []
+    while (q := session.advance()) is not None:
+        asked.append(q.field)
+        session.apply_answer(answers[q.field])
+    assert _SENSITIVE not in asked
+    assert session.profile["self"][_SENSITIVE] is False
+    assert session.current_result().verdict == Verdict.INELIGIBLE
+
+
+def test_a_decline_leaves_the_fact_unknown_and_the_verdict_undetermined():
+    session = ConversationSession(scheme=_gold("IGNOAPS"))
+    answers = {"age": "65", "is_bpl_household": "no", "is_govt_employee": "no",
+               "family_agricultural_land_acres": "1", "owns_four_wheeler": "no", "is_widow": "yes"}
+    while (q := session.advance()).field != _SENSITIVE:
+        session.apply_answer(answers[q.field])
+    session.decline_pending()
+    assert session.declined == ("self", _SENSITIVE)
+    assert _SENSITIVE not in session.profile["self"]
+    assert session.current_result().verdict == Verdict.UNDETERMINED
+
+
+def test_decline_cannot_be_used_on_an_ordinary_question():
+    session = ConversationSession(scheme=_gold("IGNOAPS"))
+    session.advance()
+    with pytest.raises(RuntimeError):
+        session.decline_pending()
+
+
+@pytest.mark.parametrize("text,expected", [
+    ("Prefer not to say", True), ("I'd rather not say", True), ("I’d rather not answer", True),
+    ("skip", True), ("I don't want to say", True), ("no comment", True), ("not comfortable sharing that", True),
+    ("no", False), ("yes", False), ("No.", False), ("passport", False), ("skipper", False),
+])
+def test_decline_phrases_are_recognised_deterministically(text, expected):
+    from schemelogic.conversational.session import is_decline
+
+    assert is_decline(text) is expected
+
+
+def test_only_the_hiv_aids_fact_is_marked_sensitive():
+    sensitive = [f for f in ("age", "is_bpl_household", "is_widow", _SENSITIVE, "is_govt_employee") if is_sensitive(f)]
+    assert sensitive == [_SENSITIVE]

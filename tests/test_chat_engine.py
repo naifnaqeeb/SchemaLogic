@@ -840,3 +840,82 @@ def test_after_an_evaluation_failure_the_citizen_can_start_again(state, deps):
     chat_engine.select_scheme(state, "TEST", "gold", deps)
     assert state["conversation_session"] is not None
     assert state["messages"][-1]["kind"] == "question"
+
+
+# --- the IGNOAPS sensitive question in the chat (decided 2026-10-04) --------------------------------
+# A sensitive question is answered deterministically: the router and the LLM answer parser are never
+# consulted (either could read "I'd rather not say" as "no"), and "Prefer not to say" ends the check with
+# a pointer to the local office -- never a verdict.
+
+from pathlib import Path  # noqa: E402
+
+_GOLD = Path(__file__).resolve().parents[1] / "data" / "gold"
+_NON_BPL_WIDOW = [("age", "65"), ("is_bpl_household", "No"), ("is_govt_employee", "No"),
+                  ("family_agricultural_land_acres", "1"), ("owns_four_wheeler", "No"), ("is_widow", "Yes")]
+
+
+def _no_llm():
+    """Router, LLM answer parser and verdict phrasing all fail the test if touched."""
+    def boom(*a, **k):
+        raise AssertionError("an LLM path was used for a sensitive question")
+    return (patch("schemelogic.conversational.chat_engine.router.classify_message", side_effect=boom),
+            patch("schemelogic.conversational.chat_engine.answer_parser.parse_answer_llm", side_effect=boom))
+
+
+def _to_sensitive_question(state, deps):
+    (deps.gold_dir / "IGNOAPS.json").write_text((_GOLD / "IGNOAPS.json").read_text(encoding="utf-8"), encoding="utf-8")
+    chat_engine.select_scheme(state, "IGNOAPS", "gold", deps)
+    for field_name, reply in _NON_BPL_WIDOW:
+        assert state["conversation_session"].pending_question.field == field_name
+        chat_engine.submit_quick_reply(state, reply, deps)
+    q = state["conversation_session"].pending_question
+    assert q.field == "is_widow_suffering_from_aids" and q.allows_decline
+    assert q.quick_replies == ("Yes", "No", "Prefer not to say")
+
+
+def _assert_declined_without_a_verdict(state):
+    outcomes = [m for m in state["messages"] if m.get("outcome") == "special_provision_check_locally"]
+    assert len(outcomes) == 1 and outcomes[0]["kind"] == "text"
+    assert "may qualify" in outcomes[0]["text"] and "local office" in outcomes[0]["text"]
+    assert not [m for m in state["messages"] if m["kind"] == "verdict"]
+    assert state["conversation_session"] is None
+
+
+def test_prefer_not_to_say_button_gives_the_special_provision_message_not_a_verdict(state, deps):
+    _to_sensitive_question(state, deps)
+    session = state["conversation_session"]
+    router_patch, parser_patch = _no_llm()
+    with router_patch, parser_patch, patch("schemelogic.conversational.chat_engine.phrase_verdict") as phrase:
+        chat_engine.submit_quick_reply(state, "Prefer not to say", deps)
+    phrase.assert_not_called()
+    _assert_declined_without_a_verdict(state)
+    assert "is_widow_suffering_from_aids" not in session.profile["self"]
+    assert session.current_result().verdict.value == "undetermined_missing_facts"
+
+
+@pytest.mark.parametrize("typed", ["I'd rather not say", "prefer not to say", "skip", "I don't want to answer that"])
+def test_a_typed_decline_never_reaches_the_router_or_the_llm_parser(state, deps, typed):
+    _to_sensitive_question(state, deps)
+    router_patch, parser_patch = _no_llm()
+    with router_patch, parser_patch:
+        chat_engine.handle_user_message(state, typed, deps)
+    _assert_declined_without_a_verdict(state)
+
+
+@pytest.mark.parametrize("typed,verdict", [("yes", "eligible"), ("No", "ineligible")])
+def test_a_typed_yes_or_no_is_read_deterministically(state, deps, typed, verdict):
+    _to_sensitive_question(state, deps)
+    router_patch, parser_patch = _no_llm()
+    with router_patch, parser_patch, patch("schemelogic.conversational.chat_engine.phrase_verdict", return_value="x"):
+        chat_engine.handle_user_message(state, typed, deps)
+    assert [m["verdict_value"] for m in state["messages"] if m["kind"] == "verdict"] == [verdict]
+
+
+def test_an_unclear_reply_to_a_sensitive_question_is_asked_again_never_guessed(state, deps):
+    _to_sensitive_question(state, deps)
+    router_patch, parser_patch = _no_llm()
+    with router_patch, parser_patch:
+        chat_engine.handle_user_message(state, "well, it's complicated", deps)
+    assert state["conversation_session"].pending_question.field == "is_widow_suffering_from_aids"
+    assert "Prefer not to say" in state["messages"][-1]["text"]
+    assert "is_widow_suffering_from_aids" not in state["conversation_session"].profile["self"]

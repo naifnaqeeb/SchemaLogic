@@ -50,6 +50,13 @@ class FieldSpec:
     # citizen-facing trace view uses this; the raw field name/description stay available only in
     # a separate "technical detail" expander, never inline in the main conversational text.
     draft_aliases: tuple[str, ...] = ()  # divergent spellings an independent LLM draft used instead
+    # A fact a citizen may not want to disclose (decided 2026-10-04, IGNOAPS). The conversational layer
+    # asks it only when it is the one fact still deciding the verdict, offers "Prefer not to say", and
+    # never turns a decline into a verdict -- see question_selector and chat_engine.
+    sensitive: bool = False
+    # A gentler screening fact asked first: answering it False settles THIS fact as False without
+    # asking it (someone who isn't a widow isn't a widow living with HIV/AIDS). Never the reverse.
+    screened_by: str | None = None
 
 
 _FIELDS: tuple[FieldSpec, ...] = (
@@ -88,9 +95,21 @@ _FIELDS: tuple[FieldSpec, ...] = (
         "(government job, 5+ acres of land, a four-wheeler for own use). Added 2026-10-03 "
         "(docs/GOLD_AUDIT_2026-10-03.md section 6.4).",
         schemes=("IGNOAPS",),
-        citizen_question="Are you a widow living with HIV or AIDS? (This is asked only because it can "
-                         "make you eligible even without a BPL card.)",
+        # Asked only after "Are you a widow?" was answered yes (screened_by), so it asks about HIV/AIDS.
+        citizen_question="Are you living with HIV or AIDS? This is asked only because a widow living "
+                         "with HIV or AIDS can be eligible without a BPL card. You can choose "
+                         "“Prefer not to say”.",
         display_label="Widow living with HIV/AIDS",
+        sensitive=True,
+        screened_by="is_widow",
+    ),
+    FieldSpec(
+        "is_widow", PredicateCategory.DEMOGRAPHIC, "boolean",
+        "Conversation-only screening fact, in no scheme's rules: asked before the sensitive "
+        "is_widow_suffering_from_aids, and an answer of No settles that fact as No without asking it.",
+        schemes=(),  # not offered to extraction: no scheme rule uses it
+        citizen_question="Are you a widow (has your husband passed away)?",
+        display_label="Widow",
     ),
     FieldSpec(
         "months_since_last_birthday", PredicateCategory.DEMOGRAPHIC, "number",
@@ -650,6 +669,16 @@ FIELD_ONTOLOGY: dict[str, FieldSpec] = {f.name: f for f in _FIELDS}
 
 def get_field(name: str) -> FieldSpec | None:
     return FIELD_ONTOLOGY.get(name)
+
+
+def is_sensitive(name: str) -> bool:
+    spec = get_field(name)
+    return spec is not None and spec.sensitive
+
+
+def fields_screened_by(name: str) -> tuple[str, ...]:
+    """The facts an answer of False to `name` settles as False."""
+    return tuple(f.name for f in _FIELDS if f.screened_by == name)
 
 
 def display_label_for(field: str) -> str:

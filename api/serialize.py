@@ -52,6 +52,7 @@ def serialize_pending_question(session: ConversationSession | None) -> dict | No
         "answer_type": q.answer_type,
         "prompt": q.prompt,
         "quick_replies": list(q.quick_replies) if q.quick_replies else None,
+        "allows_decline": q.allows_decline,
     }
 
 

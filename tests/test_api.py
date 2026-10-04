@@ -271,3 +271,17 @@ def test_an_evaluation_error_reaches_the_api_as_a_message_not_a_500():
     assert [m["error"] for m in body["messages"] if m.get("error")] == ["evaluation_error"]
     assert not [m for m in body["messages"] if m["kind"] == "verdict"]
     assert body["pending_question"] is None
+
+
+def test_prefer_not_to_say_over_the_api_returns_the_special_provision_message():
+    session_id = _new_session_id("sensitive")
+    client.post("/chat/select", json={"session_id": session_id, "scheme_id": "IGNOAPS", "source_type": "gold"})
+    for reply in ("65", "No", "No", "1", "No", "Yes"):
+        r = client.post("/chat/quick_reply", json={"session_id": session_id, "reply": reply})
+    pending = r.json()["pending_question"]
+    assert pending["field"] == "is_widow_suffering_from_aids" and pending["allows_decline"] is True
+    assert "Prefer not to say" in pending["quick_replies"]
+    body = client.post("/chat/quick_reply", json={"session_id": session_id, "reply": "Prefer not to say"}).json()
+    assert [m["outcome"] for m in body["messages"] if m.get("outcome")] == ["special_provision_check_locally"]
+    assert not [m for m in body["messages"] if m["kind"] == "verdict"]
+    assert body["pending_question"] is None

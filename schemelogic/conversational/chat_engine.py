@@ -34,7 +34,7 @@ from schemelogic.conversational import ai_checked, answer_parser, router
 from schemelogic.conversational.answer_parser import AnswerParseResult
 from schemelogic.conversational.intake import IntakeResult, parse_opening_message
 from schemelogic.conversational.phrasing import phrase_verdict, verdict_headline
-from schemelogic.conversational.session import AnswerParseError, ConversationSession
+from schemelogic.conversational.session import AnswerParseError, ConversationSession, is_decline
 from schemelogic.evaluator.symbolic_engine import EvaluationError
 from schemelogic.discovery.indexer import (
     DescriptionMatch,
@@ -137,6 +137,12 @@ def handle_user_message(state: State, raw_message: str, deps: ChatDeps) -> None:
     pending_question = session.pending_question if session else None
     shortlist = state.get("shortlist")
     current_scheme_id = state.get("current_scheme_id")
+
+    if pending_question is not None and pending_question.allows_decline:
+        # A sensitive question never reaches the router or the LLM answer parser: either could read a
+        # decline ("I'd rather not say") as "no" or as a search, and turn it into a definite verdict.
+        _handle_sensitive_answer(state, raw_message, deps)
+        return
 
     result = router.classify_message(
         raw_message,
@@ -452,12 +458,47 @@ def submit_quick_reply(state: State, reply_text: str, deps: ChatDeps) -> None:
     if session is None or session.pending_question is None:
         return
     _hear(state, reply_text)
+    if session.pending_question.allows_decline and is_decline(reply_text):
+        _declined(state, session)
+        return
     try:
         session.apply_answer(reply_text)
     except AnswerParseError:
         _say(state, "Sorry, something went wrong reading that reply — please try again.")
         return
     _advance(state, deps)
+
+
+def _handle_sensitive_answer(state: State, raw_message: str, deps: ChatDeps) -> None:
+    """Yes, No or a decline -- read deterministically. Anything else is asked again, never guessed."""
+    session: ConversationSession = state["conversation_session"]
+    if is_decline(raw_message):
+        _declined(state, session)
+        return
+    try:
+        session.apply_answer(raw_message)
+    except AnswerParseError:
+        _say(state, "You can answer Yes, No, or “Prefer not to say” — whichever you are comfortable with.")
+        return
+    _advance(state, deps)
+
+
+def _declined(state: State, session: ConversationSession) -> None:
+    """The citizen chose not to disclose a sensitive fact. That fact stays unknown in the profile, so no
+    verdict is computed or shown -- not eligible, not ineligible. They are pointed, gently, to the local
+    office, which can consider the special provision in confidence. The check ends here."""
+    session.decline_pending()
+    scheme_id = session.scheme.scheme_id
+    _say(
+        state,
+        f"That's completely fine — you don't need to tell me. You may qualify for {scheme_id} under a "
+        "special provision. Please check with your local office (for example your Gram Panchayat, Block "
+        "office or social welfare office); they can look at it with you in confidence.",
+        # kind stays "text" so both UIs render it; `outcome` marks it -- never a verdict
+        outcome="special_provision_check_locally", scheme_id=scheme_id,
+    )
+    state["conversation_session"] = None
+    state["conversation_tier"] = None
 
 
 def _handle_answer(state: State, raw_message: str, deps: ChatDeps) -> None:
