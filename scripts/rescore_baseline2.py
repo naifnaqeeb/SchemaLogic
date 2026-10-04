@@ -3,6 +3,7 @@
 LIVE for new profiles only: makes real LLM calls for profiles that have no earlier answer.
 
     B2_TOKEN_BUDGET=30000 PYTHONPATH=. python scripts/rescore_baseline2.py AB-PMJAY PMMVY PM-UJJWALA-2.0 IGNOAPS
+    B2_TOKEN_BUDGET=60000 PYTHONPATH=. python scripts/rescore_baseline2.py AB-PMJAY --label=ab-pmjay-70plus-age
 
 Why re-scoring is sound: Baseline 2's LLM is shown the scheme DOCUMENT and the profile FACTS -- never
 the gold. When the gold changes but a profile's facts don't, the LLM's answer to that profile is
@@ -50,6 +51,7 @@ RENAMED = {("PM-UJJWALA-2.0", "non_citizen_not_excluded_by_source"): "non_citize
 RUN_COMMIT = {
     "baseline2_direct_llm_2026-09-19.json": "262208a",
     "baseline2_direct_llm_2026-10-03.json": "0d53906",
+    "baseline2_direct_llm_2026-10-04.json": "8df5080",
 }
 
 
@@ -70,8 +72,11 @@ def _facts(profile: dict) -> str:
                       sort_keys=True)
 
 
-def main(schemes: list[str]) -> None:
-    out_path = RUNS / f"baseline2_direct_llm_{date.today().isoformat()}.json"
+def main(schemes: list[str], label: str | None = None) -> None:
+    # A second re-score on the same day must not overwrite the first: --label names it.
+    out_path = RUNS / f"baseline2_direct_llm_{date.today().isoformat()}{'_' + label if label else ''}.json"
+    if out_path.exists():
+        raise SystemExit(f"{out_path.name} exists -- pass --label=<name> to write a separate file")
     spent = 0
     reports, completed = [], []
     stopped_reason = None
@@ -157,6 +162,7 @@ def main(schemes: list[str]) -> None:
         "rescoring": ("Answers reused verbatim wherever a profile's facts are byte-identical to an earlier "
                       "run's (the LLM never sees the gold); only new profiles were asked. See answer_source."),
         "gold_fixes": "docs/GOLD_AUDIT_2026-10-03.md section 6",
+        "label": label,
         "token_budget": TOKEN_BUDGET,
         "tokens_spent_estimated": spent,
         "token_note": "ESTIMATED from document size; ProviderResult does not surface usage.",
@@ -172,4 +178,5 @@ def main(schemes: list[str]) -> None:
 
 
 if __name__ == "__main__":
-    main([a for a in sys.argv[1:] if not a.startswith("-")])
+    labels = [a.split("=", 1)[1] for a in sys.argv[1:] if a.startswith("--label=")]
+    main([a for a in sys.argv[1:] if not a.startswith("-")], labels[0] if labels else None)

@@ -77,7 +77,7 @@ _FIELDS: tuple[FieldSpec, ...] = (
     FieldSpec(
         "age", PredicateCategory.DEMOGRAPHIC, "number",
         "Applicant's age in years.",
-        schemes=("IGNOAPS", "MH-LADKI-BAHIN", "PM-UJJWALA-2.0", "PMMVY"),
+        schemes=("AB-PMJAY", "IGNOAPS", "MH-LADKI-BAHIN", "PM-UJJWALA-2.0", "PMMVY"),
         citizen_question="What is your age, in years?",
         display_label="Age",
     ),
@@ -119,10 +119,13 @@ _FIELDS: tuple[FieldSpec, ...] = (
     ),
     FieldSpec(
         "has_family_member_aged_70_or_above", PredicateCategory.DEMOGRAPHIC, "boolean",
-        "At least one family member is aged 70 or above.",
-        schemes=("AB-PMJAY",),
-        citizen_question="Does anyone in your family belong to your household and is 70 years of age or older?",
-        display_label="Senior citizen (70+) in family",
+        "RETIRED for AB-PMJAY 2026-10-04 in favor of the applicant's own `age` >= 70: the NHA 70+ "
+        "guidelines (s5.2) give the cover to the 70+ members only, not their household "
+        "(docs/GOLD_AUDIT_2026-10-03.md section 6.7). Kept in the ontology only as a "
+        "documentation/traceability target, same pattern as family_agricultural_land_acres.",
+        schemes=(),
+        citizen_question="(Retired field — replaced by the applicant's age; not asked directly.)",
+        display_label="Senior citizen (70+) in family (retired field)",
     ),
     FieldSpec(
         "is_sc_st_pmay_g_beneficiary", PredicateCategory.DEMOGRAPHIC, "boolean",

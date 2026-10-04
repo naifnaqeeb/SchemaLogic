@@ -1,6 +1,8 @@
 """Phase 0 step 4: hand-write gold scheme JSONs, confirm the evaluator gives correct verdicts
 on hand-constructed profiles for each. See tests/gold_fixtures.py for the draft-status caveat."""
 
+import pytest
+
 from schemelogic.evaluator.symbolic_engine import Verdict, evaluate
 from schemelogic.schema.models import Scheme
 from tests.gold_fixtures import (
@@ -64,7 +66,8 @@ def _pmjay_base_profile() -> dict:
             "is_secc_deprived_household": True,
             "is_secc_automatically_included": False,
             "is_valid_rsby_beneficiary": False,
-            "has_family_member_aged_70_or_above": False,
+            "is_urban_informal_worker": False,
+            "age": 45,
             "household_owns_motorised_vehicle_or_fishing_boat": False,
             "owns_mechanized_agricultural_equipment_3_or_4_wheeler": False,
             "kisan_credit_card_limit_inr": 0,
@@ -105,16 +108,59 @@ def test_pmjay_income_tax_paying_family_member_is_ineligible():
 def test_pmjay_missing_deprivation_and_age_data_is_undetermined():
     profile = _pmjay_base_profile()
     del profile["self"]["is_secc_deprived_household"]
-    del profile["self"]["has_family_member_aged_70_or_above"]
+    del profile["self"]["age"]
     assert evaluate(AB_PMJAY_SCHEME, profile).verdict == Verdict.UNDETERMINED
 
 
-def test_pmjay_seventy_plus_family_member_eligible_regardless_of_secc():
+def test_pmjay_seventy_plus_applicant_eligible_regardless_of_secc():
     """2024 amendment: universal for 70+, irrespective of SECC/BPL status."""
     profile = _pmjay_base_profile()
     profile["self"]["is_secc_deprived_household"] = False
-    profile["self"]["has_family_member_aged_70_or_above"] = True
+    profile["self"]["age"] = 72
     assert evaluate(AB_PMJAY_SCHEME, profile).verdict == Verdict.ELIGIBLE
+
+
+# --- AB-PMJAY 70+ route covers the 70+ person, not their household (gold fix, 2026-10-04) --------
+# NHA 70+ guidelines s5.2: "a shared cover up to Rs 5 lakh per year will be available. This cover will
+# not be available to the other members (who are not of the age 70 years and above)". The route tests
+# the APPLICANT's own age. See docs/GOLD_AUDIT_2026-10-03.md section 6.7.
+
+
+def test_pmjay_younger_applicant_with_a_seventy_plus_parent_is_not_covered_by_the_route():
+    profile = _pmjay_base_profile()
+    profile["self"]["is_secc_deprived_household"] = False  # no other route
+    profile["self"]["age"] = 40
+    profile["self"]["has_family_member_aged_70_or_above"] = True  # true, but no longer what the route tests
+    profile["family_members"][0]["age"] = 74
+    assert evaluate(AB_PMJAY_SCHEME, profile).verdict == Verdict.INELIGIBLE
+
+
+def test_pmjay_the_seventy_plus_parent_themselves_is_covered():
+    """The same household from the senior's side: the 74-year-old applying is eligible, and the
+    relatives' socio-economic facts don't block it."""
+    profile = _pmjay_base_profile()
+    profile["self"]["is_secc_deprived_household"] = False
+    profile["self"]["age"] = 74
+    profile["family_members"][0].update(age=40, paid_income_tax_last_assessment_year=True, monthly_income_inr=40000)
+    assert evaluate(AB_PMJAY_SCHEME, profile).verdict == Verdict.ELIGIBLE
+
+
+@pytest.mark.parametrize("age,expected", [(69, Verdict.INELIGIBLE), (70, Verdict.ELIGIBLE), (71, Verdict.ELIGIBLE)])
+def test_pmjay_seventy_plus_boundary_is_the_applicants_seventieth_year(age, expected):
+    """'70 years of age and above': 70 itself qualifies."""
+    profile = _pmjay_base_profile()
+    profile["self"]["is_secc_deprived_household"] = False
+    profile["self"]["age"] = age
+    assert evaluate(AB_PMJAY_SCHEME, profile).verdict == expected
+
+
+def test_pmjay_a_seventy_plus_relative_does_not_waive_the_applicants_exclusions():
+    """The waiver reads the applicant's age, not a relative's: a 45-year-old SECC-deprived applicant
+    whose household owns a refrigerator is excluded even with a 75-year-old in the family."""
+    profile = _pmjay_base_profile()
+    profile["self"]["owns_refrigerator"] = True
+    profile["family_members"][0]["age"] = 75
+    assert evaluate(AB_PMJAY_SCHEME, profile).verdict == Verdict.INELIGIBLE
 
 
 # --- AB-PMJAY 70+ path vs the socio-economic exclusions (gold fix, 2026-10-03) -----------------
@@ -128,7 +174,7 @@ def test_pmjay_seventy_plus_family_member_eligible_regardless_of_secc():
 def _pmjay_seventy_plus_profile() -> dict:
     profile = _pmjay_base_profile()
     profile["self"]["is_secc_deprived_household"] = False  # qualifies ONLY via the 70+ route
-    profile["self"]["has_family_member_aged_70_or_above"] = True
+    profile["self"]["age"] = 72
     return profile
 
 
@@ -160,7 +206,7 @@ def test_pmjay_seventy_plus_with_every_exclusion_triggered_is_still_eligible():
     for field, value in list(profile["self"].items()):
         if isinstance(value, bool) and field not in (
             "is_secc_deprived_household", "is_secc_automatically_included",
-            "is_valid_rsby_beneficiary", "has_family_member_aged_70_or_above",
+            "is_valid_rsby_beneficiary",
         ):
             profile["self"][field] = True
     profile["self"]["kisan_credit_card_limit_inr"] = 100000
@@ -173,7 +219,7 @@ def test_pmjay_seventy_plus_with_every_exclusion_triggered_is_still_eligible():
 
 def test_pmjay_exclusions_still_apply_to_non_seventy_plus_routes():
     """Control: the fix must narrow the exclusions to the non-70+ routes, not switch them off."""
-    profile = _pmjay_base_profile()  # SECC-deprived, no 70+ member
+    profile = _pmjay_base_profile()  # SECC-deprived, applicant aged 45
     profile["family_members"][0]["paid_income_tax_last_assessment_year"] = True
     assert evaluate(AB_PMJAY_SCHEME, profile).verdict == Verdict.INELIGIBLE
     profile = _pmjay_base_profile()
@@ -182,11 +228,11 @@ def test_pmjay_exclusions_still_apply_to_non_seventy_plus_routes():
 
 
 def test_pmjay_unknown_seventy_plus_status_with_an_exclusion_is_undetermined_not_ineligible():
-    """SECC-deprived, owns a refrigerator, 70+ status not yet known. If there IS a 70+ member the
-    household is eligible; if not, the refrigerator excludes it. Neither verdict is justified until
-    the fact is known -- so undetermined, and the question to ask is the 70+ one."""
+    """SECC-deprived, owns a refrigerator, applicant's age not yet known. If they are 70+ they are
+    eligible; if not, the refrigerator excludes them. Neither verdict is justified until the fact is
+    known -- so undetermined, and the question to ask is the age one."""
     profile = _pmjay_base_profile()
-    del profile["self"]["has_family_member_aged_70_or_above"]
+    del profile["self"]["age"]
     profile["self"]["owns_refrigerator"] = True
     assert evaluate(AB_PMJAY_SCHEME, profile).verdict == Verdict.UNDETERMINED
 

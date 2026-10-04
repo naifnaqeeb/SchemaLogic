@@ -4,6 +4,11 @@ Offline: no LLM calls. The extraction drafts are the ones already on disk in dat
 only the gold rules and the profile suites they're judged against have changed.
 
     PYTHONPATH=. python scripts/reevaluate_gold_fixes.py
+    PYTHONPATH=. python scripts/reevaluate_gold_fixes.py --old-ref <commit> --only AB-PMJAY
+
+`--old-ref` sets the "before" snapshot (default OLD_REF, the audit snapshot); `--only` limits the
+run to one scheme. A later fix is compared against the gold just before it, e.g. AB-PMJAY's 70+
+re-encoding (2026-10-04) against the commit preceding it.
 
 For each previously reported figure this:
   1. reads the figure as it was RECORDED at the time;
@@ -82,14 +87,16 @@ def _close(a: dict | None, b: dict | None) -> bool:
     return all(abs(float(a[k]) - float(b[k])) < 1e-9 for k in a)
 
 
-def main() -> None:
+def main(old_ref: str = OLD_REF, only: str | None = None) -> None:
     rows = []
     for sid, what, draft_file, key, rec_file in FIGURES:
+        if only and sid != only:
+            continue
         draft = Scheme.model_validate(json.loads((RUNS / draft_file).read_text(encoding="utf-8"))[key])
         rec_oe, rec_f1 = _recorded(json.loads((RUNS / rec_file).read_text(encoding="utf-8")))
 
-        old_gold = Scheme.model_validate(_git_json(OLD_REF, f"data/gold/{sid}.json"))
-        old_prof = _profiles(_git_json(OLD_REF, f"data/profiles/{sid}.json"))
+        old_gold = Scheme.model_validate(_git_json(old_ref, f"data/gold/{sid}.json"))
+        old_prof = _profiles(_git_json(old_ref, f"data/profiles/{sid}.json"))
         new_gold = Scheme.model_validate(json.loads((ROOT / "data" / "gold" / f"{sid}.json").read_text(encoding="utf-8")))
         new_prof = _profiles(json.loads((ROOT / "data" / "profiles" / f"{sid}.json").read_text(encoding="utf-8")))
 
@@ -117,8 +124,9 @@ def main() -> None:
             ],
         })
 
-    out = RUNS / f"gold_fix_reevaluation_{date.today().isoformat()}.json"
-    out.write_text(json.dumps({"old_ref": OLD_REF, "rows": rows}, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    suffix = "" if old_ref == OLD_REF and only is None else f"_{only or 'all'}_vs_{old_ref}"
+    out = RUNS / f"gold_fix_reevaluation_{date.today().isoformat()}{suffix}.json"
+    out.write_text(json.dumps({"old_ref": old_ref, "rows": rows}, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
     def pct(x):
         return "—" if x is None else f"{100 * x:.1f}%"
@@ -143,4 +151,10 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--old-ref", default=OLD_REF)
+    parser.add_argument("--only", default=None)
+    args = parser.parse_args()
+    main(args.old_ref, args.only)

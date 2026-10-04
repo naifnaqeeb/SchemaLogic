@@ -469,7 +469,7 @@ depends on, which `missing_support_data` no longer is.
 
 ### 6.5 AB-PMJAY — who the 70+ cover extends to ("on a family basis")
 
-*Found 2026-10-04. Recorded, not yet fixed: the re-encoding is a gold change awaiting a decision.*
+*Found 2026-10-04. Fixed the same day after a decision — §6.7.*
 
 **The clause.** `AB-PMJAY_primary_70plus_expansion.pdf`, §5.2 (new families):
 
@@ -488,7 +488,7 @@ for a younger applicant in a household with a 70+ member and no other route: the
 **eligible**, §5.2 says that person is not covered by the route. Verified with the evaluator on a
 40-year-old applicant with a 70+ parent, no SECC deprivation and no occupational category: eligible.
 
-**Proposed fix (for decision).** Re-encode the route on the applicant's own age — `age_years >= 70`
+**Proposed fix (approved 2026-10-04, applied in §6.7).** Re-encode the route on the applicant's own age — `age >= 70` (the ontology field is `age`)
 on `self` — in the inclusion and in all 14 exceptions. Every exclusion's exception then reads the
 applicant's age, so the four `some_family_member` exclusions still need applicant scope. Open
 question that decision must also settle: whether a younger household member asking *on behalf of*
@@ -528,6 +528,43 @@ proven model-equal before and after and byte-idempotent on a second pass. From h
 produces no diff; `test_every_gold_file_is_in_canonical_form` enforces it, and
 `test_except_scope_appears_in_gold_only_where_genuinely_applicant` pins the four AB-PMJAY
 exclusions as the only applicant-scoped ones.
+
+### 6.7 AB-PMJAY — the 70+ route tests the applicant's own age
+
+*2026-10-04. Fixes the consequence recorded in §6.5.*
+
+**Change.** The inclusion branch and all 14 exceptions now read `age >= 70` on the applicant's
+record, replacing `has_family_member_aged_70_or_above`. The four `some_family_member` exclusions keep
+applicant scope, so it is the applicant's age that waives a relative's income tax, income or
+government job. `has_family_member_aged_70_or_above` is retired in the ontology (same pattern as
+earlier retired fields); `age` now lists AB-PMJAY.
+
+**Protocol.** The failing profile came first — `younger_applicant_with_seventy_plus_parent`: a
+40-year-old, 74-year-old parent in the household, no SECC, RSBY or urban-worker route. Old gold:
+**eligible**. Confirmed failing as a test against the old gold, then fixed. New gold: **ineligible**.
+
+**Tests added** (`tests/test_gold_schemes.py`): the failing profile; the same household from the
+senior's side (the 74-year-old applying is eligible, with a tax-paying, high-earning relative); the
+boundary (69 ineligible, 70 and 71 eligible — "70 years of age and above"); and a 75-year-old
+relative not waiving a 45-year-old applicant's refrigerator exclusion. The existing AB-PMJAY tests
+now give the applicant an age (45, or 72 for the 70+ cases). Their base profile also states
+`is_urban_informal_worker: false` explicitly: the household flag had been making the inclusion true
+regardless, which hid that this fact was missing.
+
+**Profiles.** Every profile whose verdict needs it now gives the applicant an age: 45 where the
+household flag was false, 72 where it was true (the applicant is the senior). The household flag is
+kept, so the pre-fix gold can still be evaluated beside the new. `eligible_baseline` (SECC-deprived,
+nothing excluded) is decided without age and was left unchanged. Every pre-existing profile gives the
+same verdict under old and new gold; only the new profile changes:
+
+| Profile | Old gold | New gold |
+|---|---|---|
+| *new* `younger_applicant_with_seventy_plus_parent` | eligible | **ineligible** |
+| the 10 existing profiles | unchanged | unchanged |
+
+**Not modelled.** Someone asking on a senior's behalf (the conversational flow evaluates the person
+answering), and the §5.1 top-up for 70+ members of families already covered — a benefit amount, not
+an eligibility rule.
 
 ## 7. Superseded figures
 
@@ -606,13 +643,16 @@ These earlier statements should no longer be cited:
 | "The direct baseline handled exception clauses correctly" (2026-09-19) | **Narrowed.** True of *member-level* exceptions stated next to their exclusion (PM-KISAN Group D, MH-LADKI-BAHIN tractor). False of *route-level* exemptions stated elsewhere in the document (AB-PMJAY 70+) — see §7.5. |
 | PM-UJJWALA extractor citizenship miss (F1 0.0) | **Withdrawn** — gold-side, the predicate was unsourced. |
 | "Preambular / implied-fact miss" recurring 4 times | **Superseded** by 1 of 4 (§5). |
-| AB-PMJAY extraction draft: 100% outcome agreement with gold | **Superseded** by 80.0% — the 100% was a shared error (§7.5). |
+| AB-PMJAY extraction draft: 100% outcome agreement with gold | **Superseded** by 80.0% — the 100% was a shared error (§7.5) — and then by 72.7% after the §6.7 re-encoding (§7.6). |
+| Baseline 2: 90.7% agreement, **0.0% harmful false positives**, 6.7% false negatives (n=75) | **Superseded** by 89.5% / **1.3%** / 6.6% (n=76) after the §6.7 re-encoding (§7.6). |
+| AB-PMJAY structural F1 1.000 | **Superseded** by 0.947 (§7.6). |
 
 ### 7.5 What the corrections show
 
 1. **Baseline 2's errors switched direction.** On the old gold, its errors looked like the harmful
    false positives the project's framing is built around, including one apparent silent default. On
-   corrected gold it has **no** false positives and **five false negatives**: in every one, it
+   corrected gold it had **no** false positives and **five false negatives** (one harmful false
+   positive has since appeared, from the §6.7 fix — §7.6): in every one, it
    applied an exclusion to someone the source exempts. That is still a harm — a wrongly denied
    benefit — and the plan's harm-weighted framing (C5) counts both directions. But it is a different
    claim from the one previously made, and the paper should make this one.
@@ -651,3 +691,46 @@ These earlier statements should no longer be cited:
 6. **None of this is a large sample.** 75 profiles, 7 schemes; every rate above moves by several
    points with a single row. The direction of these findings is well supported; the magnitudes are
    not.
+
+### 7.6 AB-PMJAY after the 70+ re-encoding (§6.7)
+
+"Old" is the gold immediately before §6.7 (commit `d5ff107`), so this compares the 70+ re-encoding
+alone. Reproduced before comparing: outcome equivalence at `d5ff107` gives 80.0%, the corrected
+figure §7.2 reports. Offline figures: `scripts/reevaluate_gold_fixes.py --old-ref d5ff107 --only
+AB-PMJAY` → `data/extraction_runs/gold_fix_reevaluation_2026-10-04_AB-PMJAY_vs_d5ff107.json`.
+
+**Baseline 2.** Adding the applicant's age changed the facts of 8 existing profiles, so their stored
+answers could no longer be reused: those 8 and the new profile were asked live (9 calls, ~24.2k
+tokens estimated; `baseline2_direct_llm_2026-10-04_ab-pmjay-70plus-age.json`). The 8 re-asked
+profiles got the same verdicts as before.
+
+| AB-PMJAY | n | Agree | Harmful FP | FN |
+|---|---|---|---|---|
+| Before §6.7 | 10 | 80.0% | 0.0% | 20.0% |
+| After §6.7 | 11 | **72.7%** | **9.1%** | 18.2% |
+
+| Baseline 2, all 7 schemes | n | Agree | Harmful FP | FN | Over-cautious |
+|---|---|---|---|---|---|
+| Before §6.7 | 75 | 90.7% | 0.0% | 6.7% | 1.3% |
+| After §6.7 | 76 | **89.5%** | **1.3%** | 6.6% | 1.3% |
+
+The new disagreement is the new profile: the LLM calls the 40-year-old **eligible** — "the family
+includes a member aged 74, qualifying under the senior-citizen (70+) expansion". It makes the same
+household reading the old gold did.
+
+**Outcome equivalence — extraction draft vs gold.**
+
+| Figure | n | Agree | FP (eligible) | FN (eligible) |
+|---|---|---|---|---|
+| AB-PMJAY, Phase 3 check-in | 10 → 11 | 80.0% → **72.7%** | 0.0% → **9.1%** | 20.0% → 18.2% |
+
+The draft (`has_family_member_aged_70_or_above` in its inclusion) also calls the 40-year-old eligible.
+
+**Structural F1.** AB-PMJAY 1.000 → **0.947**: the inclusion leaf changed from the household flag to
+`age >= 70`, and the draft has the household flag. The 14 exceptions changed too, but the metric
+still doesn't score `except` clauses (`KNOWN_ISSUES.md`), so this figure reflects only the inclusion.
+
+**What it adds to §7.5.** The same misreading — the 70+ cover extended to the household — appears in
+the direct LLM, the extraction draft and the original gold. That is a third instance of the pattern
+in §7.5 point 2: the scope of a rule (who the cover reaches) read too broadly in all three sources,
+and caught only by checking the primary text.

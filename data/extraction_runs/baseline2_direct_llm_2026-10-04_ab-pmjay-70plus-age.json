@@ -1,0 +1,121 @@
+{
+  "run": "baseline2_direct_llm (re-scored against corrected gold)",
+  "date": "2026-10-04",
+  "methodology_module": "schemelogic/evaluation/direct_llm_baseline.py",
+  "rescoring": "Answers reused verbatim wherever a profile's facts are byte-identical to an earlier run's (the LLM never sees the gold); only new profiles were asked. See answer_source.",
+  "gold_fixes": "docs/GOLD_AUDIT_2026-10-03.md section 6",
+  "label": "ab-pmjay-70plus-age",
+  "token_budget": 30000,
+  "tokens_spent_estimated": 24170,
+  "token_note": "ESTIMATED from document size; ProviderResult does not surface usage.",
+  "schemes_completed": [
+    "AB-PMJAY"
+  ],
+  "schemes_not_attempted": [],
+  "stopped_reason": null,
+  "reports": [
+    {
+      "scheme_id": "AB-PMJAY",
+      "n_profiles": 11,
+      "agreement_rate": 0.7272727272727273,
+      "harmful_positive_rate": 0.09090909090909091,
+      "counts": {
+        "agree": 8,
+        "false_negative": 2,
+        "false_positive_vs_ineligible": 1
+      },
+      "tokens_used": 24170,
+      "failures": [],
+      "comparisons": [
+        {
+          "profile_id": "eligible_baseline",
+          "baseline_verdict": "eligible",
+          "evaluator_verdict": "eligible",
+          "relation": "agree",
+          "baseline_reason": "The household is identified as SECC‑deprived (meeting one of the six inclusion criteria) and does not trigger any of the 14 exclusion parameters.",
+          "answer_source": "reused from baseline2_direct_llm_2026-10-04.json"
+        },
+        {
+          "profile_id": "income_tax_family_member",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "agree",
+          "baseline_reason": "A family member pays income tax, which triggers the automatic exclusion clause.",
+          "answer_source": "new_llm_call"
+        },
+        {
+          "profile_id": "missing_deprivation_and_age_data_undetermined",
+          "baseline_verdict": "unsure",
+          "evaluator_verdict": "undetermined_missing_facts",
+          "relation": "agree",
+          "baseline_reason": "The applicant’s data does not indicate whether they meet any of the six rural deprivation criteria, urban occupational categories, senior‑citizen status, or automatic inclusion conditions, so eligibility cannot be determined.",
+          "answer_source": "reused from baseline2_direct_llm_2026-10-04.json"
+        },
+        {
+          "profile_id": "seventy_plus_eligible_regardless_of_secc",
+          "baseline_verdict": "eligible",
+          "evaluator_verdict": "eligible",
+          "relation": "agree",
+          "baseline_reason": "The applicant is a senior citizen aged 72, which qualifies under the 2024 expansion that covers all persons 70+ regardless of socio‑economic status, and none of the exclusion criteria apply.",
+          "answer_source": "new_llm_call"
+        },
+        {
+          "profile_id": "mechanized_agri_equipment",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "agree",
+          "baseline_reason": "Applicant meets exclusion criterion (owns mechanized 3‑4 wheeler agricultural equipment).",
+          "answer_source": "new_llm_call"
+        },
+        {
+          "profile_id": "monthly_income_over_threshold",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "agree",
+          "baseline_reason": "A family member earns more than Rs.10,000 per month, which triggers automatic exclusion under the SECC exclusion criteria, making the household ineligible despite meeting deprivation criteria.",
+          "answer_source": "new_llm_call"
+        },
+        {
+          "profile_id": "refrigerator",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "agree",
+          "baseline_reason": "The household owns a refrigerator, which is listed as an automatic exclusion criterion for AB-PMJAY.",
+          "answer_source": "new_llm_call"
+        },
+        {
+          "profile_id": "compound_irrigated_land_exclusion",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "agree",
+          "baseline_reason": "The household owns more than 2.5 acres of irrigated land with irrigation equipment, which is an automatic exclusion criterion.",
+          "answer_source": "new_llm_call"
+        },
+        {
+          "profile_id": "seventy_plus_household_refrigerator_and_landline",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "eligible",
+          "relation": "false_negative",
+          "baseline_reason": "The household owns a refrigerator and a landline phone, which are among the automatic exclusion parameters, disqualifying it even though a senior citizen (age 72) is present.",
+          "answer_source": "new_llm_call"
+        },
+        {
+          "profile_id": "seventy_plus_family_member_pays_income_tax",
+          "baseline_verdict": "ineligible",
+          "evaluator_verdict": "eligible",
+          "relation": "false_negative",
+          "baseline_reason": "The applicant qualifies as a senior citizen (70+), but the household has a member earning more than Rs. 10,000 per month, which triggers an automatic exclusion under the scheme.",
+          "answer_source": "new_llm_call"
+        },
+        {
+          "profile_id": "younger_applicant_with_seventy_plus_parent",
+          "baseline_verdict": "eligible",
+          "evaluator_verdict": "ineligible",
+          "relation": "false_positive_vs_ineligible",
+          "baseline_reason": "The family includes a member aged 74, qualifying under the senior‑citizen (70+) expansion, and no exclusion criteria are triggered.",
+          "answer_source": "new_llm_call"
+        }
+      ]
+    }
+  ]
+}

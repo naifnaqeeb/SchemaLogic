@@ -1,0 +1,64 @@
+{
+  "old_ref": "d5ff107",
+  "rows": [
+    {
+      "scheme": "AB-PMJAY",
+      "figure": "Phase 3 check-in, gate-approved draft",
+      "draft_run": "AB-PMJAY_gpt-oss-120b_gated_20260818T025520.json",
+      "recorded_in": "AB-PMJAY_phase3_checkin_20260818T025948.json",
+      "outcome_equivalence": {
+        "recorded": {
+          "n_profiles": 8,
+          "agreement_rate": 1.0,
+          "false_positive_eligible_rate": 0.0,
+          "false_negative_eligible_rate": 0.0,
+          "other_mismatch_rate": 0.0
+        },
+        "reproduced_pre_fix": {
+          "n_profiles": 10,
+          "agreement_rate": 0.8,
+          "false_positive_eligible_rate": 0.0,
+          "false_negative_eligible_rate": 0.2,
+          "other_mismatch_rate": 0.0
+        },
+        "reproduced_matches_recorded": false,
+        "corrected": {
+          "n_profiles": 11,
+          "agreement_rate": 0.7272727272727273,
+          "false_positive_eligible_rate": 0.09090909090909091,
+          "false_negative_eligible_rate": 0.18181818181818182,
+          "other_mismatch_rate": 0.0
+        }
+      },
+      "structural_f1": {
+        "recorded": 1.0,
+        "reproduced_pre_fix": 1.0,
+        "reproduced_matches_recorded": true,
+        "corrected": 0.9473684210526315
+      },
+      "corrected_disagreements": [
+        {
+          "profile_id": "seventy_plus_household_refrigerator_and_landline",
+          "gold_verdict": "eligible",
+          "draft_verdict": "ineligible",
+          "agree": false,
+          "disagreement_type": "false_negative_eligible"
+        },
+        {
+          "profile_id": "seventy_plus_family_member_pays_income_tax",
+          "gold_verdict": "eligible",
+          "draft_verdict": "ineligible",
+          "agree": false,
+          "disagreement_type": "false_negative_eligible"
+        },
+        {
+          "profile_id": "younger_applicant_with_seventy_plus_parent",
+          "gold_verdict": "ineligible",
+          "draft_verdict": "eligible",
+          "agree": false,
+          "disagreement_type": "false_positive_eligible"
+        }
+      ]
+    }
+  ]
+}
