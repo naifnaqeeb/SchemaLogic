@@ -217,7 +217,7 @@ One exception, by necessity: when the evaluator is undetermined only through the
 "Kleene evaluation is incomplete…" above, no single answer can change the verdict, and the selector
 asks the first candidate so the conversation can reach it. PMMVY's "precise floor placed LAST"
 ordering workaround is no longer needed; it is harmless and was left in the gold as is, and that
-`source_clause` remark about the selector is now historical.
+`source_clause` remark about the selector is now historical (updated with a dated note, 2026-10-04).
 
 ## [RESOLVED 2026-10-03] Gold: PMMVY age floor is 18, the source says 18 years 7 months
 
