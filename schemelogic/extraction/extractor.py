@@ -111,7 +111,34 @@ class _SchemeMeta(BaseModel):
     extraction_metadata: ExtractionMetadata
 
 
-_CORE_JSON_SCHEMA = _SchemeCore.model_json_schema()
+def _without_except_scope(schema: dict) -> dict:
+    """Remove `except_scope` (and its enum) from a JSON schema.
+
+    Applicant-scoped exceptions are gold-only (decided 2026-10-03): one waives a whole exclusion for
+    every family member when the applicant meets a condition, which is only right when the source
+    text says so, and has to be justified against that text by a human. An extractor that could set
+    it would silently turn "this member is exempt" into "everyone is exempt if the applicant is". So
+    extraction -- including the live AI-Checked tier -- can only ever produce member scope."""
+    schema = json.loads(json.dumps(schema))
+    for definition in schema.get("$defs", {}).values():
+        definition.get("properties", {}).pop("except_scope", None)
+        if "required" in definition:
+            definition["required"] = [r for r in definition["required"] if r != "except_scope"]
+    schema.get("$defs", {}).pop("ExceptScope", None)
+    return schema
+
+
+def _force_member_scope(core: dict) -> dict:
+    """Drop any `except_scope` the model emitted anyway: the schema doesn't offer it, but with
+    `strict: false` a model can still produce off-schema keys. Member scope is the default, so this
+    can only narrow an exception, never widen one."""
+    for exclusion in core.get("exclusions") or []:
+        if isinstance(exclusion, dict):
+            exclusion.pop("except_scope", None)
+    return core
+
+
+_CORE_JSON_SCHEMA = _without_except_scope(_SchemeCore.model_json_schema())
 _META_JSON_SCHEMA = _SchemeMeta.model_json_schema()
 
 FailureReason = Literal[
@@ -376,7 +403,7 @@ def extract_scheme(
     if isinstance(meta, ExtractionFailure):
         return meta
 
-    merged = {**core, **meta}
+    merged = {**_force_member_scope(core), **meta}
     try:
         return Scheme.model_validate(merged)
     except ValidationError as exc:

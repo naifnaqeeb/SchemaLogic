@@ -1,3 +1,13 @@
+# ruff: noqa
+# FROZEN REFERENCE -- do not edit. A verbatim copy of schemelogic/evaluator/symbolic_engine.py at
+# commit 5662498, the last commit before exclusions gained `except_scope` (2026-10-03).
+#
+# tests/test_engine_fuzz.py uses it as the oracle for "member scope -- the default -- preserves exactly
+# the exclusion behaviour that existed before except_scope": it never reads except_scope, so on any
+# scheme where every exception is member-scoped it must agree with the live evaluator. It imports the
+# CURRENT schema models, which only added a defaulted field and validators.
+#
+# Everything below this comment is unmodified from 5662498.
 """Deterministic symbolic evaluator (Phase 0, Section 8 of IMPLEMENTATION_PLAN.md).
 
 Pure Python, no LLM involved. Given a `Scheme` + a citizen profile dict, returns a
@@ -15,7 +25,6 @@ from typing import Any, Optional
 from schemelogic.schema.models import (
     AndNode,
     CountOperator,
-    ExceptScope,
     Exclusion,
     OrNode,
     Predicate,
@@ -238,24 +247,13 @@ def _eval_exclusion(
 ) -> tuple[Trit, dict[str, Any]]:
     members = _members_for_quantifier(profile, exclusion.quantifier)
 
-    # APPLICANT scope: the exception is a fact about the applicant's application route (AB-PMJAY's
-    # 70+ route), so it waives the WHOLE exclusion once -- `combined = Q(condition) AND NOT except`
-    # -- rather than being applied member by member. Applying it per member, before quantifying, is
-    # wrong for count quantifiers: a waiver zeroes every member, so "fewer than N members ..." fires
-    # BECAUSE of the waiver (an independent review found a 70+ applicant made INELIGIBLE where a
-    # 40-year-old was ELIGIBLE), and the members' shared waiver was treated as independent unknowns,
-    # leaving decidable cases undetermined. For some/all quantifiers both forms agree.
-    applicant_scoped = (
-        exclusion.except_ is not None and exclusion.except_scope == ExceptScope.APPLICANT
-    )
-
     member_traces: list[dict[str, Any]] = []
     member_results: list[Trit] = []
 
     for label, member_dict in members:
         pred_result, pred_actual = _evaluate_predicate(exclusion, member_dict)
 
-        if exclusion.except_ is not None and not applicant_scoped:
+        if exclusion.except_ is not None:
             except_result, except_actual = _evaluate_predicate(exclusion.except_, member_dict)
         else:
             except_result, except_actual = False, None
@@ -268,7 +266,7 @@ def _eval_exclusion(
             "predicate": _predicate_trace(exclusion, pred_result, pred_actual),
             "result": disqualifies,
         }
-        if exclusion.except_ is not None and not applicant_scoped:
+        if exclusion.except_ is not None:
             member_trace["except"] = _predicate_trace(
                 exclusion.except_, except_result, except_actual
             )
@@ -290,25 +288,11 @@ def _eval_exclusion(
         "field": exclusion.field,
         "quantifier": exclusion.quantifier.value,
         "has_except": exclusion.except_ is not None,
-        "except_scope": exclusion.except_scope.value,
         "result": combined,
         "members": member_traces,
     }
     if count_trace is not None:
         trace["count_constraint"] = count_trace
-
-    if applicant_scoped:
-        applicant = profile.get("self", {})
-        except_result, except_actual = _evaluate_predicate(exclusion.except_, applicant)
-        waived_result = _and3(combined, _not3(except_result))
-        # The exception appears ONCE, at exclusion level, read from "self": consumers must not find
-        # it on a family member's row and ask that member for the applicant's fact.
-        trace["condition_result"] = combined
-        trace["except"] = _predicate_trace(exclusion.except_, except_result, except_actual)
-        trace["except_member"] = "self"
-        trace["result"] = waived_result
-        combined = waived_result
-
     return combined, trace
 
 

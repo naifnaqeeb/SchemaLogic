@@ -801,3 +801,30 @@ def test_ujjwala_citizenship_is_never_asked():
         asked.append(q.field)
         profile["self"][q.field] = q.field == "is_bpl_household" if q.answer_type == "boolean" else 30
     assert "is_indian_citizen" not in asked
+
+
+
+def test_every_gold_file_is_in_canonical_form():
+    """Gold is written by models.dump_gold_json only (fields at their default omitted), so adding a
+    defaulted field to the schema can't rewrite every file, and a hand edit that isn't canonical fails
+    here instead of drifting. Fix with: PYTHONPATH=. python scripts/audit_gold.py format"""
+    import json
+    from pathlib import Path
+
+    from schemelogic.schema.models import dump_gold_json
+
+    for path in sorted((Path(__file__).resolve().parents[1] / "data" / "gold").glob("*.json")):
+        text = path.read_text(encoding="utf-8")
+        assert text == dump_gold_json(Scheme.model_validate(json.loads(text))), f"{path.name} is not canonical"
+
+
+def test_except_scope_appears_in_gold_only_where_genuinely_applicant():
+    import json
+    from pathlib import Path
+
+    for path in sorted((Path(__file__).resolve().parents[1] / "data" / "gold").glob("*.json")):
+        # canonical form omits an empty exclusions list (IGNOAPS has none)
+        for excl in json.loads(path.read_text(encoding="utf-8")).get("exclusions", []):
+            if "except_scope" in excl:
+                assert excl["except_scope"] == "applicant", f"{path.name}: member scope written explicitly"
+                assert excl.get("quantifier", "self") != "self"

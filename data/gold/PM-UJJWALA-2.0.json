@@ -7,14 +7,12 @@
         "field": "is_woman",
         "op": "==",
         "value": true,
-        "ontology_proposed": false,
         "cat": "demographic"
       },
       {
         "field": "age",
         "op": ">=",
         "value": 18,
-        "ontology_proposed": false,
         "cat": "demographic"
       },
       {
@@ -23,70 +21,60 @@
             "field": "is_bpl_household",
             "op": "==",
             "value": true,
-            "ontology_proposed": false,
             "cat": "economic"
           },
           {
             "field": "is_in_secc_2011_list",
             "op": "==",
             "value": true,
-            "ontology_proposed": false,
             "cat": "economic"
           },
           {
             "field": "is_sc_st",
             "op": "==",
             "value": true,
-            "ontology_proposed": false,
             "cat": "demographic"
           },
           {
             "field": "is_pmay_g_beneficiary",
             "op": "==",
             "value": true,
-            "ontology_proposed": false,
             "cat": "demographic"
           },
           {
             "field": "is_aay_beneficiary",
             "op": "==",
             "value": true,
-            "ontology_proposed": false,
             "cat": "economic"
           },
           {
             "field": "is_forest_dweller",
             "op": "==",
             "value": true,
-            "ontology_proposed": false,
             "cat": "demographic"
           },
           {
             "field": "is_most_backward_class",
             "op": "==",
             "value": true,
-            "ontology_proposed": false,
             "cat": "demographic"
           },
           {
             "field": "is_tea_garden_tribe",
             "op": "==",
             "value": true,
-            "ontology_proposed": false,
             "cat": "demographic"
           },
           {
             "field": "lives_on_river_island",
             "op": "==",
             "value": true,
-            "ontology_proposed": false,
             "cat": "demographic"
           },
           {
             "field": "meets_14_point_self_declaration",
             "op": "==",
             "value": true,
-            "ontology_proposed": false,
             "cat": "economic"
           }
         ]
@@ -98,19 +86,12 @@
       "field": "household_has_existing_lpg_connection",
       "op": "==",
       "value": true,
-      "ontology_proposed": false,
-      "cat": "other",
-      "quantifier": "self",
-      "except": null,
-      "count_op": null,
-      "count": null
+      "cat": "other"
     }
   ],
   "temporal_validity": {
     "valid_from": "2021-08-10",
-    "valid_to": null,
-    "extracted_at": "2026-08-18",
-    "supersedes": null
+    "extracted_at": "2026-08-18"
   },
   "operational_requirements": [
     "aadhaar_kyc"

@@ -1,6 +1,7 @@
 """extract_scheme() mocked throughout -- no network, no quota touched. Disk cache uses a tmp_path
 fixture so tests never touch the real data/cache/ai_checked/ directory."""
 
+import json
 from unittest.mock import patch
 
 import pytest
@@ -229,3 +230,15 @@ def test_corrupt_disk_cache_entry_degrades_gracefully():
     with patch("schemelogic.conversational.ai_checked.extract_scheme", return_value=scheme):
         result = ai_checked.get_or_extract_scheme("bad-slug", record, session_cache={})
     assert result == scheme
+
+
+
+def test_cached_scheme_with_applicant_scope_is_refused():
+    """Extraction can only produce member scope (extractor._without_except_scope), so a cached
+    AI-Checked scheme carrying applicant scope wasn't produced by this pipeline -- refuse it."""
+    data = dict(PM_KISAN)
+    data["exclusions"] = [dict(e) for e in PM_KISAN["exclusions"]]
+    data["exclusions"][1]["except_scope"] = "applicant"  # some_family_member, has an except
+    ai_checked.DISK_CACHE_DIR.mkdir(parents=True, exist_ok=True)
+    (ai_checked.DISK_CACHE_DIR / "tampered.json").write_text(json.dumps(data), encoding="utf-8")
+    assert ai_checked._load_from_disk("tampered") is None

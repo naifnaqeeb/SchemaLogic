@@ -45,9 +45,15 @@ def _load_from_disk(slug: str) -> Scheme | None:
     if not path.exists():
         return None
     try:
-        return Scheme.model_validate(json.loads(path.read_text(encoding="utf-8")))
+        scheme = Scheme.model_validate(json.loads(path.read_text(encoding="utf-8")))
     except (json.JSONDecodeError, ValidationError, OSError):
         return None  # a corrupt cache entry degrades to "not cached", never a crash
+    if any(e.except_scope.value != "member" for e in scheme.exclusions):
+        # Extraction can only ever produce member scope (extractor._without_except_scope), so a
+        # cached AI-Checked scheme carrying an applicant-scoped exception wasn't produced by this
+        # pipeline. Applicant scope is gold-only; refuse the entry rather than trust it.
+        return None
+    return scheme
 
 
 def _save_to_disk(slug: str, scheme: Scheme) -> None:

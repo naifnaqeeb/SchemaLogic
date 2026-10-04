@@ -279,6 +279,9 @@ gives the same verdict as before. Both copies of the gold set were changed toget
 
 **Change.** Every one of the 14 exclusions now carries
 `except: has_family_member_aged_70_or_above == true`, with `except_scope: "applicant"`.
+*(Revised 2026-10-04 after an independent review, §6.6: the 10 `self` exclusions now use the default
+member scope — identical verdicts — and only the 4 `some_family_member` exclusions keep
+`"applicant"`.)*
 
 **Why an exception at all.** The required logic is
 `eligible = 70plus ∨ (other_routes ∧ ¬excluded)`. A flat exclusion list computes
@@ -321,11 +324,13 @@ All 8 pre-existing AB-PMJAY profiles give identical verdicts under the old and n
 
 **Cost.** The new field appears in the extraction JSON schema: +112 tokens per core extraction
 call. The scope's rationale is kept as a code comment rather than a docstring because Pydantic
-embeds docstrings in the schema — as a docstring it cost +436 tokens per call.
+embeds docstrings in the schema — as a docstring it cost +436 tokens per call. *(Superseded
+2026-10-04, §6.6: the field is now removed from the extraction schema entirely, so the cost is 0.)*
 
 **Caveat, recorded in the `source_clause`.** Under the guidelines the 70+ cover belongs to the 70+
 members, shared on a family basis. This gold keeps its existing household-level modelling of that
-route; the fix only stops the socio-economic exclusions from blocking it.
+route; the fix only stops the socio-economic exclusions from blocking it. The clause establishing
+who the cover extends to has since been found — §6.5.
 
 ### 6.2 PMMVY — the age floor is 18 years 7 months
 
@@ -461,6 +466,68 @@ comparable; only their `_comment` metadata changed. Verdicts:
 
 The last profile keeps IGNOAPS's missing-data case — the probe the Baseline 2 silent-default analysis
 depends on, which `missing_support_data` no longer is.
+
+### 6.5 AB-PMJAY — who the 70+ cover extends to ("on a family basis")
+
+*Found 2026-10-04. Recorded, not yet fixed: the re-encoding is a gold change awaiting a decision.*
+
+**The clause.** `AB-PMJAY_primary_70plus_expansion.pdf`, §5.2 (new families):
+
+> For the senior citizens of the age of 70 years and above in the new families, a shared cover up
+> to Rs 5 lakh per year will be available. This cover will not be available to the other members
+> (who are not of the age 70 years and above) of these new families.
+
+§5.1 gives the 70+ members of families *already* covered an additional shared top-up, and the
+enrolment annex treats a person whose own eKYC age is below 70 as "not eligible under the scheme".
+"On a family basis" therefore means the cover is *shared among* the household's 70+ members — not
+that it extends to the household.
+
+**Consequence.** The gold encodes the route as `has_family_member_aged_70_or_above` on the
+applicant's record: a household fact. That is right when the applicant is the senior. It is wrong
+for a younger applicant in a household with a 70+ member and no other route: the gold says
+**eligible**, §5.2 says that person is not covered by the route. Verified with the evaluator on a
+40-year-old applicant with a 70+ parent, no SECC deprivation and no occupational category: eligible.
+
+**Proposed fix (for decision).** Re-encode the route on the applicant's own age — `age_years >= 70`
+on `self` — in the inclusion and in all 14 exceptions. Every exclusion's exception then reads the
+applicant's age, so the four `some_family_member` exclusions still need applicant scope. Open
+question that decision must also settle: whether a younger household member asking *on behalf of*
+the senior should be modelled at all (the conversational flow currently always evaluates "you").
+
+### 6.6 `except_scope` revised after independent review
+
+On 2026-10-04 a reviewer agent that had not seen the implementation reasoning was given only the
+evaluator diff, the new tests and the guideline text. Its findings, and what changed:
+
+| Finding | Change |
+|---|---|
+| **F1** (major): with `count_family_members`, waiving member by member made the waiver act as a *trigger* — `count < 1` fired because the route zeroed every member | Applicant scope now waives the whole exclusion once: `Q(condition over members) ∧ ¬exception(applicant)`. For `some_family_member` this is equivalent to the old form; for `all_family_members` and counts it is the only correct one. |
+| **Q3**: count `== 1`, two taxpayers, route unknown → undetermined, though neither completion can fire it | Fixed by the same change (the shared waiver is one unknown, not one per member). Reproducer test added. |
+| **F3**: the trace reported a scope where no exception existed | The trace reports `"member"` when there is no exception. |
+| **F4**: applicant scope with quantifier `self` is meaningless | Rejected by the model validator. AB-PMJAY's 10 `self` exclusions moved to member scope; all 10 profiles give identical verdicts. |
+| **F5**: extraction could emit applicant scope | Removed from the extractor's JSON schema entirely, and any emitted value is forced to member. Applicant scope is gold-only, justified against source text. A cached AI-Checked scheme carrying it is refused. |
+
+Coverage: every combination in the review's table is a test, plus a three-member test pinning that
+the question selector asks the applicant (not `family_members[0]`) for an applicant-scoped
+exception fact. The review's two fuzzers are now `tests/test_engine_fuzz.py`:
+
+- **Preservation** — member scope against a frozen copy of the pre-`except_scope` evaluator
+  (`tests/reference/`): **40,000 cases, 0 differences** in verdict, exception or trace.
+- **Soundness** — every definite verdict checked against every completion of the missing facts,
+  all quantifiers, both scopes: **30,000 cases, 0 unsound** (61 skipped for >7 missing facts).
+  Undetermined-although-decided: 1,449 of 5,098 applicant-scope undetermined, 1,171 of 4,169
+  member-scope — the same ~28% in both, the pre-existing gap from one field feeding several
+  predicates, not something the scope adds. Not asserted; printed.
+- A targeted test (count quantifiers, applicant scope, disjoint fields) **fails against the
+  pre-review evaluator and passes now**.
+
+**Gold serialization.** Gold is now written with `exclude_defaults=True` (`models.dump_gold_json`,
+used by the review app and `scripts/audit_gold.py format`). The existing files were *not* in that
+form — a plain re-dump differed by 20–244 lines per file — so all 7 were canonicalized once, each
+proven model-equal before and after and byte-idempotent on a second pass. From here, re-serializing
+produces no diff; `test_every_gold_file_is_in_canonical_form` enforces it, and
+`test_except_scope_appears_in_gold_only_where_genuinely_applicant` pins the four AB-PMJAY
+exclusions as the only applicant-scoped ones.
 
 ## 7. Superseded figures
 

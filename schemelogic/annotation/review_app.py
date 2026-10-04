@@ -24,7 +24,7 @@ from schemelogic.annotation.rendering import (
     predicate_to_english,
 )
 from schemelogic.extraction.judge_repair import apply_judge_findings
-from schemelogic.schema.models import Scheme
+from schemelogic.schema.models import Scheme, dump_gold_json
 
 ROOT = Path(__file__).resolve().parents[2]
 GOLD_DIR = ROOT / "data" / "gold"
@@ -40,7 +40,7 @@ def _load_scheme(scheme_id: str) -> Scheme:
 
 def _save_scheme(scheme: Scheme, annotator_id: str, edit_count: int, notes: str) -> None:
     path = GOLD_DIR / f"{scheme.scheme_id}.json"
-    path.write_text(json.dumps(scheme.model_dump(mode="json", by_alias=True), indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    path.write_text(dump_gold_json(scheme), encoding="utf-8")  # the canonical form -- see dump_gold_json
     log_entry = {
         "scheme_id": scheme.scheme_id,
         "annotator_id": annotator_id,

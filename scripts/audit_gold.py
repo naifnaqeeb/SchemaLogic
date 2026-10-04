@@ -9,6 +9,7 @@ produces the raw material that judgement needs, reproducibly:
     PYTHONPATH=. python scripts/audit_gold.py show PM-KISAN        # one scheme: predicates, source_clause, .md
     PYTHONPATH=. python scripts/audit_gold.py search "five acres" [IGNOAPS]   # term, in .md + PDF text
     PYTHONPATH=. python scripts/audit_gold.py sync                 # data/gold/*.json vs tests' copies
+    PYTHONPATH=. python scripts/audit_gold.py format [--check]     # rewrite gold in canonical form
 
 The source PDFs live in data/raw_documents/, which is gitignored (large, third-party). `search`
 works on whatever has been extracted locally and says so when a scheme's PDFs aren't present,
@@ -39,7 +40,14 @@ def scheme_ids() -> list[str]:
 
 
 def load_gold(sid: str) -> dict:
-    return json.loads((GOLD_DIR / f"{sid}.json").read_text(encoding="utf-8"))
+    """The gold scheme as a FULLY EXPLICIT dict. Gold files are stored in canonical form, which omits
+    every field at its default (models.dump_gold_json) -- an empty exclusions list, a false
+    flagged_for_review, a "self" quantifier -- so reading the raw JSON would KeyError on them. Going
+    through the model restores every field."""
+    from schemelogic.schema.models import Scheme
+
+    raw = json.loads((GOLD_DIR / f"{sid}.json").read_text(encoding="utf-8"))
+    return Scheme.model_validate(raw).model_dump(mode="json", by_alias=True)
 
 
 def _leaves(node: dict, path: str):
@@ -56,7 +64,8 @@ def predicates(gold: dict) -> list[dict]:
     out: list[dict] = []
     for path, p in _leaves(gold["inclusion"], "incl"):
         out.append({"loc": path, "field": p["field"], "op": p["op"], "value": p["value"], "kind": "inclusion"})
-    for i, e in enumerate(gold["exclusions"]):
+    # canonical gold (models.dump_gold_json) omits an empty exclusions list
+    for i, e in enumerate(gold.get("exclusions", [])):
         out.append({"loc": f"excl[{i}]", "field": e["field"], "op": e["op"], "value": e["value"],
                     "kind": f"exclusion ({e.get('quantifier', 'self')})"})
         if e.get("except"):
@@ -141,6 +150,31 @@ def cmd_search(term: str, sid: str | None) -> None:
                 print(f"      ...{text[max(0, m.start() - 160): m.end() + 160]}...")
 
 
+def cmd_format(check_only: bool) -> int:
+    """Rewrite every gold file in the one canonical form (models.dump_gold_json), or with --check
+    only report which aren't canonical. Refuses to write if re-parsing the canonical text would not
+    give back an identical Scheme -- formatting must never change meaning."""
+    from schemelogic.schema.models import Scheme, dump_gold_json
+
+    not_canonical = 0
+    for path in sorted(GOLD_DIR.glob("*.json")):
+        text = path.read_text(encoding="utf-8")
+        scheme = Scheme.model_validate(json.loads(text))
+        canonical = dump_gold_json(scheme)
+        if Scheme.model_validate(json.loads(canonical)) != scheme:
+            raise SystemExit(f"{path.name}: canonical form does not round-trip -- not writing")
+        if text == canonical:
+            print(f"  {path.name:22} canonical")
+            continue
+        not_canonical += 1
+        if check_only:
+            print(f"  {path.name:22} NOT canonical")
+        else:
+            path.write_text(canonical, encoding="utf-8")
+            print(f"  {path.name:22} rewritten")
+    return 1 if (check_only and not_canonical) else 0
+
+
 def cmd_sync() -> int:
     """data/gold/*.json and the Python copies the tests evaluate must hold the same rules."""
     from schemelogic.schema.models import Scheme
@@ -163,7 +197,7 @@ def cmd_sync() -> int:
 
 if __name__ == "__main__":
     args = sys.argv[1:]
-    if not args or args[0] not in {"table", "show", "extract", "search", "sync"}:
+    if not args or args[0] not in {"table", "show", "extract", "search", "sync", "format"}:
         print(__doc__)
         sys.exit(2)
     if args[0] == "table":
@@ -176,3 +210,5 @@ if __name__ == "__main__":
         cmd_search(args[1], args[2] if len(args) > 2 else None)
     elif args[0] == "sync":
         sys.exit(cmd_sync())
+    elif args[0] == "format":
+        sys.exit(cmd_format(check_only="--check" in args))

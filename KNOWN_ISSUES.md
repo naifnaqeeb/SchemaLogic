@@ -25,7 +25,31 @@ exclusion false, so it never exercised the conflict.
 `except_scope`, because a plain member-scoped exception reads the 70+ fact off whichever family
 member triggered the exclusion and yields "undetermined" — including for a household with no 70+
 member at all, which was previously, correctly, "ineligible". Full record and the tests that forced
-the design: `docs/GOLD_AUDIT_2026-10-03.md` §6.1.
+the design: `docs/GOLD_AUDIT_2026-10-03.md` §6.1. Revised 2026-10-04 after an independent review
+(§6.6): applicant scope now waives the whole exclusion once, is rejected with quantifier `self` (so
+the 10 `self` exclusions use member scope, verdicts unchanged), and is gold-only — the extractor
+can't produce it.
+
+## Gold: AB-PMJAY's 70+ route covers the household, the guidelines cover only the 70+ members
+
+**Where**: `data/gold/AB-PMJAY.json` (and `tests/gold_fixtures.py`) — the inclusion branch and all
+14 exceptions read `has_family_member_aged_70_or_above`, a household fact on the applicant's record.
+
+**What**: the 70+ expansion guidelines, §5.2: for new families *"a shared cover up to Rs 5 lakh per
+year will be available. This cover will not be available to the other members (who are not of the
+age 70 years and above)"*. The cover is shared among the 70+ members; it does not extend to their
+household. Verified with the evaluator: a 40-year-old applicant with a 74-year-old parent and no
+other route gets **eligible**. Under §5.2 that applicant is not covered by the route.
+
+**Found**: 2026-10-04, looking for the "on a family basis" clause after the except_scope review
+(`docs/GOLD_AUDIT_2026-10-03.md` §6.5). Recorded in the scheme's `source_clause`.
+
+**Why deferred**: a gold change, and the user decides those. It also raises a product question —
+whether someone asking on behalf of a senior should be modelled — that the re-encoding should settle.
+
+**Suggested fix**: re-encode the route on the applicant's own age (`age_years >= 70` on `self`) in the
+inclusion and in all 14 exceptions, keeping applicant scope on the four `some_family_member`
+exclusions. Same protocol as the other gold fixes: failing profile first.
 
 ## Structural F1 never scores `except` clauses
 

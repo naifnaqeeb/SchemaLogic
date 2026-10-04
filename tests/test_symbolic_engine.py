@@ -501,10 +501,15 @@ def _route_profile(route, member_pays_tax: bool) -> dict:
 def test_applicant_scoped_exception_waives_an_exclusion_triggered_by_another_member():
     result = evaluate(ROUTE_SCHEME, _route_profile(route=True, member_pays_tax=True))
     assert result.verdict == Verdict.ELIGIBLE
-    member = result.trace["exclusions"][0]["members"][1]
-    assert member["predicate"]["result"] is True  # the member DID pay tax...
-    assert member["except"]["result"] is True  # ...and the exception, read from self, waived it
-    assert member["except_member"] == "self"
+    excl = result.trace["exclusions"][0]
+    assert excl["members"][1]["predicate"]["result"] is True  # the member DID pay tax...
+    assert excl["condition_result"] is True  # ...so the exclusion's condition held...
+    assert excl["except"]["result"] is True  # ...and the applicant's exception waived it, once
+    assert excl["except_member"] == "self"
+    assert excl["result"] is False
+    # recorded once at exclusion level -- never repeated on a family member's row, where a
+    # consumer could mistake it for that member's fact
+    assert all("except" not in m for m in excl["members"])
 
 
 def test_applicant_scoped_exception_false_still_excludes_definitely():
@@ -549,3 +554,182 @@ def test_except_scope_without_an_except_clause_is_rejected():
     del data["exclusions"][0]["except"]
     with pytest.raises(ValueError, match="except_scope"):
         Scheme.model_validate(data)
+
+
+# --- except_scope coverage: every combination from the 2026-10-04 independent review ------------
+# The first review found the 6 tests above covered only some_family_member with one member, and
+# found a real bug in the combinations they missed (count quantifiers). Each combination it listed
+# is pinned below. Under applicant scope the waiver applies to the WHOLE exclusion, once:
+# result = Q(condition over members) AND NOT exception(applicant).
+
+
+def _route_scheme(quantifier: str, count_op: str | None = None, count: int | None = None,
+                  extra_exclusions: tuple = ()) -> Scheme:
+    excl = {
+        "cat": "economic", "quantifier": quantifier, "field": "pays_tax", "op": "==", "value": True,
+        "except": {"field": "household_route", "op": "==", "value": True}, "except_scope": "applicant",
+    }
+    if count_op is not None:
+        excl.update(count_op=count_op, count=count)
+    return Scheme.model_validate({
+        "scheme_id": "ROUTE", "unit_of_eligibility": "family",
+        "inclusion": {"cat": "economic", "field": "is_poor", "op": "==", "value": True},
+        "exclusions": [excl, *extra_exclusions],
+        "temporal_validity": {"valid_from": "2020-01-01", "extracted_at": "2026-01-01"},
+        "extraction_metadata": {"confidence": 1.0, "source_clause": "t", "flagged_for_review": False},
+    })
+
+
+def _household(route, applicant_pays, *members_pay):
+    me = {"is_poor": True}
+    if applicant_pays is not None:
+        me["pays_tax"] = applicant_pays
+    if route is not None:
+        me["household_route"] = route
+    return {"self": me, "family_members": [({"pays_tax": m} if m is not None else {}) for m in members_pay]}
+
+
+E, I, U = Verdict.ELIGIBLE, Verdict.INELIGIBLE, Verdict.UNDETERMINED
+
+
+@pytest.mark.parametrize("route,applicant,members,expected", [
+    (True, True, (True, True), E),     # everyone pays tax, but the route waives the exclusion
+    (False, True, (True, True), I),    # no route: everyone pays tax -> excluded
+    (False, True, (True, False), E),   # no route: not everyone pays tax -> not excluded
+    (None, True, (True, True), U),     # route unknown and everyone pays tax -> can't tell
+    (False, None, (True, True), U),    # applicant's own fact missing -> "all" undecided
+    (False, False, (None, None), E),   # one known False already makes "all" false
+])
+def test_applicant_scope_with_all_family_members(route, applicant, members, expected):
+    assert evaluate(_route_scheme("all_family_members"), _household(route, applicant, *members)).verdict == expected
+
+
+# count_family_members, every operator. The defining property of a waiver: with the route present the
+# applicant can never be MORE excluded than without it -- the first review found the opposite for
+# "<", "<=" and "==" (a 70+ applicant made ineligible BECAUSE of the waiver).
+@pytest.mark.parametrize("op,n", [("<", 1), ("<=", 0), ("==", 0), ("==", 1), (">", 0), (">=", 1), (">=", 2)])
+@pytest.mark.parametrize("members", [(True,), (False,), (True, True), (False, False), (True, False)])
+def test_applicant_scope_with_count_never_makes_the_waived_applicant_worse_off(op, n, members):
+    scheme = _route_scheme("count_family_members", op, n)
+    assert evaluate(scheme, _household(True, False, *members)).verdict == E  # waived: cannot fire
+    assert evaluate(scheme, _household(False, False, *members)).verdict in (E, I)  # all known -> definite
+
+
+def test_review_reproducer_f1_count_waiver_is_not_a_trigger():
+    """Independent review, finding F1: count `< 1`, applicant with the route, a taxpaying son. The
+    per-member waiver zeroed every member, so "fewer than one taxpayer" fired because of the waiver."""
+    scheme = _route_scheme("count_family_members", "<", 1)
+    assert evaluate(scheme, _household(True, False, True)).verdict == E
+    assert evaluate(scheme, _household(False, False, True)).verdict == E  # 1 taxpayer: "<1" is false
+
+
+def test_review_reproducer_q3_count_is_decided_when_the_route_is_unknown():
+    """Independent review, Q3: count `== 1`, two taxpayers, route unknown. With the route nothing
+    counts; without it the count is 2. Neither is 1, so the exclusion can't fire either way --
+    per-member waiving treated the shared waiver as independent unknowns and said undetermined."""
+    assert evaluate(_route_scheme("count_family_members", "==", 1), _household(None, True, True)).verdict == E
+
+
+@pytest.mark.parametrize("op,n,members,expected", [
+    (">=", 1, (True,), U),       # one taxpayer: excluded unless the route waives it -> unknown
+    (">=", 1, (False,), E),      # nobody pays tax: can't fire whatever the route
+    (">=", 3, (True, True), E),  # applicant known False, so at most 2 taxpayers: ">= 3" can't fire
+])
+def test_applicant_scope_with_count_and_unknown_route(op, n, members, expected):
+    assert evaluate(_route_scheme("count_family_members", op, n), _household(None, False, *members)).verdict == expected
+
+
+def test_applicant_scope_waived_route_decides_despite_missing_family_facts():
+    for q in ("some_family_member", "all_family_members"):
+        assert evaluate(_route_scheme(q), _household(True, None, None, None)).verdict == E
+
+
+def test_applicant_scope_no_route_with_missing_family_facts_is_undetermined():
+    assert evaluate(_route_scheme("some_family_member"), _household(False, False, None)).verdict == U
+
+
+def test_applicant_exception_missing_while_family_facts_missing_is_undetermined():
+    assert evaluate(_route_scheme("some_family_member"), _household(None, None, None)).verdict == U
+
+
+def test_applicant_scope_with_empty_family():
+    scheme = _route_scheme("some_family_member")
+    assert evaluate(scheme, _household(False, True)).verdict == I
+    assert evaluate(scheme, _household(True, True)).verdict == E
+    assert evaluate(scheme, _household(False, False)).verdict == E
+
+
+def test_applicant_scope_with_no_family_members_key():
+    profile = {"self": {"is_poor": True, "pays_tax": True, "household_route": False}}
+    assert evaluate(_route_scheme("some_family_member"), profile).verdict == I
+    profile["self"]["household_route"] = True
+    assert evaluate(_route_scheme("some_family_member"), profile).verdict == E
+
+
+def test_applicant_scope_with_no_self_key_is_undetermined_not_a_crash():
+    result = evaluate(_route_scheme("some_family_member"), {"family_members": [{"pays_tax": True}]})
+    assert result.verdict == U
+    assert result.trace["exclusions"][0]["except"]["result"] is None
+
+
+def test_multiple_members_and_mixed_scopes():
+    member_scoped = {
+        "cat": "occupation", "quantifier": "some_family_member", "field": "govt_job", "op": "==", "value": True,
+        "except": {"field": "is_group_d", "op": "==", "value": True},
+    }
+    scheme = _route_scheme("some_family_member", extra_exclusions=(member_scoped,))
+
+    def profile(route, *members):
+        return {"self": {"is_poor": True, "pays_tax": False, "govt_job": False, "household_route": route},
+                "family_members": list(members)}
+
+    # the route waives the tax exclusion for every member, but NOT the member-scoped govt-job one
+    assert evaluate(scheme, profile(True, {"pays_tax": True, "govt_job": False},
+                                    {"pays_tax": True, "govt_job": False})).verdict == E
+    assert evaluate(scheme, profile(True, {"pays_tax": False, "govt_job": True, "is_group_d": False})).verdict == I
+    # a Group D member's own exception still works alongside an applicant-scoped one
+    assert evaluate(scheme, profile(False, {"pays_tax": False, "govt_job": True, "is_group_d": True},
+                                    {"pays_tax": False, "govt_job": False})).verdict == E
+    assert evaluate(scheme, profile(False, {"pays_tax": False, "govt_job": False},
+                                    {"pays_tax": True, "govt_job": False})).verdict == I
+
+
+def test_trace_reports_member_scope_when_there_is_no_exception():
+    """Independent review F3: the trace said None where the model says "member"."""
+    data = _route_scheme("some_family_member").model_dump(mode="json", by_alias=True)
+    data["exclusions"] = [{"cat": "economic", "quantifier": "some_family_member",
+                           "field": "pays_tax", "op": "==", "value": True}]
+    excl = evaluate(Scheme.model_validate(data), _household(None, False, False)).trace["exclusions"][0]
+    assert excl["except_scope"] == "member"
+    assert excl["has_except"] is False
+
+
+def test_member_scope_trace_rows_are_unchanged_by_except_scope():
+    """Member scope keeps the exact pre-2026-10-03 shape: the exception on each member row, and no
+    exclusion-level exception, condition_result or except_member."""
+    profile = _base_eligible_profile()
+    profile["family_members"][0]["is_serving_or_retired_govt_employee"] = True
+    profile["family_members"][0]["is_group_d_class_iv_or_mts"] = True
+    excl = evaluate(PM_KISAN_SCHEME, profile).trace["exclusions"][1]
+    assert not {"except", "except_member", "condition_result"} & set(excl)
+    assert all("except_member" not in m and "except" in m for m in excl["members"])
+
+
+def test_applicant_scope_with_self_quantifier_is_rejected():
+    """Independent review F4: with quantifier 'self' applicant scope changes nothing, so accepting it
+    could only hide a mistake."""
+    with pytest.raises(ValueError, match="no effect with quantifier 'self'"):
+        _route_scheme("self")
+
+
+def test_selector_asks_the_applicant_not_a_family_member_for_an_applicant_scoped_exception():
+    """Independent review F2, with several family members: the applicant's fact is asked once, of the
+    applicant -- never of family_member[0], whose record the evaluator doesn't read for it."""
+    from schemelogic.conversational.question_selector import find_missing_fields, select_next_question
+
+    scheme = _route_scheme("some_family_member")
+    profile = _household(None, False, True, True, False)
+    question = select_next_question(scheme, profile)
+    assert (question.field, question.member) == ("household_route", "self")
+    asks = [m.member for m in find_missing_fields(evaluate(scheme, profile)) if m.field == "household_route"]
+    assert asks == ["self"]

@@ -245,3 +245,29 @@ def test_explicit_knobs_are_passed_through(no_sleep):
     core_call = client.calls[0]
     assert core_call["reasoning_effort"] == "low"
     assert core_call["messages"][0]["content"] == extractor._core_system_prompt(ontology_compact=True)
+
+
+
+# --- except_scope is gold-only (decided 2026-10-04) ----------------------------------------------
+# An applicant-scoped exception waives a whole exclusion for every family member when the applicant
+# meets a condition. That is only right when the source text says so, and must be justified against
+# it by a human. Extraction -- including the live AI-Checked tier -- can only produce member scope.
+
+
+def test_extractor_schema_does_not_offer_except_scope():
+    serialized = json.dumps(extractor._CORE_JSON_SCHEMA)
+    assert "except_scope" not in serialized
+    assert "ExceptScope" not in serialized
+
+
+def test_an_except_scope_the_model_emits_anyway_is_dropped_to_member(no_sleep):
+    """With strict:false a model can still emit off-schema keys; they must never widen an exception."""
+    core = json.loads(json.dumps(CORE_RESPONSE))
+    core["exclusions"] = [{
+        "cat": "economic", "quantifier": "some_family_member", "field": "pays_tax", "op": "==",
+        "value": True, "except": {"field": "is_senior", "op": "==", "value": True},
+        "except_scope": "applicant",
+    }]
+    result = extract_scheme("text", client=FakeGroq(outcomes=[core, META_RESPONSE]))
+    assert isinstance(result, Scheme)
+    assert result.exclusions[0].except_scope.value == "member"

@@ -116,7 +116,11 @@ def trace_to_citizen_english(trace: dict[str, Any]) -> str:
 
 
 def _was_waived(excl_trace: dict[str, Any]) -> bool:
-    """Some member met the disqualifying condition and an exception set it aside."""
+    """The disqualifying condition held and an exception set it aside -- either for a member
+    (member-scoped exception, recorded per member row) or for the whole exclusion (applicant-scoped
+    exception, recorded once at exclusion level with the pre-waiver `condition_result`)."""
+    if excl_trace.get("condition_result") is True and (excl_trace.get("except") or {}).get("result") is True:
+        return True
     return any(
         (m.get("predicate") or {}).get("result") is True and (m.get("except") or {}).get("result") is True
         for m in excl_trace.get("members", [])

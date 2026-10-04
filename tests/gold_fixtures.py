@@ -50,17 +50,17 @@ AB_PMJAY = {
         {
             "cat": "economic", "quantifier": "self",
             "field": "household_owns_motorised_vehicle_or_fishing_boat", "op": "==", "value": True,
-            "except": _SEVENTY_PLUS_ROUTE, "except_scope": "applicant",
+            "except": _SEVENTY_PLUS_ROUTE,
         },
         {
             "cat": "economic", "quantifier": "self",
             "field": "owns_mechanized_agricultural_equipment_3_or_4_wheeler", "op": "==", "value": True,
-            "except": _SEVENTY_PLUS_ROUTE, "except_scope": "applicant",
+            "except": _SEVENTY_PLUS_ROUTE,
         },
         {
             "cat": "economic", "quantifier": "self",
             "field": "kisan_credit_card_limit_inr", "op": ">", "value": 50000,
-            "except": _SEVENTY_PLUS_ROUTE, "except_scope": "applicant",
+            "except": _SEVENTY_PLUS_ROUTE,
         },
         {
             "cat": "occupation", "quantifier": "some_family_member",
@@ -70,7 +70,7 @@ AB_PMJAY = {
         {
             "cat": "economic", "quantifier": "self",
             "field": "owns_non_agricultural_enterprise_registered_with_govt", "op": "==", "value": True,
-            "except": _SEVENTY_PLUS_ROUTE, "except_scope": "applicant",
+            "except": _SEVENTY_PLUS_ROUTE,
         },
         {
             "cat": "economic", "quantifier": "some_family_member",
@@ -90,32 +90,32 @@ AB_PMJAY = {
         {
             "cat": "economic", "quantifier": "self",
             "field": "house_has_3_or_more_pucca_rooms", "op": "==", "value": True,
-            "except": _SEVENTY_PLUS_ROUTE, "except_scope": "applicant",
+            "except": _SEVENTY_PLUS_ROUTE,
         },
         {
             "cat": "economic", "quantifier": "self",
             "field": "owns_refrigerator", "op": "==", "value": True,
-            "except": _SEVENTY_PLUS_ROUTE, "except_scope": "applicant",
+            "except": _SEVENTY_PLUS_ROUTE,
         },
         {
             "cat": "economic", "quantifier": "self",
             "field": "owns_landline_phone", "op": "==", "value": True,
-            "except": _SEVENTY_PLUS_ROUTE, "except_scope": "applicant",
+            "except": _SEVENTY_PLUS_ROUTE,
         },
         {
             "cat": "economic", "quantifier": "self",
             "field": "owns_gt_2_5_acres_irrigated_land_with_irrigation_equipment", "op": "==", "value": True,
-            "except": _SEVENTY_PLUS_ROUTE, "except_scope": "applicant",
+            "except": _SEVENTY_PLUS_ROUTE,
         },
         {
             "cat": "economic", "quantifier": "self",
             "field": "owns_5_or_more_acres_irrigated_land_two_or_more_crop_seasons", "op": "==", "value": True,
-            "except": _SEVENTY_PLUS_ROUTE, "except_scope": "applicant",
+            "except": _SEVENTY_PLUS_ROUTE,
         },
         {
             "cat": "economic", "quantifier": "self",
             "field": "owns_7_5_or_more_acres_land_with_irrigation_equipment", "op": "==", "value": True,
-            "except": _SEVENTY_PLUS_ROUTE, "except_scope": "applicant",
+            "except": _SEVENTY_PLUS_ROUTE,
         },
     ],
     "temporal_validity": {
@@ -128,39 +128,40 @@ AB_PMJAY = {
     "extraction_metadata": {
         "confidence": 0.93,
         "source_clause": (
-            "VERIFIED against primary sources (see file header). Inclusion: is_secc_deprived_"
-            "household covers SECC's D1/D2/D3/D4/D5/D7 rural deprivation criteria, directly quoted "
-            "from the Beneficiary Identification Guidelines ('Total deprived Households ... who "
-            "belong to one of the six deprivation criteria amongst D1, D2, D3, D4, D5 and D7') — "
-            "D6 ('no literate adult above 25') is part of SECC's general 7-criteria deprivation "
-            "grading but explicitly NOT one of the six PM-JAY uses, confirmed by that exact phrase. "
-            "is_urban_informal_worker is a SEPARATE inclusion path (corrected in a Phase 3 "
-            "structural-F1 check — originally miscategorized as folded into is_secc_deprived_"
-            "household, but the document lists it under its own 'Urban occupational categories' "
-            "heading, distinct from the rural D1-D7 list): rag picker, beggar, domestic worker, "
-            "street vendor, construction worker, and similar SECC urban-informal-worker categories. "
-            "is_secc_automatically_included and is_valid_rsby_beneficiary are new umbrella fields, "
-            "each directly quoted from the same document ('Automatically included - Households "
-            "without shelter; Destitute...'; 'all such enrolled families under RSBY that do not "
-            "feature in the targeted groups ... will be included as well'). has_family_member_aged_"
-            "70_or_above: directly quoted from the 70+ expansion guidelines ('expansion of AB "
-            "PM-JAY to cover all senior citizens of 70 years of age and above irrespective of their "
-            "socio-economic status, on family basis', approved 11.09.2024). Exclusions: all 14 "
-            "directly quoted verbatim from the PIB SECC press release's numbered list (i-xiv) — "
-            "items i/iii/iv/vii previously captured from secondary sources are now primary-cited "
-            "exactly; items ii/v/vi/viii/ix/x/xi/xii/xiii/xiv are new. kisan_credit_card_limit_inr "
-            "uses op='>' (strict), matching the document's exact wording 'a credit limit of over "
-            "Rs. 50,000' — corrected in the same Phase 3 check from an earlier '>=' authoring slip. "
-            "Items xii-xiv are compound (acreage AND irrigation-equipment-count) facts folded into "
-            "single boolean fields since exclusion predicates can't express an AND of two fields — "
-            "flagged as a schema-expressiveness workaround, same pattern as other compound facts "
-            "elsewhere in this project. NOT modeled: the one-time, irrevocable choice a 70+ "
-            "beneficiary already covered by CGHS/ECHS/CAPF/state schemes must make between their "
-            "existing scheme and AB-PMJAY (70+ guidelines, Section 6-7) — this is a genuine "
-            "selection/election rule, not a blanket disqualifier, the same shape as MH-LADKI-"
-            "BAHIN's unmodeled 'one unmarried woman' rule. Flagged as a known gap rather than "
-            "force-fit into a predicate that could misrepresent the actual choice-based rule."
-            " GOLD CHANGE 2026-10-03 (docs/GOLD_AUDIT_2026-10-03.md): every exclusion now carries "
+            "VERIFIED against primary sources (see file header). Inclusion: "
+            "is_secc_deprived_household covers SECC's D1/D2/D3/D4/D5/D7 rural deprivation criteria,"
+            " directly quoted from the Beneficiary Identification Guidelines ('Total deprived "
+            "Households ... who belong to one of the six deprivation criteria amongst D1, D2, D3, "
+            "D4, D5 and D7') — D6 ('no literate adult above 25') is part of SECC's general "
+            "7-criteria deprivation grading but explicitly NOT one of the six PM-JAY uses, "
+            "confirmed by that exact phrase. is_urban_informal_worker is a SEPARATE inclusion path "
+            "(corrected in a Phase 3 structural-F1 check — originally miscategorized as folded into"
+            " is_secc_deprived_household, but the document lists it under its own 'Urban "
+            "occupational categories' heading, distinct from the rural D1-D7 list): rag picker, "
+            "beggar, domestic worker, street vendor, construction worker, and similar SECC "
+            "urban-informal-worker categories. is_secc_automatically_included and "
+            "is_valid_rsby_beneficiary are new umbrella fields, each directly quoted from the same "
+            "document ('Automatically included - Households without shelter; Destitute...'; 'all "
+            "such enrolled families under RSBY that do not feature in the targeted groups ... will "
+            "be included as well'). has_family_member_aged_70_or_above: directly quoted from the "
+            "70+ expansion guidelines ('expansion of AB PM-JAY to cover all senior citizens of 70 "
+            "years of age and above irrespective of their socio-economic status, on family basis', "
+            "approved 11.09.2024). Exclusions: all 14 directly quoted verbatim from the PIB SECC "
+            "press release's numbered list (i-xiv) — items i/iii/iv/vii previously captured from "
+            "secondary sources are now primary-cited exactly; items "
+            "ii/v/vi/viii/ix/x/xi/xii/xiii/xiv are new. kisan_credit_card_limit_inr uses op='>' "
+            "(strict), matching the document's exact wording 'a credit limit of over Rs. 50,000' — "
+            "corrected in the same Phase 3 check from an earlier '>=' authoring slip. Items xii-xiv"
+            " are compound (acreage AND irrigation-equipment-count) facts folded into single "
+            "boolean fields since exclusion predicates can't express an AND of two fields — flagged"
+            " as a schema-expressiveness workaround, same pattern as other compound facts elsewhere"
+            " in this project. NOT modeled: the one-time, irrevocable choice a 70+ beneficiary "
+            "already covered by CGHS/ECHS/CAPF/state schemes must make between their existing "
+            "scheme and AB-PMJAY (70+ guidelines, Section 6-7) — this is a genuine "
+            "selection/election rule, not a blanket disqualifier, the same shape as "
+            "MH-LADKI-BAHIN's unmodeled 'one unmarried woman' rule. Flagged as a known gap rather "
+            "than force-fit into a predicate that could misrepresent the actual choice-based rule. "
+            "GOLD CHANGE 2026-10-03 (docs/GOLD_AUDIT_2026-10-03.md): every exclusion now carries "
             "except has_family_member_aged_70_or_above == true with except_scope 'applicant'. "
             "Reason: the 70+ expansion guidelines cover citizens aged 70+ 'irrespective of their "
             "socio-economic status' and never apply the SECC exclusions to them, but as a flat list"
@@ -174,6 +175,31 @@ AB_PMJAY = {
             "the SECC-deprived, automatic-inclusion, RSBY and urban-informal-worker routes. Caveat:"
             " under the guidelines the 70+ cover belongs to the 70+ members specifically, shared on"
             " a family basis; this gold keeps its existing household-level modelling of that route."
+            " AMENDED 2026-10-04: the ten SELF-quantified exclusions now carry the same 70+ "
+            "exception with the default member scope instead of 'applicant'. For a self-quantified "
+            "exclusion the two read the same record, so verdicts are unchanged; the validator now "
+            "rejects applicant scope on 'self' because it can only hide authoring mistakes. "
+            "Applicant scope stays on the four some_family_member exclusions (govt employee, income"
+            " over Rs 10,000, income tax, professional tax), where it is what lets the 70+ route "
+            "override a tax-paying or high-earning relative. Also from 2026-10-04, an "
+            "applicant-scoped exception waives the whole exclusion once (condition AND NOT "
+            "exception) rather than member by member; for some_family_member exclusions that is "
+            "equivalent, and it was needed for count quantifiers. 'ON FAMILY BASIS' RESOLVED "
+            "2026-10-04 (docs/GOLD_AUDIT_2026-10-03.md section 6.5): the 70+ expansion guidelines "
+            "(AB-PMJAY_primary_70plus_expansion.pdf) state who the 70+ cover extends to. Section "
+            "5.2, new families: 'For the senior citizens of the age of 70 years and above in the "
+            "new families, a shared cover up to Rs 5 lakh per year will be available. This cover "
+            "will not be available to the other members (who are not of the age 70 years and above)"
+            " of these new families.' Section 5.1 gives the 70+ members of already-covered families"
+            " an additional shared top-up cover, and the enrolment annex treats a person whose own "
+            "eKYC age is below 70 as 'not eligible under the scheme'. So the 70+ route covers the "
+            "70+ individuals only, shared among them -- not their household. CONSEQUENCE, NOT YET "
+            "FIXED: this gold models the route at household level "
+            "(has_family_member_aged_70_or_above on the applicant's record), which is right when "
+            "the applicant is the senior but gives a wrong 'eligible' to a younger applicant in a "
+            "household not otherwise covered -- under section 5.2 that person is not covered by the"
+            " route at all. Logged in KNOWN_ISSUES.md for a decision on re-encoding the route on "
+            "the applicant's own age."
         ),
         "flagged_for_review": False,
     },

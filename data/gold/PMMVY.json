@@ -7,14 +7,12 @@
         "field": "age",
         "op": ">=",
         "value": 18,
-        "ontology_proposed": false,
         "cat": "demographic"
       },
       {
         "field": "age",
         "op": "<=",
         "value": 55,
-        "ontology_proposed": false,
         "cat": "demographic"
       },
       {
@@ -23,70 +21,60 @@
             "field": "is_sc_st",
             "op": "==",
             "value": true,
-            "ontology_proposed": false,
             "cat": "demographic"
           },
           {
             "field": "has_40_percent_or_more_disability",
             "op": "==",
             "value": true,
-            "ontology_proposed": false,
             "cat": "demographic"
           },
           {
             "field": "is_bpl_household",
             "op": "==",
             "value": true,
-            "ontology_proposed": false,
             "cat": "economic"
           },
           {
             "field": "is_ab_pmjay_beneficiary",
             "op": "==",
             "value": true,
-            "ontology_proposed": false,
             "cat": "cross_scheme"
           },
           {
             "field": "is_e_shram_registered",
             "op": "==",
             "value": true,
-            "ontology_proposed": false,
             "cat": "economic"
           },
           {
             "field": "is_pm_kisan_beneficiary",
             "op": "==",
             "value": true,
-            "ontology_proposed": false,
             "cat": "cross_scheme"
           },
           {
             "field": "has_active_mgnrega_job_card",
             "op": "==",
             "value": true,
-            "ontology_proposed": false,
             "cat": "economic"
           },
           {
             "field": "family_annual_income_inr",
             "op": "<",
             "value": 800000,
-            "ontology_proposed": false,
             "cat": "economic"
           },
           {
             "field": "is_frontline_worker",
             "op": "==",
             "value": true,
-            "ontology_proposed": false,
             "cat": "occupation"
           },
           {
             "field": "is_nfsa_ration_card_holder",
             "op": "==",
             "value": true,
-            "ontology_proposed": false,
             "cat": "economic"
           }
         ]
@@ -97,7 +85,6 @@
             "field": "pregnancy_child_order",
             "op": "==",
             "value": 1,
-            "ontology_proposed": false,
             "cat": "demographic"
           },
           {
@@ -106,14 +93,12 @@
                 "field": "pregnancy_child_order",
                 "op": "==",
                 "value": 2,
-                "ontology_proposed": false,
                 "cat": "demographic"
               },
               {
                 "field": "child_is_girl",
                 "op": "==",
                 "value": true,
-                "ontology_proposed": false,
                 "cat": "demographic"
               }
             ]
@@ -123,25 +108,23 @@
       {
         "or": [
           {
-            "cat": "demographic",
             "field": "age",
             "op": ">=",
-            "value": 19
+            "value": 19,
+            "cat": "demographic"
           },
           {
-            "cat": "demographic",
             "field": "months_since_last_birthday",
             "op": ">=",
-            "value": 7
+            "value": 7,
+            "cat": "demographic"
           }
         ]
       }
     ]
   },
-  "exclusions": [],
   "temporal_validity": {
     "valid_from": "2022-04-01",
-    "valid_to": null,
     "extracted_at": "2026-08-18",
     "supersedes": {
       "rule_version": "PMMVY_1.0_pre_2022",

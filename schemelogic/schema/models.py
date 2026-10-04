@@ -142,6 +142,10 @@ class Exclusion(Predicate):
     def _validate_except_scope(self) -> "Exclusion":
         if self.except_scope != ExceptScope.MEMBER and self.except_ is None:
             raise ValueError("except_scope is only meaningful when an `except` clause is present")
+        if self.except_scope == ExceptScope.APPLICANT and self.quantifier == Quantifier.SELF:
+            # A self-quantified exclusion only ever reads the applicant, so applicant scope changes
+            # nothing -- accepting it would only hide an authoring or extraction mistake.
+            raise ValueError("except_scope 'applicant' has no effect with quantifier 'self'; use 'member'")
         return self
 
     @model_validator(mode="after")
@@ -222,3 +226,19 @@ class Scheme(BaseModel):
     temporal_validity: TemporalValidity
     operational_requirements: list[str] = Field(default_factory=list)
     extraction_metadata: ExtractionMetadata
+
+
+def dump_gold_json(scheme: Scheme) -> str:
+    """The one canonical serialization for gold scheme files (data/gold/*.json).
+
+    Fields at their default are omitted (`exclude_defaults=True`), so adding a defaulted field to
+    the schema -- as `except_scope` was on 2026-10-03 -- doesn't rewrite every gold file, and a field
+    appears only where it says something: `except_scope` shows up only on the exceptions that are
+    genuinely applicant-scoped. The cost is explicitness: an absent `quantifier` means "self", an
+    absent `flagged_for_review` means false. tests/test_gold_schemes.py checks every gold file is
+    byte-identical to this output, so a hand edit that isn't canonical fails the suite rather than
+    accumulating drift (`PYTHONPATH=. python scripts/audit_gold.py format` rewrites them)."""
+    import json
+
+    data = scheme.model_dump(mode="json", by_alias=True, exclude_defaults=True)
+    return json.dumps(data, indent=2, ensure_ascii=False) + "\n"

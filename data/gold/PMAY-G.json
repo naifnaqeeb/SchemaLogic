@@ -7,21 +7,18 @@
         "field": "is_houseless",
         "op": "==",
         "value": true,
-        "ontology_proposed": false,
         "cat": "economic"
       },
       {
         "field": "lives_in_kutcha_house",
         "op": "==",
         "value": true,
-        "ontology_proposed": false,
         "cat": "economic"
       },
       {
         "field": "is_secc_automatically_included",
         "op": "==",
         "value": true,
-        "ontology_proposed": false,
         "cat": "economic"
       }
     ]
@@ -31,127 +28,74 @@
       "field": "is_govt_employee",
       "op": "==",
       "value": true,
-      "ontology_proposed": false,
       "cat": "occupation",
-      "quantifier": "some_family_member",
-      "except": null,
-      "count_op": null,
-      "count": null
+      "quantifier": "some_family_member"
     },
     {
       "field": "owns_non_agricultural_enterprise_registered_with_govt",
       "op": "==",
       "value": true,
-      "ontology_proposed": false,
-      "cat": "economic",
-      "quantifier": "self",
-      "except": null,
-      "count_op": null,
-      "count": null
+      "cat": "economic"
     },
     {
       "field": "kisan_credit_card_limit_inr",
       "op": ">=",
       "value": 50000,
-      "ontology_proposed": false,
-      "cat": "economic",
-      "quantifier": "self",
-      "except": null,
-      "count_op": null,
-      "count": null
+      "cat": "economic"
     },
     {
       "field": "monthly_income_inr",
       "op": ">",
       "value": 15000,
-      "ontology_proposed": false,
       "cat": "economic",
-      "quantifier": "some_family_member",
-      "except": null,
-      "count_op": null,
-      "count": null
+      "quantifier": "some_family_member"
     },
     {
       "field": "paid_income_tax_last_assessment_year",
       "op": "==",
       "value": true,
-      "ontology_proposed": false,
       "cat": "economic",
-      "quantifier": "some_family_member",
-      "except": null,
-      "count_op": null,
-      "count": null
+      "quantifier": "some_family_member"
     },
     {
       "field": "owns_refrigerator",
       "op": "==",
       "value": true,
-      "ontology_proposed": false,
-      "cat": "economic",
-      "quantifier": "self",
-      "except": null,
-      "count_op": null,
-      "count": null
+      "cat": "economic"
     },
     {
       "field": "owns_landline_phone",
       "op": "==",
       "value": true,
-      "ontology_proposed": false,
-      "cat": "economic",
-      "quantifier": "self",
-      "except": null,
-      "count_op": null,
-      "count": null
+      "cat": "economic"
     },
     {
       "field": "owns_gt_2_5_acres_irrigated_land",
       "op": "==",
       "value": true,
-      "ontology_proposed": false,
-      "cat": "economic",
-      "quantifier": "self",
-      "except": null,
-      "count_op": null,
-      "count": null
+      "cat": "economic"
     },
     {
       "field": "owns_motorised_three_or_four_wheeler",
       "op": "==",
       "value": true,
-      "ontology_proposed": false,
-      "cat": "economic",
-      "quantifier": "self",
-      "except": null,
-      "count_op": null,
-      "count": null
+      "cat": "economic"
     },
     {
       "field": "owns_mechanized_agricultural_equipment_3_or_4_wheeler",
       "op": "==",
       "value": true,
-      "ontology_proposed": false,
-      "cat": "economic",
-      "quantifier": "self",
-      "except": null,
-      "count_op": null,
-      "count": null
+      "cat": "economic"
     },
     {
       "field": "owns_pucca_house",
       "op": "==",
       "value": true,
-      "ontology_proposed": false,
-      "cat": "economic",
-      "quantifier": "self",
-      "except": null,
-      "count_op": null,
-      "count": null
+      "cat": "economic"
     }
   ],
   "temporal_validity": {
     "valid_from": "2024-09-11",
-    "valid_to": null,
     "extracted_at": "2026-08-18",
     "supersedes": {
       "rule_version": "v1_pre_2024_amendment",
