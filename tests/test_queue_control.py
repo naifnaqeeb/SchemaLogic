@@ -73,11 +73,22 @@ def test_queue_stops_while_waiting_once_the_stop_time_passes():
     assert "STOP" in (harness.control_dir() / "queue_state.json").read_text(encoding="utf-8")
 
 
-def test_review_order_hindi_first_then_languages_pipeline_temporal():
+def test_review_order_hindi_then_presentable_results_then_other_languages():
+    """Order revised 2026-10-05: the demo uses English and Hindi only."""
     labels = [label for label, _, _ in _script("run_queue").queue("review", 1)]
-    assert labels[:6] == ["translations hi", "translations ur", "translations mr", "translations ta",
-                          "pipeline on sample 1", "temporal C4 (+ Marathi arm of C2)"]
+    assert labels[:6] == ["translations hi", "pipeline on sample 1", "temporal C4 (+ Marathi arm of C2)",
+                          "translations ur", "translations mr", "translations ta"]
     assert len(labels) == 11
+
+
+def test_the_running_order_is_recorded_and_shown_by_queue_status(capsys):
+    q = _script("run_queue")
+    _set_stop(datetime.now() + timedelta(hours=1))
+    steps = [("translations hi", 1, lambda: "done"), ("pipeline on sample 1", 1, lambda: "done")]
+    assert q.main(["review"], 10**9, steps=steps) == "done"
+    _script("queue_status").status()
+    out = capsys.readouterr().out
+    assert out.index("1. translations hi") < out.index("2. pipeline on sample 1")
 
 
 def test_status_reports_progress_without_a_running_queue(capsys):

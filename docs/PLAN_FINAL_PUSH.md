@@ -54,11 +54,12 @@ budget now checks a rolling 24h total.
 
 ## Quota schedule (Groq, ~180k tokens/day)
 
-**Revised 2026-10-05 for the review (2026-10-08 10:00).** One queue, `review`, in the order you set:
-Hindi, Urdu, Marathi, Tamil translations; full pipeline on sample 1; temporal C4 (+ Marathi C2 arm);
-then PMMVY samples 2–3, pmksypdmc, Baseline 1, gate re-validation, RAG. **No experiment call starts
-after 2026-10-07 10:00** — 24h before the review, because Groq's cap is a rolling 24h window, so the
-demo gets the whole window. Nothing restarts it until you say.
+**Revised 2026-10-05 for the review (2026-10-08 10:00); order revised again 20:33 (the demo uses English
+and Hindi only).** One queue, `review`: Hindi translations; full pipeline on sample 1; temporal C4 (+
+Marathi C2 arm); Urdu, Marathi, Tamil translations; then PMMVY samples 2–3, pmksypdmc, Baseline 1, gate
+re-validation, RAG. **No experiment call starts after 2026-10-07 10:00** — 24h before the review,
+because Groq's cap is a rolling 24h window, so the demo gets the whole window. Nothing restarts it until
+you say. `python scripts/queue_status.py` shows the order the running process is using.
 
 How the stop is guaranteed without anyone being notified (`scripts/queue_status.py`):
 1. `Ledger.before_call` refuses every experiment call after `data/experiments/logs/stop_at.txt` or
@@ -72,9 +73,9 @@ The queue was launched through WMI (parent `WmiPrvSE.exe`, not VS Code), so it s
 Code or the terminal; it pauses if the machine sleeps and ends on shutdown (`--start` resumes it).
 Check it: `python scripts/queue_status.py`.
 
-Expected before the stop (~33h of window from 2026-10-06 00:30, roughly 240k tokens): translations
-(~110k), pipeline on sample 1 (~56k), most or all of temporal C4 (~79k). **Not before the review**:
-everything after it in the order above.
+Expected before the stop (roughly 240k tokens of window): Hindi (~25k left), pipeline on sample 1
+(~56k), temporal C4 (~79k), then Urdu and part of Marathi (~110k for all three). **Not before the
+review**: Tamil, probably, and everything after it in the order above.
 
 Original estimates (2026-10-05, day 1):
 

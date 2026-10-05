@@ -63,13 +63,17 @@ def queue(name: str, budget: int):
             export.main()
         return result
 
-    # Order set 2026-10-05 for the review: Hindi first, then the other languages, the full pipeline on
-    # sample 1, the temporal case study (with the Marathi arm of C2), then everything else.
+    def translations(lang: str):
+        return (f"translations {lang}", tc.ESTIMATE, lambda: translate_and_publish(lang))
+
+    # Order revised 2026-10-05 for the review, whose demo uses English and Hindi only: Hindi, then the
+    # presentable results (full pipeline on sample 1, temporal case study with the Marathi arm of C2),
+    # then Urdu, Marathi and Tamil, then everything else.
     return [
-        (f"translations {lang}", tc.ESTIMATE, lambda lang=lang: translate_and_publish(lang)) for lang in ("hi", "ur", "mr", "ta")
-    ] + [
+        translations("hi"),
         ("pipeline on sample 1", p1.ESTIMATE, lambda: p1.run(gold, budget)),
         ("temporal C4 (+ Marathi arm of C2)", temporal.ESTIMATE_PER_SAMPLE, lambda: temporal.run(budget)),
+        translations("ur"), translations("mr"), translations("ta"),
         ("k=3 self-consistency (finish)", sc.ESTIMATE_PER_SAMPLE, lambda: sc.run(gold, 3, budget)),
         ("k=3 pmksypdmc (silver)", sc.ESTIMATE_PER_SAMPLE, lambda: sc.run(["_silver_pmksypdmc"], 3, budget)),
         ("baseline 1", b1.ESTIMATE, lambda: b1.run(gold, budget)),
@@ -78,11 +82,14 @@ def queue(name: str, budget: int):
     ]
 
 
+_ORDER: list[str] = []  # the running queue's item order, recorded in every state write
+
+
 def _state(**fields) -> None:
     path = harness.control_dir() / "queue_state.json"
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps({"pid": os.getpid(), "updated": datetime.now().isoformat(timespec="seconds"), **fields},
-                               indent=2), encoding="utf-8")
+    path.write_text(json.dumps({"pid": os.getpid(), "updated": datetime.now().isoformat(timespec="seconds"),
+                                **fields, "order": _ORDER}, indent=2, ensure_ascii=False), encoding="utf-8")
 
 
 def _wait(seconds: float, sleep=time.sleep, clock=time.time) -> str | None:
@@ -104,8 +111,10 @@ def main(names: list[str], budget: int, steps=None, sleep=time.sleep, clock=time
         _log(f"refusing to start: {reason}")
         _state(phase="stopped", reason=reason)
         return "stopped"
-    _log(f"queue {names}; no call starts after {harness.stop_at().isoformat(timespec='minutes')}")
-    for label, estimate, step in steps if steps is not None else [s for name in names for s in queue(name, budget)]:
+    plan = steps if steps is not None else [s for name in names for s in queue(name, budget)]
+    _ORDER[:] = [label for label, _, _ in plan]
+    _log(f"queue {names}; no call starts after {harness.stop_at().isoformat(timespec='minutes')}; order: {' -> '.join(_ORDER)}")
+    for label, estimate, step in plan:
         while True:
             _state(phase="running", item=label)
             _log(f"{label}: start (rolling 24h {harness.tokens_spent_rolling():,})")

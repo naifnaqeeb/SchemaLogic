@@ -88,6 +88,15 @@ def progress() -> list[tuple[str, str]]:
     return rows
 
 
+# queue item label (scripts/run_queue.py) -> progress label above
+PROGRESS_OF = {"pipeline on sample 1": "pipeline on sample 1",
+               "temporal C4 (+ Marathi arm of C2)": "temporal C4 + Marathi C2 arm",
+               "k=3 self-consistency (finish)": "k=3 self-consistency, PMMVY",
+               "k=3 pmksypdmc (silver)": "k=3 pmksypdmc (silver)", "baseline 1": "baseline 1",
+               "gate re-validation (judge on 21 candidates)": "gate re-validation",
+               "RAG with/without retrieval": "RAG with/without retrieval"}
+
+
 def status() -> None:
     state = _queue_state()
     pid = state.get("pid")
@@ -106,9 +115,19 @@ def status() -> None:
     if reason:
         print(f"blocked:       {reason}")
     print(f"tokens, last 24h (rolling): {harness.tokens_spent_rolling():,} of the queue's 175,000")
-    print("\nprogress:")
-    for label, value in progress():
-        print(f"  {label:<32} {value}")
+    rows = dict(progress())
+    order = state.get("order") or []
+    if order:
+        print("\nqueue order (as the running process has it) and progress:")
+        current = state.get("item")
+        for i, label in enumerate(order, 1):
+            key = label if label.startswith("translations") else PROGRESS_OF.get(label, label)
+            marker = "->" if label == current and state.get("phase") in ("running", "waiting") else "  "
+            print(f" {marker} {i:>2}. {key:<32} {rows.pop(key, '?')}")
+    if rows:
+        print("\nprogress:" if not order else "\nnot in the queue:")
+        for label, value in rows.items():
+            print(f"     {label:<32} {value}")
     log = harness.control_dir() / LOG
     if log.exists():
         print(f"\nlast log lines ({log.relative_to(ROOT)}):")

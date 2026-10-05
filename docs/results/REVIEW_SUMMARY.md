@@ -6,9 +6,9 @@ Model: `openai/gpt-oss-120b` on Groq (free tier). **All samples are small**; rea
 decimals.*
 
 > **Still running (background queue, stops 2026-10-07 10:00 so the demo has the full Groq quota):**
-> catalogue translations (Hindi first, then Urdu, Marathi, Tamil) → full pipeline (judge → gate) on
-> Baseline 3's extraction → temporal case study, pre-amendment arms (+ Marathi arm of the cross-lingual
-> study). **Will not run before the review** at the current quota: Baseline 1, gate re-validation on
+> Hindi translations → full pipeline (judge → gate) on Baseline 3's extraction → temporal case study,
+> pre-amendment arms (+ Marathi arm of the cross-lingual study) → Urdu, Marathi, Tamil translations (the
+> demo uses English and Hindi). **Will not run before the review** at the current quota: Baseline 1, gate re-validation on
 > injected errors (judge part), RAG with/without retrieval, PMMVY samples 2–3, the pmksypdmc test.
 > Tables for these show "no results yet". Check progress: `python scripts/queue_status.py`.
 
