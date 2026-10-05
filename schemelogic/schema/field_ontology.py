@@ -789,6 +789,20 @@ def display_label_for(field: str) -> str:
 # comparison treats as the known vocabulary). A canonical field's phrasing is never overridden.
 _RUNTIME_CITIZEN_QUESTIONS: dict[str, str] = {}
 _RUNTIME_HOUSEHOLD_QUESTIONS: dict[str, str] = {}  # generated household phrasings, AI-Checked fields
+# Generated phrasings in the citizen's language (multilingual stage 2): language -> {field: question};
+# household ones under field + "@household". English stays in the two dicts above.
+_RUNTIME_LOCALIZED_QUESTIONS: dict[str, dict[str, str]] = {}
+
+
+def register_localized_question(field: str, question: str, language: str, household: bool = False) -> bool:
+    if get_field(field) is not None or not question.strip() or language == "en":
+        return False
+    _RUNTIME_LOCALIZED_QUESTIONS.setdefault(language, {})[field + ("@household" if household else "")] = question.strip()
+    return True
+
+
+def localized_question_for(field: str, language: str, household: bool = False) -> str | None:
+    return _RUNTIME_LOCALIZED_QUESTIONS.get(language, {}).get(field + ("@household" if household else ""))
 
 
 def register_citizen_question(field: str, question: str) -> bool:
@@ -809,6 +823,7 @@ def registered_citizen_questions() -> dict[str, str]:
 def clear_registered_citizen_questions() -> None:
     _RUNTIME_CITIZEN_QUESTIONS.clear()
     _RUNTIME_HOUSEHOLD_QUESTIONS.clear()
+    _RUNTIME_LOCALIZED_QUESTIONS.clear()
 
 
 def citizen_question_for(field: str) -> str | None:

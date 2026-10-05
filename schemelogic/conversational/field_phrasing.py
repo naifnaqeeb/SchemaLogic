@@ -80,6 +80,20 @@ def _save_disk_cache(cache: dict[str, str]) -> None:
 
 
 _HOUSEHOLD_SUFFIX = "@household"  # disk-cache key suffix for a field's household phrasing
+_LANGUAGES = ("hi", "ur", "mr", "ta")
+
+
+def _cache_key(field: str, household: bool, language: str) -> str:
+    """English keys are unchanged ("field", "field@household"); other languages append "@<lang>", so a
+    phrasing in one language is never served as another's."""
+    return field + (_HOUSEHOLD_SUFFIX if household else "") + ("" if language == "en" else f"@{language}")
+
+
+def _parse_key(key: str) -> tuple[str, bool, str]:
+    parts = key.split("@")
+    language = parts.pop() if len(parts) > 1 and parts[-1] in _LANGUAGES else "en"
+    household = len(parts) > 1 and parts[-1] == "household"
+    return parts[0], household, language
 
 
 def _system_prompt(answer_type: str, language: str = "en", household: bool = False) -> str:
@@ -182,7 +196,7 @@ def phrase_field_question(
         return None  # canonical fields already have a human-written question
 
     cache = _load_disk_cache() if cache is None else cache
-    key = field + _HOUSEHOLD_SUFFIX if household else field
+    key = _cache_key(field, household, language)
     if key in cache:
         return cache[key]
 
@@ -225,7 +239,7 @@ def phrase_field_question(
     return candidate
 
 
-def _novel_fields(scheme: Scheme) -> list[tuple[str, str]]:
+def _novel_fields(scheme: Scheme, language: str = "en") -> list[tuple[str, str]]:
     """(field, answer_type) for every predicate field in `scheme` the ontology can't phrase.
     answer_type is inferred the same way question_selector does it, so the generated question
     matches the answer affordance the citizen will actually be given (buttons vs free text)."""
@@ -248,7 +262,9 @@ def _novel_fields(scheme: Scheme) -> list[tuple[str, str]]:
         name = getattr(node, "field", None)
         if name and name not in seen:
             seen.add(name)
-            if field_ontology.citizen_question_for(name) is None:
+            # English: fields with no question yet. Another language: every non-canonical field (an
+            # English phrasing registered earlier doesn't make it phrased in this language)
+            if (field_ontology.get_field(name) is None) if language != "en" else (field_ontology.citizen_question_for(name) is None):
                 out.append((name, answer_type_for(getattr(node, "value", None))))
 
     walk(scheme.inclusion)
@@ -270,11 +286,19 @@ def ensure_questions_for_scheme(scheme: Scheme, language: str = "en") -> int:
     registered = 0
     context = scheme.scheme_id.replace("-", " ").strip() or None
     family_wide = family_wide_fields(scheme)
-    for field, answer_type in _novel_fields(scheme):
+
+    def register(field: str, question: str, household: bool) -> bool:
+        if language != "en":
+            return field_ontology.register_localized_question(field, question, language, household=household)
+        if household:
+            return field_ontology.register_household_question(field, question)
+        return field_ontology.register_citizen_question(field, question)
+
+    for field, answer_type in _novel_fields(scheme, language):
         question = phrase_field_question(
             field, answer_type=answer_type, language=language, cache=cache, scheme_context=context
         )
-        if question and field_ontology.register_citizen_question(field, question):
+        if question and register(field, question, household=False):
             registered += 1
         if field in family_wide:
             # Checked for the whole family: the applicant must be asked about the household. Without
@@ -284,7 +308,7 @@ def ensure_questions_for_scheme(scheme: Scheme, language: str = "en") -> int:
                 field, answer_type=answer_type, language=language, cache=cache,
                 scheme_context=context, household=True,
             )
-            if household and field_ontology.register_household_question(field, household):
+            if household and register(field, household, household=True):
                 registered += 1
     return registered
 
@@ -295,9 +319,12 @@ def preload_registered_questions() -> int:
     in-memory registry does not)."""
     registered = 0
     for key, question in _load_disk_cache().items():
-        if key.endswith(_HOUSEHOLD_SUFFIX):
-            ok = field_ontology.register_household_question(key[: -len(_HOUSEHOLD_SUFFIX)], question)
+        field, household, language = _parse_key(key)
+        if language != "en":
+            ok = field_ontology.register_localized_question(field, question, language, household=household)
+        elif household:
+            ok = field_ontology.register_household_question(field, question)
         else:
-            ok = field_ontology.register_citizen_question(key, question)
+            ok = field_ontology.register_citizen_question(field, question)
         registered += ok
     return registered

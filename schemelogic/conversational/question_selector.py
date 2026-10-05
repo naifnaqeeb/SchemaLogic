@@ -27,7 +27,10 @@ from schemelogic.schema.field_ontology import (
     get_field,
     household_question_for,
     is_sensitive,
+    localized_question_for,
 )
+from schemelogic.conversational.messages import MESSAGES, field_text, text, translated
+from schemelogic.schema.field_ontology import FAMILY_SCOPE
 from schemelogic.schema.models import Quantifier
 from schemelogic.schema.models import Scheme
 
@@ -181,9 +184,32 @@ def family_wide_fields(scheme: Scheme) -> set[str]:
     return family - own
 
 
-def household_question(field: str, scheme_id: str, answer_type: str) -> str:
+def household_question(field: str, scheme_id: str, answer_type: str, language: str = "en") -> str:
     """The applicant's question for a family-wide fact: the field's own household phrasing for this
-    scheme if it has one, else a plain generic one -- never an applicant-only question."""
+    scheme if it has one, else a plain generic one -- never an applicant-only question. In another
+    language, the template and the scheme's family scope are translated separately; if either is
+    missing the whole question stays English rather than mixing languages."""
+    english = _household_english(field, scheme_id, answer_type)
+    if language == "en":
+        return english
+    spec = get_field(field)
+    scope_key = f"family_scope.{scheme_id}" if scheme_id in FAMILY_SCOPE else "family_scope.default"
+    scope = translated(scope_key, language, family_scope_for(scheme_id))
+    if spec is not None and spec.household_question:
+        template = translated(f"field_household.{field}", language, spec.household_question)
+        return template.format(members=scope) if template and scope else english
+    if spec is not None and spec.citizen_question == english:  # already household-worded
+        return field_text("field", field, english, language)
+    generated = localized_question_for(field, language, household=True)
+    if generated:
+        return generated
+    key = "question.household_generic_value" if answer_type == "number" else "question.household_generic_boolean"
+    label = field_text("label", field, display_label_for(field), language)
+    template = translated(key, language, MESSAGES[key])
+    return template.format(members=scope, label=label) if template and scope else english
+
+
+def _household_english(field: str, scheme_id: str, answer_type: str) -> str:
     specific = household_question_for(field, scheme_id)
     if specific:
         return specific
@@ -193,7 +219,17 @@ def household_question(field: str, scheme_id: str, answer_type: str) -> str:
     return f'Does any one of {members} meet this: "{label}"?'
 
 
-def build_question(missing: MissingField, scheme: Scheme | None = None) -> Question:
+def _localized(field: str, english: str, language: str, known: bool, kind: str) -> str:
+    """A field question in `language`: the reviewed-or-unreviewed catalogue translation for an
+    ontology field, a phrasing generated in that language for an AI-Checked one, else English."""
+    if language == "en":
+        return english
+    if known:
+        return field_text(kind, field, english, language)
+    return (localized_question_for(field, language) if kind == "field" else None) or english
+
+
+def build_question(missing: MissingField, scheme: Scheme | None = None, language: str = "en") -> Question:
     """Uses the ontology's own citizen_question directly (Part A, readability pass) — never the
     technical `description`. Fields the ontology doesn't know about yet (an ontology_proposed
     field from a live extraction run) get a plain, generic fallback phrasing instead of a
@@ -207,17 +243,20 @@ def build_question(missing: MissingField, scheme: Scheme | None = None) -> Quest
         # conjugation only in subject position, not as the object of a preposition.
         base_question = f'Do you meet this criterion: "{label}"?' if answer_type == "boolean" else f'What is your value for "{label}"?'
 
+    known = get_field(missing.field) is not None
     if missing.member == "self" and scheme is not None and missing.field in family_wide_fields(scheme):
-        prompt = household_question(missing.field, scheme.scheme_id, answer_type)
+        prompt = household_question(missing.field, scheme.scheme_id, answer_type, language)
     elif missing.member == "self":
-        prompt = base_question
+        prompt = _localized(missing.field, base_question, language, known, "field")
     else:
-        prompt = f"This next one is about one of your family members — {_second_to_third_person(base_question)}"
+        member_question = _localized(missing.field, _second_to_third_person(base_question), language, known, "field_member")
+        prompt = text("question.family_prefix", language, question=member_question)
 
-    quick_replies: tuple[str, ...] | None = ("Yes", "No") if answer_type == "boolean" else None
+    quick_replies: tuple[str, ...] | None = (
+        (text("reply.yes", language), text("reply.no", language)) if answer_type == "boolean" else None)
     allows_decline = is_sensitive(missing.field)
     if allows_decline:
-        quick_replies = (*(quick_replies or ()), DECLINE_REPLY)
+        quick_replies = (*(quick_replies or ()), text("reply.decline", language))
     return Question(
         field=missing.field, member=missing.member, answer_type=answer_type,
         prompt=prompt, quick_replies=quick_replies, allows_decline=allows_decline,
@@ -328,7 +367,7 @@ def _could_change_verdict(scheme: Scheme, profile: dict[str, Any], target: tuple
         return True  # can't prove it irrelevant: ask, as the structural walk alone would
 
 
-def _screened_question(missing: MissingField, profile: dict[str, Any], scheme: Scheme) -> Question:
+def _screened_question(missing: MissingField, profile: dict[str, Any], scheme: Scheme, language: str = "en") -> Question:
     """A sensitive fact with a gentler screening question is preceded by it: an answer of No settles
     the sensitive fact without asking it (ConversationSession.apply_answer)."""
     spec = get_field(missing.field)
@@ -337,11 +376,11 @@ def _screened_question(missing: MissingField, profile: dict[str, Any], scheme: S
         record = profile.get("self", {}) if missing.member == "self" else (
             profile.get("family_members", [])[int(missing.member[len("family_member["):-1])])
         if screen not in record:
-            return build_question(MissingField(field=screen, member=missing.member, cat=None, expected_value=True), scheme)
-    return build_question(missing, scheme)
+            return build_question(MissingField(field=screen, member=missing.member, cat=None, expected_value=True), scheme, language)
+    return build_question(missing, scheme, language)
 
 
-def select_next_question(scheme: Scheme, profile: dict[str, Any]) -> Question | None:
+def select_next_question(scheme: Scheme, profile: dict[str, Any], language: str = "en") -> Question | None:
     """Returns None once the profile already has enough information for a definite verdict
     (ELIGIBLE or INELIGIBLE) — the caller should stop asking questions and move to the final
     answer. Never calls an LLM."""
@@ -363,10 +402,10 @@ def select_next_question(scheme: Scheme, profile: dict[str, Any]) -> Question | 
     # a government job, five acres or a four-wheeler each settle the verdict without it).
     ordinary = [c for c in relevant if not is_sensitive(c.field)]
     if ordinary:
-        return build_question(ordinary[0], scheme)
+        return build_question(ordinary[0], scheme, language)
     if relevant:
-        return _screened_question(relevant[0], profile, scheme)
+        return _screened_question(relevant[0], profile, scheme, language)
     # No single answer can change the verdict, yet the evaluator can't decide: the fact feeding several
     # rules cancels out (KNOWN_ISSUES, "Kleene evaluation is incomplete..."). Asking the first fact
     # resolves that, and is the only way the conversation reaches the verdict every answer leads to.
-    return build_question(candidates[0], scheme)
+    return build_question(candidates[0], scheme, language)

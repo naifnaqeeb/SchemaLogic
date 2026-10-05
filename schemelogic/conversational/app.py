@@ -66,7 +66,7 @@ def _render_verdict_message(msg: dict) -> None:
             # alone is too quiet a signal at the moment a citizen reads an actual verdict.
             st.warning(i18n.t("ai_checked_verdict_disclaimer"))
         with st.expander("Why? (plain-language explanation)"):
-            st.markdown(trace_to_citizen_english(msg["trace"]))
+            st.markdown(trace_to_citizen_english(msg["trace"], msg.get("language", "en")))
         with st.expander("Technical detail (field names, raw trace)"):
             st.caption("For transparency/audit — not needed to understand the result above.")
             st.json(msg["trace"])

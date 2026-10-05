@@ -35,6 +35,7 @@ _PROVIDER_BINDINGS = (
     "schemelogic.conversational.intake.chat_completion_with_fallback",
     "schemelogic.conversational.phrasing.chat_completion_with_fallback",
     "schemelogic.conversational.answer_parser.chat_completion_with_fallback",
+    "schemelogic.conversational.description_translation.chat_completion_with_fallback",  # stage 2, 2026-10-05
 )
 
 _DISABLED = ProviderFailure(
@@ -71,6 +72,9 @@ def _isolate_disk_caches(tmp_path, monkeypatch):
     monkeypatch.setattr(
         "schemelogic.conversational.field_phrasing.DISK_CACHE_PATH",
         tmp_path / "field_questions.json",
+    )
+    monkeypatch.setattr(
+        "schemelogic.conversational.description_translation.CACHE_DIR", tmp_path / "translations"
     )
 
 

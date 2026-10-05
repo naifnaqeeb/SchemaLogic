@@ -25,15 +25,17 @@ invariant -- don't do it.
 
 from __future__ import annotations
 
+import dataclasses
 import json
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, MutableMapping
 
-from schemelogic.conversational import ai_checked, answer_parser, router
+from schemelogic.conversational import ai_checked, answer_parser, description_translation, router
 from schemelogic.conversational.answer_parser import AnswerParseResult
 from schemelogic.conversational.intake import IntakeResult, parse_opening_message
 from schemelogic.conversational.phrasing import phrase_verdict, verdict_headline
+from schemelogic.conversational.messages import LANGUAGES, text
 from schemelogic.conversational.session import AnswerParseError, ConversationSession, is_decline
 from schemelogic.evaluator.symbolic_engine import EvaluationError
 from schemelogic.discovery.indexer import (
@@ -106,8 +108,18 @@ def reset(state: State) -> None:
     init_state(state)
 
 
-def _say(state: State, text: str, kind: str = "text", **extra: Any) -> None:
-    state["messages"].append({"role": "assistant", "kind": kind, "text": text, **extra})
+def _say(state: State, message: str, kind: str = "text", **extra: Any) -> None:
+    state["messages"].append({"role": "assistant", "kind": kind, "text": message, **extra})
+
+
+def _lang(state: State) -> str:
+    """The language to reply in: the citizen's own, detected per message (so it follows switches); when
+    they wrote in English, the UI's language toggle. English unless a supported language is in play."""
+    detected = state.get("language", "en")
+    if detected in LANGUAGES:
+        return detected
+    ui = state.get("ui_language", "en")
+    return ui if ui in LANGUAGES else "en"
 
 
 def _hear(state: State, text: str) -> None:
@@ -129,6 +141,7 @@ def handle_user_message(state: State, raw_message: str, deps: ChatDeps) -> None:
     transcript, classifies it, and appends whatever assistant response results. Never raises: the
     router itself never raises (heuristic fallback), and every branch below has a safe default."""
     init_state(state)
+    state["ui_language"] = deps.language
     raw_message = raw_message.strip()
     if not raw_message:
         return
@@ -195,9 +208,9 @@ def _handle_greeting(state: State) -> None:
     quota for the calls that actually need it (Step 4's discipline requirement)."""
     session: ConversationSession | None = state.get("conversation_session")
     if session is not None and session.pending_question is not None:
-        _say(state, f"No rush! Whenever you're ready: {session.pending_question.prompt}")
+        _say(state, text("chat.greeting_pending", _lang(state), question=session.pending_question.prompt))
         return
-    _say(state, "Hey! Tell me a bit about your situation or what kind of help you're looking for, and I'll check real scheme rules for you.")
+    _say(state, text("chat.greeting", _lang(state)))
 
 
 # --- eligibility request (Bug 1 fix: "am I eligible for this?" about the currently-shown scheme) --
@@ -207,15 +220,15 @@ def _handle_eligibility_request(state: State, deps: ChatDeps) -> None:
     scheme_id = state.get("current_scheme_id")
     tier = state.get("current_scheme_tier")
     if scheme_id is None:
-        _say(state, "Which scheme did you mean? Search for one first, or pick one from Browse all schemes.")
+        _say(state, text("chat.which_scheme", _lang(state)))
         return
 
     if tier in ("gold", "ai_checked"):
         session: ConversationSession | None = state.get("conversation_session")
         if session is not None and session.pending_question is not None:
-            _say(state, f"Let's finish checking {scheme_id} first — {session.pending_question.prompt}")
+            _say(state, text("chat.finish_first", _lang(state), scheme_id=scheme_id, question=session.pending_question.prompt))
         else:
-            _say(state, f"I already checked {scheme_id} for you above — scroll up to see the result, or search again to check a different scheme.")
+            _say(state, text("chat.already_checked", _lang(state), scheme_id=scheme_id))
         return
 
     # tier == "silver": extraction hasn't succeeded for this scheme (not yet tried, or already
@@ -223,7 +236,7 @@ def _handle_eligibility_request(state: State, deps: ChatDeps) -> None:
     # the session cache either way.
     record = deps.silver_by_slug.get(scheme_id)
     if record is None:
-        _say(state, "Sorry, I couldn't find that scheme anymore.")
+        _say(state, text("chat.scheme_gone", _lang(state)))
         return
     _attempt_ai_checked_extraction(state, scheme_id, record, deps)
 
@@ -237,7 +250,7 @@ def _note_if_abandoning_pending(state: State, new_scheme_id: str | None = None) 
         return
     if new_scheme_id is not None and session.scheme.scheme_id == new_scheme_id:
         return  # re-selecting the same in-progress scheme isn't an abandonment
-    _say(state, f"(Switching away from {session.scheme.scheme_id} for now — search for it again anytime to restart that check.)")
+    _say(state, text("chat.switching_away", _lang(state), scheme_id=session.scheme.scheme_id))
 
 
 def _handle_search(state: State, query: str, deps: ChatDeps) -> None:
@@ -247,10 +260,10 @@ def _handle_search(state: State, query: str, deps: ChatDeps) -> None:
     items = [chunk for chunk, _score in results]
     state["shortlist"] = items
     if not items:
-        _say(state, "Nothing matched closely. Try describing it differently, or a different situation.")
+        _say(state, text("chat.nothing_matched", _lang(state)))
         return
-    _say(state, "Here's what I found", kind="shortlist", items=items)
-    _say(state, "Want more detail on any of these, or should I check your eligibility for one? Just tell me, or click Select.")
+    _say(state, text("chat.found", _lang(state)), kind="shortlist", items=items)
+    _say(state, text("chat.found_followup", _lang(state)))
 
 
 # --- scheme lookup / selection -----------------------------------------------------------------
@@ -274,6 +287,7 @@ def select_scheme(state: State, scheme_id: str, source_type: str, deps: ChatDeps
     priority over the query_context-based intake parse below (which is for free text, not a
     ready-made profile)."""
     init_state(state)
+    state["ui_language"] = deps.language
     _note_if_abandoning_pending(state, new_scheme_id=scheme_id)
     if source_type == "gold":
         scheme = load_gold_scheme(deps.gold_dir, scheme_id)
@@ -285,7 +299,7 @@ def select_scheme(state: State, scheme_id: str, source_type: str, deps: ChatDeps
 
     record = deps.silver_by_slug.get(scheme_id)
     if record is None:
-        _say(state, "Sorry, I couldn't find that scheme anymore.")
+        _say(state, text("chat.scheme_gone", _lang(state)))
         return
 
     state["current_scheme_id"] = scheme_id
@@ -305,18 +319,14 @@ def _attempt_ai_checked_extraction(
     cache = state["scheme_cache"]
     already_attempted = scheme_id in cache
     if not already_attempted:
-        _say(state, "Checking the rules for this scheme now...")
+        _say(state, text("chat.checking_rules", _lang(state)))
     scheme, failure = ai_checked.extract_with_reason(scheme_id, record, cache)
 
     if scheme is not None:
         if not already_attempted:
-            _say(
-                state,
-                f"I ran automatic rule extraction on **{record.get('scheme_name', scheme_id)}** and it "
-                "validated, so I can check your eligibility the same way as a verified scheme — just "
-                "know this is AI-Checked (rules extracted automatically), not human-verified.",
-            )
+            _say(state, text("chat.ai_checked_ok", _lang(state), scheme_name=record.get("scheme_name", scheme_id)))
         state["current_scheme_tier"] = "ai_checked"
+        ai_checked.ensure_localized_questions(scheme, _lang(state))  # no-op in English
         _start_question_loop(state, scheme_id, "ai_checked", scheme, deps, initial_profile=initial_profile)
         return
 
@@ -326,25 +336,11 @@ def _attempt_ai_checked_extraction(
         # otherwise would be a false statement about the scheme, and would discourage the citizen
         # from the retry that will very likely work (see ai_checked._RETRYABLE_FAILURES: these
         # aren't session-cached either, so selecting the scheme again really does retry).
-        _say(
-            state,
-            f"I couldn't reach the rule-extraction service just now, so I haven't checked "
-            f"**{record.get('scheme_name', scheme_id)}**'s rules yet — here's the description as "
-            "listed meanwhile. Selecting it again in a moment will retry the check.",
-        )
+        _say(state, text("chat.extraction_unreachable", _lang(state), scheme_name=record.get("scheme_name", scheme_id)))
     elif already_attempted:
-        _say(
-            state,
-            f"I already tried automatic rule extraction for **{record.get('scheme_name', scheme_id)}** "
-            "earlier this session and it didn't produce reliable eligibility rules, so I won't retry — "
-            "here's the description as listed.",
-        )
+        _say(state, text("chat.extraction_already_failed", _lang(state), scheme_name=record.get("scheme_name", scheme_id)))
     else:
-        _say(
-            state,
-            "I wasn't able to reliably extract eligibility rules for this scheme automatically — "
-            "here's the description as listed.",
-        )
+        _say(state, text("chat.extraction_failed", _lang(state)))
     _show_description_only(state, scheme_id, record, deps)
 
 
@@ -359,14 +355,14 @@ def _apply_initial_profile(session: ConversationSession, profile: dict) -> None:
 def _start_question_loop(
     state: State, scheme_id: str, tier: str, scheme: Scheme, deps: ChatDeps, initial_profile: dict | None = None,
 ) -> None:
-    _say(state, f"Let's check your eligibility for {scheme_id}.", kind="scheme_intro", scheme_id=scheme_id, tier=tier)
+    _say(state, text("chat.lets_check", _lang(state), scheme_id=scheme_id), kind="scheme_intro", scheme_id=scheme_id, tier=tier)
     # Bug 3 fix: once a real Q&A session starts, a shortlist selection is no longer a live
     # possibility -- clearing it here stops a stale shortlist from several turns earlier from
     # confusing the router (heuristic AND live LLM, since it also drops out of the system prompt)
     # into reading a free-text answer as a shortlist reference (see router._heuristic_classify's
     # matching fix for the other half of this).
     state["shortlist"] = None
-    session = ConversationSession(scheme=scheme)
+    session = ConversationSession(scheme=scheme, language=_lang(state))  # the first question in their language
     query_context = state.get("query_context", "")
     if initial_profile:
         _apply_initial_profile(session, initial_profile)
@@ -374,11 +370,7 @@ def _start_question_loop(
         intake_result = parse_opening_message(query_context)
         if isinstance(intake_result, IntakeResult):
             _apply_initial_profile(session, intake_result.profile)
-            _say(
-                state,
-                f"Starting from what you already told me — I'll only ask about what's still "
-                f"missing. (via {intake_result.provider_used})",
-            )
+            _say(state, text("chat.intake_used", _lang(state), provider=intake_result.provider_used))
     state["conversation_session"] = session
     state["conversation_tier"] = tier
     _advance(state, deps)
@@ -401,11 +393,13 @@ def _advance(state: State, deps: ChatDeps) -> None:
         _say(state, q.prompt, kind="question", quick_replies=q.quick_replies)
         return
 
-    phrased = phrase_verdict(result, language=deps.language)
+    language = _lang(state)
+    phrased = phrase_verdict(result, language=language)
     next_steps = _resolve_next_steps(session.scheme.scheme_id, tier, deps)
     _say(
         state, phrased, kind="verdict",
-        verdict_value=result.verdict.value, headline=verdict_headline(result), trace=result.trace,
+        verdict_value=result.verdict.value, headline=verdict_headline(result, language), trace=result.trace,
+        language=language,
         scheme_id=session.scheme.scheme_id, tier=tier, next_steps=next_steps,
     )
     state["conversation_session"] = None
@@ -419,10 +413,7 @@ def _evaluation_failed(state: State, session: ConversationSession, exc: Evaluati
     office, and the session ends so the bad fact isn't re-evaluated on every later message."""
     _say(
         state,
-        f"I couldn't work out a result for {session.scheme.scheme_id}: one of the answers I have isn't in "
-        "a form the scheme's rules can use (for example, words where a number was needed), and I won't "
-        "guess. This is not a decision about your eligibility. You can start the check again, or ask "
-        "at your local office.",
+        text("chat.evaluation_failed", _lang(state), scheme_id=session.scheme.scheme_id),
         # kind stays "text" so both UIs render it; `error` marks it for anything that needs to tell
         error="evaluation_error", scheme_id=session.scheme.scheme_id, detail=str(exc),
     )
@@ -444,7 +435,18 @@ def _resolve_next_steps(scheme_id: str, tier: str, deps: ChatDeps) -> NextSteps:
 
 def _show_description_only(state: State, scheme_id: str, record: dict, deps: ChatDeps) -> None:
     ns = next_steps_for_silver(record)
-    _say(state, "", kind="scheme_detail", scheme_id=scheme_id, tier="silver", record=record, next_steps=ns)
+    language = _lang(state)
+    translated = description_translation.translate_record(scheme_id, record, language) if language != "en" else None
+    if not translated:
+        _say(state, "", kind="scheme_detail", scheme_id=scheme_id, tier="silver", record=record, next_steps=ns)
+        return
+    # Multilingual stage 2: shown translated, labelled, with the English original kept on the message.
+    shown = {**record, **{f: v for f, v in translated.items() if f in ("description", "eligibility_text")}}
+    ns_shown = dataclasses.replace(ns, **{f: translated[f] for f in ("benefits_text", "application_process_text")
+                                          if f in translated and getattr(ns, f, None)})
+    _say(state, text("chat.machine_translated", language))
+    _say(state, "", kind="scheme_detail", scheme_id=scheme_id, tier="silver", record=shown, next_steps=ns_shown,
+         machine_translated=True, language=language, original_record=record)
 
 
 # --- answering a pending question ---------------------------------------------------------------
@@ -464,6 +466,7 @@ def submit_quick_reply(state: State, reply_text: str, deps: ChatDeps) -> None:
     session: ConversationSession | None = state.get("conversation_session")
     if session is None or session.pending_question is None:
         return
+    state["ui_language"] = deps.language
     _hear(state, reply_text)
     if session.pending_question.allows_decline and is_decline(reply_text):
         _declined(state, session)
@@ -471,7 +474,7 @@ def submit_quick_reply(state: State, reply_text: str, deps: ChatDeps) -> None:
     try:
         session.apply_answer(reply_text)
     except AnswerParseError:
-        _say(state, "Sorry, something went wrong reading that reply — please try again.")
+        _say(state, text("chat.quick_reply_error", _lang(state)))
         return
     _advance(state, deps)
 
@@ -485,7 +488,7 @@ def _handle_sensitive_answer(state: State, raw_message: str, deps: ChatDeps) -> 
     try:
         session.apply_answer(raw_message)
     except AnswerParseError:
-        _say(state, "You can answer Yes, No, or “Prefer not to say” — whichever you are comfortable with.")
+        _say(state, text("chat.sensitive_reask", _lang(state)))
         return
     _advance(state, deps)
 
@@ -498,9 +501,7 @@ def _declined(state: State, session: ConversationSession) -> None:
     scheme_id = session.scheme.scheme_id
     _say(
         state,
-        f"That's completely fine — you don't need to tell me. You may qualify for {scheme_id} under a "
-        "special provision. Please check with your local office (for example your Gram Panchayat, Block "
-        "office or social welfare office); they can look at it with you in confidence.",
+        text("chat.declined", _lang(state), scheme_id=scheme_id),
         # kind stays "text" so both UIs render it; `outcome` marks it -- never a verdict
         outcome="special_provision_check_locally", scheme_id=scheme_id,
     )
@@ -518,14 +519,14 @@ def _handle_answer(state: State, raw_message: str, deps: ChatDeps, english_text:
         # English version when there is one (None for English: unchanged)
         llm_result = answer_parser.parse_answer_llm(english_text or raw_message, q.prompt, q.answer_type, language=deps.language)
         if not isinstance(llm_result, AnswerParseResult):
-            _say(state, "I couldn't quite understand that — could you rephrase? " + (
-                "You can also use the Yes/No buttons above." if q.quick_replies else ""
+            _say(state, text("chat.rephrase", _lang(state)) + (
+                text("chat.rephrase_buttons", _lang(state)) if q.quick_replies else ""
             ))
             return
         normalized = _to_canonical_answer_string(llm_result.value, q.answer_type)
         try:
             session.apply_answer(normalized)
         except AnswerParseError:
-            _say(state, "Sorry, I still couldn't quite parse that — could you try rephrasing?")
+            _say(state, text("chat.still_unparsed", _lang(state)))
             return
     _advance(state, deps)

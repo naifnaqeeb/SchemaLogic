@@ -116,6 +116,18 @@ def _ensure_citizen_questions(scheme: Scheme) -> None:
         pass
 
 
+def ensure_localized_questions(scheme: Scheme, language: str) -> None:
+    """Phrase this AI-Checked scheme's novel fields in the citizen's language (multilingual stage 2),
+    cached per field and language. Best-effort and cosmetic, exactly like _ensure_citizen_questions; a
+    no-op for English, whose phrasing happens at extraction time as before."""
+    if language == "en":
+        return
+    try:
+        field_phrasing.ensure_questions_for_scheme(scheme, language=language)
+    except Exception:  # noqa: BLE001
+        pass
+
+
 def build_source_text(record: dict) -> str:
     """Best available text for a silver (myScheme-scraped) record -- there's no raw source
     document for these the way gold schemes have one, so this concatenates whatever scraped

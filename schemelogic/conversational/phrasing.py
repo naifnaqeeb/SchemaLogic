@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import json
 
+from schemelogic.conversational.messages import text
 from schemelogic.evaluator.symbolic_engine import EvaluationResult, Verdict
 from schemelogic.llm.provider import ProviderFailure, chat_completion_with_fallback
 
@@ -25,31 +26,33 @@ _VERDICT_EMOJI = {
 }
 
 
+_OTHER_LANGUAGES = {"ur": "Urdu (اردو)", "mr": "Marathi (मराठी)", "ta": "Tamil (தமிழ்)"}
+
+
 def verdict_emoji(verdict: Verdict) -> str:
     return _VERDICT_EMOJI[verdict]
 
 
-def verdict_headline(result: EvaluationResult) -> str:
+def verdict_headline(result: EvaluationResult, language: str = "en") -> str:
     """Short, single-line, human-readable summary — for a badge/header anywhere in the UI.
     NEVER the raw Verdict enum value (e.g. "undetermined_missing_facts") — every caller that
     used to build its own badge text from `result.verdict.value` directly must use this instead."""
     scheme_id = result.trace.get("scheme_id", "this scheme")
-    emoji = verdict_emoji(result.verdict)
-    if result.verdict == Verdict.UNDETERMINED:
-        return f"{emoji} One more detail needed for {scheme_id}"
-    return f"{emoji} {_VERDICT_PHRASE[result.verdict].capitalize()} for {scheme_id}"
+    key = {Verdict.ELIGIBLE: "verdict.headline_eligible", Verdict.INELIGIBLE: "verdict.headline_ineligible",
+           Verdict.UNDETERMINED: "verdict.headline_undetermined"}[result.verdict]
+    return text(key, language, emoji=verdict_emoji(result.verdict), scheme_id=scheme_id)
 
 
-def plain_template_answer(result: EvaluationResult) -> str:
+def plain_template_answer(result: EvaluationResult, language: str = "en") -> str:
     """The non-LLM fallback. Always available, always correct (same verdict the LLM path would
     have phrased, just less warmly worded) — this is the actual safety net, not a degraded
     experience to apologize for. Never contains a raw Verdict enum value; runs with zero LLM
     dependency, so `phrase_verdict`'s optional LLM call is an enhancement on top of this, never
     the only source of readable text."""
     scheme_id = result.trace.get("scheme_id", "this scheme")
-    if result.verdict == Verdict.UNDETERMINED:
-        return f"I need one more detail to be sure about your eligibility for {scheme_id} — let's continue."
-    return f"Based on what you've told me, {_VERDICT_PHRASE[result.verdict]} for {scheme_id} — here's why:"
+    key = {Verdict.ELIGIBLE: "verdict.answer_eligible", Verdict.INELIGIBLE: "verdict.answer_ineligible",
+           Verdict.UNDETERMINED: "verdict.answer_undetermined"}[result.verdict]
+    return text(key, language, scheme_id=scheme_id)
 
 
 def _system_prompt(language: str = "en") -> str:
@@ -67,6 +70,11 @@ def _system_prompt(language: str = "en") -> str:
         # function is ever called) and never translates the scraped scheme data quoted inside the
         # trace, which stays in its original language regardless.
         prompt += " Respond in Hindi (हिन्दी), not English."
+    elif language in _OTHER_LANGUAGES:
+        # multilingual stage 2: the same instruction for the other supported languages; domain terms
+        # keep their exact form, as everywhere else
+        prompt += (f" Respond in {_OTHER_LANGUAGES[language]}, not English. Keep terms such as BPL, SC/ST, "
+                   "Group D and scheme names exactly as they appear.")
     return prompt
 
 
@@ -81,5 +89,5 @@ def phrase_verdict(result: EvaluationResult, language: str = "en") -> str:
     ]
     response = chat_completion_with_fallback(messages, temperature=0.3, max_tokens=300)
     if isinstance(response, ProviderFailure):
-        return plain_template_answer(result)
+        return plain_template_answer(result, language)
     return response.content

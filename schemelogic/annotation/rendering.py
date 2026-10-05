@@ -14,6 +14,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from schemelogic.conversational.messages import field_text, text
 from schemelogic.deferral.calibration_gate import GateDecision, evaluate_gate
 from schemelogic.extraction.judge_repair import JudgeFinding, JudgeReport
 from schemelogic.schema.field_ontology import display_label_for
@@ -67,7 +68,11 @@ def exclusion_to_english(exc: Exclusion) -> str:
     return line
 
 
-def _trace_node_to_citizen_lines(node: dict[str, Any], lines: list[str], depth: int = 0) -> None:
+def _label(field: str, language: str) -> str:
+    return field_text("label", field, display_label_for(field), language)
+
+
+def _trace_node_to_citizen_lines(node: dict[str, Any], lines: list[str], depth: int = 0, language: str = "en") -> None:
     """Citizen-facing rendering of a symbolic_engine.evaluate() TRACE node (has `result`/`actual`
     per predicate — not the static predicate-tree scheme_to_english renders above). Uses
     display_label_for(), never the raw snake_case field name — that stays in the technical view
@@ -76,42 +81,42 @@ def _trace_node_to_citizen_lines(node: dict[str, Any], lines: list[str], depth: 
     node_type = node.get("type")
     if node_type == "predicate":
         result = node.get("result")
-        mark = "Yes ✅" if result is True else ("No ❌" if result is False else "Not yet known ❓")
-        lines.append(f"{indent}- {display_label_for(node['field'])}: {mark}")
+        mark = text("trace.yes" if result is True else ("trace.no" if result is False else "trace.unknown"), language)
+        lines.append(f"{indent}- {_label(node['field'], language)}: {mark}")
     elif node_type in ("and", "or"):
-        connector = "All of these need to be true" if node_type == "and" else "At least one of these needs to be true"
+        connector = text("trace.all_of" if node_type == "and" else "trace.one_of", language)
         lines.append(f"{indent}- {connector}:")
         for child in node.get("children", []):
-            _trace_node_to_citizen_lines(child, lines, depth + 1)
+            _trace_node_to_citizen_lines(child, lines, depth + 1, language)
 
 
-def trace_to_citizen_english(trace: dict[str, Any]) -> str:
+def trace_to_citizen_english(trace: dict[str, Any], language: str = "en") -> str:
     """Full citizen-facing rendering of an evaluate() result's trace dict — inclusion criteria
     plus exclusions, every field shown via display_label_for(), never the raw field name and
     never the technical description/source_clause. This is the MAIN "why" view the conversational
     app shows inline; scheme_to_english/predicate_to_english (above) are the technical/annotator
     view, reachable only from a separate "technical detail" expander in the UI, never inline
     alongside this."""
-    lines: list[str] = ["What we checked to reach this result:", ""]
-    _trace_node_to_citizen_lines(trace["inclusion"], lines)
+    lines: list[str] = [text("trace.header", language), ""]
+    _trace_node_to_citizen_lines(trace["inclusion"], lines, language=language)
     exclusions = trace.get("exclusions") or []
     if exclusions:
         lines.append("")
-        lines.append("Things that would disqualify you:")
+        lines.append(text("trace.disqualify_header", language))
         for excl in exclusions:
             result = excl.get("result")
             if result is True:
-                mark = "Applies to you 🚫"
+                mark = text("trace.applies", language)
             elif result is False and _was_waived(excl):
                 # The disqualifying fact IS true, but an exception sets it aside (e.g. AB-PMJAY's
                 # 70+ route, PM-KISAN's Group D carve-out). "Doesn't apply" would tell a 70+ senior
                 # who owns a refrigerator that they don't own one.
-                mark = "True for you, but waived by an exception ✅"
+                mark = text("trace.waived", language)
             elif result is False:
-                mark = "Doesn't apply ✅"
+                mark = text("trace.does_not_apply", language)
             else:
-                mark = "Not yet known ❓"
-            lines.append(f"- {display_label_for(excl['field'])}: {mark}")
+                mark = text("trace.unknown", language)
+            lines.append(f"- {_label(excl['field'], language)}: {mark}")
     return "\n".join(lines)
 
 

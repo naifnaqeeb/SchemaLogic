@@ -38,7 +38,7 @@ def serialize_message(msg: dict) -> dict:
     Streamlit script."""
     out = {k: _serialize_value(v) for k, v in msg.items()}
     if msg.get("kind") == "verdict" and isinstance(msg.get("trace"), dict):
-        out["plain_explanation"] = trace_to_citizen_english(msg["trace"])
+        out["plain_explanation"] = trace_to_citizen_english(msg["trace"], msg.get("language", "en"))
     return out
 
 

@@ -10,6 +10,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from schemelogic.conversational.language import normalize_digits, yes_no
+from schemelogic.conversational.messages import all_quick_replies
 from schemelogic.conversational.question_selector import DECLINE_REPLY, Question, select_next_question
 from schemelogic.evaluator.symbolic_engine import EvaluationResult, Verdict, evaluate
 from schemelogic.schema.field_ontology import fields_screened_by
@@ -32,6 +33,8 @@ _DECLINE_PHRASES = (
 def is_decline(raw: str) -> bool:
     """Deterministic: the Prefer-not-to-say button, or a plain decline typed in its own words. Never an
     LLM -- a model reading "I'd rather not" as "no" would turn a decline into a definite verdict."""
+    if raw.strip() in all_quick_replies("reply.decline"):  # the button, in any language
+        return True
     text = " ".join(raw.lower().replace("’", "'").split()).strip(" .!")
     return text == DECLINE_REPLY.lower() or any(
         re.search(rf"(?<![\w']){re.escape(phrase)}(?![\w'])", text) for phrase in _DECLINE_PHRASES)
@@ -48,6 +51,10 @@ def _parse_answer(raw: str, answer_type: str) -> Any:
         word = yes_no(raw)  # हाँ / नहीं / ہاں / இல்லை / haan / nahi ... (English handled above, unchanged)
         if word is not None:
             return word
+        if raw in all_quick_replies("reply.yes"):  # a translated Yes button sends its own text
+            return True
+        if raw in all_quick_replies("reply.no"):
+            return False
         raise AnswerParseError(f"expected yes/no, got {raw!r}")
     if answer_type == "number":
         raw = normalize_digits(raw)  # ४५ / ٤٥ / ௪௫ -> 45; ASCII digits are untouched
@@ -106,7 +113,7 @@ class ConversationSession:
     def advance(self) -> Question | None:
         """Computes the next question (or None once enough is known for a definite verdict) and
         stores it as pending_question. Never calls an LLM."""
-        self.pending_question = select_next_question(self.scheme, self.profile)
+        self.pending_question = select_next_question(self.scheme, self.profile, self.language)
         if self.pending_question is not None:
             self.turns.append({"role": "assistant", "text": self.pending_question.prompt})
         return self.pending_question
