@@ -1,0 +1,203 @@
+{
+  "item": "self_consistency",
+  "gold_tag": "gold-v2",
+  "gold_commit": "82436ac11fb53421bf44c8c68e6333e1db353442",
+  "code_commit": "14d17f9",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "config": {
+    "k": 3,
+    "temperature": 0.2,
+    "extractor": "defaults"
+  },
+  "date": "2026-10-05",
+  "created_at": "2026-10-05T14:35:13",
+  "scheme_id": "PMAY-G",
+  "sample": 3,
+  "source_document_sha256": "f614c93821f510771790492801da10bdcefcc1a7484175c6f87846f2e00d9fee",
+  "usage": [
+    {
+      "call": "scheme_core_extraction",
+      "prompt_tokens": 5294,
+      "completion_tokens": 1561,
+      "total_tokens": 6855
+    },
+    {
+      "call": "scheme_meta_extraction",
+      "prompt_tokens": 1894,
+      "completion_tokens": 777,
+      "total_tokens": 2671
+    }
+  ],
+  "draft_extraction": {
+    "scheme_id": "PMAY-G",
+    "unit_of_eligibility": "family",
+    "inclusion": {
+      "or": [
+        {
+          "field": "is_houseless",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false,
+          "cat": "other"
+        },
+        {
+          "field": "lives_in_kutcha_house",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false,
+          "cat": "demographic"
+        },
+        {
+          "field": "is_secc_automatically_included",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false,
+          "cat": "economic"
+        }
+      ]
+    },
+    "exclusions": [
+      {
+        "field": "house_has_pucca_roof_or_wall",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "house_room_count",
+        "op": ">",
+        "value": 2,
+        "ontology_proposed": false,
+        "cat": "other",
+        "quantifier": "self",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "kisan_credit_card_limit_inr",
+        "op": ">=",
+        "value": 50000,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "is_govt_employee",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "occupation",
+        "quantifier": "some_family_member",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "owns_non_agricultural_enterprise_registered_with_govt",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "monthly_income_inr",
+        "op": ">",
+        "value": 15000,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "some_family_member",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "paid_income_tax_last_assessment_year",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "some_family_member",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "paid_professional_tax",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "some_family_member",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "owns_motorised_three_or_four_wheeler",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "owns_mechanized_agricultural_equipment_3_or_4_wheeler",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      }
+    ],
+    "temporal_validity": {
+      "valid_from": "2024-09-01",
+      "valid_to": null,
+      "extracted_at": "2026-10-05",
+      "supersedes": {
+        "rule_version": "PMAY-G prior exclusion criteria (13 parameters)",
+        "retired_predicate": {
+          "fishing_boat_exclusion": true,
+          "motorised_two_wheeler_exclusion": true,
+          "income_threshold": "Rs 10,000 per month"
+        },
+        "amendment_source": "September 2024 revision announcement"
+      }
+    },
+    "operational_requirements": [],
+    "extraction_metadata": {
+      "confidence": 0.95,
+      "source_clause": "Eligibility Criteria and Exclusion Criteria sections (including revised automatic exclusion criteria)",
+      "flagged_for_review": false
+    }
+  }
+}

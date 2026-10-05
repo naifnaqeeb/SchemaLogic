@@ -1,0 +1,158 @@
+{
+  "item": "self_consistency",
+  "gold_tag": "gold-v2",
+  "gold_commit": "82436ac11fb53421bf44c8c68e6333e1db353442",
+  "code_commit": "6cac897",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "config": {
+    "k": 3,
+    "temperature": 0.2,
+    "extractor": "defaults"
+  },
+  "date": "2026-10-05",
+  "created_at": "2026-10-05T00:46:52",
+  "scheme_id": "PM-KISAN",
+  "sample": 2,
+  "source_document_sha256": "f9bbbc8558971a46355b84b590f8dcfb5380dca9ebbda21010c716cc7acaf12f",
+  "usage": [
+    {
+      "call": "scheme_core_extraction",
+      "prompt_tokens": 4965,
+      "completion_tokens": 1058,
+      "total_tokens": 6023
+    },
+    {
+      "call": "scheme_meta_extraction",
+      "prompt_tokens": 1565,
+      "completion_tokens": 581,
+      "total_tokens": 2146
+    }
+  ],
+  "draft_extraction": {
+    "scheme_id": "PM-KISAN",
+    "unit_of_eligibility": "family",
+    "inclusion": {
+      "and": [
+        {
+          "field": "owns_cultivable_land_in_records",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false,
+          "cat": "occupation"
+        }
+      ]
+    },
+    "exclusions": [
+      {
+        "field": "is_institutional_landholder",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "institutional",
+        "quantifier": "self",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "holds_constitutional_or_political_post",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "political",
+        "quantifier": "some_family_member",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "is_serving_or_retired_govt_employee",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "occupation",
+        "quantifier": "some_family_member",
+        "except": {
+          "field": "is_group_d_class_iv_or_mts",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false
+        },
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "monthly_pension_inr",
+        "op": ">=",
+        "value": 10000,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "some_family_member",
+        "except": {
+          "field": "is_group_d_class_iv_or_mts",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false
+        },
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "paid_income_tax_last_assessment_year",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "some_family_member",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "is_practicing_registered_professional",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "professional",
+        "quantifier": "some_family_member",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "is_nri_per_income_tax_act_1961",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "citizenship",
+        "quantifier": "some_family_member",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      }
+    ],
+    "temporal_validity": {
+      "valid_from": "2019-06-01",
+      "valid_to": null,
+      "extracted_at": "2026-10-05",
+      "supersedes": null
+    },
+    "operational_requirements": [
+      "Beneficiary must have an Aadhaar-seeded bank account",
+      "Beneficiary must complete e-KYC"
+    ],
+    "extraction_metadata": {
+      "confidence": 0.95,
+      "source_clause": "Eligibility and Exclusion Categories sections",
+      "flagged_for_review": false
+    }
+  }
+}

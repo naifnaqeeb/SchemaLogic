@@ -1,0 +1,185 @@
+{
+  "item": "self_consistency",
+  "gold_tag": "gold-v2",
+  "gold_commit": "82436ac11fb53421bf44c8c68e6333e1db353442",
+  "code_commit": "c8b7508",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "config": {
+    "k": 3,
+    "temperature": 0.2,
+    "extractor": "defaults"
+  },
+  "date": "2026-10-05",
+  "created_at": "2026-10-05T00:30:28",
+  "scheme_id": "AB-PMJAY",
+  "sample": 2,
+  "source_document_sha256": "566d627be86b794f4346f6134b58eb2ce5a19647393465a7bf5310969c437fd6",
+  "usage": [
+    {
+      "call": "scheme_core_extraction",
+      "prompt_tokens": 5239,
+      "completion_tokens": 1662,
+      "total_tokens": 6901
+    },
+    {
+      "call": "scheme_meta_extraction",
+      "prompt_tokens": 1839,
+      "completion_tokens": 518,
+      "total_tokens": 2357
+    }
+  ],
+  "draft_extraction": {
+    "scheme_id": "AB-PMJAY",
+    "unit_of_eligibility": "family",
+    "inclusion": {
+      "or": [
+        {
+          "field": "is_secc_deprived_household",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false,
+          "cat": "economic"
+        },
+        {
+          "field": "age",
+          "op": ">=",
+          "value": 70,
+          "ontology_proposed": false,
+          "cat": "demographic"
+        },
+        {
+          "field": "is_urban_informal_worker",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false,
+          "cat": "occupation"
+        },
+        {
+          "field": "is_secc_automatically_included",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false,
+          "cat": "economic"
+        },
+        {
+          "field": "is_valid_rsby_beneficiary",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false,
+          "cat": "economic"
+        }
+      ]
+    },
+    "exclusions": [
+      {
+        "field": "household_owns_motorised_vehicle_or_fishing_boat",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "owns_mechanized_agricultural_equipment_3_or_4_wheeler",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "kisan_credit_card_limit_inr",
+        "op": ">",
+        "value": 50000,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "is_govt_employee",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "occupation",
+        "quantifier": "some_family_member",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "owns_non_agricultural_enterprise_registered_with_govt",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "monthly_income_inr",
+        "op": ">",
+        "value": 10000,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "some_family_member",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "paid_income_tax_last_assessment_year",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "some_family_member",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "paid_professional_tax",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "some_family_member",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      }
+    ],
+    "temporal_validity": {
+      "valid_from": "2018-09-23",
+      "valid_to": null,
+      "extracted_at": "2026-10-05",
+      "supersedes": null
+    },
+    "operational_requirements": [],
+    "extraction_metadata": {
+      "confidence": 0.96,
+      "source_clause": "Eligibility (Inclusion) and Exclusions sections",
+      "flagged_for_review": false
+    }
+  }
+}

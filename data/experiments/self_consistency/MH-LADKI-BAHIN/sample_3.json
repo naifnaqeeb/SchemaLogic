@@ -1,0 +1,219 @@
+{
+  "item": "self_consistency",
+  "gold_tag": "gold-v2",
+  "gold_commit": "82436ac11fb53421bf44c8c68e6333e1db353442",
+  "code_commit": "6cac897",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "config": {
+    "k": 3,
+    "temperature": 0.2,
+    "extractor": "defaults"
+  },
+  "date": "2026-10-05",
+  "created_at": "2026-10-05T00:42:50",
+  "scheme_id": "MH-LADKI-BAHIN",
+  "sample": 3,
+  "source_document_sha256": "11302970e0a8255cc7b9ca7dc6cabd5b3027c35fb2393edaa505430eb8611513",
+  "usage": [
+    {
+      "call": "scheme_core_extraction",
+      "prompt_tokens": 5076,
+      "completion_tokens": 1598,
+      "total_tokens": 6674
+    },
+    {
+      "call": "scheme_meta_extraction",
+      "prompt_tokens": 1676,
+      "completion_tokens": 605,
+      "total_tokens": 2281
+    }
+  ],
+  "draft_extraction": {
+    "scheme_id": "MH-LADKI-BAHIN",
+    "unit_of_eligibility": "individual",
+    "inclusion": {
+      "and": [
+        {
+          "field": "is_maharashtra_resident",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false,
+          "cat": "demographic"
+        },
+        {
+          "field": "is_woman",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false,
+          "cat": "demographic"
+        },
+        {
+          "field": "age",
+          "op": ">=",
+          "value": 21,
+          "ontology_proposed": false,
+          "cat": "demographic"
+        },
+        {
+          "field": "age",
+          "op": "<=",
+          "value": 65,
+          "ontology_proposed": false,
+          "cat": "demographic"
+        },
+        {
+          "field": "has_bank_account",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false,
+          "cat": "economic"
+        },
+        {
+          "field": "family_annual_income_inr",
+          "op": "<=",
+          "value": 250000,
+          "ontology_proposed": false,
+          "cat": "economic"
+        },
+        {
+          "field": "marital_status_category",
+          "op": "in",
+          "value": [
+            "married",
+            "widowed",
+            "divorced",
+            "abandoned",
+            "destitute",
+            "unmarried"
+          ],
+          "ontology_proposed": true,
+          "cat": "demographic"
+        }
+      ]
+    },
+    "exclusions": [
+      {
+        "field": "family_annual_income_inr",
+        "op": ">",
+        "value": 250000,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "paid_income_tax_last_assessment_year",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "some_family_member",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "is_regular_govt_employee_or_pensioner",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "occupation",
+        "quantifier": "some_family_member",
+        "except": {
+          "field": "monthly_income_inr",
+          "op": "<=",
+          "value": 250000,
+          "ontology_proposed": false
+        },
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "other_govt_scheme_monthly_benefit_inr",
+        "op": ">=",
+        "value": 1500,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "holds_constitutional_or_political_post",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "political",
+        "quantifier": "some_family_member",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "holds_govt_board_or_corporation_post",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "political",
+        "quantifier": "some_family_member",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "owns_four_wheeler",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "some_family_member",
+        "except": {
+          "field": "owned_vehicle_is_farm_tractor_only",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false
+        },
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "is_unmarried_woman",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": true,
+        "cat": "demographic",
+        "quantifier": "count_family_members",
+        "except": null,
+        "except_scope": "member",
+        "count_op": ">",
+        "count": 1
+      }
+    ],
+    "temporal_validity": {
+      "valid_from": "2024-07-01",
+      "valid_to": null,
+      "extracted_at": "2026-10-05",
+      "supersedes": null
+    },
+    "operational_requirements": [
+      "Aadhaar-linked bank account required for benefit transfer",
+      "Income certificate of head of family showing annual income ≤ Rs. 2.50 lakh (exempt for yellow/orange ration card holders)"
+    ],
+    "extraction_metadata": {
+      "confidence": 0.95,
+      "source_clause": "Eligibility (Para 4, as amended)",
+      "flagged_for_review": false
+    }
+  }
+}

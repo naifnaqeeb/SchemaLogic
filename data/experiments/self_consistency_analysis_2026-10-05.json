@@ -1,0 +1,332 @@
+{
+  "item": "self_consistency_analysis",
+  "gold_tag": "gold-v2",
+  "gold_commit": "82436ac11fb53421bf44c8c68e6333e1db353442",
+  "code_commit": "14d17f9",
+  "provider": "none (offline)",
+  "model": "openai/gpt-oss-120b",
+  "config": {
+    "bins": {
+      "agreement": [
+        [
+          0.0,
+          0.34
+        ],
+        [
+          0.35,
+          0.67
+        ],
+        [
+          0.68,
+          1.0
+        ]
+      ],
+      "self_reported": [
+        [
+          0.0,
+          0.5
+        ],
+        [
+          0.51,
+          0.7
+        ],
+        [
+          0.71,
+          0.85
+        ],
+        [
+          0.86,
+          1.0
+        ]
+      ]
+    }
+  },
+  "date": "2026-10-05",
+  "created_at": "2026-10-05T14:37:34",
+  "schemes_with_samples": [
+    "AB-PMJAY",
+    "IGNOAPS",
+    "MH-LADKI-BAHIN",
+    "PM-KISAN",
+    "PM-UJJWALA-2.0",
+    "PMAY-G"
+  ],
+  "per_scheme": {
+    "AB-PMJAY": {
+      "k": 3,
+      "valid": 3,
+      "failures": [],
+      "predicates_per_sample": [
+        17,
+        13,
+        20
+      ],
+      "mean_agreement_confidence": 0.88,
+      "unanimous_share": 0.72,
+      "mean_self_reported_confidence": 0.953,
+      "self_reported_by_sample": [
+        0.95,
+        0.96,
+        0.95
+      ],
+      "mean_structural_f1": 0.641,
+      "structural_f1_by_sample": [
+        0.68,
+        0.565,
+        0.679
+      ],
+      "mean_outcome_agreement": 0.758,
+      "outcome_agreement_by_sample": [
+        0.818,
+        0.727,
+        0.727
+      ],
+      "predicate_precision": 0.96
+    },
+    "IGNOAPS": {
+      "k": 3,
+      "valid": 3,
+      "failures": [],
+      "predicates_per_sample": [
+        6,
+        6,
+        6
+      ],
+      "mean_agreement_confidence": 0.778,
+      "unanimous_share": 0.5,
+      "mean_self_reported_confidence": 0.8,
+      "self_reported_by_sample": [
+        0.9,
+        0.6,
+        0.9
+      ],
+      "mean_structural_f1": 0.444,
+      "structural_f1_by_sample": [
+        0.5,
+        0.333,
+        0.5
+      ],
+      "mean_outcome_agreement": 0.722,
+      "outcome_agreement_by_sample": [
+        0.75,
+        0.667,
+        0.75
+      ],
+      "predicate_precision": 0.444
+    },
+    "MH-LADKI-BAHIN": {
+      "k": 3,
+      "valid": 2,
+      "failures": [
+        {
+          "reason": "schema_validation_failed",
+          "detail": "42 validation errors for Scheme\ninclusion.AndNode.and.6.AndNode.and\n  Field required [type=missing, input_value={'or': [{'and': [{'field'...': '<=', 'count': 1}]}]}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/missing\ninclusion.AndNode.and.6.AndNode.or\n  Extra inputs are not permitted [type=extra_forbidden, input_value=[{'and': [{'field': 'mari...p': '<=', 'count': 1}]}], input_type=list]\n    For further information visit https://errors.pydantic.dev/2.12/v/extra_forbidden\ninclusion.AndNode.and.6.OrNode.or.1.AndNode.and.1.AndNode.and\n  Field required [type=missing, input_value={'field': 'is_unmarried_w...t_op': '<=', 'count': 1}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/missing\ninclusion.AndNode.and.6.OrNode.or.1.AndNode.and.1.AndNode.field\n  Extra inputs are not permitted [type=extra_forbidden, input_value='is_unmarried_woman', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.12/v/extra_forbidden\ninclusion.AndNode.and.6.OrNode.or.1.AndNode.and.1.AndNode.op\n  Extra inputs are not permitted [type=extra_forbidden, input_value='==', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.12/v/extra_forbidden\ninclusion.AndNode.and.6.OrNode.or.1.AndNode.and.1.AndNode.value\n  Extra inputs are not permitted [type=extra_forbidden, input_value=True, input_type=bool]\n    For further information visit https://errors.pydantic.dev/2.12/v/extra_forbidden\ninclusion.AndNode.and.6.OrNode.or.1.AndNode.and.1.AndNode.cat\n  Extra inputs are not permitted [type=extra_forbidden, input_value='demographic', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.12/v/extra_forbidden\ninclusion.AndNode.and.6.OrNode.or.1.AndNode.and.1.AndNode.ontology_proposed\n  Extra inputs are not permitted [type=extra_forbidden, input_value=True, input_type=bool]\n    For further information visit https://errors.pydantic.dev/2.12/v/extra_forbidde"
+        }
+      ],
+      "predicates_per_sample": [
+        15,
+        17
+      ],
+      "mean_agreement_confidence": 0.906,
+      "unanimous_share": 0.812,
+      "mean_self_reported_confidence": 0.95,
+      "self_reported_by_sample": [
+        0.95,
+        0.95
+      ],
+      "mean_structural_f1": 0.862,
+      "structural_f1_by_sample": [
+        0.857,
+        0.867
+      ],
+      "mean_outcome_agreement": 0.75,
+      "outcome_agreement_by_sample": [
+        0.8,
+        0.7
+      ],
+      "predicate_precision": 0.781
+    },
+    "PM-KISAN": {
+      "k": 3,
+      "valid": 3,
+      "failures": [],
+      "predicates_per_sample": [
+        10,
+        10,
+        10
+      ],
+      "mean_agreement_confidence": 1.0,
+      "unanimous_share": 1.0,
+      "mean_self_reported_confidence": 0.95,
+      "self_reported_by_sample": [
+        0.95,
+        0.95,
+        0.95
+      ],
+      "mean_structural_f1": 0.952,
+      "structural_f1_by_sample": [
+        0.952,
+        0.952,
+        0.952
+      ],
+      "mean_outcome_agreement": 0.917,
+      "outcome_agreement_by_sample": [
+        0.917,
+        0.917,
+        0.917
+      ],
+      "predicate_precision": 1.0
+    },
+    "PM-UJJWALA-2.0": {
+      "k": 3,
+      "valid": 3,
+      "failures": [],
+      "predicates_per_sample": [
+        13,
+        13,
+        13
+      ],
+      "mean_agreement_confidence": 0.966,
+      "unanimous_share": 0.923,
+      "mean_self_reported_confidence": 0.95,
+      "self_reported_by_sample": [
+        0.95,
+        0.95,
+        0.95
+      ],
+      "mean_structural_f1": 0.974,
+      "structural_f1_by_sample": [
+        0.923,
+        1.0,
+        1.0
+      ],
+      "mean_outcome_agreement": 1.0,
+      "outcome_agreement_by_sample": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "predicate_precision": 0.974
+    },
+    "PMAY-G": {
+      "k": 3,
+      "valid": 3,
+      "failures": [],
+      "predicates_per_sample": [
+        12,
+        18,
+        13
+      ],
+      "mean_agreement_confidence": 0.643,
+      "unanimous_share": 0.279,
+      "mean_self_reported_confidence": 0.883,
+      "self_reported_by_sample": [
+        0.85,
+        0.85,
+        0.95
+      ],
+      "mean_structural_f1": 0.631,
+      "structural_f1_by_sample": [
+        0.296,
+        0.667,
+        0.929
+      ],
+      "mean_outcome_agreement": 0.548,
+      "outcome_agreement_by_sample": [
+        0.357,
+        0.5,
+        0.786
+      ],
+      "predicate_precision": 0.651
+    },
+    "PMMVY": {
+      "k": 1,
+      "valid": 1,
+      "failures": [],
+      "excluded": "fewer than 2 valid samples so far"
+    }
+  },
+  "predicate_calibration": {
+    "n_predicates": 212,
+    "agreement": {
+      "ece": 0.0566,
+      "reliability": [
+        {
+          "bin": [
+            0.0,
+            0.34
+          ],
+          "n": 23,
+          "mean_confidence": 0.333,
+          "accuracy": 0.174
+        },
+        {
+          "bin": [
+            0.35,
+            0.67
+          ],
+          "n": 40,
+          "mean_confidence": 0.642,
+          "accuracy": 0.725
+        },
+        {
+          "bin": [
+            0.68,
+            1.0
+          ],
+          "n": 149,
+          "mean_confidence": 1.0,
+          "accuracy": 0.966
+        }
+      ]
+    },
+    "self_reported": {
+      "ece": 0.0888,
+      "reliability": [
+        {
+          "bin": [
+            0.0,
+            0.5
+          ],
+          "n": 0,
+          "mean_confidence": null,
+          "accuracy": null
+        },
+        {
+          "bin": [
+            0.51,
+            0.7
+          ],
+          "n": 6,
+          "mean_confidence": 0.6,
+          "accuracy": 0.333
+        },
+        {
+          "bin": [
+            0.71,
+            0.85
+          ],
+          "n": 30,
+          "mean_confidence": 0.85,
+          "accuracy": 0.5
+        },
+        {
+          "bin": [
+            0.86,
+            1.0
+          ],
+          "n": 176,
+          "mean_confidence": 0.947,
+          "accuracy": 0.909
+        }
+      ]
+    }
+  },
+  "scheme_rank_correlation": {
+    "agreement_vs_structural_f1": 0.886,
+    "self_reported_vs_structural_f1": 0.577,
+    "agreement_vs_outcome_agreement": 0.886,
+    "self_reported_vs_outcome_agreement": 0.638,
+    "n_schemes": 6
+  }
+}

@@ -92,8 +92,10 @@ def analyze() -> dict:
     for sid in schemes:
         samples = load_samples(sid)
         valid = [s for s in samples if s["draft"] is not None]
-        if not valid:
-            per_scheme[sid] = {"k": len(samples), "valid": 0, "failures": [s["failure"] for s in samples]}
+        if len(valid) < 2:
+            # agreement needs at least two samples to agree or disagree -- one sample is not a signal
+            per_scheme[sid] = {"k": len(samples), "valid": len(valid), "failures": [s["failure"] for s in samples if s["draft"] is None],
+                               "excluded": "fewer than 2 valid samples so far"}
             continue
         gold = harness.frozen_gold(sid)
         profiles = harness.frozen_profiles(sid)
@@ -126,7 +128,7 @@ def analyze() -> dict:
             "mean_outcome_agreement": round(sum(oes) / len(oes), 3), "outcome_agreement_by_sample": [round(o, 3) for o in oes],
             "predicate_precision": round(sum(r["correct"] for r in rows) / len(rows), 3) if rows else None,
         }
-    scored = [s for s, r in per_scheme.items() if r.get("valid")]
+    scored = [s for s, r in per_scheme.items() if "excluded" not in r]
     agreement_bins = [(0.0, 0.34), (0.35, 0.67), (0.68, 1.0)]
     self_bins = [(0.0, 0.5), (0.51, 0.7), (0.71, 0.85), (0.86, 1.0)]
     a_ece, a_table = ece(agreement_points, agreement_bins)
@@ -155,12 +157,14 @@ def markdown(a: dict) -> str:
     L = ["# Self-consistency confidence (k samples) vs self-reported confidence", "",
          f"*Generated {a['created_at']} by `scripts/analyze_self_consistency.py` from code `{a['code_commit']}`, "
          f"against frozen gold `{a['gold_tag']}`. Small sample: {len(a['schemes_with_samples'])} schemes, k samples each; "
-         "rank correlations over so few schemes are indicative only.*", "",
+         "rank correlations over so few schemes are indicative only. Agreement is over a scheme's VALID samples "
+         "(a sample that failed schema validation produced no predicates and is listed, not counted); a scheme "
+         "needs at least 2 valid samples to be scored.*", "",
          "| Scheme | Valid samples | Predicates per sample | Mean agreement | Unanimous | Self-reported (per sample) | Structural F1 (per sample) | Outcome agreement (mean) |",
          "|---|---|---|---|---|---|---|---|"]
     for sid, r in a["per_scheme"].items():
-        if not r.get("valid"):
-            L.append(f"| {sid} | 0/{r['k']} | — | — | — | — | — | — |")
+        if "excluded" in r:
+            L.append(f"| {sid} | {r['valid']}/{r['k']} | — | — | — | — | — | — | *({r['excluded']})*")
             continue
         L.append(f"| {sid} | {r['valid']}/{r['k']} | {r['predicates_per_sample']} | {r['mean_agreement_confidence']} | "
                  f"{r['unanimous_share']} | {r['self_reported_by_sample']} | {r['structural_f1_by_sample']} | {r['mean_outcome_agreement']} |")

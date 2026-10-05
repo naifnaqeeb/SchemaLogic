@@ -9,3 +9,6 @@ data/raw_documents/
 data/cache/
 # Agent scratch lock, not project state.
 .claude/scheduled_tasks.lock
+
+# experiment run logs echo provider error text (org IDs); results and the token ledger are committed
+data/experiments/logs/

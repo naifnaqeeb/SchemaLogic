@@ -1,6 +1,6 @@
 # Batch report — all gold schemes
 
-*Generated 2026-10-05T00:29:17 by `scripts/run_batch_report.py` from code `72dd363`, against frozen gold `gold-v2` (`82436ac`). Offline: no LLM calls. Regenerate rather than edit.*
+*Generated 2026-10-05T14:37:10 by `scripts/run_batch_report.py` from code `14d17f9`, against frozen gold `gold-v2` (`82436ac`). Offline: no LLM calls. Regenerate rather than edit.*
 
 ## Caveats — read first
 
@@ -33,9 +33,20 @@ Baseline 3: one extraction, no judge or repair (k=3 run, sample 1).
 | Scheme | Structural F1 | Exceptions F1 | Outcome agreement | FP (eligible) | FN (eligible) | n | Scalar | Draft |
 |---|---|---|---|---|---|---|---|---|
 | AB-PMJAY | 0.680 | 0.000 | 81.8% | 0.0% | 18.2% | 11 | 2/2 | `sample_1.json` |
-| **All (1)** | **0.680** (micro) | | **81.8%** | 0.0% | 18.2% | 11 | | |
+| IGNOAPS | 0.500 | — | 75.0% | 0.0% | 25.0% | 12 | 2/2 | `sample_1.json` |
+| PM-KISAN | 0.952 | 1.000 | 91.7% | 8.3% | 0.0% | 12 | 2/2 | `sample_1.json` |
+| PM-UJJWALA-2.0 | 0.923 | — | 100.0% | 0.0% | 0.0% | 9 | 2/2 | `sample_1.json` |
+| PMAY-G | 0.296 | — | 35.7% | 57.1% | 0.0% | 14 | 1/2 | `sample_1.json` |
+| PMMVY | 0.839 | — | 41.7% | 0.0% | 0.0% | 12 | 2/2 | `sample_1.json` |
+| **All (6)** | **0.707** (micro) | | **68.6%** | 12.9% | 7.1% | 70 | | |
 
-Absent: IGNOAPS, MH-LADKI-BAHIN, PM-KISAN, PM-UJJWALA-2.0, PMAY-G, PMMVY.
+Absent: MH-LADKI-BAHIN.
+
+## pipeline_on_sample1
+
+Full pipeline (judge -> gate -> apply approved) on the same extraction as Baseline 3.
+
+*No results yet (absent for all 7 schemes).*
 
 ## baseline1_flat
 

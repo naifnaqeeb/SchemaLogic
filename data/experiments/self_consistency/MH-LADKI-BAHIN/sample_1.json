@@ -1,0 +1,36 @@
+{
+  "item": "self_consistency",
+  "gold_tag": "gold-v2",
+  "gold_commit": "82436ac11fb53421bf44c8c68e6333e1db353442",
+  "code_commit": "8195ad8",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "config": {
+    "k": 3,
+    "temperature": 0.2,
+    "extractor": "defaults"
+  },
+  "date": "2026-10-05",
+  "created_at": "2026-10-05T00:38:38",
+  "scheme_id": "MH-LADKI-BAHIN",
+  "sample": 1,
+  "source_document_sha256": "11302970e0a8255cc7b9ca7dc6cabd5b3027c35fb2393edaa505430eb8611513",
+  "usage": [
+    {
+      "call": "scheme_core_extraction",
+      "prompt_tokens": 5076,
+      "completion_tokens": 1651,
+      "total_tokens": 6727
+    },
+    {
+      "call": "scheme_meta_extraction",
+      "prompt_tokens": 1676,
+      "completion_tokens": 849,
+      "total_tokens": 2525
+    }
+  ],
+  "failure": {
+    "reason": "schema_validation_failed",
+    "detail": "42 validation errors for Scheme\ninclusion.AndNode.and.6.AndNode.and\n  Field required [type=missing, input_value={'or': [{'and': [{'field'...': '<=', 'count': 1}]}]}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/missing\ninclusion.AndNode.and.6.AndNode.or\n  Extra inputs are not permitted [type=extra_forbidden, input_value=[{'and': [{'field': 'mari...p': '<=', 'count': 1}]}], input_type=list]\n    For further information visit https://errors.pydantic.dev/2.12/v/extra_forbidden\ninclusion.AndNode.and.6.OrNode.or.1.AndNode.and.1.AndNode.and\n  Field required [type=missing, input_value={'field': 'is_unmarried_w...t_op': '<=', 'count': 1}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/missing\ninclusion.AndNode.and.6.OrNode.or.1.AndNode.and.1.AndNode.field\n  Extra inputs are not permitted [type=extra_forbidden, input_value='is_unmarried_woman', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.12/v/extra_forbidden\ninclusion.AndNode.and.6.OrNode.or.1.AndNode.and.1.AndNode.op\n  Extra inputs are not permitted [type=extra_forbidden, input_value='==', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.12/v/extra_forbidden\ninclusion.AndNode.and.6.OrNode.or.1.AndNode.and.1.AndNode.value\n  Extra inputs are not permitted [type=extra_forbidden, input_value=True, input_type=bool]\n    For further information visit https://errors.pydantic.dev/2.12/v/extra_forbidden\ninclusion.AndNode.and.6.OrNode.or.1.AndNode.and.1.AndNode.cat\n  Extra inputs are not permitted [type=extra_forbidden, input_value='demographic', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.12/v/extra_forbidden\ninclusion.AndNode.and.6.OrNode.or.1.AndNode.and.1.AndNode.ontology_proposed\n  Extra inputs are not permitted [type=extra_forbidden, input_value=True, input_type=bool]\n    For further information visit https://errors.pydantic.dev/2.12/v/extra_forbidde"
+  }
+}
