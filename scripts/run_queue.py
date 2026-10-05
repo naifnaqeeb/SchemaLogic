@@ -68,11 +68,13 @@ def queue(name: str, budget: int):
 
     # Order revised 2026-10-05 for the review, whose demo uses English and Hindi only: Hindi, then the
     # presentable results (full pipeline on sample 1, temporal case study with the Marathi arm of C2),
-    # then Urdu, Marathi and Tamil, then everything else.
+    # then Urdu, Marathi and Tamil, then everything else. 2026-10-06: a retry of the pipeline's failed
+    # judge calls (json_validate_failed) goes after the temporal study, before Urdu.
     return [
         translations("hi"),
         ("pipeline on sample 1", p1.ESTIMATE, lambda: p1.run(gold, budget)),
         ("temporal C4 (+ Marathi arm of C2)", temporal.ESTIMATE_PER_SAMPLE, lambda: temporal.run(budget)),
+        ("pipeline retry: failed judge calls at max_tokens=2000", p1.ESTIMATE, lambda: p1.retry_failed(gold, budget)),
         translations("ur"), translations("mr"), translations("ta"),
         ("k=3 self-consistency (finish)", sc.ESTIMATE_PER_SAMPLE, lambda: sc.run(gold, 3, budget)),
         ("k=3 pmksypdmc (silver)", sc.ESTIMATE_PER_SAMPLE, lambda: sc.run(["_silver_pmksypdmc"], 3, budget)),

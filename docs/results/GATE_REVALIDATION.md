@@ -1,6 +1,6 @@
 # Gate re-validation on injected errors
 
-*Generated 2026-10-05T18:41:05 by `scripts/analyze_gate_revalidation.py` from code `df7fb58`, against frozen gold `gold-v2`.*
+*Generated 2026-10-06T02:55:30 by `scripts/analyze_gate_revalidation.py` from code `068d3a6`, against frozen gold `gold-v2`.*
 
 > **Synthetic errors, small sample.** 30 deliberate mutations of correct gold (14 mutated variants, 7 clean controls), one judge sample each. These numbers say what the judge + gate *can* catch, not how often real extractions go wrong. One error moves a type's rate by 17-25 points. Groups A, B and C are never pooled into one catch rate.
 

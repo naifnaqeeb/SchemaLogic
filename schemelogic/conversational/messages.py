@@ -33,6 +33,17 @@ GLOSSARY = ("BPL", "APL", "SC/ST", "SC", "ST", "OBC", "Group D", "Class IV", "MT
             "NRI", "e-Shram", "MGNREGA", "NFSA", "AAY", "PM-KISAN", "AB-PMJAY", "PMAY-G", "PMMVY", "IGNOAPS",
             "SECC", "RSBY", "Kisan Credit Card", "HIV", "AIDS")
 
+# Glossary terms that are ordinary words in a language, so a translation into it may use the native
+# word (2026-10-06: Hindi पक्का / कच्चा). Every other glossary term still stays exactly as written.
+NATIVE_TERMS: dict[str, dict[str, str]] = {"hi": {"pucca": "पक्का", "kutcha": "कच्चा"}}
+
+
+def glossary_for(language: str | None) -> tuple[str, ...]:
+    """The glossary terms a translation into `language` must keep unchanged."""
+    native = NATIVE_TERMS.get(language or "", {})
+    return tuple(t for t in GLOSSARY if t not in native)
+
+
 MESSAGES: dict[str, str] = {
     # --- chat replies (chat_engine) ---
     "chat.greeting": "Hey! Tell me a bit about your situation or what kind of help you're looking for, and I'll check real scheme rules for you.",

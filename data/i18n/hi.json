@@ -136,9 +136,9 @@
   },
   "chat.machine_translated": {
     "source": "Machine-translated from English — the original is authoritative.",
-    "text": "Machine-translated from English — the original is authoritative.",
+    "text": "अंग्रेज़ी से मशीन अनुवादित — मूल अधिक अधिकारिक है।",
     "status": "unreviewed",
-    "translated_on": "2026-10-05",
+    "translated_on": "2026-10-06",
     "model": "openai/gpt-oss-120b",
     "provider": "groq",
     "gold_tag": "gold-v2"
@@ -224,6 +224,1991 @@
     "provider": "groq",
     "gold_tag": "gold-v2"
   },
+  "family_scope.AB-PMJAY": {
+    "source": "the members of your household",
+    "text": "आपके घर के सदस्य",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "family_scope.PM-KISAN": {
+    "source": "you, your husband or wife, and your minor children",
+    "text": "आप, आपका पति/पत्नी और आपके नाबालिग बच्चे",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "family_scope.PMAY-G": {
+    "source": "the members of your family",
+    "text": "आपके परिवार के सदस्य",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "family_scope.default": {
+    "source": "you and the members of your family",
+    "text": "आप और आपके परिवार के सदस्य",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.age": {
+    "source": "What is your age, in years?",
+    "text": "आपकी आयु वर्ष में क्या है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.child_is_girl": {
+    "source": "Is the child from this pregnancy/birth a girl?",
+    "text": "क्या इस गर्भावस्था/जन्म से जन्मा बच्चा लड़की है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.family_agricultural_land_acres": {
+    "source": "How many acres of land do you and your family own in total? (Enter 0 if none.)",
+    "text": "आप और आपके परिवार कुल मिलाकर कितने एकड़ जमीन के मालिक हैं? (यदि नहीं है तो 0 दर्ज करें।)",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.family_annual_income_inr": {
+    "source": "What is your family's combined annual income, in rupees?",
+    "text": "आपके परिवार की संयुक्त वार्षिक आय (रुपयों में) क्या है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.has_40_percent_or_more_disability": {
+    "source": "Do you have a disability certificate showing 40% or more disability?",
+    "text": "क्या आपके पास 40% या अधिक विकलांगता दर्शाने वाला प्रमाणपत्र है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.has_aadhaar_linked_bank_account": {
+    "source": "Is your bank account linked to your Aadhaar number?",
+    "text": "क्या आपका बैंक खाता आपके Aadhaar नंबर से जुड़ा है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.has_active_mgnrega_job_card": {
+    "source": "Does your household hold an active MGNREGA job card?",
+    "text": "क्या आपके घर के पास सक्रिय MGNREGA जॉब कार्ड है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.has_bank_account": {
+    "source": "Do you have a bank account?",
+    "text": "क्या आपके पास बैंक खाता है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.has_regular_family_financial_support": {
+    "source": "Do you have a regular source of financial support from family or elsewhere?",
+    "text": "क्या आपको परिवार या अन्य स्रोतों से नियमित वित्तीय सहायता मिलती है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.holds_constitutional_or_political_post": {
+    "source": "Does any family member hold or has held a constitutional post or elected political office, such as Minister, MP, MLA, MLC, or Mayor?",
+    "text": "क्या किसी परिवार के सदस्य ने संवैधानिक पद या चुनी हुई राजनीतिक पद, जैसे मंत्री, MP, MLA, MLC, या मेयर, संभाला है या किया है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.holds_govt_board_or_corporation_post": {
+    "source": "Does any family member serve as Chairperson, Vice-Chairperson, Director, or Member of a government Board or Corporation?",
+    "text": "क्या किसी परिवार के सदस्य ने सरकारी बोर्ड या निगम में अध्यक्ष, उपाध्यक्ष, निदेशक, या सदस्य के रूप में कार्य किया है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.house_has_3_or_more_pucca_rooms": {
+    "source": "Does your house have 3 or more rooms built with permanent (pucca) walls and roof?",
+    "text": "क्या आपके घर में स्थायी (pucca) दीवारों और छत वाले 3 या अधिक कमरे हैं?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.house_has_pucca_roof_or_wall": {
+    "source": "Does your house have a pucca (permanent) roof, or pucca walls, made of brick, stone, cement or concrete?",
+    "text": null,
+    "status": "manual",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2",
+    "manual_reason": "it failed the automatic checks",
+    "manual_since": "2026-10-06"
+  },
+  "field.house_room_count": {
+    "source": "How many rooms does your house have? (Enter 0 if you have no house.)",
+    "text": "आपके घर में कितने कमरे हैं? (यदि आपके पास घर नहीं है तो 0 दर्ज करें।)",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.household_has_existing_lpg_connection": {
+    "source": "Does your household already have an LPG gas connection?",
+    "text": "क्या आपके घर में पहले से LPG गैस कनेक्शन है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.household_owns_motorised_vehicle_or_fishing_boat": {
+    "source": "Does your household own a motorised vehicle or a fishing boat?",
+    "text": "क्या आपका घर मोटरयुक्त वाहन या मछली पकड़ने की नाव का मालिक है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.irrigated_land_acres": {
+    "source": "How many acres of irrigated land does your household own? (Enter 0 if none.)",
+    "text": "आपके घर के पास कितनी एकड़ सिंचित जमीन है? (यदि नहीं है तो 0 दर्ज करें।)",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.is_aay_beneficiary": {
+    "source": "Is your household a beneficiary of the Antyodaya Anna Yojana (AAY) scheme?",
+    "text": "क्या आपका घर Antyodaya Anna Yojana (AAY) योजना का लाभार्थी है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.is_ab_pmjay_beneficiary": {
+    "source": "Is your family already a beneficiary of the Ayushman Bharat (AB-PMJAY) health scheme?",
+    "text": "क्या आपका परिवार पहले से आयुष्मान भारत (AB-PMJAY) स्वास्थ्य योजना का लाभार्थी है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.is_bpl_household": {
+    "source": "Is your household officially classified as Below Poverty Line (BPL)?",
+    "text": "क्या आपका घर आधिकारिक तौर पर Below Poverty Line (BPL) के रूप में वर्गीकृत है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.is_e_shram_registered": {
+    "source": "Do you hold an e-Shram card (the government's unorganised-worker registration)?",
+    "text": null,
+    "status": "manual",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2",
+    "manual_reason": "it failed the automatic checks",
+    "manual_since": "2026-10-06"
+  },
+  "field.is_forest_dweller": {
+    "source": "Are you recognized as a forest dweller?",
+    "text": "क्या आप वनवासी के रूप में मान्यता प्राप्त हैं?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.is_frontline_worker": {
+    "source": "Are you employed as a frontline worker, such as an Anganwadi worker/helper or ASHA worker?",
+    "text": "क्या आप एंगनवाड़ी कार्यकर्ता/सहायक या आशा कार्यकर्ता जैसे फ्रंटलाइन कार्यकर्ता के रूप में कार्यरत हैं?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.is_govt_employee": {
+    "source": "Is any family member a government employee?",
+    "text": "क्या किसी परिवार के सदस्य का सरकारी कर्मचारी है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.is_group_d_class_iv_or_mts": {
+    "source": "Is that family member specifically a Group D, Class IV, or Multi-Tasking Staff (MTS) employee?",
+    "text": "क्या वह परिवार का सदस्य विशेष रूप से Group D, Class IV, या Multi-Tasking Staff (MTS) कर्मचारी है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.is_houseless": {
+    "source": "Does your family currently have no house at all?",
+    "text": "क्या आपका परिवार वर्तमान में बिल्कुल भी घर नहीं रखता?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.is_in_secc_2011_list": {
+    "source": "Does your household appear in the government's SECC 2011 survey list?",
+    "text": "क्या आपका घर सरकार की SECC 2011 सर्वेक्षण सूची में आता है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.is_indian_citizen": {
+    "source": "Are you an Indian citizen?",
+    "text": "क्या आप भारतीय नागरिक हैं?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.is_institutional_landholder": {
+    "source": "Is your land owned by an institution rather than by your family directly?",
+    "text": "क्या आपका जमीन संस्थान के पास है न कि सीधे आपके परिवार के पास?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.is_maharashtra_resident": {
+    "source": "Are you a permanent resident of Maharashtra?",
+    "text": "क्या आप महाराष्ट्र के स्थायी निवासी हैं?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.is_most_backward_class": {
+    "source": "Do you belong to a community classified as a Most Backward Class?",
+    "text": "क्या आप सबसे पिछड़ी वर्ग (Most Backward Class) के रूप में वर्गीकृत समुदाय से हैं?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.is_nfsa_ration_card_holder": {
+    "source": "Does your household hold a ration card covered under the National Food Security Act?",
+    "text": "क्या आपके घर के पास राष्ट्रीय खाद्य सुरक्षा अधिनियम के तहत रेशन कार्ड है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.is_nri_per_income_tax_act_1961": {
+    "source": "Are you classified as a Non-Resident Indian (NRI) under Indian income tax rules?",
+    "text": "क्या आप आयकर अधिनियम 1961 के तहत नॉन‑रेसिडेंट इंडियन (NRI) माने जाते हैं?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.is_pm_kisan_beneficiary": {
+    "source": "Is your household already a beneficiary of the PM-KISAN scheme?",
+    "text": "क्या आपका घराना पहले से ही PM-KISAN योजना का लाभार्थी है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.is_pmay_g_beneficiary": {
+    "source": "Is your household already a beneficiary of the PMAY-Gramin (rural housing) scheme?",
+    "text": "क्या आपका घर पहले से ही PMAY-Gramin (ग्रामीण आवास) योजना का लाभार्थी है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.is_practicing_registered_professional": {
+    "source": "Is any family member a practicing, professionally-registered Doctor, Engineer, Lawyer, Chartered Accountant, or Architect?",
+    "text": "क्या किसी परिवार के सदस्य डॉक्टर, इंजीनियर, वकील, चार्टर्ड अकाउंटेंट, या आर्किटेक्ट जैसे पंजीकृत पेशेवर के रूप में कार्यरत हैं?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.is_receiving_ladki_bahin_benefit": {
+    "source": "Is this family member already receiving the Ladki Bahin benefit?",
+    "text": "क्या यह परिवार का सदस्य पहले से Ladki Bahin लाभ प्राप्त कर रहा है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.is_regular_govt_employee_or_pensioner": {
+    "source": "Is any family member a regular/permanent government employee or a government pensioner?",
+    "text": "क्या किसी परिवार के सदस्य का नियमित/स्थायी सरकारी कर्मचारी या सरकारी पेंशनभोगी है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.is_sc_st": {
+    "source": "Does your household belong to a Scheduled Caste (SC) or Scheduled Tribe (ST)?",
+    "text": "क्या आपके घर का वर्गीकरण अनुसूचित जाति (SC) या अनुसूचित जनजाति (ST) में है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.is_secc_automatically_included": {
+    "source": "Does your household fall into one of the automatically-included categories: destitute/living on alms, a manual scavenger family, a primitive tribal group, or a legally released bonded labourer family?",
+    "text": "क्या आपका घर स्वचालित‑समावेशन श्रेणियों में आता है: निराश्रित/भिक्षा पर जीवित, मैन्युअल स्कैवेंजर परिवार, आदिम जनजातीय समूह, या कानूनी रूप से मुक्त बंधक श्रमिक परिवार?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.is_secc_deprived_household": {
+    "source": "Does your household fall under one of the government's official rural poverty-deprivation categories (for example: no adult wage-earner, a female-headed household with no adult male, a disabled member with no able-bodied adult, or a landless household relying on manual labour)?",
+    "text": "क्या आपका घर सरकार की आधिकारिक ग्रामीण गरीबी‑वंचन श्रेणियों में आता है (जैसे: कोई वयस्क वेतनभोगी नहीं, महिला प्रमुख घर बिना वयस्क पुरुष के, विकलांग सदस्य बिना सक्षम वयस्क के, या ज़मीनी काम पर निर्भर बेजाय घर)?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.is_serving_or_retired_govt_employee": {
+    "source": "Is any family member a serving or retired government employee, at a central/state ministry, public-sector undertaking, or local body?",
+    "text": "क्या आपके परिवार में कोई सदस्य केंद्रीय/राज्य मंत्रालय, सार्वजनिक क्षेत्र उद्यम या स्थानीय निकाय में वर्तमान में या सेवानिवृत्त सरकारी कर्मचारी है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.is_tea_garden_tribe": {
+    "source": "Do you belong to a Tea or Ex-Tea Garden Tribe community?",
+    "text": "क्या आप चाय या पूर्व-चाय बागान जनजाति समुदाय से हैं?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.is_urban_informal_worker": {
+    "source": "Do you work in an urban informal occupation — for example, rag picker, domestic worker, street vendor, construction worker, or sanitation worker?",
+    "text": "क्या आप शहरी अनौपचारिक कार्य में लगे हैं — उदाहरण के तौर पर, कचरा इकट्ठा करने वाला, घरेलू कामगार, सड़क विक्रेता, निर्माण कार्यकर्ता, या सफाई कर्मचारी?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.is_valid_rsby_beneficiary": {
+    "source": "Is your family a valid, premium-paid beneficiary of the earlier RSBY health insurance scheme?",
+    "text": "क्या आपका परिवार पहले की RSBY स्वास्थ्य बीमा योजना का वैध, प्रीमियम‑भुगतान किया हुआ लाभार्थी है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.is_widow": {
+    "source": "Are you a widow (has your husband passed away)?",
+    "text": "क्या आप विधवा हैं (क्या आपका पति गुजर गया है?)",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.is_widow_suffering_from_aids": {
+    "source": "Are you living with HIV or AIDS? This is asked only because a widow living with HIV or AIDS can be eligible without a BPL card. You can choose “Prefer not to say”.",
+    "text": "क्या आप HIV या AIDS से पीड़ित हैं? यह प्रश्न केवल इसलिए पूछा जाता है क्योंकि HIV या AIDS से पीड़ित विधवा बिना BPL कार्ड के भी पात्र हो सकती है। आप “कहना नहीं चाहते” चुन सकते हैं।",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.is_woman": {
+    "source": "Are you a woman?",
+    "text": "क्या आप महिला हैं?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.kisan_credit_card_limit_inr": {
+    "source": "What is the sanctioned limit on your Kisan Credit Card, in rupees? (Enter 0 if you don't have one.)",
+    "text": "आपके Kisan Credit Card की स्वीकृत सीमा (रुपये में) क्या है? (यदि आपके पास नहीं है तो 0 दर्ज करें.)",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.lives_in_kutcha_house": {
+    "source": "Does your family live in a kutcha house — one made of non-permanent materials like mud, thatch, or loose brick?",
+    "text": null,
+    "status": "manual",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2",
+    "manual_reason": "it failed the automatic checks",
+    "manual_since": "2026-10-06"
+  },
+  "field.lives_on_river_island": {
+    "source": "Do you live on a river island?",
+    "text": "क्या आप नदी के द्वीप पर रहते हैं?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.meets_14_point_self_declaration": {
+    "source": "If none of the other categories apply to you, would you be able to submit a self-declaration form stating your household is poor?",
+    "text": "यदि अन्य कोई श्रेणी आप पर लागू नहीं होती, तो क्या आप स्व-घोषणा फॉर्म जमा करके यह बता सकते हैं कि आपका घर गरीब है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.monthly_income_inr": {
+    "source": "What is the monthly income, in rupees?",
+    "text": "मासिक आय (रुपयों में) क्या है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.monthly_pension_inr": {
+    "source": "What is your monthly pension amount, in rupees? (Enter 0 if you don't receive a pension.)",
+    "text": "आपका मासिक पेंशन राशि कितनी है, रुपये में? (यदि आप पेंशन नहीं प्राप्त करते तो 0 दर्ज करें।)",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.months_since_last_birthday": {
+    "source": "How many full months have passed since your last birthday? (0 to 11)",
+    "text": "आपके पिछले जन्मदिन के बाद से कितने पूर्ण महीने बीते हैं? (0 से 11)",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.other_govt_scheme_monthly_benefit_inr": {
+    "source": "How much do you already receive per month from another government financial scheme, in rupees? (Enter 0 if none.)",
+    "text": "आपको किसी अन्य सरकारी वित्तीय योजना से प्रति माह कितनी राशि मिलती है (रुपये में)? (यदि नहीं तो 0 दर्ज करें)",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.owned_vehicle_is_farm_tractor_only": {
+    "source": "Is the four-wheeler your family owns only a farm tractor, and not a car or other vehicle?",
+    "text": "क्या आपके परिवार द्वारा रखे गए चारपहिया वाहन केवल एक फार्म ट्रैक्टर है, कार या अन्य वाहन नहीं?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.owns_5_or_more_acres_irrigated_land_two_or_more_crop_seasons": {
+    "source": "Does your household own 5 or more acres of irrigated land used for two or more crop seasons a year?",
+    "text": "क्या आपका घर 5 या अधिक एकड़ सिंचित भूमि दो या अधिक फसल मौसमों के लिए उपयोग करता है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.owns_7_5_or_more_acres_land_with_irrigation_equipment": {
+    "source": "Does your household own at least 7.5 acres of land, along with irrigation equipment?",
+    "text": "क्या आपका घर कम से कम 7.5 एकड़ भूमि, साथ में सिंचाई उपकरण, रखता है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.owns_cultivable_land_in_records": {
+    "source": "Does your family own cultivable land according to official state land records?",
+    "text": "क्या आपका परिवार आधिकारिक राज्य भूमि अभिलेखों के अनुसार खेती योग्य जमीन का मालिक है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.owns_four_wheeler": {
+    "source": "Does your family own a private four-wheeler, such as a car or SUV?",
+    "text": "क्या आपका परिवार निजी चारपहिया वाहन, जैसे कार या SUV, का मालिक है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.owns_gt_2_5_acres_irrigated_land_with_irrigation_equipment": {
+    "source": "Does your household own more than 2.5 acres of irrigated land, along with irrigation equipment?",
+    "text": "क्या आपका घर 2.5 एकड़ से अधिक सिंचित भूमि, साथ में सिंचाई उपकरण, रखता है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.owns_landline_phone": {
+    "source": "Does your household own a landline telephone?",
+    "text": "क्या आपका घर लैंडलाइन टेलीफोन रखता है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.owns_mechanized_agricultural_equipment_3_or_4_wheeler": {
+    "source": "Does your household own mechanised 3-wheeler or 4-wheeler agricultural equipment, like a tractor?",
+    "text": "क्या आपका घर 3‑व्हीलर या 4‑व्हीलर कृषि उपकरण, जैसे ट्रैक्टर, रखता है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.owns_motorised_three_or_four_wheeler": {
+    "source": "Does your household own a motorised three-wheeler or four-wheeler?",
+    "text": "क्या आपका घर मोटरयुक्त तीन-पहिया या चार-पहिया वाहन का मालिक है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.owns_non_agricultural_enterprise_registered_with_govt": {
+    "source": "Does your household own a non-agricultural business registered with the government?",
+    "text": "क्या आपका घर सरकार के साथ पंजीकृत गैर‑कृषि व्यवसाय रखता है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.owns_refrigerator": {
+    "source": "Does your household own a refrigerator?",
+    "text": "क्या आपका घर रेफ्रिजरेटर रखता है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.paid_income_tax_last_assessment_year": {
+    "source": "Did you or a family member pay income tax in the last assessment year?",
+    "text": "क्या आपने या आपके परिवार के किसी सदस्य ने पिछले मूल्यांकन वर्ष में आयकर का भुगतान किया?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.paid_professional_tax": {
+    "source": "Does your family pay professional tax?",
+    "text": "क्या आपका परिवार प्रोफेशनल टैक्स देता है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.pregnancy_child_order": {
+    "source": "For this pregnancy or birth, which child is this for you — first, second, etc.? (Enter the number.)",
+    "text": "इस गर्भावस्था या जन्म के लिए यह बच्चा आपका कौन‑सा है — पहला, दूसरा आदि? (संख्या दर्ज करें)",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field.unirrigated_land_acres": {
+    "source": "How many acres of unirrigated (rain-fed) land does your household own? (Enter 0 if none.)",
+    "text": "आपके घर के पास कितनी एकड़ बिनसिंचित (बारिश‑आधारित) जमीन है? (यदि नहीं है तो 0 दर्ज करें।)",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_household.is_nri_per_income_tax_act_1961": {
+    "source": "Is any one of {members} a Non-Resident Indian (NRI) under Indian income tax rules?",
+    "text": "क्या {members} में से कोई भी आयकर अधिनियम 1961 के तहत नॉन‑रेसिडेंट इंडियन (NRI) है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_household.monthly_income_inr": {
+    "source": "What is the highest monthly income earned by any one of {members}, in rupees? (Enter 0 if none of them earns.)",
+    "text": "{members} में से किसी एक की सबसे अधिक मासिक आय (रुपयों में) क्या है? (यदि कोई नहीं कमाता तो 0 दर्ज करें)",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_household.monthly_pension_inr": {
+    "source": "What is the highest monthly pension received by any one of {members}, in rupees? (Enter 0 if none of them receives a pension.)",
+    "text": "आपके {members} में से किसी एक द्वारा प्राप्त सबसे अधिक मासिक पेंशन राशि कितनी है, रुपये में? (यदि कोई पेंशन नहीं लेता तो 0 दर्ज करें।)",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.age": {
+    "source": "What is their age, in years?",
+    "text": "उनकी आयु वर्ष में क्या है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.child_is_girl": {
+    "source": "Is the child from this pregnancy/birth a girl?",
+    "text": "क्या इस गर्भावस्था/जन्म से जन्मा बच्चा लड़की है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.family_agricultural_land_acres": {
+    "source": "How many acres of land do they and their family own in total? (Enter 0 if none.)",
+    "text": "वे और उनका परिवार कुल मिलाकर कितने एकड़ जमीन के मालिक हैं? (यदि नहीं है तो 0 दर्ज करें।)",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.family_annual_income_inr": {
+    "source": "What is their family's combined annual income, in rupees?",
+    "text": "उनके परिवार की संयुक्त वार्षिक आय (रुपयों में) क्या है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.has_40_percent_or_more_disability": {
+    "source": "Do they have a disability certificate showing 40% or more disability?",
+    "text": "क्या उनके पास 40% या अधिक विकलांगता दर्शाने वाला प्रमाणपत्र है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.has_aadhaar_linked_bank_account": {
+    "source": "Is their bank account linked to their Aadhaar number?",
+    "text": "क्या उनका बैंक खाता उनके Aadhaar नंबर से जुड़ा है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.has_active_mgnrega_job_card": {
+    "source": "Does their household hold an active MGNREGA job card?",
+    "text": "क्या उनके घर के पास सक्रिय MGNREGA जॉब कार्ड है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.has_bank_account": {
+    "source": "Do they have a bank account?",
+    "text": "क्या उनके पास बैंक खाता है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.has_regular_family_financial_support": {
+    "source": "Do they have a regular source of financial support from family or elsewhere?",
+    "text": "क्या उन्हें परिवार या अन्य स्रोतों से नियमित वित्तीय सहायता मिलती है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.holds_constitutional_or_political_post": {
+    "source": "Does any family member hold or has held a constitutional post or elected political office, such as Minister, MP, MLA, MLC, or Mayor?",
+    "text": "क्या किसी परिवार के सदस्य ने संवैधानिक पद या चुनी हुई राजनीतिक पद, जैसे मंत्री, MP, MLA, MLC, या मेयर, संभाला है या किया है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.holds_govt_board_or_corporation_post": {
+    "source": "Does any family member serve as Chairperson, Vice-Chairperson, Director, or Member of a government Board or Corporation?",
+    "text": "क्या किसी परिवार के सदस्य ने सरकारी बोर्ड या निगम में अध्यक्ष, उपाध्यक्ष, निदेशक, या सदस्य के रूप में कार्य किया है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.house_has_3_or_more_pucca_rooms": {
+    "source": "Does their house have 3 or more rooms built with permanent (pucca) walls and roof?",
+    "text": "क्या उनके घर में स्थायी (pucca) दीवारों और छत वाले 3 या अधिक कमरे हैं?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.house_has_pucca_roof_or_wall": {
+    "source": "Does their house have a pucca (permanent) roof, or pucca walls, made of brick, stone, cement or concrete?",
+    "text": null,
+    "status": "manual",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2",
+    "manual_reason": "it failed the automatic checks",
+    "manual_since": "2026-10-06"
+  },
+  "field_member.house_room_count": {
+    "source": "How many rooms does their house have? (Enter 0 if they have no house.)",
+    "text": "उनके घर में कितने कमरे हैं? (यदि उनके पास घर नहीं है तो 0 दर्ज करें।)",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.household_has_existing_lpg_connection": {
+    "source": "Does their household already have an LPG gas connection?",
+    "text": "क्या उनके घर में पहले से LPG गैस कनेक्शन है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.household_owns_motorised_vehicle_or_fishing_boat": {
+    "source": "Does their household own a motorised vehicle or a fishing boat?",
+    "text": "क्या उनका घर मोटरयुक्त वाहन या मछली पकड़ने की नाव का मालिक है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.irrigated_land_acres": {
+    "source": "How many acres of irrigated land does their household own? (Enter 0 if none.)",
+    "text": "उनके घर के पास कितनी एकड़ सिंचित जमीन है? (यदि नहीं है तो 0 दर्ज करें।)",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.is_aay_beneficiary": {
+    "source": "Is their household a beneficiary of the Antyodaya Anna Yojana (AAY) scheme?",
+    "text": "क्या उनका घर Antyodaya Anna Yojana (AAY) योजना का लाभार्थी है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.is_ab_pmjay_beneficiary": {
+    "source": "Is their family already a beneficiary of the Ayushman Bharat (AB-PMJAY) health scheme?",
+    "text": "क्या उनका परिवार पहले से आयुष्मान भारत (AB-PMJAY) स्वास्थ्य योजना का लाभार्थी है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.is_bpl_household": {
+    "source": "Is their household officially classified as Below Poverty Line (BPL)?",
+    "text": "क्या उनका घर आधिकारिक तौर पर Below Poverty Line (BPL) के रूप में वर्गीकृत है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.is_e_shram_registered": {
+    "source": "Do they hold an e-Shram card (the government's unorganised-worker registration)?",
+    "text": "क्या उनके पास e-Shram कार्ड (सरकार का अनौपचारिक कार्यकर्ता पंजीकरण) है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.is_forest_dweller": {
+    "source": "Are they recognized as a forest dweller?",
+    "text": "क्या वे वनवासी के रूप में मान्यता प्राप्त हैं?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.is_frontline_worker": {
+    "source": "Are they employed as a frontline worker, such as an Anganwadi worker/helper or ASHA worker?",
+    "text": "क्या वे एंगनवाड़ी कार्यकर्ता/सहायक या आशा कार्यकर्ता जैसे फ्रंटलाइन कार्यकर्ता के रूप में कार्यरत हैं?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.is_govt_employee": {
+    "source": "Is any family member a government employee?",
+    "text": "क्या किसी परिवार के सदस्य का सरकारी कर्मचारी है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.is_group_d_class_iv_or_mts": {
+    "source": "Is that family member specifically a Group D, Class IV, or Multi-Tasking Staff (MTS) employee?",
+    "text": "क्या वह परिवार का सदस्य विशेष रूप से Group D, Class IV, या Multi-Tasking Staff (MTS) कर्मचारी है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.is_houseless": {
+    "source": "Does their family currently have no house at all?",
+    "text": "क्या उनका परिवार वर्तमान में बिल्कुल भी घर नहीं रखता?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.is_in_secc_2011_list": {
+    "source": "Does their household appear in the government's SECC 2011 survey list?",
+    "text": "क्या उनका घर सरकार की SECC 2011 सर्वेक्षण सूची में आता है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.is_indian_citizen": {
+    "source": "Are they an Indian citizen?",
+    "text": "क्या वे भारतीय नागरिक हैं?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.is_institutional_landholder": {
+    "source": "Is their land owned by an institution rather than by their family directly?",
+    "text": "क्या उनका जमीन संस्थान के पास है न कि सीधे उनके परिवार के पास?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.is_maharashtra_resident": {
+    "source": "Are they a permanent resident of Maharashtra?",
+    "text": "क्या वे महाराष्ट्र के स्थायी निवासी हैं?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.is_most_backward_class": {
+    "source": "Do they belong to a community classified as a Most Backward Class?",
+    "text": "क्या वे सबसे पिछड़ी वर्ग (Most Backward Class) के रूप में वर्गीकृत समुदाय से हैं?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.is_nfsa_ration_card_holder": {
+    "source": "Does their household hold a ration card covered under the National Food Security Act?",
+    "text": "क्या उनके घर के पास राष्ट्रीय खाद्य सुरक्षा अधिनियम के तहत रेशन कार्ड है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.is_nri_per_income_tax_act_1961": {
+    "source": "Are they classified as a Non-Resident Indian (NRI) under Indian income tax rules?",
+    "text": "क्या वे आयकर अधिनियम 1961 के तहत नॉन‑रेसिडेंट इंडियन (NRI) माने जाते हैं?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.is_pm_kisan_beneficiary": {
+    "source": "Is their household already a beneficiary of the PM-KISAN scheme?",
+    "text": null,
+    "status": "manual",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2",
+    "manual_reason": "it failed the automatic checks",
+    "manual_since": "2026-10-06"
+  },
+  "field_member.is_pmay_g_beneficiary": {
+    "source": "Is their household already a beneficiary of the PMAY-Gramin (rural housing) scheme?",
+    "text": "क्या उनका घर पहले से ही PMAY-Gramin (ग्रामीण आवास) योजना का लाभार्थी है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.is_practicing_registered_professional": {
+    "source": "Is any family member a practicing, professionally-registered Doctor, Engineer, Lawyer, Chartered Accountant, or Architect?",
+    "text": "क्या किसी परिवार के सदस्य डॉक्टर, इंजीनियर, वकील, चार्टर्ड अकाउंटेंट, या आर्किटेक्ट जैसे पंजीकृत पेशेवर के रूप में कार्यरत हैं?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.is_receiving_ladki_bahin_benefit": {
+    "source": "Is this family member already receiving the Ladki Bahin benefit?",
+    "text": "क्या यह परिवार का सदस्य पहले से Ladki Bahin लाभ प्राप्त कर रहा है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.is_regular_govt_employee_or_pensioner": {
+    "source": "Is any family member a regular/permanent government employee or a government pensioner?",
+    "text": "क्या किसी परिवार के सदस्य का नियमित/स्थायी सरकारी कर्मचारी या सरकारी पेंशनभोगी है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.is_sc_st": {
+    "source": "Does their household belong to a Scheduled Caste (SC) or Scheduled Tribe (ST)?",
+    "text": "क्या उनके घर का परिवार अनुसूचित जाति (SC) या अनुसूचित जनजाति (ST) से संबंधित है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.is_secc_automatically_included": {
+    "source": "Does their household fall into one of the automatically-included categories: destitute/living on alms, a manual scavenger family, a primitive tribal group, or a legally released bonded labourer family?",
+    "text": "क्या उनका घर स्वचालित‑समावेशन श्रेणियों में आता है: निराश्रित/भिक्षा पर जीवित, मैन्युअल स्कैवेंजर परिवार, आदिम जनजातीय समूह, या कानूनी रूप से मुक्त बंधक श्रमिक परिवार?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.is_secc_deprived_household": {
+    "source": "Does their household fall under one of the government's official rural poverty-deprivation categories (for example: no adult wage-earner, a female-headed household with no adult male, a disabled member with no able-bodied adult, or a landless household relying on manual labour)?",
+    "text": "क्या उनका घर सरकार की आधिकारिक ग्रामीण गरीबी‑वंचन श्रेणियों में आता है (जैसे: कोई वयस्क वेतनभोगी नहीं, महिला प्रमुख घर बिना वयस्क पुरुष के, विकलांग सदस्य बिना सक्षम वयस्क के, या ज़मीनी काम पर निर्भर बेजाय घर)?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.is_serving_or_retired_govt_employee": {
+    "source": "Is any family member a serving or retired government employee, at a central/state ministry, public-sector undertaking, or local body?",
+    "text": "क्या उनके परिवार में कोई सदस्य केंद्रीय/राज्य मंत्रालय, सार्वजनिक क्षेत्र उद्यम या स्थानीय निकाय में वर्तमान में या सेवानिवृत्त सरकारी कर्मचारी है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.is_tea_garden_tribe": {
+    "source": "Do they belong to a Tea or Ex-Tea Garden Tribe community?",
+    "text": "क्या वे चाय या पूर्व-चाय बागान जनजाति समुदाय से हैं?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.is_urban_informal_worker": {
+    "source": "Do they work in an urban informal occupation — for example, rag picker, domestic worker, street vendor, construction worker, or sanitation worker?",
+    "text": "क्या वह शहरी अनौपचारिक कार्य में लगे हैं — उदाहरण के तौर पर, कचरा इकट्ठा करने वाला, घरेलू कामगार, सड़क विक्रेता, निर्माण कार्यकर्ता, या सफाई कर्मचारी?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.is_valid_rsby_beneficiary": {
+    "source": "Is their family a valid, premium-paid beneficiary of the earlier RSBY health insurance scheme?",
+    "text": "क्या उनका परिवार पहले की RSBY स्वास्थ्य बीमा योजना का वैध, प्रीमियम‑भुगतान किया हुआ लाभार्थी है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.is_widow_suffering_from_aids": {
+    "source": "Are they living with HIV or AIDS? This is asked only because a widow living with HIV or AIDS can be eligible without a BPL card. They can choose “Prefer not to say”.",
+    "text": "क्या वे HIV या AIDS से पीड़ित हैं? यह प्रश्न केवल इसलिए पूछा जाता है क्योंकि HIV या AIDS से पीड़ित विधवा बिना BPL कार्ड के भी पात्र हो सकती है। वे “कहना नहीं चाहते” चुन सकते हैं।",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.is_woman": {
+    "source": "Are they a woman?",
+    "text": "क्या वे महिला हैं?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.kisan_credit_card_limit_inr": {
+    "source": "What is the sanctioned limit on their Kisan Credit Card, in rupees? (Enter 0 if they don't have one.)",
+    "text": "उनके Kisan Credit Card की स्वीकृत सीमा (रुपये में) क्या है? (यदि उनके पास नहीं है तो 0 दर्ज करें.)",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.lives_in_kutcha_house": {
+    "source": "Does their family live in a kutcha house — one made of non-permanent materials like mud, thatch, or loose brick?",
+    "text": null,
+    "status": "manual",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2",
+    "manual_reason": "it failed the automatic checks",
+    "manual_since": "2026-10-06"
+  },
+  "field_member.lives_on_river_island": {
+    "source": "Do they live on a river island?",
+    "text": "क्या वे नदी के द्वीप पर रहते हैं?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.meets_14_point_self_declaration": {
+    "source": "If none of the other categories apply to them, would they be able to submit a self-declaration form stating their household is poor?",
+    "text": "यदि अन्य कोई श्रेणी उन पर लागू नहीं होती, तो क्या वे स्व-घोषणा फॉर्म जमा करके यह बता सकते हैं कि उनका घर गरीब है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.monthly_income_inr": {
+    "source": "What is the monthly income, in rupees?",
+    "text": "मासिक आय (रुपयों में) क्या है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.monthly_pension_inr": {
+    "source": "What is their monthly pension amount, in rupees? (Enter 0 if they don't receive a pension.)",
+    "text": "उनकी मासिक पेंशन राशि कितनी है, रुपये में? (यदि वे पेंशन नहीं प्राप्त करते तो 0 दर्ज करें।)",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.months_since_last_birthday": {
+    "source": "How many full months have passed since their last birthday? (0 to 11)",
+    "text": "उनके पिछले जन्मदिन के बाद से कितने पूर्ण महीने बीते हैं? (0 से 11)",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.other_govt_scheme_monthly_benefit_inr": {
+    "source": "How much do they already receive per month from another government financial scheme, in rupees? (Enter 0 if none.)",
+    "text": "उन्हें किसी अन्य सरकारी वित्तीय योजना से प्रति माह कितनी राशि मिलती है (रुपये में)? (यदि नहीं तो 0 दर्ज करें)",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.owned_vehicle_is_farm_tractor_only": {
+    "source": "Is the four-wheeler their family owns only a farm tractor, and not a car or other vehicle?",
+    "text": "क्या उनके परिवार द्वारा रखे गए चारपहिया वाहन केवल एक फार्म ट्रैक्टर है, कार या अन्य वाहन नहीं?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.owns_5_or_more_acres_irrigated_land_two_or_more_crop_seasons": {
+    "source": "Does their household own 5 or more acres of irrigated land used for two or more crop seasons a year?",
+    "text": "क्या उनका घर 5 या अधिक एकड़ सिंचित भूमि दो या अधिक फसल मौसमों के लिए उपयोग करता है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.owns_7_5_or_more_acres_land_with_irrigation_equipment": {
+    "source": "Does their household own at least 7.5 acres of land, along with irrigation equipment?",
+    "text": "क्या उनका घर कम से कम 7.5 एकड़ भूमि, साथ में सिंचाई उपकरण, रखता है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.owns_cultivable_land_in_records": {
+    "source": "Does their family own cultivable land according to official state land records?",
+    "text": "क्या उनका परिवार आधिकारिक राज्य भूमि अभिलेखों के अनुसार खेती योग्य जमीन का मालिक है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.owns_four_wheeler": {
+    "source": "Does their family own a private four-wheeler, such as a car or SUV?",
+    "text": "क्या उनका परिवार निजी चारपहिया वाहन, जैसे कार या SUV, का मालिक है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.owns_gt_2_5_acres_irrigated_land_with_irrigation_equipment": {
+    "source": "Does their household own more than 2.5 acres of irrigated land, along with irrigation equipment?",
+    "text": "क्या उनका घर 2.5 एकड़ से अधिक सिंचित भूमि, साथ में सिंचाई उपकरण, रखता है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.owns_landline_phone": {
+    "source": "Does their household own a landline telephone?",
+    "text": "क्या उनका घर लैंडलाइन टेलीफोन रखता है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.owns_mechanized_agricultural_equipment_3_or_4_wheeler": {
+    "source": "Does their household own mechanised 3-wheeler or 4-wheeler agricultural equipment, like a tractor?",
+    "text": "क्या उनका घर 3‑व्हीलर या 4‑व्हीलर कृषि उपकरण, जैसे ट्रैक्टर, रखता है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.owns_motorised_three_or_four_wheeler": {
+    "source": "Does their household own a motorised three-wheeler or four-wheeler?",
+    "text": "क्या उनका घर मोटरयुक्त तीन-पहिया या चार-पहिया वाहन का मालिक है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.owns_non_agricultural_enterprise_registered_with_govt": {
+    "source": "Does their household own a non-agricultural business registered with the government?",
+    "text": "क्या उनका घर सरकार के साथ पंजीकृत गैर‑कृषि व्यवसाय रखता है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.owns_refrigerator": {
+    "source": "Does their household own a refrigerator?",
+    "text": "क्या उनका घर रेफ्रिजरेटर रखता है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.paid_income_tax_last_assessment_year": {
+    "source": "Did they or a family member pay income tax in the last assessment year?",
+    "text": "क्या उन्होंने या उनके परिवार के किसी सदस्य ने पिछले मूल्यांकन वर्ष में आयकर का भुगतान किया?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.paid_professional_tax": {
+    "source": "Does their family pay professional tax?",
+    "text": "क्या उनका परिवार प्रोफेशनल टैक्स देता है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.pregnancy_child_order": {
+    "source": "For this pregnancy or birth, which child is this for them — first, second, etc.? (Enter the number.)",
+    "text": "इस गर्भावस्था या जन्म के लिए यह बच्चा उनका कौन‑सा है — पहला, दूसरा आदि? (संख्या दर्ज करें)",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "field_member.unirrigated_land_acres": {
+    "source": "How many acres of unirrigated (rain-fed) land does their household own? (Enter 0 if none.)",
+    "text": "उनके घर के पास कितनी एकड़ बिनसिंचित (बारिश‑आधारित) जमीन है? (यदि नहीं है तो 0 दर्ज करें।)",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.age": {
+    "source": "Age",
+    "text": "आयु",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.child_is_girl": {
+    "source": "Child's gender (this pregnancy/birth)",
+    "text": "बच्चे का लिंग (इस गर्भावस्था/जन्म)",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.family_agricultural_land_acres": {
+    "source": "Family landholding (acres)",
+    "text": "परिवार की जमीन (एकड़)",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.family_annual_income_inr": {
+    "source": "Family annual income",
+    "text": "परिवार की वार्षिक आय",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.has_40_percent_or_more_disability": {
+    "source": "Disability status (40%+)",
+    "text": "विकलांगता स्थिति (40%+)",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.has_aadhaar_linked_bank_account": {
+    "source": "Aadhaar-linked bank account",
+    "text": "Aadhaar‑लिंक्ड बैंक खाता",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.has_active_mgnrega_job_card": {
+    "source": "MGNREGA job card status",
+    "text": "MGNREGA जॉब कार्ड स्थिति",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.has_bank_account": {
+    "source": "Bank account status",
+    "text": "बैंक खाता स्थिति",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.has_regular_family_financial_support": {
+    "source": "Regular family financial support",
+    "text": "नियमित पारिवारिक वित्तीय सहायता",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.holds_constitutional_or_political_post": {
+    "source": "Constitutional or elected political post",
+    "text": "संवैधानिक या चुनी हुई राजनीतिक पद",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.holds_govt_board_or_corporation_post": {
+    "source": "Government board/corporation post",
+    "text": "सरकारी बोर्ड/कॉरपोरेशन पद",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.house_has_3_or_more_pucca_rooms": {
+    "source": "Pucca house room count",
+    "text": "पुच्छा घर कमरे गिनती",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.house_has_pucca_roof_or_wall": {
+    "source": "Pucca roof or walls",
+    "text": "पक्की छत या दीवारें",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.house_room_count": {
+    "source": "Rooms in the house",
+    "text": "घर में कमरे",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.household_has_existing_lpg_connection": {
+    "source": "Existing LPG connection",
+    "text": "मौजूदा LPG कनेक्शन",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.household_owns_motorised_vehicle_or_fishing_boat": {
+    "source": "Motorised vehicle or fishing boat ownership",
+    "text": "मोटरयुक्त वाहन या मछली पकड़ने की नाव का स्वामित्व",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.irrigated_land_acres": {
+    "source": "Irrigated land (acres)",
+    "text": "सिंचित जमीन (एकड़)",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.is_aay_beneficiary": {
+    "source": "Antyodaya Anna Yojana (AAY) beneficiary status",
+    "text": "Antyodaya Anna Yojana (AAY) लाभार्थी स्थिति",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.is_ab_pmjay_beneficiary": {
+    "source": "Ayushman Bharat (AB-PMJAY) beneficiary status",
+    "text": "आयुष्मान भारत (AB-PMJAY) लाभार्थी स्थिति",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.is_bpl_household": {
+    "source": "Below Poverty Line (BPL) status",
+    "text": "Below Poverty Line (BPL) स्थिति",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.is_e_shram_registered": {
+    "source": "e-Shram registration",
+    "text": "e-Shram पंजीकरण",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.is_forest_dweller": {
+    "source": "Forest dweller status",
+    "text": "वनवासी स्थिति",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.is_frontline_worker": {
+    "source": "Frontline worker status",
+    "text": "फ्रंटलाइन कार्यकर्ता स्थिति",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.is_govt_employee": {
+    "source": "Government employment status",
+    "text": "सरकारी रोजगार स्थिति",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.is_group_d_class_iv_or_mts": {
+    "source": "Group D / Class IV / MTS employee status",
+    "text": "Group D / Class IV / MTS कर्मचारी स्थिति",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.is_houseless": {
+    "source": "Houseless status",
+    "text": "घर न होने की स्थिति",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.is_in_secc_2011_list": {
+    "source": "SECC 2011 listing",
+    "text": "SECC 2011 सूचीकरण",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.is_indian_citizen": {
+    "source": "Indian citizenship",
+    "text": "भारतीय नागरिकता",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.is_institutional_landholder": {
+    "source": "Institutional landholding status",
+    "text": "संस्थागत भूमि स्वामित्व स्थिति",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.is_maharashtra_resident": {
+    "source": "Maharashtra residency",
+    "text": "महाराष्ट्र निवास",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.is_most_backward_class": {
+    "source": "Most Backward Class status",
+    "text": "सबसे पिछड़ी वर्ग स्थिति",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.is_nfsa_ration_card_holder": {
+    "source": "NFSA ration card status",
+    "text": "NFSA रेशन कार्ड स्थिति",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.is_nri_per_income_tax_act_1961": {
+    "source": "NRI status",
+    "text": "NRI स्थिति",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.is_pm_kisan_beneficiary": {
+    "source": "PM-KISAN beneficiary status",
+    "text": "PM-KISAN लाभार्थी स्थिति",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.is_pmay_g_beneficiary": {
+    "source": "PMAY-G beneficiary status",
+    "text": "PMAY-G लाभार्थी स्थिति",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.is_practicing_registered_professional": {
+    "source": "Registered professional status",
+    "text": "पंजीकृत पेशेवर स्थिति",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.is_receiving_ladki_bahin_benefit": {
+    "source": "Already receiving this benefit",
+    "text": "पहले से यह लाभ प्राप्त कर रहा है",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.is_regular_govt_employee_or_pensioner": {
+    "source": "Regular government employee/pensioner status",
+    "text": "नियमित सरकारी कर्मचारी/पेंशनभोगी स्थिति",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.is_sc_st": {
+    "source": "SC/ST status",
+    "text": "SC/ST स्थिति",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.is_secc_automatically_included": {
+    "source": "Automatic inclusion category",
+    "text": "स्वचालित समावेशन श्रेणी",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.is_secc_deprived_household": {
+    "source": "Household deprivation status",
+    "text": "घर की वंचन स्थिति",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.is_serving_or_retired_govt_employee": {
+    "source": "Government employment status",
+    "text": "सरकारी रोजगार स्थिति",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.is_tea_garden_tribe": {
+    "source": "Tea garden tribe status",
+    "text": "चाय बागान जनजाति स्थिति",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.is_urban_informal_worker": {
+    "source": "Urban informal worker status",
+    "text": "शहरी अनौपचारिक कार्यकर्ता स्थिति",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.is_valid_rsby_beneficiary": {
+    "source": "RSBY beneficiary status",
+    "text": "RSBY लाभार्थी स्थिति",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.is_widow": {
+    "source": "Widow",
+    "text": "विधवा",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.is_widow_suffering_from_aids": {
+    "source": "Widow living with HIV/AIDS",
+    "text": "HIV/AIDS से पीड़ित विधवा",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.is_woman": {
+    "source": "Gender: woman",
+    "text": "लिंग: महिला",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.kisan_credit_card_limit_inr": {
+    "source": "Kisan Credit Card limit",
+    "text": null,
+    "status": "manual",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2",
+    "manual_reason": "it failed the automatic checks",
+    "manual_since": "2026-10-06"
+  },
+  "label.lives_in_kutcha_house": {
+    "source": "Kutcha house residency",
+    "text": "कुटचा घर में रहने की स्थिति",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.lives_on_river_island": {
+    "source": "River island residency",
+    "text": "नदी द्वीप निवास",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.meets_14_point_self_declaration": {
+    "source": "Self-declared poor household",
+    "text": "स्व-घोषित गरीब घर",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.monthly_income_inr": {
+    "source": "Monthly income",
+    "text": "मासिक आय",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.monthly_pension_inr": {
+    "source": "Monthly pension",
+    "text": "मासिक पेंशन",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.months_since_last_birthday": {
+    "source": "Months since last birthday",
+    "text": "पिछले जन्मदिन के बाद के महीने",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.other_govt_scheme_monthly_benefit_inr": {
+    "source": "Other government scheme monthly benefit",
+    "text": "अन्य सरकारी योजना मासिक लाभ",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.owned_vehicle_is_farm_tractor_only": {
+    "source": "Four-wheeler is a farm tractor only",
+    "text": "चारपहिया वाहन केवल फार्म ट्रैक्टर है",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.owns_5_or_more_acres_irrigated_land_two_or_more_crop_seasons": {
+    "source": "Irrigated land, multi-season (5+ acres)",
+    "text": "सिंचित भूमि, बहु‑सीजन (5+ एकड़)",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.owns_7_5_or_more_acres_land_with_irrigation_equipment": {
+    "source": "Large landholding with irrigation equipment (7.5+ acres)",
+    "text": "बड़ी भूमि (7.5+ एकड़) सिंचाई उपकरण सहित",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.owns_cultivable_land_in_records": {
+    "source": "Cultivable landholding (official records)",
+    "text": "खेती योग्य जमीन (आधिकारिक अभिलेख)",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.owns_four_wheeler": {
+    "source": "Four-wheeler ownership",
+    "text": "चारपहिया वाहन स्वामित्व",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.owns_gt_2_5_acres_irrigated_land_with_irrigation_equipment": {
+    "source": "Irrigated land with equipment (>2.5 acres)",
+    "text": "सिंचित भूमि उपकरण सहित (>2.5 एकड़)",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.owns_landline_phone": {
+    "source": "Landline phone ownership",
+    "text": "लैंडलाइन फोन स्वामित्व",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.owns_mechanized_agricultural_equipment_3_or_4_wheeler": {
+    "source": "Mechanised agricultural equipment ownership",
+    "text": "मैकेनाइज़्ड कृषि उपकरण का स्वामित्व",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.owns_motorised_three_or_four_wheeler": {
+    "source": "Motorised 3/4-wheeler ownership",
+    "text": "मोटरयुक्त 3/4-व्हीलर का स्वामित्व",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.owns_non_agricultural_enterprise_registered_with_govt": {
+    "source": "Registered non-agricultural business",
+    "text": "पंजीकृत गैर‑कृषि व्यवसाय",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.owns_refrigerator": {
+    "source": "Refrigerator ownership",
+    "text": "रेफ्रिजरेटर स्वामित्व",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.paid_income_tax_last_assessment_year": {
+    "source": "Income tax payment",
+    "text": "आयकर भुगतान",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.paid_professional_tax": {
+    "source": "Professional tax payment",
+    "text": "प्रोफेशनल टैक्स भुगतान",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.pregnancy_child_order": {
+    "source": "Child order (this pregnancy/birth)",
+    "text": "बच्चे का क्रम (इस गर्भावस्था/जन्म)",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "label.unirrigated_land_acres": {
+    "source": "Unirrigated land (acres)",
+    "text": "बिनसिंचित जमीन (एकड़)",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
   "question.family_prefix": {
     "source": "This next one is about one of your family members — {question}",
     "text": "यह अगला प्रश्न आपके परिवार के एक सदस्य के बारे में है — {question}",
@@ -271,27 +2256,63 @@
   },
   "reply.decline": {
     "source": "Prefer not to say",
-    "text": "Prefer not to say",
+    "text": "कहना नहीं चाहते",
     "status": "unreviewed",
-    "translated_on": "2026-10-05",
+    "translated_on": "2026-10-06",
     "model": "openai/gpt-oss-120b",
     "provider": "groq",
     "gold_tag": "gold-v2"
   },
   "reply.no": {
     "source": "No",
-    "text": "No",
+    "text": "नहीं",
     "status": "unreviewed",
-    "translated_on": "2026-10-05",
+    "translated_on": "2026-10-06",
     "model": "openai/gpt-oss-120b",
     "provider": "groq",
     "gold_tag": "gold-v2"
   },
   "reply.yes": {
     "source": "Yes",
-    "text": "Yes",
+    "text": "हाँ",
     "status": "unreviewed",
-    "translated_on": "2026-10-05",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "trace.all_of": {
+    "source": "All of these need to be true",
+    "text": "इन सभी का सत्य होना आवश्यक है",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "trace.applies": {
+    "source": "Applies to you 🚫",
+    "text": "आप पर लागू 🚫",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "trace.disqualify_header": {
+    "source": "Things that would disqualify you:",
+    "text": "वे बातें जो आपको अयोग्य कर सकती हैं:",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "trace.does_not_apply": {
+    "source": "Doesn't apply ✅",
+    "text": "लागू नहीं ✅",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
     "model": "openai/gpt-oss-120b",
     "provider": "groq",
     "gold_tag": "gold-v2"
@@ -301,6 +2322,51 @@
     "text": "इस परिणाम तक पहुँचने के लिये हमने जो जाँच की:",
     "status": "unreviewed",
     "translated_on": "2026-10-05",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "trace.no": {
+    "source": "No ❌",
+    "text": "नहीं ❌",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "trace.one_of": {
+    "source": "At least one of these needs to be true",
+    "text": "इनमें से कम से कम एक का सत्य होना आवश्यक है",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "trace.unknown": {
+    "source": "Not yet known ❓",
+    "text": "अभी तक ज्ञात नहीं ❓",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "trace.waived": {
+    "source": "True for you, but waived by an exception ✅",
+    "text": "आपके लिए सत्य, पर अपवाद के कारण छूट ✅",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "trace.yes": {
+    "source": "Yes ✅",
+    "text": "हाँ ✅",
+    "status": "unreviewed",
+    "translated_on": "2026-10-06",
     "model": "openai/gpt-oss-120b",
     "provider": "groq",
     "gold_tag": "gold-v2"

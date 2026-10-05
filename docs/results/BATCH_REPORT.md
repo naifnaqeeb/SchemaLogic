@@ -1,6 +1,6 @@
 # Batch report — all gold schemes
 
-*Generated 2026-10-05T18:41:02 by `scripts/run_batch_report.py` from code `df7fb58`, against frozen gold `gold-v2` (`82436ac`). Offline: no LLM calls. Regenerate rather than edit.*
+*Generated 2026-10-06T02:55:27 by `scripts/run_batch_report.py` from code `068d3a6`, against frozen gold `gold-v2` (`82436ac`). Offline: no LLM calls. Regenerate rather than edit.*
 
 ## Caveats — read first
 
@@ -46,13 +46,39 @@ Absent: MH-LADKI-BAHIN.
 
 Full pipeline (judge -> gate -> apply approved) on the same extraction as Baseline 3.
 
-*No results yet (absent for all 7 schemes).*
+| Scheme | Structural F1 | Exceptions F1 | Outcome agreement | FP (eligible) | FN (eligible) | n | Scalar | Draft |
+|---|---|---|---|---|---|---|---|---|
+| IGNOAPS | 0.462 | — | 41.7% | 0.0% | 25.0% | 12 | 2/2 | `IGNOAPS.json` |
+| PM-KISAN | 0.909 | 1.000 | 66.7% | 0.0% | 0.0% | 12 | 2/2 | `PM-KISAN.json` |
+| PM-UJJWALA-2.0 | 0.923 | — | 100.0% | 0.0% | 0.0% | 9 | 2/2 | `PM-UJJWALA-2.0.json` |
+| PMMVY | 0.812 | — | 41.7% | 0.0% | 0.0% | 12 | 2/2 | `PMMVY.json` |
+| AB-PMJAY | **failed run** — judge call failed (api_error: json_validate_failed); excluded | | | | | | | `AB-PMJAY.json` |
+| PMAY-G | **failed run** — judge call failed (api_error: json_validate_failed); excluded | | | | | | | `PMAY-G.json` |
+| **All (4)** | **0.817** (micro) | | **60.0%** | 0.0% | 6.7% | 45 | | |
+
+Absent: MH-LADKI-BAHIN.
 
 ## baseline1_flat
 
 Baseline 1: flat attribute extraction, no compositional logic.
 
 *No results yet (absent for all 7 schemes).*
+
+## Full pipeline vs Baseline 3, same extraction
+
+Only schemes where both produced a scheme. A failed judge call is a failed run: excluded and listed, not scored as "no change".
+
+Each cell: Baseline 3 → pipeline. "Other" is almost always *undetermined*: a rule on a field the test profiles don't carry. A finding the judge adds usually introduces such a field (`ontology_proposed`), so a drop in agreement there is the profiles not answering, not a wrong verdict; false eligible / false not eligible are the wrong verdicts.
+
+| Scheme | Findings applied | Structural F1 | Outcome agreement | False eligible | False not eligible | Other (undetermined) |
+|---|---|---|---|---|---|---|
+| IGNOAPS | 1 | 0.500 → 0.462 | 75.0% → 41.7% | 0.0% → 0.0% | 25.0% → 25.0% | 0.0% → 33.3% |
+| PM-KISAN | 1 | 0.952 → 0.909 | 91.7% → 66.7% | 8.3% → 0.0% | 0.0% → 0.0% | 0.0% → 33.3% |
+| PM-UJJWALA-2.0 | 0 | 0.923 → 0.923 | 100.0% → 100.0% | 0.0% → 0.0% | 0.0% → 0.0% | 0.0% → 0.0% |
+| PMMVY | 1 | 0.839 → 0.812 | 41.7% → 41.7% | 0.0% → 0.0% | 0.0% → 0.0% | 58.3% → 58.3% |
+| **All (4)** | | **0.844 → 0.817** (micro) | **75.6% → 60.0%** (n=45) | 2.2% → 0.0% | 6.7% → 6.7% | 15.6% → 33.3% |
+
+Excluded: AB-PMJAY — judge call failed (api_error: json_validate_failed); PMAY-G — judge call failed (api_error: json_validate_failed); MH-LADKI-BAHIN — no Baseline 3 sample (extraction failed validation).
 
 ## Baseline 2 — direct LLM answering, re-scored against frozen gold
 

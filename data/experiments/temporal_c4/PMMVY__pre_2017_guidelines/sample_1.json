@@ -1,0 +1,119 @@
+{
+  "item": "temporal_c4",
+  "gold_tag": "gold-v2",
+  "gold_commit": "82436ac11fb53421bf44c8c68e6333e1db353442",
+  "code_commit": "068d3a6",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "config": {
+    "k": 1,
+    "temperature": 0.2,
+    "extractor": "defaults"
+  },
+  "date": "2026-10-06",
+  "created_at": "2026-10-06T00:42:38",
+  "scheme_id": "PMMVY",
+  "arm": "PMMVY__pre_2017_guidelines",
+  "role": "pre",
+  "sample": 1,
+  "source": "PMMVY Scheme Implementation Guidelines, MWCD 2017 (PMMVY_primary_guidelines_2017.pdf, from https://nirdpr.org.in/crru/docs/health/PMMVY%20Scheme%20Implemetation%20Guidelines.pdf), paras 1.3, 2.2-2.4",
+  "source_document_sha256": "be479e4e0b10c7cd620d1af915ae014e461be7031997936ffe3ea5fcdac73e08",
+  "source_excerpt": "Pradhan Mantri Matru Vandana Yojana (PMMVY) -- Scheme Implementation Guidelines, Ministry of Women and Child Development, 2017 (excerpts)\n\n1.3 Under PMMVY , a cash incentive of ` 5000/- would be provided directly in the account of Pregnant Women and Lactating Mothers (PW&LM) for first living child of the family subject to their fulfilling specific conditions relating to Maternal and Child Health.\n\n2.2 Target beneficiaries 2.2.1 All Pregnant Women and Lactating Mothers, excluding PW&LM who are in regular employment with the Central Government or the State Governments or PSUs or those who are in receipt of similar benefits under any law for the time being in force. 2.2.2 All eligible Pregnant Women and Lactating Mothers who have their pregnancy on or after 01.01.2017 for first child in family. 2.2.3 The date and stage of pregnancy for a beneficiary would be counted with respect to her LMP date as mentioned in the MCP card. 2.2.4 Case of Miscarriage/Still Birth: (i) A beneficiary is eligible to receive benefits under the scheme only once. (ii) In case of miscarriage/still birth, the beneficiary would be eligible to claim the remaining instalment(s) in event of any future pregnancy. (iii) Thus, after receiving the 1st instalment, if the beneficiary has a miscarriage, she would only be eligible for receiving 2 nd and 3 rd instalment in event of future pregnancy subject to fulfilment of eligibility criterion and conditionalities of the scheme. Similarly, if the beneficiary has a miscarriage or still birth a fter receiving 1 st and 2 nd instalments, she would only be eligible for receiving 3rd instalment in event of future pregnancy subject to fulfilment of eligibility criterion and conditionalities of the scheme. 2.2.5 C ase of Infant Mortality: A beneficiary is eligible to receive benefits under the scheme only once. That is, in case of infant mortality, she will not be eligible for claiming benefits under the scheme, if she has already received all the instalments of the maternity benefit under PMMVY earlier. 2.2.6 Pregnant and Lactating AWWs/ AWHs/ ASHA may also avail the benefits under the PMMVY subject to fulfilment of scheme conditionalities 2.3 Benefits under PMMVY 2.3.1 Cash incentives in three instalments i.e. first instalment of ` 1000/- on early registration of pregnancy at the Anganwadi Centre (AWC)/ approved Health facility as may be identified by the respective administering State/ UT, second instalment of ` 2000/- after six months of pregnancy on receiving at least one ante-natal check-up (ANC) and third instalment of ` 2000/- after child birth is registered and the child has received the first cycle of BCG, OPV, DPT and Hepatitis-B, or its equivalent/ substitute. 2.3.2 The eligible beneficiaries would receive the incentive given under the Janani Suraksha Yojana (JSY) for Institutional delivery and the incentive received under JSY would be accounted towards maternity benefits so that on an average a woman gets ` 6000/-. 2.4 Conditionalities and Instalments 2.4.1 PW&LM shall receive a cash benefit of ` 5000/- in three instalments at the following stages as specified in the table given below: Conditionalities and Instalments Instalment Conditions Amount First Instalment Early Registration of pregnancy ` 1,000/- Second Instalment Received at least one ANC (can be claimed after 6 months of pregnancy) ` 2,000/- Third Instalment i. Child Birth is registered ii. Child has received first cycle of BCG, OPV,DPT and Hepatitis-B or its equivalent/substitute ` 2,000/- 2.4.2 The eligible beneficiaries would receive the remaining cash incentive as per approved norms towards the Maternity Benefit under JSY after institutional delivery so that on an average, a woman will get ` 6000/-.",
+  "usage": [
+    {
+      "call": "scheme_core_extraction",
+      "prompt_tokens": 5003,
+      "completion_tokens": 784,
+      "total_tokens": 5787
+    },
+    {
+      "call": "scheme_meta_extraction",
+      "prompt_tokens": 1603,
+      "completion_tokens": 473,
+      "total_tokens": 2076
+    }
+  ],
+  "draft_extraction": {
+    "scheme_id": "PMMVY",
+    "unit_of_eligibility": "individual",
+    "inclusion": {
+      "or": [
+        {
+          "and": [
+            {
+              "field": "is_woman",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": false,
+              "cat": "demographic"
+            },
+            {
+              "field": "pregnancy_child_order",
+              "op": "==",
+              "value": 1,
+              "ontology_proposed": false,
+              "cat": "demographic"
+            },
+            {
+              "field": "pregnancy_start_date",
+              "op": ">=",
+              "value": "2017-01-01",
+              "ontology_proposed": true,
+              "cat": "temporal"
+            }
+          ]
+        },
+        {
+          "field": "is_frontline_worker",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false,
+          "cat": "occupation"
+        }
+      ]
+    },
+    "exclusions": [
+      {
+        "field": "is_regular_govt_employee_or_pensioner",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "occupation",
+        "quantifier": "self",
+        "except": {
+          "field": "is_group_d_class_iv_or_mts",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false
+        },
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "is_pmmvy_already_received",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": true,
+        "cat": "other",
+        "quantifier": "self",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      }
+    ],
+    "temporal_validity": {
+      "valid_from": "2017-01-01",
+      "valid_to": null,
+      "extracted_at": "2026-10-06",
+      "supersedes": null
+    },
+    "operational_requirements": [],
+    "extraction_metadata": {
+      "confidence": 0.95,
+      "source_clause": "Section 2.2 Target beneficiaries",
+      "flagged_for_review": false
+    }
+  }
+}

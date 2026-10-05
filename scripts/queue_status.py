@@ -65,6 +65,16 @@ def _files(rel: str, pattern: str = "*.json", exclude: tuple[str, ...] = ()) -> 
     return sum(1 for p in (harness.EXPERIMENTS_DIR / rel).glob(pattern) if p.name not in exclude)
 
 
+def _retries() -> str:
+    """Pipeline runs that failed with json_validate_failed: how many have had their one retry."""
+    runs = [json.loads(p.read_text(encoding="utf-8")) for p in (harness.EXPERIMENTS_DIR / "pipeline_on_sample1").glob("*.json")]
+    due = [r for r in runs if "json_validate_failed" in (r.get("judge_failure") or {}).get("detail", "")
+           or r.get("retried_with_max_tokens")]
+    done = [r for r in due if r.get("retried_with_max_tokens")]
+    still = sum(1 for r in done if r.get("judge_failure"))
+    return f"{len(done)}/{len(due)}" + (f" ({still} failed again)" if still else "")
+
+
 def progress() -> list[tuple[str, str]]:
     from schemelogic.conversational import messages
 
@@ -78,6 +88,7 @@ def progress() -> list[tuple[str, str]]:
         rows.append((f"translations {lang}", f"{done}/{total}" + (f" ({failed} failed validation)" if failed else "")))
     rows += [
         ("pipeline on sample 1", f"{_files('pipeline_on_sample1')}/7"),
+        ("pipeline retry (failed judge calls)", _retries()),
         ("temporal C4 + Marathi C2 arm", f"{_files('temporal_c4', '*/sample_*.json')}/9"),
         ("k=3 self-consistency, PMMVY", f"{_files('self_consistency/PMMVY', 'sample_*.json')}/3"),
         ("k=3 pmksypdmc (silver)", f"{_files('self_consistency/_silver_pmksypdmc', 'sample_*.json')}/3"),
@@ -90,6 +101,7 @@ def progress() -> list[tuple[str, str]]:
 
 # queue item label (scripts/run_queue.py) -> progress label above
 PROGRESS_OF = {"pipeline on sample 1": "pipeline on sample 1",
+               "pipeline retry: failed judge calls at max_tokens=2000": "pipeline retry (failed judge calls)",
                "temporal C4 (+ Marathi arm of C2)": "temporal C4 + Marathi C2 arm",
                "k=3 self-consistency (finish)": "k=3 self-consistency, PMMVY",
                "k=3 pmksypdmc (silver)": "k=3 pmksypdmc (silver)", "baseline 1": "baseline 1",

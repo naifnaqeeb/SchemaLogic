@@ -1,0 +1,154 @@
+{
+  "item": "temporal_c4",
+  "gold_tag": "gold-v2",
+  "gold_commit": "82436ac11fb53421bf44c8c68e6333e1db353442",
+  "code_commit": "068d3a6",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "config": {
+    "k": 1,
+    "temperature": 0.2,
+    "extractor": "defaults"
+  },
+  "date": "2026-10-06",
+  "created_at": "2026-10-06T00:40:41",
+  "scheme_id": "PM-KISAN",
+  "arm": "PM-KISAN__pre_2019_guidelines",
+  "role": "pre",
+  "sample": 1,
+  "source": "PM-KISAN Operational Guidelines as first issued, 2018-19 (PM-KISAN_primary_pre_revised_OG.pdf, from https://pmkisan.gov.in/Documents/OPERATIONAL%20GUIDELINES.pdf, linked there as 'Pre-Revised Operational Guidelines'), paras 1-3",
+  "source_document_sha256": "5f307d86d0912bd9d6aac190a1f4de8a90f1e085756a296a65e6a31a285f5224",
+  "source_excerpt": "“Pradhan Mantri KIsan SAmman Nidhi (PM-KISAN)” OPERATIONAL GUIDELINES 1. Scheme The Government with a view to augment the income of the Small and Marginal farmers has approved a Central Sector Scheme, namely, “Pradhan Mantri KIsan SAmman Nidhi (PM-KISAN)”in the current financial year. The Scheme takes effect from 01.12.2018 for transfer of benefit to eligible beneficiaries during this financial year 2018-19. 2. Objective and Benefits 2.1 With a view to provide income support to all Small and Marginal landholding farmer families having cultivable land, the Government has launched PM-KISAN. The scheme aims to supplement the financial needs of the farmers in procuring various inputs to ensure proper crop health and appropriate yields, commensurate with the anticipated farm income. 2.2 Benefits under the Scheme Under the scheme, financial benefit as given below will be provided to all Small and Marginal landholder farmer families across the country:- (a) Landholder Farmer families wi th total cultivable holding upto 2 hectares shall be provided a benefit of Rs. 6000 per annum per family payable in three equal installments, every four months. (b) The first installment to eligible beneficiaries during this financial year 2018 -19 shall be for the period from 01.12.2018 to 31.03.2019. 2.3 Definition A Small and Marginal landholder farmer family is defined as “a family comprising of husband, wife and minor children who collectively own cultivable land upto 2 hectare as per land records of the concerned State/UT”. The existing land -ownership system will be used for identification of beneficiaries for calculation of benefit. 2.4 Exclusions 2.4.1 The following categories of beneficiaries of higher economic status shall not be eligible for benefit under the scheme: (a) All Institutional Land holders; and 2 (b) Farmer families in which one or more of its members belong to following categories : a) Former and present holders of constitutional posts b) Former and present Ministers/ State Ministers and former/present Members of Lok Sabha/ Rajya Sabha/ State Legislative Assemblies/ State Legislative Councils,former and present Mayors of Municipal Corporations, former and present Chairpersons of District Panchayats. c) All serving or retired officers and employees of Central/ State Government Ministries /Offices/Departments and its field units Central or State PSEs and Attached offices /Autonomous Institutions under Government as well as regular employees of the Local Bodies (Excluding Multi Tasking Staff / Class IV/Group D employees) d) All superannuated/retired pensioners whose monthly pension is Rs.10,000/ -or more(Excluding Multi Tasking Staff / Class IV/Group D employees) of above category 2.4.1 (c)) e) All Persons who paid Income Tax in last assessment year. f) Professionals like Doctors, Engineers, Lawyers, Chartered Accountants, and Architects registered with Professional bodies and carrying out profession by undertaking practices. 2.4.2 For the purpose of exclusion State/UT Government can certify the eligibility of the beneficiary based on self declaration by the beneficiaries. In case beneficiary is not available /does not reside in the village, State/UT Governments may consider certification based on the declaration by other adult member of his/her family. In case of incorrect self declaration, beneficiary shall be liable for recovery of transferred financial benefit and other penal actions as per law. 3. Methodology for calculation of benefit 3.1 As mentioned in Para 2.3 above, the benefit of the scheme would be provided to all Small and Marginal landholder farmer families who collectively own cultivable land upto 2 hectare as per land records of concerned State/UTs, subject to exclusionsas detailed in para 2.4 above. 3.2 If within a landholding farmer family, there are land parcels owned by family members spread across different revenue records in the same or different villages, then in such cases, land will be pooled for determining the benefits under the scheme. In case of joint holding the benefit will be transferred to the bank account of the person within the family with highest quantum of landholding. If the quantum of cultivable land owned by two or more individual family members is same, the benefit will be transferred to the bank account of the elder/eldest, as the case may be, of such members of that farmer family. Few illustrative examples for the eligibility of the benefits can be seen in Annexure-I. 3 3.3 The cut-off date for determination of eligibility of beneficiaries under the scheme shall be 01.02.2019 and no changes thereafter shall be considered for eligibility of benefit under the scheme for next 5 years. 3.4 Benefit will be allowed in those cases where transfer of ow nership of cultivable land takes place on account of succession due to death of the landowner. However, those eligible farmers whose names have been entered in the land record after 01.12.2018 till 01.02.2019 shall be eligible for the benefits from the date of entry of land rights in the land records . In such cases where, transfer of ownership of cultivable land has happened due to any reason which could be purchase, succession, will, gift, etc., between 01.12 .2018 and 31.0 1.2019, the first installment during the financial year (2018 -19) shall be proportionate amount from date of transfer till 31.03.2019 with respect to the 4 months period. 3.5 In some of the North Eastern States, the land ownership rights ar e community based and it might not be possible to assess the quantum of Land holder farmers. In such States an alternate implementation mechanism for eligibility of the farmers will be developed and approved by the Committee of Union Ministers of Ministry of Development of North East Region (DoNER), Ministry of Land Resources, Union Agriculture Minister and concerned State Chief Ministers or their Ministerial representative, based on the proposal by the concerned North Eastern States.",
+  "usage": [
+    {
+      "call": "scheme_core_extraction",
+      "prompt_tokens": 5406,
+      "completion_tokens": 959,
+      "total_tokens": 6365
+    },
+    {
+      "call": "scheme_meta_extraction",
+      "prompt_tokens": 2006,
+      "completion_tokens": 552,
+      "total_tokens": 2558
+    }
+  ],
+  "draft_extraction": {
+    "scheme_id": "PM-KISAN",
+    "unit_of_eligibility": "family",
+    "inclusion": {
+      "and": [
+        {
+          "field": "owns_cultivable_land_in_records",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false,
+          "cat": "occupation"
+        },
+        {
+          "field": "cultivable_land_hectares",
+          "op": "<=",
+          "value": 2,
+          "ontology_proposed": true,
+          "cat": "economic"
+        }
+      ]
+    },
+    "exclusions": [
+      {
+        "field": "is_institutional_landholder",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "institutional",
+        "quantifier": "some_family_member",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "holds_constitutional_or_political_post",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "political",
+        "quantifier": "some_family_member",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "is_serving_or_retired_govt_employee",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "occupation",
+        "quantifier": "some_family_member",
+        "except": {
+          "field": "is_group_d_class_iv_or_mts",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false
+        },
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "monthly_pension_inr",
+        "op": ">=",
+        "value": 10000,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "some_family_member",
+        "except": {
+          "field": "is_group_d_class_iv_or_mts",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false
+        },
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "paid_income_tax_last_assessment_year",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "some_family_member",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "is_practicing_registered_professional",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "professional",
+        "quantifier": "some_family_member",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      }
+    ],
+    "temporal_validity": {
+      "valid_from": "2018-12-01",
+      "valid_to": null,
+      "extracted_at": "2026-10-06",
+      "supersedes": null
+    },
+    "operational_requirements": [],
+    "extraction_metadata": {
+      "confidence": 0.95,
+      "source_clause": "Section 2.4 (Exclusions) and Section 3.1 (Eligibility methodology)",
+      "flagged_for_review": false
+    }
+  }
+}

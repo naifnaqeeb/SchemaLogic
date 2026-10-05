@@ -1,0 +1,227 @@
+{
+  "item": "cross_lingual_c2",
+  "gold_tag": "gold-v2",
+  "gold_commit": "82436ac11fb53421bf44c8c68e6333e1db353442",
+  "code_commit": "068d3a6",
+  "provider": "none (offline)",
+  "model": "openai/gpt-oss-120b",
+  "config": {
+    "scheme": "MH-LADKI-BAHIN",
+    "arms": {
+      "mr": "temporal_c4/MH-LADKI-BAHIN__marathi_GRs_in_order",
+      "en": "self_consistency/MH-LADKI-BAHIN"
+    }
+  },
+  "date": "2026-10-06",
+  "created_at": "2026-10-06T02:55:30",
+  "n_profiles": 10,
+  "per_draft": [
+    {
+      "draft": "mr:sample_1",
+      "language": "mr",
+      "status": "ok",
+      "structural_f1": 0.6,
+      "n_profiles": 10,
+      "agreement_rate": 0.6,
+      "false_positive_eligible_rate": 0.0,
+      "false_negative_eligible_rate": 0.0,
+      "other_mismatch_rate": 0.4
+    },
+    {
+      "draft": "mr:sample_2",
+      "language": "mr",
+      "status": "ok",
+      "structural_f1": 0.69,
+      "n_profiles": 10,
+      "agreement_rate": 0.6,
+      "false_positive_eligible_rate": 0.0,
+      "false_negative_eligible_rate": 0.0,
+      "other_mismatch_rate": 0.4
+    },
+    {
+      "draft": "mr:sample_3",
+      "language": "mr",
+      "status": "ok",
+      "structural_f1": 0.733,
+      "n_profiles": 10,
+      "agreement_rate": 0.6,
+      "false_positive_eligible_rate": 0.0,
+      "false_negative_eligible_rate": 0.0,
+      "other_mismatch_rate": 0.4
+    },
+    {
+      "draft": "en:sample_1",
+      "language": "en",
+      "status": "extraction failed"
+    },
+    {
+      "draft": "en:sample_2",
+      "language": "en",
+      "status": "ok",
+      "structural_f1": 0.857,
+      "n_profiles": 10,
+      "agreement_rate": 0.8,
+      "false_positive_eligible_rate": 0.0,
+      "false_negative_eligible_rate": 0.0,
+      "other_mismatch_rate": 0.2
+    },
+    {
+      "draft": "en:sample_3",
+      "language": "en",
+      "status": "ok",
+      "structural_f1": 0.867,
+      "n_profiles": 10,
+      "agreement_rate": 0.7,
+      "false_positive_eligible_rate": 0.0,
+      "false_negative_eligible_rate": 0.0,
+      "other_mismatch_rate": 0.3
+    }
+  ],
+  "pairwise_by_kind": {
+    "en-en": {
+      "pairs": 1,
+      "mean_agreement": 0.9
+    },
+    "mr-mr": {
+      "pairs": 3,
+      "mean_agreement": 1.0
+    },
+    "mr-en": {
+      "pairs": 6,
+      "mean_agreement": 0.85
+    }
+  },
+  "pairs": [
+    {
+      "a": "en:sample_2",
+      "b": "en:sample_3",
+      "kind": "en-en",
+      "agreement": 0.9,
+      "differ_on": [
+        {
+          "profile": "govt_employee_family_member",
+          "en:sample_2": "ineligible",
+          "en:sample_3": "undetermined_missing_facts"
+        }
+      ]
+    },
+    {
+      "a": "en:sample_2",
+      "b": "mr:sample_1",
+      "kind": "mr-en",
+      "agreement": 0.8,
+      "differ_on": [
+        {
+          "profile": "govt_employee_family_member",
+          "en:sample_2": "ineligible",
+          "mr:sample_1": "undetermined_missing_facts"
+        },
+        {
+          "profile": "other_govt_scheme_benefit_at_threshold",
+          "en:sample_2": "ineligible",
+          "mr:sample_1": "undetermined_missing_facts"
+        }
+      ]
+    },
+    {
+      "a": "en:sample_2",
+      "b": "mr:sample_2",
+      "kind": "mr-en",
+      "agreement": 0.8,
+      "differ_on": [
+        {
+          "profile": "govt_employee_family_member",
+          "en:sample_2": "ineligible",
+          "mr:sample_2": "undetermined_missing_facts"
+        },
+        {
+          "profile": "other_govt_scheme_benefit_at_threshold",
+          "en:sample_2": "ineligible",
+          "mr:sample_2": "undetermined_missing_facts"
+        }
+      ]
+    },
+    {
+      "a": "en:sample_2",
+      "b": "mr:sample_3",
+      "kind": "mr-en",
+      "agreement": 0.8,
+      "differ_on": [
+        {
+          "profile": "govt_employee_family_member",
+          "en:sample_2": "ineligible",
+          "mr:sample_3": "undetermined_missing_facts"
+        },
+        {
+          "profile": "other_govt_scheme_benefit_at_threshold",
+          "en:sample_2": "ineligible",
+          "mr:sample_3": "undetermined_missing_facts"
+        }
+      ]
+    },
+    {
+      "a": "en:sample_3",
+      "b": "mr:sample_1",
+      "kind": "mr-en",
+      "agreement": 0.9,
+      "differ_on": [
+        {
+          "profile": "other_govt_scheme_benefit_at_threshold",
+          "en:sample_3": "ineligible",
+          "mr:sample_1": "undetermined_missing_facts"
+        }
+      ]
+    },
+    {
+      "a": "en:sample_3",
+      "b": "mr:sample_2",
+      "kind": "mr-en",
+      "agreement": 0.9,
+      "differ_on": [
+        {
+          "profile": "other_govt_scheme_benefit_at_threshold",
+          "en:sample_3": "ineligible",
+          "mr:sample_2": "undetermined_missing_facts"
+        }
+      ]
+    },
+    {
+      "a": "en:sample_3",
+      "b": "mr:sample_3",
+      "kind": "mr-en",
+      "agreement": 0.9,
+      "differ_on": [
+        {
+          "profile": "other_govt_scheme_benefit_at_threshold",
+          "en:sample_3": "ineligible",
+          "mr:sample_3": "undetermined_missing_facts"
+        }
+      ]
+    },
+    {
+      "a": "mr:sample_1",
+      "b": "mr:sample_2",
+      "kind": "mr-mr",
+      "agreement": 1.0,
+      "differ_on": []
+    },
+    {
+      "a": "mr:sample_1",
+      "b": "mr:sample_3",
+      "kind": "mr-mr",
+      "agreement": 1.0,
+      "differ_on": []
+    },
+    {
+      "a": "mr:sample_2",
+      "b": "mr:sample_3",
+      "kind": "mr-mr",
+      "agreement": 1.0,
+      "differ_on": []
+    }
+  ],
+  "not_run": [
+    "PM-KISAN (Hindi/English): pmkisan.gov.in has a 2019 scheme summary in English and in Hindi (kept locally as PM-KISAN_summary_english_2019.pdf / PM-KISAN_summary_hindi_2019.pdf). The Hindi PDF uses a legacy non-Unicode font: its extracted text is corrupted (e.g. निधि comes out as ननधध), so an extraction from it would test the PDF's font encoding, not the language. Not run; would need OCR.",
+    "No other gold scheme's sources include an official parallel text in two languages."
+  ]
+}

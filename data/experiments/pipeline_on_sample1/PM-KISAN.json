@@ -1,0 +1,196 @@
+{
+  "item": "pipeline_on_sample1",
+  "gold_tag": "gold-v2",
+  "gold_commit": "82436ac11fb53421bf44c8c68e6333e1db353442",
+  "code_commit": "068d3a6",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "config": {
+    "judge_samples": 1,
+    "compact_draft": true,
+    "apply": "gate auto-accepted findings only"
+  },
+  "date": "2026-10-06",
+  "created_at": "2026-10-06T00:35:57",
+  "scheme_id": "PM-KISAN",
+  "source_document_sha256": "f9bbbc8558971a46355b84b590f8dcfb5380dca9ebbda21010c716cc7acaf12f",
+  "from_sample": "self_consistency/PM-KISAN/sample_1.json",
+  "usage": [
+    {
+      "call": "judge_report",
+      "prompt_tokens": 5001,
+      "completion_tokens": 1859,
+      "total_tokens": 6860
+    }
+  ],
+  "findings": [
+    {
+      "category": "preambular_implied_fact",
+      "description": "Only one member of an eligible family can receive the benefit — not both husband and wife.",
+      "source_quote": "Only one member of an eligible family can receive the benefit — not both husband and wife.",
+      "confidence": 0.9,
+      "proposed_predicate": {
+        "location": "exclusion",
+        "cat": "other",
+        "field": "max_one_beneficiary_per_family",
+        "op": "==",
+        "value": true,
+        "quantifier": "self",
+        "ontology_proposed": true,
+        "except_": null
+      },
+      "proposed_supersedes": null
+    }
+  ],
+  "gate_decisions": [
+    {
+      "decision": "auto_accept",
+      "reasons": [
+        "source quote verbatim, confidence above threshold, no contradicting signals"
+      ],
+      "signals": {
+        "quote_verbatim_in_source": true,
+        "self_consistent_across_samples": null,
+        "confidence": 0.9,
+        "threshold_used": 0.7
+      },
+      "caveat": "AUTO-ACCEPT means this finding passed the fabrication/groundedness checks — it does NOT mean the predicate was verified correct. Confirmed false-accept shape at validation time: plausible-sounding but incoherent or redundant predicates (a real, verbatim-quoted source sentence stretched into an unwarranted or nonsensical predicate). Keep this visible wherever auto-accept decisions are logged or reviewed — do not flatten it into a bare 'gate said fine'.",
+      "finding_category": "preambular_implied_fact",
+      "finding_description": "Only one member of an eligible family can receive the benefit — not both husband and wife."
+    }
+  ],
+  "gated_extraction": {
+    "scheme_id": "PM-KISAN",
+    "unit_of_eligibility": "family",
+    "inclusion": {
+      "field": "owns_cultivable_land_in_records",
+      "op": "==",
+      "value": true,
+      "ontology_proposed": false,
+      "cat": "occupation"
+    },
+    "exclusions": [
+      {
+        "field": "is_institutional_landholder",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "institutional",
+        "quantifier": "self",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "holds_constitutional_or_political_post",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "political",
+        "quantifier": "some_family_member",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "is_serving_or_retired_govt_employee",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "occupation",
+        "quantifier": "some_family_member",
+        "except": {
+          "field": "is_group_d_class_iv_or_mts",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false
+        },
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "monthly_pension_inr",
+        "op": ">=",
+        "value": 10000,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "some_family_member",
+        "except": {
+          "field": "is_group_d_class_iv_or_mts",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false
+        },
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "paid_income_tax_last_assessment_year",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "some_family_member",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "is_practicing_registered_professional",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "professional",
+        "quantifier": "some_family_member",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "is_nri_per_income_tax_act_1961",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "citizenship",
+        "quantifier": "some_family_member",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "max_one_beneficiary_per_family",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": true,
+        "cat": "other",
+        "quantifier": "self",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      }
+    ],
+    "temporal_validity": {
+      "valid_from": "2019-06-01",
+      "valid_to": null,
+      "extracted_at": "2026-10-05",
+      "supersedes": null
+    },
+    "operational_requirements": [
+      "Beneficiary must have an Aadhaar-seeded bank account",
+      "Beneficiary must complete e-KYC to receive installments"
+    ],
+    "extraction_metadata": {
+      "confidence": 0.95,
+      "source_clause": "Eligibility",
+      "flagged_for_review": false
+    }
+  }
+}

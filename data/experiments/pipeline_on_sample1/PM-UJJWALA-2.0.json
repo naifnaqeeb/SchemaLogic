@@ -1,0 +1,152 @@
+{
+  "item": "pipeline_on_sample1",
+  "gold_tag": "gold-v2",
+  "gold_commit": "82436ac11fb53421bf44c8c68e6333e1db353442",
+  "code_commit": "068d3a6",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "config": {
+    "judge_samples": 1,
+    "compact_draft": true,
+    "apply": "gate auto-accepted findings only"
+  },
+  "date": "2026-10-06",
+  "created_at": "2026-10-06T00:37:00",
+  "scheme_id": "PM-UJJWALA-2.0",
+  "source_document_sha256": "e3f070cf37583eead78654ed2479747d12151976f7061f5a72b690af036a460d",
+  "from_sample": "self_consistency/PM-UJJWALA-2.0/sample_1.json",
+  "usage": [
+    {
+      "call": "judge_report",
+      "prompt_tokens": 4742,
+      "completion_tokens": 861,
+      "total_tokens": 5603
+    }
+  ],
+  "findings": [],
+  "gate_decisions": [],
+  "gated_extraction": {
+    "scheme_id": "PM-UJJWALA",
+    "unit_of_eligibility": "individual",
+    "inclusion": {
+      "and": [
+        {
+          "field": "is_woman",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false,
+          "cat": "demographic"
+        },
+        {
+          "field": "age",
+          "op": ">=",
+          "value": 18,
+          "ontology_proposed": false,
+          "cat": "demographic"
+        },
+        {
+          "or": [
+            {
+              "field": "is_secc_deprived_household",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": false,
+              "cat": "economic"
+            },
+            {
+              "field": "is_bpl_household",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": false,
+              "cat": "economic"
+            },
+            {
+              "field": "is_sc_st",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": false,
+              "cat": "demographic"
+            },
+            {
+              "field": "is_pmay_g_beneficiary",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": false,
+              "cat": "demographic"
+            },
+            {
+              "field": "is_aay_beneficiary",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": false,
+              "cat": "economic"
+            },
+            {
+              "field": "is_forest_dweller",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": false,
+              "cat": "demographic"
+            },
+            {
+              "field": "is_most_backward_class",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": false,
+              "cat": "demographic"
+            },
+            {
+              "field": "is_tea_garden_tribe",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": false,
+              "cat": "demographic"
+            },
+            {
+              "field": "lives_on_river_island",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": false,
+              "cat": "demographic"
+            },
+            {
+              "field": "meets_14_point_self_declaration",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": false,
+              "cat": "economic"
+            }
+          ]
+        }
+      ]
+    },
+    "exclusions": [
+      {
+        "field": "household_has_existing_lpg_connection",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "other",
+        "quantifier": "self",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      }
+    ],
+    "temporal_validity": {
+      "valid_from": "2021-08-10",
+      "valid_to": null,
+      "extracted_at": "2026-10-05",
+      "supersedes": null
+    },
+    "operational_requirements": [
+      "Aadhaar-based KYC required for connection issuance."
+    ],
+    "extraction_metadata": {
+      "confidence": 0.95,
+      "source_clause": "Eligibility section",
+      "flagged_for_review": false
+    }
+  }
+}

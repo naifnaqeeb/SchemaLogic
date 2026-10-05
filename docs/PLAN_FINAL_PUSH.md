@@ -281,3 +281,25 @@ spent on day 1's samples. All are queued and run unattended (see the quota sched
 - RESULTS.md draft built; gate report now says its agreement-signal recall is near-guaranteed by
   construction (injected rules are ones no sample produced) — precision is the number to read.
 
+
+### Overnight results and corrections — 2026-10-06, 03:00
+
+- **Ran overnight** (~92k tokens): Hindi translations (293/300), full pipeline on sample 1 (6/7 —
+  MH-LADKI-BAHIN has no valid sample 1), temporal C4 6/9 incl. all 3 Marathi samples.
+- **Failed judge calls are failed runs.** AB-PMJAY and PMAY-G's judge calls returned
+  `json_validate_failed` (empty generation: the completion budget, ~1.56k, spent on reasoning). The
+  runner had stored the unrepaired draft as the pipeline's output, so they would have scored as
+  "unchanged"; it no longer writes a repaired scheme for a failed call, and the batch report lists any
+  `judge_failure` as a failed run and excludes it from the new paired table (pipeline vs Baseline 3, same
+  extraction). One retry each at `max_tokens=2000` (Baseline 2's recovery) is queued after the temporal
+  arms, before Urdu; the failed attempt is kept in the result.
+- **Pipeline vs Baseline 3** (4 schemes, n=45): agreement 75.6% → 60.0%, all of it undetermined verdicts
+  from rules the judge added on new fields the profiles lack; false "eligible" 2.2% → 0.0%, false "not
+  eligible" unchanged.
+- **Temporal**: pre-amendment texts read correctly (3/3 run so far); from the Marathi GRs in order the
+  extractor applied the age amendment (3/3) but kept the deleted five-acre exclusion (3/3).
+- **C2**: Marathi drafts 60% agreement with gold, English 70–80%; Marathi–English verdict agreement 85%
+  vs 90% English–English, 100% Marathi–Marathi. No wrong eligible/not-eligible verdicts in either.
+- **Hindi**: the 7 entries that failed validation are handed to the team (`--mark-manual`, rows marked
+  TRANSLATE BY HAND at the top of the sheet; never retried by the model). "pucca"/"kutcha" no longer
+  have to stay in English in Hindi (`messages.NATIVE_TERMS`: पक्का / कच्चा); other languages unchanged.

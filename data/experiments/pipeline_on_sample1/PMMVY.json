@@ -1,0 +1,228 @@
+{
+  "item": "pipeline_on_sample1",
+  "gold_tag": "gold-v2",
+  "gold_commit": "82436ac11fb53421bf44c8c68e6333e1db353442",
+  "code_commit": "068d3a6",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "config": {
+    "judge_samples": 1,
+    "compact_draft": true,
+    "apply": "gate auto-accepted findings only"
+  },
+  "date": "2026-10-06",
+  "created_at": "2026-10-06T00:38:40",
+  "scheme_id": "PMMVY",
+  "source_document_sha256": "c5137cab54eff6664fe67eb3e05e89557224a44b2b125dfadcb8e760f9943fbe",
+  "from_sample": "self_consistency/PMMVY/sample_1.json",
+  "usage": [
+    {
+      "call": "judge_report",
+      "prompt_tokens": 4938,
+      "completion_tokens": 1632,
+      "total_tokens": 6570
+    }
+  ],
+  "findings": [
+    {
+      "category": "preambular_implied_fact",
+      "description": "Eligibility requires the applicant to be a pregnant or lactating mother, implied by the introductory description but not captured as a predicate.",
+      "source_quote": "providing financial support to pregnant and lactating mothers under the National Food Security Act, 2013",
+      "confidence": 0.95,
+      "proposed_predicate": {
+        "location": "inclusion",
+        "cat": "other",
+        "field": "is_pregnant_or_lactating",
+        "op": "==",
+        "value": true,
+        "quantifier": "self",
+        "ontology_proposed": true,
+        "except_": null
+      },
+      "proposed_supersedes": null
+    },
+    {
+      "category": "temporal_supersession",
+      "description": "The document amends the scheme to include the second living child if a girl, superseding the earlier rule that only the first living child was eligible.",
+      "source_quote": "PMMVY 2.0 (effective 1 April 2022): extended maternity benefits to also cover the second living child, if a girl... Before this amendment, the scheme covered only the first living child.",
+      "confidence": 0.9,
+      "proposed_predicate": null,
+      "proposed_supersedes": {
+        "retired_field": "pregnancy_child_order",
+        "retired_op": "==",
+        "retired_value": 1,
+        "amendment_source_quote": "PMMVY 2.0 (effective 1 April 2022): extended maternity benefits to also cover the second living child, if a girl... Before this amendment, the scheme covered only the first living child.",
+        "rule_version_label": "prior_version",
+        "new_valid_from": null
+      }
+    }
+  ],
+  "gate_decisions": [
+    {
+      "decision": "auto_accept",
+      "reasons": [
+        "source quote verbatim, confidence above threshold, no contradicting signals"
+      ],
+      "signals": {
+        "quote_verbatim_in_source": true,
+        "self_consistent_across_samples": null,
+        "confidence": 0.95,
+        "threshold_used": 0.7
+      },
+      "caveat": "AUTO-ACCEPT means this finding passed the fabrication/groundedness checks — it does NOT mean the predicate was verified correct. Confirmed false-accept shape at validation time: plausible-sounding but incoherent or redundant predicates (a real, verbatim-quoted source sentence stretched into an unwarranted or nonsensical predicate). Keep this visible wherever auto-accept decisions are logged or reviewed — do not flatten it into a bare 'gate said fine'.",
+      "finding_category": "preambular_implied_fact",
+      "finding_description": "Eligibility requires the applicant to be a pregnant or lactating mother, implied by the introductory description but not captured as a predicate."
+    },
+    {
+      "decision": "defer_to_review",
+      "reasons": [
+        "source_quote is not found verbatim in the document — possible fabricated citation"
+      ],
+      "signals": {
+        "quote_verbatim_in_source": false,
+        "retired_value_literally_grounded": true,
+        "self_consistent_across_samples": null,
+        "confidence": 0.9,
+        "threshold_used": 0.9
+      },
+      "caveat": null,
+      "finding_category": "temporal_supersession",
+      "finding_description": "The document amends the scheme to include the second living child if a girl, superseding the earlier rule that only the first living child was eligible."
+    }
+  ],
+  "gated_extraction": {
+    "scheme_id": "PMMVY",
+    "unit_of_eligibility": "individual",
+    "inclusion": {
+      "and": [
+        {
+          "field": "age",
+          "op": ">=",
+          "value": 18,
+          "ontology_proposed": false,
+          "cat": "demographic"
+        },
+        {
+          "field": "age",
+          "op": "<=",
+          "value": 55,
+          "ontology_proposed": false,
+          "cat": "demographic"
+        },
+        {
+          "field": "months_since_last_birthday",
+          "op": ">=",
+          "value": 7,
+          "ontology_proposed": false,
+          "cat": "demographic"
+        },
+        {
+          "field": "is_woman",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false,
+          "cat": "demographic"
+        },
+        {
+          "or": [
+            {
+              "field": "is_sc_st",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": false,
+              "cat": "demographic"
+            },
+            {
+              "field": "has_40_percent_or_more_disability",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": false,
+              "cat": "demographic"
+            },
+            {
+              "field": "is_bpl_household",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": false,
+              "cat": "economic"
+            },
+            {
+              "field": "is_ab_pmjay_beneficiary",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": false,
+              "cat": "cross_scheme"
+            },
+            {
+              "field": "is_e_shram_registered",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": false,
+              "cat": "occupation"
+            },
+            {
+              "field": "is_pm_kisan_beneficiary",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": false,
+              "cat": "occupation"
+            },
+            {
+              "field": "has_active_mgnrega_job_card",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": false,
+              "cat": "occupation"
+            },
+            {
+              "field": "family_annual_income_inr",
+              "op": "<",
+              "value": 800000,
+              "ontology_proposed": false,
+              "cat": "economic"
+            },
+            {
+              "field": "is_frontline_worker",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": false,
+              "cat": "occupation"
+            },
+            {
+              "field": "is_nfsa_ration_card_holder",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": false,
+              "cat": "economic"
+            }
+          ]
+        },
+        {
+          "field": "is_pregnant_or_lactating",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": true,
+          "cat": "other"
+        }
+      ]
+    },
+    "exclusions": [],
+    "temporal_validity": {
+      "valid_from": "2022-04-01",
+      "valid_to": null,
+      "extracted_at": "2026-10-05",
+      "supersedes": null
+    },
+    "operational_requirements": [
+      "Applicant must possess a Mother and Child Protection (MCP) Card",
+      "Registration via PMMVYSoft MIS portal or mobile app with Aadhaar-based authentication",
+      "Direct Benefit Transfer to an Aadhaar-seeded bank or post office account",
+      "Registration must occur within 270 days of childbirth"
+    ],
+    "extraction_metadata": {
+      "confidence": 0.97,
+      "source_clause": "Eligibility Criteria",
+      "flagged_for_review": false
+    }
+  }
+}

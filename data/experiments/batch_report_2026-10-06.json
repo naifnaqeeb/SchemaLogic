@@ -1,0 +1,2064 @@
+{
+  "item": "batch_report",
+  "gold_tag": "gold-v2",
+  "gold_commit": "82436ac11fb53421bf44c8c68e6333e1db353442",
+  "code_commit": "068d3a6",
+  "provider": "none (offline)",
+  "model": "openai/gpt-oss-120b",
+  "config": {
+    "configurations": {
+      "phase3_pipeline": "2026-08 Phase 3 pipeline: extraction -> judge+repair -> gate (latest stage on disk)",
+      "baseline3_extraction_only": "Baseline 3: one extraction, no judge or repair (k=3 run, sample 1)",
+      "pipeline_on_sample1": "Full pipeline (judge -> gate -> apply approved) on the same extraction as Baseline 3",
+      "baseline1_flat": "Baseline 1: flat attribute extraction, no compositional logic"
+    }
+  },
+  "date": "2026-10-06",
+  "created_at": "2026-10-06T02:55:27",
+  "caveats": [
+    "ONTOLOGY CONTAMINATION. The field ontology the extractor is constrained to was built from these same 7 gold schemes (each field lists the schemes it was made for), and the extraction prompt names those fields. Field-name agreement with gold is therefore optimistic: a structural F1 here measures extraction into a vocabulary designed around the answer, not open-world extraction. The AI-Checked tier (schemes outside the gold set) is the only evidence on unseen schemes.",
+    "SYNTHETIC PROFILES. The profile suites were written by the gold annotator to exercise the rules they encoded, so outcome equivalence tests the scenarios someone already thought of. A rule nobody wrote a profile for cannot disagree.",
+    "SMALL SAMPLES. 7 schemes, 8-14 profiles each. One profile moves a scheme's rate by 7-12 points; directions are more trustworthy than magnitudes.",
+    "SHARED SOURCES. Gold, drafts and the direct-LLM baseline mostly read the same source documents. Agreement can mean they share a source's error (the PMAY-G stale-document case, audit doc s7.9).",
+    "FROZEN GOLD. Everything is scored against tag gold-v2. Open findings of the 2026-10-04 independent gold review are part of that gold, unfixed; a draft that 'disagrees' may be right."
+  ],
+  "configurations": {
+    "phase3_pipeline": {
+      "description": "2026-08 Phase 3 pipeline: extraction -> judge+repair -> gate (latest stage on disk)",
+      "absent": [
+        "PMMVY"
+      ],
+      "failed": {},
+      "per_scheme": {
+        "AB-PMJAY": {
+          "draft_file": "data\\extraction_runs\\AB-PMJAY_gpt-oss-120b_gated_20260818T025520.json",
+          "structural_f1": {
+            "category": "__overall__",
+            "tp": 18,
+            "fp": 1,
+            "fn": 15,
+            "precision": 0.9474,
+            "recall": 0.5455,
+            "f1": 0.6923
+          },
+          "f1_by_category": {
+            "economic": {
+              "category": "economic",
+              "tp": 16,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "demographic": {
+              "category": "demographic",
+              "tp": 0,
+              "fp": 1,
+              "fn": 1,
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0
+            },
+            "occupation": {
+              "category": "occupation",
+              "tp": 2,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "exception_to_exclusion": {
+              "category": "exception_to_exclusion",
+              "tp": 0,
+              "fp": 0,
+              "fn": 14,
+              "precision": 1.0,
+              "recall": 0.0,
+              "f1": 0.0
+            }
+          },
+          "outcome_equivalence": {
+            "n_profiles": 11,
+            "agreement_rate": 0.7272727272727273,
+            "false_positive_eligible_rate": 0.09090909090909091,
+            "false_negative_eligible_rate": 0.18181818181818182,
+            "other_mismatch_rate": 0.0
+          },
+          "outcome_disagreements": [
+            {
+              "profile_id": "seventy_plus_household_refrigerator_and_landline",
+              "gold_verdict": "eligible",
+              "draft_verdict": "ineligible",
+              "agree": false,
+              "disagreement_type": "false_negative_eligible"
+            },
+            {
+              "profile_id": "seventy_plus_family_member_pays_income_tax",
+              "gold_verdict": "eligible",
+              "draft_verdict": "ineligible",
+              "agree": false,
+              "disagreement_type": "false_negative_eligible"
+            },
+            {
+              "profile_id": "younger_applicant_with_seventy_plus_parent",
+              "gold_verdict": "ineligible",
+              "draft_verdict": "eligible",
+              "agree": false,
+              "disagreement_type": "false_positive_eligible"
+            }
+          ],
+          "scalar": {
+            "scheme_id": "AB-PMJAY",
+            "n_checked": 2,
+            "n_matched": 2,
+            "match_rate": 1.0,
+            "mismatches": []
+          },
+          "findings_applied": 0
+        },
+        "IGNOAPS": {
+          "draft_file": "data\\extraction_runs\\IGNOAPS_gpt-oss-120b_judge_repair_20260818T015010.json",
+          "structural_f1": {
+            "category": "__overall__",
+            "tp": 2,
+            "fp": 7,
+            "fn": 4,
+            "precision": 0.2222,
+            "recall": 0.3333,
+            "f1": 0.2667
+          },
+          "f1_by_category": {
+            "demographic": {
+              "category": "demographic",
+              "tp": 1,
+              "fp": 1,
+              "fn": 1,
+              "precision": 0.5,
+              "recall": 0.5,
+              "f1": 0.5
+            },
+            "economic": {
+              "category": "economic",
+              "tp": 1,
+              "fp": 3,
+              "fn": 2,
+              "precision": 0.25,
+              "recall": 0.3333,
+              "f1": 0.2857
+            },
+            "occupation": {
+              "category": "occupation",
+              "tp": 0,
+              "fp": 1,
+              "fn": 1,
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0
+            },
+            "other": {
+              "category": "other",
+              "tp": 0,
+              "fp": 2,
+              "fn": 0,
+              "precision": 0.0,
+              "recall": 1.0,
+              "f1": 0.0
+            }
+          },
+          "outcome_equivalence": {
+            "n_profiles": 12,
+            "agreement_rate": 0.3333333333333333,
+            "false_positive_eligible_rate": 0.0,
+            "false_negative_eligible_rate": 0.25,
+            "other_mismatch_rate": 0.4166666666666667
+          },
+          "outcome_disagreements": [
+            {
+              "profile_id": "eligible_baseline",
+              "gold_verdict": "eligible",
+              "draft_verdict": "undetermined_missing_facts",
+              "agree": false,
+              "disagreement_type": "other_mismatch"
+            },
+            {
+              "profile_id": "has_family_support",
+              "gold_verdict": "eligible",
+              "draft_verdict": "undetermined_missing_facts",
+              "agree": false,
+              "disagreement_type": "other_mismatch"
+            },
+            {
+              "profile_id": "govt_employee",
+              "gold_verdict": "eligible",
+              "draft_verdict": "ineligible",
+              "agree": false,
+              "disagreement_type": "false_negative_eligible"
+            },
+            {
+              "profile_id": "five_acres_land",
+              "gold_verdict": "eligible",
+              "draft_verdict": "ineligible",
+              "agree": false,
+              "disagreement_type": "false_negative_eligible"
+            },
+            {
+              "profile_id": "owns_four_wheeler",
+              "gold_verdict": "eligible",
+              "draft_verdict": "ineligible",
+              "agree": false,
+              "disagreement_type": "false_negative_eligible"
+            },
+            {
+              "profile_id": "missing_support_data",
+              "gold_verdict": "eligible",
+              "draft_verdict": "undetermined_missing_facts",
+              "agree": false,
+              "disagreement_type": "other_mismatch"
+            },
+            {
+              "profile_id": "not_bpl_not_aids_widow",
+              "gold_verdict": "ineligible",
+              "draft_verdict": "undetermined_missing_facts",
+              "agree": false,
+              "disagreement_type": "other_mismatch"
+            },
+            {
+              "profile_id": "aids_widow_non_bpl_clear_of_criteria",
+              "gold_verdict": "eligible",
+              "draft_verdict": "undetermined_missing_facts",
+              "agree": false,
+              "disagreement_type": "other_mismatch"
+            }
+          ],
+          "scalar": {
+            "scheme_id": "IGNOAPS",
+            "n_checked": 2,
+            "n_matched": 2,
+            "match_rate": 1.0,
+            "mismatches": []
+          }
+        },
+        "MH-LADKI-BAHIN": {
+          "draft_file": "data\\extraction_runs\\MH-LADKI-BAHIN_gpt-oss-120b_judge_repair_20260818T015321.json",
+          "structural_f1": {
+            "category": "__overall__",
+            "tp": 12,
+            "fp": 5,
+            "fn": 1,
+            "precision": 0.7059,
+            "recall": 0.9231,
+            "f1": 0.8
+          },
+          "f1_by_category": {
+            "demographic": {
+              "category": "demographic",
+              "tp": 4,
+              "fp": 2,
+              "fn": 0,
+              "precision": 0.6667,
+              "recall": 1.0,
+              "f1": 0.8
+            },
+            "economic": {
+              "category": "economic",
+              "tp": 5,
+              "fp": 2,
+              "fn": 0,
+              "precision": 0.7143,
+              "recall": 1.0,
+              "f1": 0.8333
+            },
+            "occupation": {
+              "category": "occupation",
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "political": {
+              "category": "political",
+              "tp": 2,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "exception_to_exclusion": {
+              "category": "exception_to_exclusion",
+              "tp": 0,
+              "fp": 1,
+              "fn": 1,
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0
+            }
+          },
+          "outcome_equivalence": {
+            "n_profiles": 10,
+            "agreement_rate": 0.7,
+            "false_positive_eligible_rate": 0.0,
+            "false_negative_eligible_rate": 0.1,
+            "other_mismatch_rate": 0.2
+          },
+          "outcome_disagreements": [
+            {
+              "profile_id": "eligible_baseline",
+              "gold_verdict": "eligible",
+              "draft_verdict": "undetermined_missing_facts",
+              "agree": false,
+              "disagreement_type": "other_mismatch"
+            },
+            {
+              "profile_id": "four_wheeler_tractor_exception",
+              "gold_verdict": "eligible",
+              "draft_verdict": "ineligible",
+              "agree": false,
+              "disagreement_type": "false_negative_eligible"
+            },
+            {
+              "profile_id": "govt_employee_family_member",
+              "gold_verdict": "ineligible",
+              "draft_verdict": "undetermined_missing_facts",
+              "agree": false,
+              "disagreement_type": "other_mismatch"
+            }
+          ],
+          "scalar": {
+            "scheme_id": "MH-LADKI-BAHIN",
+            "n_checked": 2,
+            "n_matched": 0,
+            "match_rate": 0.0,
+            "mismatches": [
+              {
+                "field": "unit_of_eligibility",
+                "gold_value": "family",
+                "draft_value": "individual"
+              },
+              {
+                "field": "temporal_validity.valid_from",
+                "gold_value": "2024-07-01",
+                "draft_value": "2024-07-03"
+              }
+            ]
+          }
+        },
+        "PM-KISAN": {
+          "draft_file": "data\\extraction_runs\\PM-KISAN_gpt-oss-120b_judge_repair_20260818T014850.json",
+          "structural_f1": {
+            "category": "__overall__",
+            "tp": 10,
+            "fp": 3,
+            "fn": 1,
+            "precision": 0.7692,
+            "recall": 0.9091,
+            "f1": 0.8333
+          },
+          "f1_by_category": {
+            "citizenship": {
+              "category": "citizenship",
+              "tp": 1,
+              "fp": 0,
+              "fn": 1,
+              "precision": 1.0,
+              "recall": 0.5,
+              "f1": 0.6667
+            },
+            "occupation": {
+              "category": "occupation",
+              "tp": 2,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "economic": {
+              "category": "economic",
+              "tp": 2,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "political": {
+              "category": "political",
+              "tp": 1,
+              "fp": 1,
+              "fn": 0,
+              "precision": 0.5,
+              "recall": 1.0,
+              "f1": 0.6667
+            },
+            "professional": {
+              "category": "professional",
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "institutional": {
+              "category": "institutional",
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "exception_to_exclusion": {
+              "category": "exception_to_exclusion",
+              "tp": 2,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "other": {
+              "category": "other",
+              "tp": 0,
+              "fp": 2,
+              "fn": 0,
+              "precision": 0.0,
+              "recall": 1.0,
+              "f1": 0.0
+            }
+          },
+          "outcome_equivalence": {
+            "n_profiles": 12,
+            "agreement_rate": 0.6666666666666666,
+            "false_positive_eligible_rate": 0.0,
+            "false_negative_eligible_rate": 0.0,
+            "other_mismatch_rate": 0.3333333333333333
+          },
+          "outcome_disagreements": [
+            {
+              "profile_id": "eligible_baseline",
+              "gold_verdict": "eligible",
+              "draft_verdict": "undetermined_missing_facts",
+              "agree": false,
+              "disagreement_type": "other_mismatch"
+            },
+            {
+              "profile_id": "govt_employee_group_d_exception",
+              "gold_verdict": "eligible",
+              "draft_verdict": "undetermined_missing_facts",
+              "agree": false,
+              "disagreement_type": "other_mismatch"
+            },
+            {
+              "profile_id": "pension_group_d_exception",
+              "gold_verdict": "eligible",
+              "draft_verdict": "undetermined_missing_facts",
+              "agree": false,
+              "disagreement_type": "other_mismatch"
+            },
+            {
+              "profile_id": "citizenship_gap_false_positive",
+              "gold_verdict": "ineligible",
+              "draft_verdict": "undetermined_missing_facts",
+              "agree": false,
+              "disagreement_type": "other_mismatch"
+            }
+          ],
+          "scalar": {
+            "scheme_id": "PM-KISAN",
+            "n_checked": 2,
+            "n_matched": 2,
+            "match_rate": 1.0,
+            "mismatches": []
+          }
+        },
+        "PM-UJJWALA-2.0": {
+          "draft_file": "data\\extraction_runs\\PM-UJJWALA-2.0_gpt-oss-120b_gated_20260818T033601.json",
+          "structural_f1": {
+            "category": "__overall__",
+            "tp": 13,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "f1_by_category": {
+            "demographic": {
+              "category": "demographic",
+              "tp": 8,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "economic": {
+              "category": "economic",
+              "tp": 4,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "other": {
+              "category": "other",
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            }
+          },
+          "outcome_equivalence": {
+            "n_profiles": 9,
+            "agreement_rate": 1.0,
+            "false_positive_eligible_rate": 0.0,
+            "false_negative_eligible_rate": 0.0,
+            "other_mismatch_rate": 0.0
+          },
+          "outcome_disagreements": [],
+          "scalar": {
+            "scheme_id": "PM-UJJWALA-2.0",
+            "n_checked": 2,
+            "n_matched": 1,
+            "match_rate": 0.5,
+            "mismatches": [
+              {
+                "field": "unit_of_eligibility",
+                "gold_value": "individual",
+                "draft_value": "family"
+              }
+            ]
+          },
+          "findings_applied": 2
+        },
+        "PMAY-G": {
+          "draft_file": "data\\extraction_runs\\PMAY-G_gpt-oss-120b_gated_20260818T031713.json",
+          "structural_f1": {
+            "category": "__overall__",
+            "tp": 8,
+            "fp": 6,
+            "fn": 7,
+            "precision": 0.5714,
+            "recall": 0.5333,
+            "f1": 0.5517
+          },
+          "f1_by_category": {
+            "economic": {
+              "category": "economic",
+              "tp": 8,
+              "fp": 5,
+              "fn": 6,
+              "precision": 0.6154,
+              "recall": 0.5714,
+              "f1": 0.5926
+            },
+            "occupation": {
+              "category": "occupation",
+              "tp": 0,
+              "fp": 1,
+              "fn": 1,
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0
+            }
+          },
+          "outcome_equivalence": {
+            "n_profiles": 14,
+            "agreement_rate": 0.5,
+            "false_positive_eligible_rate": 0.35714285714285715,
+            "false_negative_eligible_rate": 0.14285714285714285,
+            "other_mismatch_rate": 0.0
+          },
+          "outcome_disagreements": [
+            {
+              "profile_id": "income_over_ceiling",
+              "gold_verdict": "ineligible",
+              "draft_verdict": "eligible",
+              "agree": false,
+              "disagreement_type": "false_positive_eligible"
+            },
+            {
+              "profile_id": "refrigerator",
+              "gold_verdict": "eligible",
+              "draft_verdict": "ineligible",
+              "agree": false,
+              "disagreement_type": "false_negative_eligible"
+            },
+            {
+              "profile_id": "landline_phone",
+              "gold_verdict": "eligible",
+              "draft_verdict": "ineligible",
+              "agree": false,
+              "disagreement_type": "false_negative_eligible"
+            },
+            {
+              "profile_id": "professional_tax_family_member",
+              "gold_verdict": "ineligible",
+              "draft_verdict": "eligible",
+              "agree": false,
+              "disagreement_type": "false_positive_eligible"
+            },
+            {
+              "profile_id": "unirrigated_land_five_acres",
+              "gold_verdict": "ineligible",
+              "draft_verdict": "eligible",
+              "agree": false,
+              "disagreement_type": "false_positive_eligible"
+            },
+            {
+              "profile_id": "irrigated_land_exactly_two_and_a_half_acres",
+              "gold_verdict": "ineligible",
+              "draft_verdict": "eligible",
+              "agree": false,
+              "disagreement_type": "false_positive_eligible"
+            },
+            {
+              "profile_id": "kutcha_house_with_three_rooms",
+              "gold_verdict": "ineligible",
+              "draft_verdict": "eligible",
+              "agree": false,
+              "disagreement_type": "false_positive_eligible"
+            }
+          ],
+          "scalar": {
+            "scheme_id": "PMAY-G",
+            "n_checked": 2,
+            "n_matched": 1,
+            "match_rate": 0.5,
+            "mismatches": [
+              {
+                "field": "temporal_validity.valid_from",
+                "gold_value": "2024-09-11",
+                "draft_value": "2024-09-10"
+              }
+            ]
+          },
+          "findings_applied": 0
+        }
+      },
+      "aggregate": {
+        "schemes": 6,
+        "structural_f1_micro": {
+          "category": "__overall__",
+          "tp": 63,
+          "fp": 22,
+          "fn": 28,
+          "precision": 0.7412,
+          "recall": 0.6923,
+          "f1": 0.7159
+        },
+        "outcome_equivalence": {
+          "n_profiles": 68,
+          "agreement_rate": 0.6323529411764706,
+          "false_positive_eligible_rate": 0.08823529411764706,
+          "false_negative_eligible_rate": 0.11764705882352941
+        }
+      }
+    },
+    "baseline3_extraction_only": {
+      "description": "Baseline 3: one extraction, no judge or repair (k=3 run, sample 1)",
+      "absent": [
+        "MH-LADKI-BAHIN"
+      ],
+      "failed": {},
+      "per_scheme": {
+        "AB-PMJAY": {
+          "draft_file": "data\\experiments\\self_consistency\\AB-PMJAY\\sample_1.json",
+          "structural_f1": {
+            "category": "__overall__",
+            "tp": 17,
+            "fp": 0,
+            "fn": 16,
+            "precision": 1.0,
+            "recall": 0.5152,
+            "f1": 0.68
+          },
+          "f1_by_category": {
+            "economic": {
+              "category": "economic",
+              "tp": 14,
+              "fp": 0,
+              "fn": 2,
+              "precision": 1.0,
+              "recall": 0.875,
+              "f1": 0.9333
+            },
+            "demographic": {
+              "category": "demographic",
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "occupation": {
+              "category": "occupation",
+              "tp": 2,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "exception_to_exclusion": {
+              "category": "exception_to_exclusion",
+              "tp": 0,
+              "fp": 0,
+              "fn": 14,
+              "precision": 1.0,
+              "recall": 0.0,
+              "f1": 0.0
+            }
+          },
+          "outcome_equivalence": {
+            "n_profiles": 11,
+            "agreement_rate": 0.8181818181818182,
+            "false_positive_eligible_rate": 0.0,
+            "false_negative_eligible_rate": 0.18181818181818182,
+            "other_mismatch_rate": 0.0
+          },
+          "outcome_disagreements": [
+            {
+              "profile_id": "seventy_plus_household_refrigerator_and_landline",
+              "gold_verdict": "eligible",
+              "draft_verdict": "ineligible",
+              "agree": false,
+              "disagreement_type": "false_negative_eligible"
+            },
+            {
+              "profile_id": "seventy_plus_family_member_pays_income_tax",
+              "gold_verdict": "eligible",
+              "draft_verdict": "ineligible",
+              "agree": false,
+              "disagreement_type": "false_negative_eligible"
+            }
+          ],
+          "scalar": {
+            "scheme_id": "AB-PMJAY",
+            "n_checked": 2,
+            "n_matched": 2,
+            "match_rate": 1.0,
+            "mismatches": []
+          }
+        },
+        "IGNOAPS": {
+          "draft_file": "data\\experiments\\self_consistency\\IGNOAPS\\sample_1.json",
+          "structural_f1": {
+            "category": "__overall__",
+            "tp": 3,
+            "fp": 3,
+            "fn": 3,
+            "precision": 0.5,
+            "recall": 0.5,
+            "f1": 0.5
+          },
+          "f1_by_category": {
+            "demographic": {
+              "category": "demographic",
+              "tp": 2,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "economic": {
+              "category": "economic",
+              "tp": 1,
+              "fp": 2,
+              "fn": 2,
+              "precision": 0.3333,
+              "recall": 0.3333,
+              "f1": 0.3333
+            },
+            "occupation": {
+              "category": "occupation",
+              "tp": 0,
+              "fp": 1,
+              "fn": 1,
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0
+            }
+          },
+          "outcome_equivalence": {
+            "n_profiles": 12,
+            "agreement_rate": 0.75,
+            "false_positive_eligible_rate": 0.0,
+            "false_negative_eligible_rate": 0.25,
+            "other_mismatch_rate": 0.0
+          },
+          "outcome_disagreements": [
+            {
+              "profile_id": "govt_employee",
+              "gold_verdict": "eligible",
+              "draft_verdict": "ineligible",
+              "agree": false,
+              "disagreement_type": "false_negative_eligible"
+            },
+            {
+              "profile_id": "five_acres_land",
+              "gold_verdict": "eligible",
+              "draft_verdict": "ineligible",
+              "agree": false,
+              "disagreement_type": "false_negative_eligible"
+            },
+            {
+              "profile_id": "owns_four_wheeler",
+              "gold_verdict": "eligible",
+              "draft_verdict": "ineligible",
+              "agree": false,
+              "disagreement_type": "false_negative_eligible"
+            }
+          ],
+          "scalar": {
+            "scheme_id": "IGNOAPS",
+            "n_checked": 2,
+            "n_matched": 2,
+            "match_rate": 1.0,
+            "mismatches": []
+          }
+        },
+        "PM-KISAN": {
+          "draft_file": "data\\experiments\\self_consistency\\PM-KISAN\\sample_1.json",
+          "structural_f1": {
+            "category": "__overall__",
+            "tp": 10,
+            "fp": 0,
+            "fn": 1,
+            "precision": 1.0,
+            "recall": 0.9091,
+            "f1": 0.9524
+          },
+          "f1_by_category": {
+            "citizenship": {
+              "category": "citizenship",
+              "tp": 1,
+              "fp": 0,
+              "fn": 1,
+              "precision": 1.0,
+              "recall": 0.5,
+              "f1": 0.6667
+            },
+            "occupation": {
+              "category": "occupation",
+              "tp": 2,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "economic": {
+              "category": "economic",
+              "tp": 2,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "political": {
+              "category": "political",
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "professional": {
+              "category": "professional",
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "institutional": {
+              "category": "institutional",
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "exception_to_exclusion": {
+              "category": "exception_to_exclusion",
+              "tp": 2,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            }
+          },
+          "outcome_equivalence": {
+            "n_profiles": 12,
+            "agreement_rate": 0.9166666666666666,
+            "false_positive_eligible_rate": 0.08333333333333333,
+            "false_negative_eligible_rate": 0.0,
+            "other_mismatch_rate": 0.0
+          },
+          "outcome_disagreements": [
+            {
+              "profile_id": "citizenship_gap_false_positive",
+              "gold_verdict": "ineligible",
+              "draft_verdict": "eligible",
+              "agree": false,
+              "disagreement_type": "false_positive_eligible"
+            }
+          ],
+          "scalar": {
+            "scheme_id": "PM-KISAN",
+            "n_checked": 2,
+            "n_matched": 2,
+            "match_rate": 1.0,
+            "mismatches": []
+          }
+        },
+        "PM-UJJWALA-2.0": {
+          "draft_file": "data\\experiments\\self_consistency\\PM-UJJWALA-2.0\\sample_1.json",
+          "structural_f1": {
+            "category": "__overall__",
+            "tp": 12,
+            "fp": 1,
+            "fn": 1,
+            "precision": 0.9231,
+            "recall": 0.9231,
+            "f1": 0.9231
+          },
+          "f1_by_category": {
+            "demographic": {
+              "category": "demographic",
+              "tp": 8,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "economic": {
+              "category": "economic",
+              "tp": 3,
+              "fp": 1,
+              "fn": 1,
+              "precision": 0.75,
+              "recall": 0.75,
+              "f1": 0.75
+            },
+            "other": {
+              "category": "other",
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            }
+          },
+          "outcome_equivalence": {
+            "n_profiles": 9,
+            "agreement_rate": 1.0,
+            "false_positive_eligible_rate": 0.0,
+            "false_negative_eligible_rate": 0.0,
+            "other_mismatch_rate": 0.0
+          },
+          "outcome_disagreements": [],
+          "scalar": {
+            "scheme_id": "PM-UJJWALA-2.0",
+            "n_checked": 2,
+            "n_matched": 2,
+            "match_rate": 1.0,
+            "mismatches": []
+          }
+        },
+        "PMAY-G": {
+          "draft_file": "data\\experiments\\self_consistency\\PMAY-G\\sample_1.json",
+          "structural_f1": {
+            "category": "__overall__",
+            "tp": 4,
+            "fp": 8,
+            "fn": 11,
+            "precision": 0.3333,
+            "recall": 0.2667,
+            "f1": 0.2963
+          },
+          "f1_by_category": {
+            "economic": {
+              "category": "economic",
+              "tp": 4,
+              "fp": 3,
+              "fn": 10,
+              "precision": 0.5714,
+              "recall": 0.2857,
+              "f1": 0.381
+            },
+            "occupation": {
+              "category": "occupation",
+              "tp": 0,
+              "fp": 1,
+              "fn": 1,
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0
+            },
+            "other": {
+              "category": "other",
+              "tp": 0,
+              "fp": 4,
+              "fn": 0,
+              "precision": 0.0,
+              "recall": 1.0,
+              "f1": 0.0
+            }
+          },
+          "outcome_equivalence": {
+            "n_profiles": 14,
+            "agreement_rate": 0.35714285714285715,
+            "false_positive_eligible_rate": 0.5714285714285714,
+            "false_negative_eligible_rate": 0.0,
+            "other_mismatch_rate": 0.07142857142857142
+          },
+          "outcome_disagreements": [
+            {
+              "profile_id": "income_over_ceiling",
+              "gold_verdict": "ineligible",
+              "draft_verdict": "eligible",
+              "agree": false,
+              "disagreement_type": "false_positive_eligible"
+            },
+            {
+              "profile_id": "secc_automatically_included_regardless_of_housing",
+              "gold_verdict": "eligible",
+              "draft_verdict": "undetermined_missing_facts",
+              "agree": false,
+              "disagreement_type": "other_mismatch"
+            },
+            {
+              "profile_id": "irrigated_land_over_threshold",
+              "gold_verdict": "ineligible",
+              "draft_verdict": "eligible",
+              "agree": false,
+              "disagreement_type": "false_positive_eligible"
+            },
+            {
+              "profile_id": "mechanized_agri_equipment",
+              "gold_verdict": "ineligible",
+              "draft_verdict": "eligible",
+              "agree": false,
+              "disagreement_type": "false_positive_eligible"
+            },
+            {
+              "profile_id": "income_tax_family_member",
+              "gold_verdict": "ineligible",
+              "draft_verdict": "eligible",
+              "agree": false,
+              "disagreement_type": "false_positive_eligible"
+            },
+            {
+              "profile_id": "professional_tax_family_member",
+              "gold_verdict": "ineligible",
+              "draft_verdict": "eligible",
+              "agree": false,
+              "disagreement_type": "false_positive_eligible"
+            },
+            {
+              "profile_id": "unirrigated_land_five_acres",
+              "gold_verdict": "ineligible",
+              "draft_verdict": "eligible",
+              "agree": false,
+              "disagreement_type": "false_positive_eligible"
+            },
+            {
+              "profile_id": "irrigated_land_exactly_two_and_a_half_acres",
+              "gold_verdict": "ineligible",
+              "draft_verdict": "eligible",
+              "agree": false,
+              "disagreement_type": "false_positive_eligible"
+            },
+            {
+              "profile_id": "kutcha_house_with_three_rooms",
+              "gold_verdict": "ineligible",
+              "draft_verdict": "eligible",
+              "agree": false,
+              "disagreement_type": "false_positive_eligible"
+            }
+          ],
+          "scalar": {
+            "scheme_id": "PMAY-G",
+            "n_checked": 2,
+            "n_matched": 1,
+            "match_rate": 0.5,
+            "mismatches": [
+              {
+                "field": "temporal_validity.valid_from",
+                "gold_value": "2024-09-11",
+                "draft_value": "2024-09-01"
+              }
+            ]
+          }
+        },
+        "PMMVY": {
+          "draft_file": "data\\experiments\\self_consistency\\PMMVY\\sample_1.json",
+          "structural_f1": {
+            "category": "__overall__",
+            "tp": 13,
+            "fp": 1,
+            "fn": 4,
+            "precision": 0.9286,
+            "recall": 0.7647,
+            "f1": 0.8387
+          },
+          "f1_by_category": {
+            "demographic": {
+              "category": "demographic",
+              "tp": 5,
+              "fp": 1,
+              "fn": 4,
+              "precision": 0.8333,
+              "recall": 0.5556,
+              "f1": 0.6667
+            },
+            "economic": {
+              "category": "economic",
+              "tp": 5,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "cross_scheme": {
+              "category": "cross_scheme",
+              "tp": 2,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "occupation": {
+              "category": "occupation",
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            }
+          },
+          "outcome_equivalence": {
+            "n_profiles": 12,
+            "agreement_rate": 0.4166666666666667,
+            "false_positive_eligible_rate": 0.0,
+            "false_negative_eligible_rate": 0.0,
+            "other_mismatch_rate": 0.5833333333333334
+          },
+          "outcome_disagreements": [
+            {
+              "profile_id": "eligible_baseline",
+              "gold_verdict": "eligible",
+              "draft_verdict": "undetermined_missing_facts",
+              "agree": false,
+              "disagreement_type": "other_mismatch"
+            },
+            {
+              "profile_id": "second_child_boy_ineligible",
+              "gold_verdict": "ineligible",
+              "draft_verdict": "undetermined_missing_facts",
+              "agree": false,
+              "disagreement_type": "other_mismatch"
+            },
+            {
+              "profile_id": "second_child_girl_eligible",
+              "gold_verdict": "eligible",
+              "draft_verdict": "undetermined_missing_facts",
+              "agree": false,
+              "disagreement_type": "other_mismatch"
+            },
+            {
+              "profile_id": "third_child_ineligible",
+              "gold_verdict": "ineligible",
+              "draft_verdict": "undetermined_missing_facts",
+              "agree": false,
+              "disagreement_type": "other_mismatch"
+            },
+            {
+              "profile_id": "ab_pmjay_beneficiary_alone_eligible",
+              "gold_verdict": "eligible",
+              "draft_verdict": "undetermined_missing_facts",
+              "agree": false,
+              "disagreement_type": "other_mismatch"
+            },
+            {
+              "profile_id": "income_based_eligibility_alone_eligible",
+              "gold_verdict": "eligible",
+              "draft_verdict": "undetermined_missing_facts",
+              "agree": false,
+              "disagreement_type": "other_mismatch"
+            },
+            {
+              "profile_id": "eighteen_years_seven_months_at_floor",
+              "gold_verdict": "eligible",
+              "draft_verdict": "undetermined_missing_facts",
+              "agree": false,
+              "disagreement_type": "other_mismatch"
+            }
+          ],
+          "scalar": {
+            "scheme_id": "PMMVY",
+            "n_checked": 2,
+            "n_matched": 2,
+            "match_rate": 1.0,
+            "mismatches": []
+          }
+        }
+      },
+      "aggregate": {
+        "schemes": 6,
+        "structural_f1_micro": {
+          "category": "__overall__",
+          "tp": 59,
+          "fp": 13,
+          "fn": 36,
+          "precision": 0.8194,
+          "recall": 0.6211,
+          "f1": 0.7066
+        },
+        "outcome_equivalence": {
+          "n_profiles": 70,
+          "agreement_rate": 0.6857142857142857,
+          "false_positive_eligible_rate": 0.12857142857142856,
+          "false_negative_eligible_rate": 0.07142857142857142
+        }
+      }
+    },
+    "pipeline_on_sample1": {
+      "description": "Full pipeline (judge -> gate -> apply approved) on the same extraction as Baseline 3",
+      "absent": [
+        "MH-LADKI-BAHIN"
+      ],
+      "failed": {
+        "AB-PMJAY": {
+          "reason": "judge call failed (api_error: json_validate_failed)",
+          "file": "data\\experiments\\pipeline_on_sample1\\AB-PMJAY.json"
+        },
+        "PMAY-G": {
+          "reason": "judge call failed (api_error: json_validate_failed)",
+          "file": "data\\experiments\\pipeline_on_sample1\\PMAY-G.json"
+        }
+      },
+      "per_scheme": {
+        "IGNOAPS": {
+          "draft_file": "data\\experiments\\pipeline_on_sample1\\IGNOAPS.json",
+          "structural_f1": {
+            "category": "__overall__",
+            "tp": 3,
+            "fp": 4,
+            "fn": 3,
+            "precision": 0.4286,
+            "recall": 0.5,
+            "f1": 0.4615
+          },
+          "f1_by_category": {
+            "demographic": {
+              "category": "demographic",
+              "tp": 2,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "economic": {
+              "category": "economic",
+              "tp": 1,
+              "fp": 3,
+              "fn": 2,
+              "precision": 0.25,
+              "recall": 0.3333,
+              "f1": 0.2857
+            },
+            "occupation": {
+              "category": "occupation",
+              "tp": 0,
+              "fp": 1,
+              "fn": 1,
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0
+            }
+          },
+          "outcome_equivalence": {
+            "n_profiles": 12,
+            "agreement_rate": 0.4166666666666667,
+            "false_positive_eligible_rate": 0.0,
+            "false_negative_eligible_rate": 0.25,
+            "other_mismatch_rate": 0.3333333333333333
+          },
+          "outcome_disagreements": [
+            {
+              "profile_id": "eligible_baseline",
+              "gold_verdict": "eligible",
+              "draft_verdict": "undetermined_missing_facts",
+              "agree": false,
+              "disagreement_type": "other_mismatch"
+            },
+            {
+              "profile_id": "has_family_support",
+              "gold_verdict": "eligible",
+              "draft_verdict": "undetermined_missing_facts",
+              "agree": false,
+              "disagreement_type": "other_mismatch"
+            },
+            {
+              "profile_id": "govt_employee",
+              "gold_verdict": "eligible",
+              "draft_verdict": "ineligible",
+              "agree": false,
+              "disagreement_type": "false_negative_eligible"
+            },
+            {
+              "profile_id": "five_acres_land",
+              "gold_verdict": "eligible",
+              "draft_verdict": "ineligible",
+              "agree": false,
+              "disagreement_type": "false_negative_eligible"
+            },
+            {
+              "profile_id": "owns_four_wheeler",
+              "gold_verdict": "eligible",
+              "draft_verdict": "ineligible",
+              "agree": false,
+              "disagreement_type": "false_negative_eligible"
+            },
+            {
+              "profile_id": "missing_support_data",
+              "gold_verdict": "eligible",
+              "draft_verdict": "undetermined_missing_facts",
+              "agree": false,
+              "disagreement_type": "other_mismatch"
+            },
+            {
+              "profile_id": "aids_widow_non_bpl_clear_of_criteria",
+              "gold_verdict": "eligible",
+              "draft_verdict": "undetermined_missing_facts",
+              "agree": false,
+              "disagreement_type": "other_mismatch"
+            }
+          ],
+          "scalar": {
+            "scheme_id": "IGNOAPS",
+            "n_checked": 2,
+            "n_matched": 2,
+            "match_rate": 1.0,
+            "mismatches": []
+          },
+          "findings_applied": 1
+        },
+        "PM-KISAN": {
+          "draft_file": "data\\experiments\\pipeline_on_sample1\\PM-KISAN.json",
+          "structural_f1": {
+            "category": "__overall__",
+            "tp": 10,
+            "fp": 1,
+            "fn": 1,
+            "precision": 0.9091,
+            "recall": 0.9091,
+            "f1": 0.9091
+          },
+          "f1_by_category": {
+            "citizenship": {
+              "category": "citizenship",
+              "tp": 1,
+              "fp": 0,
+              "fn": 1,
+              "precision": 1.0,
+              "recall": 0.5,
+              "f1": 0.6667
+            },
+            "occupation": {
+              "category": "occupation",
+              "tp": 2,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "economic": {
+              "category": "economic",
+              "tp": 2,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "political": {
+              "category": "political",
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "professional": {
+              "category": "professional",
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "institutional": {
+              "category": "institutional",
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "exception_to_exclusion": {
+              "category": "exception_to_exclusion",
+              "tp": 2,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "other": {
+              "category": "other",
+              "tp": 0,
+              "fp": 1,
+              "fn": 0,
+              "precision": 0.0,
+              "recall": 1.0,
+              "f1": 0.0
+            }
+          },
+          "outcome_equivalence": {
+            "n_profiles": 12,
+            "agreement_rate": 0.6666666666666666,
+            "false_positive_eligible_rate": 0.0,
+            "false_negative_eligible_rate": 0.0,
+            "other_mismatch_rate": 0.3333333333333333
+          },
+          "outcome_disagreements": [
+            {
+              "profile_id": "eligible_baseline",
+              "gold_verdict": "eligible",
+              "draft_verdict": "undetermined_missing_facts",
+              "agree": false,
+              "disagreement_type": "other_mismatch"
+            },
+            {
+              "profile_id": "govt_employee_group_d_exception",
+              "gold_verdict": "eligible",
+              "draft_verdict": "undetermined_missing_facts",
+              "agree": false,
+              "disagreement_type": "other_mismatch"
+            },
+            {
+              "profile_id": "pension_group_d_exception",
+              "gold_verdict": "eligible",
+              "draft_verdict": "undetermined_missing_facts",
+              "agree": false,
+              "disagreement_type": "other_mismatch"
+            },
+            {
+              "profile_id": "citizenship_gap_false_positive",
+              "gold_verdict": "ineligible",
+              "draft_verdict": "undetermined_missing_facts",
+              "agree": false,
+              "disagreement_type": "other_mismatch"
+            }
+          ],
+          "scalar": {
+            "scheme_id": "PM-KISAN",
+            "n_checked": 2,
+            "n_matched": 2,
+            "match_rate": 1.0,
+            "mismatches": []
+          },
+          "findings_applied": 1
+        },
+        "PM-UJJWALA-2.0": {
+          "draft_file": "data\\experiments\\pipeline_on_sample1\\PM-UJJWALA-2.0.json",
+          "structural_f1": {
+            "category": "__overall__",
+            "tp": 12,
+            "fp": 1,
+            "fn": 1,
+            "precision": 0.9231,
+            "recall": 0.9231,
+            "f1": 0.9231
+          },
+          "f1_by_category": {
+            "demographic": {
+              "category": "demographic",
+              "tp": 8,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "economic": {
+              "category": "economic",
+              "tp": 3,
+              "fp": 1,
+              "fn": 1,
+              "precision": 0.75,
+              "recall": 0.75,
+              "f1": 0.75
+            },
+            "other": {
+              "category": "other",
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            }
+          },
+          "outcome_equivalence": {
+            "n_profiles": 9,
+            "agreement_rate": 1.0,
+            "false_positive_eligible_rate": 0.0,
+            "false_negative_eligible_rate": 0.0,
+            "other_mismatch_rate": 0.0
+          },
+          "outcome_disagreements": [],
+          "scalar": {
+            "scheme_id": "PM-UJJWALA-2.0",
+            "n_checked": 2,
+            "n_matched": 2,
+            "match_rate": 1.0,
+            "mismatches": []
+          },
+          "findings_applied": 0
+        },
+        "PMMVY": {
+          "draft_file": "data\\experiments\\pipeline_on_sample1\\PMMVY.json",
+          "structural_f1": {
+            "category": "__overall__",
+            "tp": 13,
+            "fp": 2,
+            "fn": 4,
+            "precision": 0.8667,
+            "recall": 0.7647,
+            "f1": 0.8125
+          },
+          "f1_by_category": {
+            "demographic": {
+              "category": "demographic",
+              "tp": 5,
+              "fp": 1,
+              "fn": 4,
+              "precision": 0.8333,
+              "recall": 0.5556,
+              "f1": 0.6667
+            },
+            "economic": {
+              "category": "economic",
+              "tp": 5,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "cross_scheme": {
+              "category": "cross_scheme",
+              "tp": 2,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "occupation": {
+              "category": "occupation",
+              "tp": 1,
+              "fp": 0,
+              "fn": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0
+            },
+            "other": {
+              "category": "other",
+              "tp": 0,
+              "fp": 1,
+              "fn": 0,
+              "precision": 0.0,
+              "recall": 1.0,
+              "f1": 0.0
+            }
+          },
+          "outcome_equivalence": {
+            "n_profiles": 12,
+            "agreement_rate": 0.4166666666666667,
+            "false_positive_eligible_rate": 0.0,
+            "false_negative_eligible_rate": 0.0,
+            "other_mismatch_rate": 0.5833333333333334
+          },
+          "outcome_disagreements": [
+            {
+              "profile_id": "eligible_baseline",
+              "gold_verdict": "eligible",
+              "draft_verdict": "undetermined_missing_facts",
+              "agree": false,
+              "disagreement_type": "other_mismatch"
+            },
+            {
+              "profile_id": "second_child_boy_ineligible",
+              "gold_verdict": "ineligible",
+              "draft_verdict": "undetermined_missing_facts",
+              "agree": false,
+              "disagreement_type": "other_mismatch"
+            },
+            {
+              "profile_id": "second_child_girl_eligible",
+              "gold_verdict": "eligible",
+              "draft_verdict": "undetermined_missing_facts",
+              "agree": false,
+              "disagreement_type": "other_mismatch"
+            },
+            {
+              "profile_id": "third_child_ineligible",
+              "gold_verdict": "ineligible",
+              "draft_verdict": "undetermined_missing_facts",
+              "agree": false,
+              "disagreement_type": "other_mismatch"
+            },
+            {
+              "profile_id": "ab_pmjay_beneficiary_alone_eligible",
+              "gold_verdict": "eligible",
+              "draft_verdict": "undetermined_missing_facts",
+              "agree": false,
+              "disagreement_type": "other_mismatch"
+            },
+            {
+              "profile_id": "income_based_eligibility_alone_eligible",
+              "gold_verdict": "eligible",
+              "draft_verdict": "undetermined_missing_facts",
+              "agree": false,
+              "disagreement_type": "other_mismatch"
+            },
+            {
+              "profile_id": "eighteen_years_seven_months_at_floor",
+              "gold_verdict": "eligible",
+              "draft_verdict": "undetermined_missing_facts",
+              "agree": false,
+              "disagreement_type": "other_mismatch"
+            }
+          ],
+          "scalar": {
+            "scheme_id": "PMMVY",
+            "n_checked": 2,
+            "n_matched": 2,
+            "match_rate": 1.0,
+            "mismatches": []
+          },
+          "findings_applied": 1
+        }
+      },
+      "aggregate": {
+        "schemes": 4,
+        "structural_f1_micro": {
+          "category": "__overall__",
+          "tp": 38,
+          "fp": 8,
+          "fn": 9,
+          "precision": 0.8261,
+          "recall": 0.8085,
+          "f1": 0.8172
+        },
+        "outcome_equivalence": {
+          "n_profiles": 45,
+          "agreement_rate": 0.6,
+          "false_positive_eligible_rate": 0.0,
+          "false_negative_eligible_rate": 0.06666666666666667
+        }
+      }
+    },
+    "baseline1_flat": {
+      "description": "Baseline 1: flat attribute extraction, no compositional logic",
+      "absent": [
+        "AB-PMJAY",
+        "IGNOAPS",
+        "MH-LADKI-BAHIN",
+        "PM-KISAN",
+        "PM-UJJWALA-2.0",
+        "PMAY-G",
+        "PMMVY"
+      ],
+      "failed": {},
+      "per_scheme": {},
+      "aggregate": null
+    }
+  },
+  "baseline2": {
+    "AB-PMJAY": {
+      "source": "baseline2_direct_llm_2026-10-04_ab-pmjay-70plus-age.json",
+      "n": 11,
+      "counts": {
+        "agree": 8,
+        "false_negative": 2,
+        "false_positive_vs_ineligible": 1
+      },
+      "stale_excluded": [],
+      "agreement_rate": 0.7272727272727273,
+      "harmful_false_positive_rate": 0.09090909090909091,
+      "false_negative_rate": 0.18181818181818182,
+      "disagreements": [
+        {
+          "profile_id": "seventy_plus_household_refrigerator_and_landline",
+          "baseline": "ineligible",
+          "evaluator": "eligible",
+          "relation": "false_negative"
+        },
+        {
+          "profile_id": "seventy_plus_family_member_pays_income_tax",
+          "baseline": "ineligible",
+          "evaluator": "eligible",
+          "relation": "false_negative"
+        },
+        {
+          "profile_id": "younger_applicant_with_seventy_plus_parent",
+          "baseline": "eligible",
+          "evaluator": "ineligible",
+          "relation": "false_positive_vs_ineligible"
+        }
+      ]
+    },
+    "IGNOAPS": {
+      "source": "baseline2_direct_llm_2026-10-04.json",
+      "n": 12,
+      "counts": {
+        "agree": 8,
+        "other": 1,
+        "false_negative": 3
+      },
+      "stale_excluded": [],
+      "agreement_rate": 0.6666666666666666,
+      "harmful_false_positive_rate": 0.0,
+      "false_negative_rate": 0.25,
+      "disagreements": [
+        {
+          "profile_id": "not_bpl",
+          "baseline": "ineligible",
+          "evaluator": "undetermined_missing_facts",
+          "relation": "other"
+        },
+        {
+          "profile_id": "govt_employee",
+          "baseline": "ineligible",
+          "evaluator": "eligible",
+          "relation": "false_negative"
+        },
+        {
+          "profile_id": "five_acres_land",
+          "baseline": "ineligible",
+          "evaluator": "eligible",
+          "relation": "false_negative"
+        },
+        {
+          "profile_id": "owns_four_wheeler",
+          "baseline": "ineligible",
+          "evaluator": "eligible",
+          "relation": "false_negative"
+        }
+      ]
+    },
+    "MH-LADKI-BAHIN": {
+      "source": "baseline2_direct_llm_2026-09-19.json",
+      "n": 10,
+      "counts": {
+        "agree": 10
+      },
+      "stale_excluded": [],
+      "agreement_rate": 1.0,
+      "harmful_false_positive_rate": 0.0,
+      "false_negative_rate": 0.0,
+      "disagreements": []
+    },
+    "PM-KISAN": {
+      "source": "baseline2_direct_llm_2026-09-19.json",
+      "n": 12,
+      "counts": {
+        "over_cautious": 1,
+        "agree": 11
+      },
+      "stale_excluded": [],
+      "agreement_rate": 0.9166666666666666,
+      "harmful_false_positive_rate": 0.0,
+      "false_negative_rate": 0.0,
+      "disagreements": [
+        {
+          "profile_id": "eligible_baseline",
+          "baseline": "unsure",
+          "evaluator": "eligible",
+          "relation": "over_cautious"
+        }
+      ]
+    },
+    "PM-UJJWALA-2.0": {
+      "source": "baseline2_direct_llm_2026-10-04.json",
+      "n": 9,
+      "counts": {
+        "agree": 9
+      },
+      "stale_excluded": [],
+      "agreement_rate": 1.0,
+      "harmful_false_positive_rate": 0.0,
+      "false_negative_rate": 0.0,
+      "disagreements": []
+    },
+    "PMAY-G": {
+      "source": "baseline2_direct_llm_2026-10-04_pmay-g-updated-doc.json",
+      "n": 14,
+      "counts": {
+        "agree": 14
+      },
+      "stale_excluded": [],
+      "agreement_rate": 1.0,
+      "harmful_false_positive_rate": 0.0,
+      "false_negative_rate": 0.0,
+      "disagreements": []
+    },
+    "PMMVY": {
+      "source": "baseline2_direct_llm_2026-10-04.json",
+      "n": 12,
+      "counts": {
+        "agree": 12
+      },
+      "stale_excluded": [],
+      "agreement_rate": 1.0,
+      "harmful_false_positive_rate": 0.0,
+      "false_negative_rate": 0.0,
+      "disagreements": []
+    }
+  },
+  "superseded_claims": [
+    {
+      "claim": "Baseline 2: 94.0% agreement, **4.5% harmful false positives**, 0% false negatives (n=67)",
+      "status": "**Superseded** by 90.7% / **0.0%** / **6.7%** (n=75)."
+    },
+    {
+      "claim": "\"Every harmful Baseline 2 error rests on contested or unsourced gold\"",
+      "status": "**Confirmed and now resolved**: with that gold corrected, there are none."
+    },
+    {
+      "claim": "IGNOAPS as an example of the LLM **silently defaulting to \"eligible\"** on missing information",
+      "status": "**Withdrawn.** It was an artifact of the doubted family-support predicate. On corrected gold the LLM never defaulted to eligible (0/8)."
+    },
+    {
+      "claim": "\"The direct baseline handled exception clauses correctly\" (2026-09-19)",
+      "status": "**Narrowed.** True of *member-level* exceptions stated next to their exclusion (PM-KISAN Group D, MH-LADKI-BAHIN tractor). False of *route-level* exemptions stated elsewhere in the document (AB-PMJAY 70+) — see §7.5."
+    },
+    {
+      "claim": "PM-UJJWALA extractor citizenship miss (F1 0.0)",
+      "status": "**Withdrawn** — gold-side, the predicate was unsourced."
+    },
+    {
+      "claim": "\"Preambular / implied-fact miss\" recurring 4 times",
+      "status": "**Superseded** by 1 of 4 (§5)."
+    },
+    {
+      "claim": "AB-PMJAY extraction draft: 100% outcome agreement with gold",
+      "status": "**Superseded** by 80.0% — the 100% was a shared error (§7.5) — and then by 72.7% after the §6.7 re-encoding (§7.6)."
+    },
+    {
+      "claim": "Baseline 2: 90.7% agreement, **0.0% harmful false positives**, 6.7% false negatives (n=75)",
+      "status": "**Superseded** by 89.5% / **1.3%** / 6.6% (n=76) after the §6.7 re-encoding (§7.6)."
+    },
+    {
+      "claim": "AB-PMJAY structural F1 1.000",
+      "status": "**Superseded** by 0.947 (§7.6)."
+    },
+    {
+      "claim": "PMAY-G extraction draft: 90.0% outcome agreement, structural F1 0.857",
+      "status": "**Superseded** by 50.0% / 0.552 against the MoRD-sourced gold (§7.7) — mostly a source gap, see the caveat there."
+    },
+    {
+      "claim": "Baseline 2: 89.5% agreement, 1.3% harmful FP, 6.6% FN (n=76)",
+      "status": "**Superseded** by 82.5% / 6.2% / 8.8% (n=80) (§7.7)."
+    },
+    {
+      "claim": "PMAY-G Baseline 2: 100% agreement",
+      "status": "**Superseded** by 57.1% (§7.7)."
+    },
+    {
+      "claim": "PMAY-G Baseline 2 57.1%, aggregate 82.5% / 6.2% / 8.8% (§7.7)",
+      "status": "Stale-document results, kept as a record; with the updated document **100%** and **90.0% / 1.2% / 6.2%** (§7.9)."
+    },
+    {
+      "claim": "PMAY-G extraction draft 50.0% / F1 0.552 (§7.7)",
+      "status": "Stale-document result, kept; with the updated document 50.0% (FP 0.0%) / **0.839** (§7.9)."
+    },
+    {
+      "claim": "AB-PMJAY Phase 3 check-in, 1.000 (and 0.947 in §7.6)",
+      "status": "**0.692**"
+    },
+    {
+      "claim": "PM-UJJWALA-2.0 Phase 3 check-in, 0.963",
+      "status": "1.000 (gold fix; the metric change doesn't affect it)"
+    },
+    {
+      "claim": "PMAY-G Phase 3 check-in, 0.857 (and 0.552 in §7.7)",
+      "status": "0.552 (gold fix; unchanged by the metric)"
+    },
+    {
+      "claim": "PM-KISAN manual report, \"8/9 exact field matches\" (F1 0.889)",
+      "status": "**0.909**: 8/9 fields plus 2/2 exceptions"
+    },
+    {
+      "claim": "MH-LADKI-BAHIN ontology draft, 0.818",
+      "status": "**0.786**"
+    },
+    {
+      "claim": "IGNOAPS 0.714 / 0.667 (never reported; §7.3)",
+      "status": "0.286 / 0.267 (gold fix)"
+    }
+  ],
+  "pipeline_vs_baseline3": {
+    "rows": [
+      {
+        "scheme": "IGNOAPS",
+        "findings_applied": 1,
+        "baseline3": {
+          "f1": 0.5,
+          "agreement": 0.75,
+          "false_eligible": 0.0,
+          "false_not_eligible": 0.25,
+          "other": 0.0
+        },
+        "pipeline": {
+          "f1": 0.4615,
+          "agreement": 0.4166666666666667,
+          "false_eligible": 0.0,
+          "false_not_eligible": 0.25,
+          "other": 0.3333333333333333
+        }
+      },
+      {
+        "scheme": "PM-KISAN",
+        "findings_applied": 1,
+        "baseline3": {
+          "f1": 0.9524,
+          "agreement": 0.9166666666666666,
+          "false_eligible": 0.08333333333333333,
+          "false_not_eligible": 0.0,
+          "other": 0.0
+        },
+        "pipeline": {
+          "f1": 0.9091,
+          "agreement": 0.6666666666666666,
+          "false_eligible": 0.0,
+          "false_not_eligible": 0.0,
+          "other": 0.3333333333333333
+        }
+      },
+      {
+        "scheme": "PM-UJJWALA-2.0",
+        "findings_applied": 0,
+        "baseline3": {
+          "f1": 0.9231,
+          "agreement": 1.0,
+          "false_eligible": 0.0,
+          "false_not_eligible": 0.0,
+          "other": 0.0
+        },
+        "pipeline": {
+          "f1": 0.9231,
+          "agreement": 1.0,
+          "false_eligible": 0.0,
+          "false_not_eligible": 0.0,
+          "other": 0.0
+        }
+      },
+      {
+        "scheme": "PMMVY",
+        "findings_applied": 1,
+        "baseline3": {
+          "f1": 0.8387,
+          "agreement": 0.4166666666666667,
+          "false_eligible": 0.0,
+          "false_not_eligible": 0.0,
+          "other": 0.5833333333333334
+        },
+        "pipeline": {
+          "f1": 0.8125,
+          "agreement": 0.4166666666666667,
+          "false_eligible": 0.0,
+          "false_not_eligible": 0.0,
+          "other": 0.5833333333333334
+        }
+      }
+    ],
+    "excluded": {
+      "AB-PMJAY": "judge call failed (api_error: json_validate_failed)",
+      "PMAY-G": "judge call failed (api_error: json_validate_failed)",
+      "MH-LADKI-BAHIN": "no Baseline 3 sample (extraction failed validation)"
+    },
+    "aggregate": {
+      "baseline3": {
+        "schemes": 4,
+        "structural_f1_micro": {
+          "category": "__overall__",
+          "tp": 38,
+          "fp": 5,
+          "fn": 9,
+          "precision": 0.8837,
+          "recall": 0.8085,
+          "f1": 0.8444
+        },
+        "outcome_equivalence": {
+          "n_profiles": 45,
+          "agreement_rate": 0.7555555555555555,
+          "false_positive_eligible_rate": 0.022222222222222223,
+          "false_negative_eligible_rate": 0.06666666666666667
+        }
+      },
+      "pipeline": {
+        "schemes": 4,
+        "structural_f1_micro": {
+          "category": "__overall__",
+          "tp": 38,
+          "fp": 8,
+          "fn": 9,
+          "precision": 0.8261,
+          "recall": 0.8085,
+          "f1": 0.8172
+        },
+        "outcome_equivalence": {
+          "n_profiles": 45,
+          "agreement_rate": 0.6,
+          "false_positive_eligible_rate": 0.0,
+          "false_negative_eligible_rate": 0.06666666666666667
+        }
+      }
+    }
+  }
+}

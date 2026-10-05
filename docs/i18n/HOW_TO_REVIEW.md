@@ -7,11 +7,17 @@ yet reviewed".** This sheet is how that confirmation happens.
 ## What to open
 
 `docs/i18n/REVIEW_hi.csv`, and later `REVIEW_ur.csv`, `REVIEW_mr.csv` and `REVIEW_ta.csv`. Open it in
-Excel or Google Sheets. It is UTF-8 and the scripts display correctly. Rows that have a translation come
-first. Rows marked "not translated yet" are not ready, so skip them.
+Excel or Google Sheets. It is UTF-8 and the scripts display correctly. Rows to translate by hand come
+first, then rows that have a translation. Rows marked "not translated yet" are not ready, so skip them.
 
 Work on a copy, or tell whoever maintains the repo before you start. The file is regenerated as new
 translations arrive, but your four columns are kept.
+
+## Rows marked TRANSLATE BY HAND (they come first)
+
+The machine translation of these rows was rejected and is not used: the app shows the English
+instead. Nobody will retry them by machine. Write the translation yourself in `corrected translation`,
+set `reviewer verdict` to `FIX`, and add your name.
 
 ## For each row
 
@@ -38,8 +44,10 @@ Fill in:
 3. **Leave anything in `{curly braces}` exactly as it is**, for example `{scheme_id}` or `{question}`. The app
    fills these in. Keep `**` (bold markers) around the same words.
 4. **Keep these terms in English as written:** BPL, APL, SC/ST, SC, ST, OBC, Group D, Class IV, MTS,
-   Aadhaar, kutcha, pucca, NRI, e-Shram, MGNREGA, NFSA, AAY, SECC, RSBY, Kisan Credit Card, HIV, AIDS,
-   and scheme names (PM-KISAN, AB-PMJAY, PMAY-G, PMMVY, IGNOAPS).
+   Aadhaar, NRI, e-Shram, MGNREGA, NFSA, AAY, SECC, RSBY, Kisan Credit Card, HIV, AIDS, and scheme names
+   (PM-KISAN, AB-PMJAY, PMAY-G, PMMVY, IGNOAPS). In Hindi, "pucca" and "kutcha" are ordinary words:
+   write पक्का and कच्चा (or the right form, for example पक्की, कच्चे). In the other languages, keep them
+   as written.
 5. **Be consistent.** Translate the button words "Yes", "No" and "Prefer not to say" once (rows
    `reply.yes`, `reply.no`, `reply.decline`). Then use the same words wherever a message mentions those
    buttons. Pick one spelling (for example, के लिए and not के लिये) and use it throughout.

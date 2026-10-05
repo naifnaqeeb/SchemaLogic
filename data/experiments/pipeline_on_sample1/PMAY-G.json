@@ -1,0 +1,163 @@
+{
+  "item": "pipeline_on_sample1",
+  "gold_tag": "gold-v2",
+  "gold_commit": "82436ac11fb53421bf44c8c68e6333e1db353442",
+  "code_commit": "068d3a6",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "config": {
+    "judge_samples": 1,
+    "compact_draft": true,
+    "apply": "gate auto-accepted findings only"
+  },
+  "date": "2026-10-06",
+  "created_at": "2026-10-06T00:38:04",
+  "scheme_id": "PMAY-G",
+  "source_document_sha256": "f614c93821f510771790492801da10bdcefcc1a7484175c6f87846f2e00d9fee",
+  "from_sample": "self_consistency/PMAY-G/sample_1.json",
+  "usage": [],
+  "judge_failure": {
+    "reason": "api_error",
+    "detail": "Error code: 400 - {'error': {'message': \"Failed to validate JSON. Please adjust your prompt. See 'failed_generation' for more details.\", 'type': 'invalid_request_error', 'code': 'json_validate_failed', 'failed_generation': ''}}"
+  },
+  "gated_extraction": {
+    "scheme_id": "PMAY-G",
+    "unit_of_eligibility": "family",
+    "inclusion": {
+      "or": [
+        {
+          "field": "is_houseless",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false,
+          "cat": "other"
+        },
+        {
+          "field": "lives_in_kutcha_house",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false,
+          "cat": "demographic"
+        },
+        {
+          "or": [
+            {
+              "field": "is_destitute_household",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": true,
+              "cat": "other"
+            },
+            {
+              "field": "is_manual_scavenger_household",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": true,
+              "cat": "other"
+            },
+            {
+              "field": "is_primitive_tribal_group_household",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": true,
+              "cat": "other"
+            },
+            {
+              "field": "is_legally_released_bonded_labour_household",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": true,
+              "cat": "other"
+            }
+          ]
+        }
+      ]
+    },
+    "exclusions": [
+      {
+        "field": "kisan_credit_card_limit_inr",
+        "op": ">=",
+        "value": 50000,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "is_govt_employee",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "occupation",
+        "quantifier": "self",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "owns_non_agricultural_enterprise_registered_with_govt",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "monthly_income_inr",
+        "op": ">",
+        "value": 15000,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "paid_income_tax_last_assessment_year",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "paid_professional_tax",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      }
+    ],
+    "temporal_validity": {
+      "valid_from": "2024-09-01",
+      "valid_to": null,
+      "extracted_at": "2026-10-05",
+      "supersedes": null
+    },
+    "operational_requirements": [],
+    "extraction_metadata": {
+      "confidence": 0.85,
+      "source_clause": "Revised automatic exclusion criteria (new phase of PMAY-G)",
+      "flagged_for_review": true
+    }
+  }
+}

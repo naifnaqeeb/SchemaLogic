@@ -7,6 +7,7 @@ experiment ledger; resumable (entries already translated from the current Englis
     PYTHONPATH=. python scripts/translate_catalogue.py --sheets                  # regenerate review sheets only
     PYTHONPATH=. python scripts/translate_catalogue.py --mark-reviewed hi all    # or: hi key1 key2 ...
     PYTHONPATH=. python scripts/translate_catalogue.py --import-review hi docs/i18n/REVIEW_hi.csv
+    PYTHONPATH=. python scripts/translate_catalogue.py --mark-manual hi failed   # hand them to people
 
 Every entry is validated before it is stored: the same {placeholders}, every glossary term in the
 English (BPL, SC/ST, Group D, ...) present unchanged, markdown bold kept, non-empty. An invalid entry is
@@ -51,7 +52,9 @@ def system_prompt(language: str) -> str:
         "is a JSON object {key: English}. Return ONLY a JSON object with exactly the same keys, each value the "
         "translation.\n\nRules:\n"
         "- Keep every {placeholder} in braces exactly as written (e.g. {scheme_id}, {question}, {members}).\n"
-        f"- Keep these terms exactly as written, untranslated: {', '.join(messages.GLOSSARY)}.\n"
+        f"- Keep these terms exactly as written, untranslated: {', '.join(messages.glossary_for(language))}.\n"
+        + "".join(f"- Translate '{en}' as the {LANGUAGE_NAMES[language]} word '{native}'.\n"
+                  for en, native in messages.NATIVE_TERMS.get(language, {}).items()) +
         "- Keep markdown (**bold**), emoji and quotation marks.\n"
         "- Questions stay questions; keep the meaning exact -- amounts, ages and conditions must not change.\n"
         '- Strings starting "This next one is about one of your family members" refer to the family member in '
@@ -67,10 +70,10 @@ SCRIPTS = {
 }
 
 
-def _words(text: str) -> list[str]:
-    """English words in `text`, ignoring {placeholders} and glossary terms (which stay in English)."""
+def _words(text: str, language: str | None = None) -> list[str]:
+    """English words in `text`, ignoring {placeholders} and the glossary terms that stay in English."""
     text = re.sub(r"\{[^{}]*\}", " ", text)
-    for term in sorted(messages.GLOSSARY, key=len, reverse=True):
+    for term in sorted(messages.glossary_for(language), key=len, reverse=True):
         text = text.replace(term, " ")
     return re.findall(r"[A-Za-z]{2,}", text)
 
@@ -84,9 +87,9 @@ def checks(source: str, translation: object, language: str | None = None) -> lis
         problems.append("placeholders differ")
     if source.count("**") != translation.count("**"):
         problems.append("bold markers differ")
-    problems += [f"glossary term changed: {term}" for term in messages.GLOSSARY
+    problems += [f"glossary term changed: {term}" for term in messages.glossary_for(language)
                  if term in source and len(term) > 2 and term not in translation]
-    if language in SCRIPTS and _words(source):
+    if language in SCRIPTS and _words(source, language):
         name, pattern = SCRIPTS[language]
         if translation.strip() == source.strip():
             problems.append("identical to the English")
@@ -99,9 +102,9 @@ def valid(source: str, translation: object, language: str | None = None) -> bool
     return not checks(source, translation, language)
 
 
-def english_kept(source: str, translation: str | None) -> list[str]:
+def english_kept(source: str, translation: str | None, language: str | None = None) -> list[str]:
     """English words left in a translation (informational: some are UI labels, like "Select")."""
-    return sorted(set(_words(translation or "")), key=str.lower)
+    return sorted(set(_words(translation or "", language)), key=str.lower)
 
 
 def _call(language: str, batch: dict[str, str], ledger: harness.Ledger) -> dict | str:
@@ -161,6 +164,8 @@ def translate(language: str, budget: int) -> str:
         entry = data.get(k, {})
         if language == "hi" and k.startswith("ui."):
             return False  # hand-written, seeded above
+        if entry.get("status") == "manual" and entry.get("source") == v:
+            return False  # to be translated by hand (mark_manual); never sent to the model again
         if entry.get("source") != v:
             return True
         return entry.get("status") != "reviewed" and not valid(v, entry.get("text"), language)
@@ -256,6 +261,11 @@ def write_csv(language: str) -> Path:
         text = entry.get("text") if entry.get("source") == source else None
         status = entry.get("status", "not translated yet") if text else ("stale: English changed" if entry else "not translated yet")
         flags = checks(source, text, language) if text else []
+        manual = entry.get("status") == "manual" and entry.get("source") == source
+        if manual:
+            status = "TRANSLATE BY HAND"
+            flags = [f"machine translation rejected: {entry.get('manual_reason', 'it failed the automatic checks')}. "
+                     "Write the translation in 'corrected translation' and set the verdict to FIX"]
         before = old.get(key, {})
         if before and before.get("machine translation") != (text or "") and any(before.get(c) for c in REVIEWER_COLUMNS):
             flags.append("CHANGED since this row was reviewed: please re-check")
@@ -264,11 +274,12 @@ def write_csv(language: str) -> Path:
             "key": key, "where it appears": WHERE.get(key.split(".")[0], "")
             + (" (hand-written, not machine-translated)" if entry.get("origin") else ""), "English": source,
             "machine translation": text or "", "status": status, "automatic checks": "; ".join(flags),
-            "English words kept": ", ".join(english_kept(source, text)) if text else "",
+            "English words kept": ", ".join(english_kept(source, text, language)) if text else "",
             "pre-check note": note.get("note", "") if note.get("text") == text else "",
             **{c: before.get(c, "") for c in REVIEWER_COLUMNS},
         })
-    rows.sort(key=lambda r: not r["machine translation"])  # translated rows first; otherwise catalogue order
+    # rows to translate by hand first, then translated rows, then the rest; otherwise catalogue order
+    rows.sort(key=lambda r: (r["status"] != "TRANSLATE BY HAND", not r["machine translation"]))
     SHEETS.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8-sig", newline="") as f:  # BOM: Excel opens it as UTF-8
         writer = csv.DictWriter(f, fieldnames=CSV_COLUMNS)
@@ -314,6 +325,21 @@ def import_review(language: str, path: str) -> dict:
     return result
 
 
+def mark_manual(language: str, keys: list[str]) -> list[str]:
+    """Hand entries over to people: `failed` = every entry that failed validation. They stay untranslated
+    (the app shows English) until a reviewer's FIX row supplies the translation; the model never retries."""
+    data = _load(language)
+    targets = [k for k, v in data.items() if v.get("status") == "failed_validation"] if keys == ["failed"] else keys
+    for k in targets:
+        entry = data.get(k)
+        if entry and not entry.get("text"):
+            entry.update(status="manual", manual_reason="it failed the automatic checks",
+                         manual_since=date.today().isoformat())
+    _save(language, data)
+    write_sheet(language)
+    return targets
+
+
 def mark_reviewed(language: str, keys: list[str]) -> None:
     data = _load(language)
     targets = [k for k in data if data[k].get("text")] if keys == ["all"] else keys
@@ -333,6 +359,10 @@ if __name__ == "__main__":
         print(f"{args[i + 1]}: {r['ok']} confirmed, {r['fixed']} corrected, {len(r['skipped'])} skipped")
         for key, why in r["skipped"]:
             print(f"  skipped {key}: {why}")
+        sys.exit(0)
+    if "--mark-manual" in args:
+        i = args.index("--mark-manual")
+        print(f"{args[i + 1]}: to be translated by hand:", ", ".join(mark_manual(args[i + 1], args[i + 2:])))
         sys.exit(0)
     if "--mark-reviewed" in args:
         i = args.index("--mark-reviewed")

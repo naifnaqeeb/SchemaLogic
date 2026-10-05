@@ -16,7 +16,7 @@ import json
 from pathlib import Path
 
 from schemelogic.conversational.language import LANGUAGE_NAMES
-from schemelogic.conversational.messages import GLOSSARY
+from schemelogic.conversational.messages import NATIVE_TERMS, glossary_for
 from schemelogic.llm.provider import ProviderFailure, chat_completion_with_fallback
 
 CACHE_DIR = Path(__file__).resolve().parents[2] / "data" / "cache" / "translations"
@@ -29,8 +29,9 @@ def _system_prompt(language: str) -> str:
         f"Translate the given Indian government welfare scheme text from English into {LANGUAGE_NAMES[language]}, "
         "faithfully and plainly, for a citizen to read. Do not add, remove, soften or summarise anything; "
         "translate amounts, ages and dates exactly. Keep these terms exactly as written, untranslated: "
-        f"{', '.join(GLOSSARY)}, and every scheme or programme name. Return ONLY a JSON object with the same "
-        "keys as the input, each value the translation of that field."
+        f"{', '.join(glossary_for(language))}, and every scheme or programme name."
+        + "".join(f" Translate '{en}' as '{native}'." for en, native in NATIVE_TERMS.get(language, {}).items())
+        + " Return ONLY a JSON object with the same keys as the input, each value the translation of that field."
     )
 
 

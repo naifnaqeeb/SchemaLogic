@@ -86,10 +86,27 @@ def _sample(i: int) -> Callable[[str], Path | None]:
     return find
 
 
+def _failure(path: Path) -> str | None:
+    """Why a pipeline run produced no repaired scheme (a failed judge call), or None. A failed run is a
+    failed run: never scored as if the judge had found nothing (2026-10-06)."""
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    f = payload.get("judge_failure")
+    if not f:
+        return None
+    detail = f.get("detail", "")
+    code = next((c for c in ("json_validate_failed", "request too large", "rate limit") if c in detail.lower()), "")
+    return f"judge call failed ({f.get('reason')}{': ' + code if code else ''})"
+
+
+def _applied(path: Path) -> int | None:
+    decisions = json.loads(path.read_text(encoding="utf-8")).get("gate_decisions")
+    return None if decisions is None else sum(d.get("decision") == "auto_accept" for d in decisions)
+
+
 def _latest(pattern: str) -> Callable[[str], Path | None]:
     def find(sid: str) -> Path | None:
         files = sorted(EXP.glob(pattern.format(sid=sid)))
-        files = [f for f in files if _draft(f) is not None]
+        files = [f for f in files if _draft(f) is not None or _failure(f)]
         return files[-1] if files else None
     return find
 
@@ -208,18 +225,45 @@ def build() -> dict:
     gold = {s: harness.frozen_gold(s) for s in schemes}
     profiles = {s: harness.frozen_profiles(s) for s in schemes}
     for name, (description, find) in CONFIGURATIONS.items():
-        per_scheme, absent = {}, []
+        per_scheme, absent, failed = {}, [], {}
         for sid in schemes:
             path = find(sid)
             if path is None:
                 absent.append(sid)
                 continue
+            if name != "phase3_pipeline" and _failure(path):
+                failed[sid] = {"reason": _failure(path), "file": str(path.relative_to(ROOT))}
+                continue
             per_scheme[sid] = {"draft_file": str(path.relative_to(ROOT)), **_score(gold[sid], profiles[sid], _draft(path))}
-        report["configurations"][name] = {"description": description, "absent": absent, "per_scheme": per_scheme,
+            if _applied(path) is not None:
+                per_scheme[sid]["findings_applied"] = _applied(path)
+        report["configurations"][name] = {"description": description, "absent": absent, "failed": failed,
+                                          "per_scheme": per_scheme,
                                           "aggregate": _aggregate(per_scheme) if per_scheme else None}
+    report["pipeline_vs_baseline3"] = _paired(report["configurations"])
     for sid in schemes:
         report["baseline2"][sid] = baseline2(sid, gold[sid], profiles[sid])
     return report
+
+
+def _paired(configs: dict) -> dict:
+    """The full pipeline against Baseline 3 on the SAME extraction, only where both produced a scheme:
+    a failed judge call or a missing sample is excluded and listed, never counted as "unchanged"."""
+    b3, pipe = configs["baseline3_extraction_only"], configs["pipeline_on_sample1"]
+    both = [s for s in b3["per_scheme"] if s in pipe["per_scheme"]]
+    def side(r: dict) -> dict:
+        o = r["outcome_equivalence"]
+        return {"f1": r["structural_f1"]["f1"], "agreement": o["agreement_rate"], "false_eligible": o["false_positive_eligible_rate"],
+                "false_not_eligible": o["false_negative_eligible_rate"], "other": o["other_mismatch_rate"]}
+
+    rows = [{"scheme": s, "findings_applied": pipe["per_scheme"][s].get("findings_applied"),
+             "baseline3": side(b3["per_scheme"][s]), "pipeline": side(pipe["per_scheme"][s])} for s in both]
+    excluded = {**{s: v["reason"] for s, v in pipe["failed"].items()},
+                **{s: "no Baseline 3 sample (extraction failed validation)" for s in b3["absent"]},
+                **{s: "pipeline not run yet" for s in pipe["absent"] if s not in b3["absent"]}}
+    return {"rows": rows, "excluded": excluded,
+            "aggregate": {"baseline3": _aggregate({s: b3["per_scheme"][s] for s in both}) if both else None,
+                          "pipeline": _aggregate({s: pipe["per_scheme"][s] for s in both}) if both else None}}
 
 
 def _pct(x) -> str:
@@ -234,7 +278,7 @@ def markdown(report: dict) -> str:
     lines += [f"{i}. {c}" for i, c in enumerate(report["caveats"], 1)]
     for name, cfg in report["configurations"].items():
         lines += ["", f"## {name}", "", cfg["description"] + ".", ""]
-        if not cfg["per_scheme"]:
+        if not cfg["per_scheme"] and not cfg.get("failed"):
             lines += [f"*No results yet (absent for all {len(cfg['absent'])} schemes).*"]
             continue
         lines += ["| Scheme | Structural F1 | Exceptions F1 | Outcome agreement | FP (eligible) | FN (eligible) | n | Scalar | Draft |",
@@ -246,12 +290,45 @@ def markdown(report: dict) -> str:
                          f"{_pct(o['agreement_rate'])} | {_pct(o['false_positive_eligible_rate'])} | "
                          f"{_pct(o['false_negative_eligible_rate'])} | {o['n_profiles']} | {s['n_matched']}/{s['n_checked']} | "
                          f"`{Path(r['draft_file']).name}` |")
+        for sid, f in cfg.get("failed", {}).items():
+            lines.append(f"| {sid} | **failed run** — {f['reason']}; excluded | | | | | | | `{Path(f['file']).name}` |")
         a = cfg["aggregate"]
+        if a is None:
+            continue
         lines.append(f"| **All ({a['schemes']})** | **{a['structural_f1_micro']['f1']:.3f}** (micro) | | "
                      f"**{_pct(a['outcome_equivalence']['agreement_rate'])}** | {_pct(a['outcome_equivalence']['false_positive_eligible_rate'])} | "
                      f"{_pct(a['outcome_equivalence']['false_negative_eligible_rate'])} | {a['outcome_equivalence']['n_profiles']} | | |")
         if cfg["absent"]:
             lines.append(f"\nAbsent: {', '.join(cfg['absent'])}.")
+    pv = report.get("pipeline_vs_baseline3")
+    if pv:
+        lines += ["", "## Full pipeline vs Baseline 3, same extraction", "",
+                  "Only schemes where both produced a scheme. A failed judge call is a failed run: excluded and listed, "
+                  "not scored as \"no change\".", ""]
+        if pv["rows"]:
+            lines += ["Each cell: Baseline 3 → pipeline. \"Other\" is almost always *undetermined*: a rule on a field the "
+                      "test profiles don't carry. A finding the judge adds usually introduces such a field "
+                      "(`ontology_proposed`), so a drop in agreement there is the profiles not answering, not a wrong "
+                      "verdict; false eligible / false not eligible are the wrong verdicts.", "",
+                      "| Scheme | Findings applied | Structural F1 | Outcome agreement | False eligible | False not eligible | Other (undetermined) |",
+                      "|---|---|---|---|---|---|---|"]
+            for r in pv["rows"]:
+                b, p = r["baseline3"], r["pipeline"]
+                lines.append(f"| {r['scheme']} | {r['findings_applied']} | {b['f1']:.3f} → {p['f1']:.3f} | "
+                             f"{_pct(b['agreement'])} → {_pct(p['agreement'])} | {_pct(b['false_eligible'])} → {_pct(p['false_eligible'])} | "
+                             f"{_pct(b['false_not_eligible'])} → {_pct(p['false_not_eligible'])} | {_pct(b['other'])} → {_pct(p['other'])} |")
+            ab, ap = pv["aggregate"]["baseline3"], pv["aggregate"]["pipeline"]
+            ob, op = ab["outcome_equivalence"], ap["outcome_equivalence"]
+            other = lambda o: 1 - o["agreement_rate"] - o["false_positive_eligible_rate"] - o["false_negative_eligible_rate"]  # noqa: E731
+            lines.append(f"| **All ({ab['schemes']})** | | **{ab['structural_f1_micro']['f1']:.3f} → {ap['structural_f1_micro']['f1']:.3f}** (micro) | "
+                         f"**{_pct(ob['agreement_rate'])} → {_pct(op['agreement_rate'])}** (n={ob['n_profiles']}) | "
+                         f"{_pct(ob['false_positive_eligible_rate'])} → {_pct(op['false_positive_eligible_rate'])} | "
+                         f"{_pct(ob['false_negative_eligible_rate'])} → {_pct(op['false_negative_eligible_rate'])} | "
+                         f"{_pct(other(ob))} → {_pct(other(op))} |")
+        else:
+            lines.append("*No scheme has both yet.*")
+        if pv["excluded"]:
+            lines += ["", "Excluded: " + "; ".join(f"{s} — {why}" for s, why in pv["excluded"].items()) + "."]
     lines += ["", "## Baseline 2 — direct LLM answering, re-scored against frozen gold", "",
               "| Scheme | n | Agreement | Harmful FP | FN | Stale answers excluded | Answers from |", "|---|---|---|---|---|---|---|"]
     tot = Counter()

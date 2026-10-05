@@ -127,3 +127,25 @@ def test_review_state_is_reviewed_only_when_every_entry_is(tc):
     assert messages.review_status("ta") == {"state": "machine", "translated": 1, "reviewed": 1, "total": len(catalogue)}
     _write("ta", {k: {"source": v, "text": v, "status": "reviewed"} for k, v in catalogue.items()})
     assert messages.review_status("ta")["state"] == "reviewed"
+
+
+def test_pucca_and_kutcha_may_be_translated_into_hindi_but_stay_glossary_elsewhere(tc):
+    source = "Does your family live in a kutcha house?"
+    assert tc.checks(source, "क्या आपका परिवार कच्चे घर में रहता है?", "hi") == []
+    assert tc.checks(source, "உங்கள் குடும்பம் மண் வீட்டில் வசிக்கிறதா?", "ta") == ["glossary term changed: kutcha"]
+    assert tc.checks("Do you hold an e-Shram card?", "क्या आपके पास ई-श्रम कार्ड है?", "hi") == ["glossary term changed: e-Shram"]
+    assert "पक्का" in tc.system_prompt("hi") and "pucca" not in tc.system_prompt("hi").split("untranslated:")[1].split(".")[0]
+
+
+def test_entries_handed_to_people_are_never_sent_to_the_model_and_lead_the_sheet(tc, monkeypatch):
+    catalogue = messages.catalogue()
+    key = "field.is_e_shram_registered"
+    _write("hi", {key: {"source": catalogue[key], "text": None, "status": "failed_validation"}})
+    assert tc.mark_manual("hi", ["failed"]) == [key]
+    sent = []
+    monkeypatch.setattr(tc, "_call", lambda language, batch, ledger: sent.extend(batch) or {k: "हिंदी" for k in batch})
+    tc.translate("hi", 10**9)
+    assert key not in sent
+    first = next(iter(_rows(tc.SHEETS / "REVIEW_hi.csv").values()))
+    assert first["key"] == key and first["status"] == "TRANSLATE BY HAND" and first["machine translation"] == ""
+    assert "FIX" in first["automatic checks"]

@@ -196,6 +196,7 @@ def run_judge(
     provider: str = "groq",
     usage_sink=None,
     compact_draft: bool = False,
+    max_tokens: int | None = None,
 ) -> JudgeReport | JudgeFailure:
     """Single judge pass: re-reads the source document against the draft, scoped to the two
     confirmed failure patterns. Never returns a full Scheme — only findings + proposed patches.
@@ -205,7 +206,8 @@ def run_judge(
     already retrieved and date-filtered by the caller (this function does no retrieval itself, it
     just accepts context and cites it the same way it cites document_text). Optional and additive:
     omitting it reproduces the exact pre-Phase-4 judge behavior, so existing callers/tests are
-    unaffected. `provider` / `usage_sink`: see extractor.extract_scheme."""
+    unaffected. `provider` / `usage_sink`: see extractor.extract_scheme. `max_tokens` overrides the
+    computed completion budget (opt-in, for a retry after json_validate_failed; default unchanged)."""
     client = client or (Groq(api_key=os.environ["GROQ_API_KEY"]) if provider == "groq" else _client_for(provider))
     if compact_draft:
         # Same content without indentation or default-valued keys: AB-PMJAY's 14-exception draft, indented,
@@ -235,7 +237,7 @@ def run_judge(
         response = client.chat.completions.create(
             model=model,
             temperature=0.1,
-            max_tokens=_completion_budget(system_prompt, user_content, _JUDGE_JSON_SCHEMA),
+            max_tokens=max_tokens or _completion_budget(system_prompt, user_content, _JUDGE_JSON_SCHEMA),
             messages=[
                 {"role": "system", "content": system_prompt},
                 {

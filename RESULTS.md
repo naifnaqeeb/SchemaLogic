@@ -1,6 +1,6 @@
 # Results — SchemeLogic final push
 
-*Built 2026-10-05 18:41 by `scripts/build_results.py` from code `df7fb58`, against gold frozen at `gold-v2` (`82436ac`). Model `openai/gpt-oss-120b` on Groq's free tier. Regenerate; don't edit.*
+*Built 2026-10-06 02:55 by `scripts/build_results.py` from code `068d3a6`, against gold frozen at `gold-v2` (`82436ac`). Model `openai/gpt-oss-120b` on Groq's free tier. Regenerate; don't edit.*
 
 **Every sample here is small** (7 gold schemes, 8–14 profiles each, k=3, ~30 injected errors, k=1 per pre-amendment text). Read directions, not decimals. The caveats and the withdrawn claims are in §1. The one-page review summary is [docs/results/REVIEW_SUMMARY.md](docs/results/REVIEW_SUMMARY.md).
 
@@ -9,17 +9,18 @@
 | Experiment | Done | Section |
 |---|---|---|
 | Batch report: pipeline 2026-08, Baseline 3, Baseline 2 | complete | batch report |
-| Full pipeline on Baseline 3's extraction | 0/7 — **not run yet** | batch report |
+| Full pipeline on Baseline 3's extraction | 6/7 — **partial** | batch report |
+| Retry of failed judge calls (max_tokens=2000) | 0/2 — **not run yet** | batch report |
 | Baseline 1 (flat attributes) | 0/7 — **not run yet** | batch report |
 | Self-consistency k=3 (PMMVY samples) | 1/3 — **partial** | self-consistency |
 | pmksypdmc confidence test | 0/3 — **not run yet** | self-consistency |
 | Gate re-validation, judge runs | 0/21 — **not run yet** | gate re-validation |
-| Temporal C4 + Marathi arm of C2 | 0/9 — **not run yet** | temporal / cross-lingual |
+| Temporal C4 + Marathi arm of C2 | 6/9 — **partial** | temporal / cross-lingual |
 | RAG with/without retrieval | 0/4 — **not run yet** | RAG |
 
 ## 1. Extraction, pipeline and baselines against gold
 
-*Generated 2026-10-05T18:41:02 by `scripts/run_batch_report.py` from code `df7fb58`, against frozen gold `gold-v2` (`82436ac`). Offline: no LLM calls. Regenerate rather than edit.*
+*Generated 2026-10-06T02:55:27 by `scripts/run_batch_report.py` from code `068d3a6`, against frozen gold `gold-v2` (`82436ac`). Offline: no LLM calls. Regenerate rather than edit.*
 
 ### Caveats — read first
 
@@ -65,13 +66,39 @@ Absent: MH-LADKI-BAHIN.
 
 Full pipeline (judge -> gate -> apply approved) on the same extraction as Baseline 3.
 
-*No results yet (absent for all 7 schemes).*
+| Scheme | Structural F1 | Exceptions F1 | Outcome agreement | FP (eligible) | FN (eligible) | n | Scalar | Draft |
+|---|---|---|---|---|---|---|---|---|
+| IGNOAPS | 0.462 | — | 41.7% | 0.0% | 25.0% | 12 | 2/2 | `IGNOAPS.json` |
+| PM-KISAN | 0.909 | 1.000 | 66.7% | 0.0% | 0.0% | 12 | 2/2 | `PM-KISAN.json` |
+| PM-UJJWALA-2.0 | 0.923 | — | 100.0% | 0.0% | 0.0% | 9 | 2/2 | `PM-UJJWALA-2.0.json` |
+| PMMVY | 0.812 | — | 41.7% | 0.0% | 0.0% | 12 | 2/2 | `PMMVY.json` |
+| AB-PMJAY | **failed run** — judge call failed (api_error: json_validate_failed); excluded | | | | | | | `AB-PMJAY.json` |
+| PMAY-G | **failed run** — judge call failed (api_error: json_validate_failed); excluded | | | | | | | `PMAY-G.json` |
+| **All (4)** | **0.817** (micro) | | **60.0%** | 0.0% | 6.7% | 45 | | |
+
+Absent: MH-LADKI-BAHIN.
 
 ### baseline1_flat
 
 Baseline 1: flat attribute extraction, no compositional logic.
 
 *No results yet (absent for all 7 schemes).*
+
+### Full pipeline vs Baseline 3, same extraction
+
+Only schemes where both produced a scheme. A failed judge call is a failed run: excluded and listed, not scored as "no change".
+
+Each cell: Baseline 3 → pipeline. "Other" is almost always *undetermined*: a rule on a field the test profiles don't carry. A finding the judge adds usually introduces such a field (`ontology_proposed`), so a drop in agreement there is the profiles not answering, not a wrong verdict; false eligible / false not eligible are the wrong verdicts.
+
+| Scheme | Findings applied | Structural F1 | Outcome agreement | False eligible | False not eligible | Other (undetermined) |
+|---|---|---|---|---|---|---|
+| IGNOAPS | 1 | 0.500 → 0.462 | 75.0% → 41.7% | 0.0% → 0.0% | 25.0% → 25.0% | 0.0% → 33.3% |
+| PM-KISAN | 1 | 0.952 → 0.909 | 91.7% → 66.7% | 8.3% → 0.0% | 0.0% → 0.0% | 0.0% → 33.3% |
+| PM-UJJWALA-2.0 | 0 | 0.923 → 0.923 | 100.0% → 100.0% | 0.0% → 0.0% | 0.0% → 0.0% | 0.0% → 0.0% |
+| PMMVY | 1 | 0.839 → 0.812 | 41.7% → 41.7% | 0.0% → 0.0% | 0.0% → 0.0% | 58.3% → 58.3% |
+| **All (4)** | | **0.844 → 0.817** (micro) | **75.6% → 60.0%** (n=45) | 2.2% → 0.0% | 6.7% → 6.7% | 15.6% → 33.3% |
+
+Excluded: AB-PMJAY — judge call failed (api_error: json_validate_failed); PMAY-G — judge call failed (api_error: json_validate_failed); MH-LADKI-BAHIN — no Baseline 3 sample (extraction failed validation).
 
 ### Baseline 2 — direct LLM answering, re-scored against frozen gold
 
@@ -113,7 +140,7 @@ Baseline 1: flat attribute extraction, no compositional logic.
 
 ## 2. Self-consistency confidence
 
-*Generated 2026-10-05T18:41:03 by `scripts/analyze_self_consistency.py` from code `df7fb58`, against frozen gold `gold-v2`. Small sample: 6 schemes, k samples each; rank correlations over so few schemes are indicative only. Agreement is over a scheme's VALID samples (a sample that failed schema validation produced no predicates and is listed, not counted); a scheme needs at least 2 valid samples to be scored.*
+*Generated 2026-10-06T02:55:28 by `scripts/analyze_self_consistency.py` from code `068d3a6`, against frozen gold `gold-v2`. Small sample: 6 schemes, k samples each; rank correlations over so few schemes are indicative only. Agreement is over a scheme's VALID samples (a sample that failed schema validation produced no predicates and is listed, not counted); a scheme needs at least 2 valid samples to be scored.*
 
 | Scheme | Valid samples | Predicates per sample | Mean agreement | Unanimous | Self-reported (per sample) | Structural F1 (per sample) | Outcome agreement (mean) |
 |---|---|---|---|---|---|---|---|
@@ -151,7 +178,7 @@ Correct = an identical predicate exists in the frozen gold.
 
 ## 3. Gate re-validation on injected errors
 
-*Generated 2026-10-05T18:41:05 by `scripts/analyze_gate_revalidation.py` from code `df7fb58`, against frozen gold `gold-v2`.*
+*Generated 2026-10-06T02:55:30 by `scripts/analyze_gate_revalidation.py` from code `068d3a6`, against frozen gold `gold-v2`.*
 
 > **Synthetic errors, small sample.** 30 deliberate mutations of correct gold (14 mutated variants, 7 clean controls), one judge sample each. These numbers say what the judge + gate *can* catch, not how often real extractions go wrong. One error moves a type's rate by 17-25 points. Groups A, B and C are never pooled into one catch rate.
 
@@ -221,22 +248,22 @@ The gold rule each error removed or replaced (a dropped rule or exception, or th
 
 ## 4. Temporal case study (C4)
 
-*Generated 2026-10-05 by `scripts/run_temporal_case_study.py --score` from `data/experiments/temporal_c4/` and `data/experiments/self_consistency/`. Gold tag gold-v2; extractor defaults; Groq `openai/gpt-oss-120b`.*
+*Generated 2026-10-06 by `scripts/run_temporal_case_study.py --score` from `data/experiments/temporal_c4/` and `data/experiments/self_consistency/`. Gold tag gold-v2; extractor defaults; Groq `openai/gpt-oss-120b`.*
 
 **Small sample.** One extraction per pre-amendment text (k=1) and three per current document (k=3); the Marathi arm is k=3. A single pre-amendment sample shows what the extractor *can* read from that text, not a rate.
 
 | Scheme | Check | Source | Expected | As expected | Values seen |
 |---|---|---|---|---|---|
-| PM-KISAN | 2-hectare landholding limit (removed 1 June 2019) | pre-amendment text | present | *not run yet* | — |
+| PM-KISAN | 2-hectare landholding limit (removed 1 June 2019) | pre-amendment text | present | 1/1 | present |
 | PM-KISAN | 2-hectare landholding limit (removed 1 June 2019) | current document (k=3) | absent | 3/3 | absent; absent; absent |
-| PMMVY | child-order rule | pre-amendment text | first child only | *not run yet* | — |
+| PMMVY | child-order rule | pre-amendment text | first child only | 1/1 | first child only |
 | PMMVY | child-order rule | current document (k=3) | first child, or second if a girl | 0/1 | no child-order rule |
-| MH-LADKI-BAHIN | five-acre land exclusion (retired 03.07.2024) | pre-amendment text | present | *not run yet* | — |
+| MH-LADKI-BAHIN | five-acre land exclusion (retired 03.07.2024) | pre-amendment text | present | 1/1 | present |
 | MH-LADKI-BAHIN | five-acre land exclusion (retired 03.07.2024) | current document (k=3) | absent | 2/2 (+1 failed) | absent; absent |
-| MH-LADKI-BAHIN | five-acre land exclusion (retired 03.07.2024) | Marathi GRs in order | absent | *not run yet* | — |
-| MH-LADKI-BAHIN | upper age bound (60 -> 65 on 03.07.2024) | pre-amendment text | <= 60 | *not run yet* | — |
+| MH-LADKI-BAHIN | five-acre land exclusion (retired 03.07.2024) | Marathi GRs in order | absent | 0/3 | present; present; present |
+| MH-LADKI-BAHIN | upper age bound (60 -> 65 on 03.07.2024) | pre-amendment text | <= 60 | 1/1 | <= 60 |
 | MH-LADKI-BAHIN | upper age bound (60 -> 65 on 03.07.2024) | current document (k=3) | <= 65 | 2/2 (+1 failed) | <= 65; <= 65 |
-| MH-LADKI-BAHIN | upper age bound (60 -> 65 on 03.07.2024) | Marathi GRs in order | <= 65 | *not run yet* | — |
+| MH-LADKI-BAHIN | upper age bound (60 -> 65 on 03.07.2024) | Marathi GRs in order | <= 65 | 3/3 | <= 65; <= 65; <= 65 |
 | AB-PMJAY | 70+ branch (added 2024; nothing retired) | pre-amendment text | absent | *not run yet* | — |
 | AB-PMJAY | 70+ branch (added 2024; nothing retired) | current document (k=3) | present | 3/3 | present; present; present |
 | PMAY-G | refrigerator exclusion (deleted 2024) | pre-amendment text | present | *not run yet* | — |
@@ -255,14 +282,30 @@ None: official pre-amendment text was found for every listed scheme (sources in 
 
 ### Per sample (matched predicates)
 
+- **PM-KISAN__pre_2019_guidelines** sample_1: ok
+  - 2-hectare landholding limit (removed 1 June 2019): **present** — inclusion: cultivable_land_hectares <= 2
 - **PM-KISAN__post_current_document (k=3 self-consistency)** sample_1: ok
   - 2-hectare landholding limit (removed 1 June 2019): **absent** — no matching predicate
 - **PM-KISAN__post_current_document (k=3 self-consistency)** sample_2: ok
   - 2-hectare landholding limit (removed 1 June 2019): **absent** — no matching predicate
 - **PM-KISAN__post_current_document (k=3 self-consistency)** sample_3: ok
   - 2-hectare landholding limit (removed 1 June 2019): **absent** — no matching predicate
+- **PMMVY__pre_2017_guidelines** sample_1: ok
+  - child-order rule: **first child only** — inclusion: pregnancy_child_order == 1
 - **PMMVY__post_current_document (k=3 self-consistency)** sample_1: ok
   - child-order rule: **no child-order rule** — no matching predicate
+- **MH-LADKI-BAHIN__pre_GR_20240628** sample_1: ok
+  - five-acre land exclusion (retired 03.07.2024): **present** — exclusion: family_agricultural_land_acres > 5
+  - upper age bound (60 -> 65 on 03.07.2024): **<= 60** — inclusion: age <= 60
+- **MH-LADKI-BAHIN__marathi_GRs_in_order** sample_1: ok; supersedes recorded: `{"age_upper_limit": 60, "farm_land_condition": ">5 acres"}`
+  - five-acre land exclusion (retired 03.07.2024): **present** — exclusion: family_agricultural_land_acres > 5
+  - upper age bound (60 -> 65 on 03.07.2024): **<= 65** — inclusion: age <= 65
+- **MH-LADKI-BAHIN__marathi_GRs_in_order** sample_2: ok; supersedes recorded: `{"age_upper_limit": "60 years", "disqualification_condition_7": "family land >5 acres"}`
+  - five-acre land exclusion (retired 03.07.2024): **present** — exclusion: family_agricultural_land_acres > 5
+  - upper age bound (60 -> 65 on 03.07.2024): **<= 65** — inclusion: age <= 65
+- **MH-LADKI-BAHIN__marathi_GRs_in_order** sample_3: ok
+  - five-acre land exclusion (retired 03.07.2024): **present** — exclusion: family_agricultural_land_acres > 5
+  - upper age bound (60 -> 65 on 03.07.2024): **<= 65** — inclusion: age <= 65
 - **MH-LADKI-BAHIN__post_current_document (k=3 self-consistency)** sample_1: extraction failed: schema_validation_failed
 - **MH-LADKI-BAHIN__post_current_document (k=3 self-consistency)** sample_2: ok; supersedes recorded: `{"disqualification_condition": "families whose members jointly hold more than five acres of agricultural land"}`
   - five-acre land exclusion (retired 03.07.2024): **absent** — no matching predicate
@@ -291,7 +334,48 @@ None: official pre-amendment text was found for every listed scheme (sources in 
 
 ## 5. Cross-lingual case study (C2)
 
-*Not run yet* (the Marathi arm is queued with the temporal case study).
+*Generated 2026-10-06 by `scripts/analyze_cross_lingual.py` (offline). Gold tag gold-v2; 10 frozen test profiles; Groq `openai/gpt-oss-120b` extractions.*
+
+**Small sample** (k=3 per language, one scheme). **Not a clean translation pair**: the English input is a compilation of the GRs and official secondary sources, not a translation; the Marathi input is the original GR plus two amending GRs, so the extractor must also apply the amendment (see the temporal case study).
+
+### Each draft against gold
+
+| Draft | Language | Structural F1 | Outcome agreement | False eligible | False not eligible | Other |
+|---|---|---|---|---|---|---|
+| mr:sample_1 | mr | 0.600 | 60.0% | 0.0% | 0.0% | 40.0% |
+| mr:sample_2 | mr | 0.690 | 60.0% | 0.0% | 0.0% | 40.0% |
+| mr:sample_3 | mr | 0.733 | 60.0% | 0.0% | 0.0% | 40.0% |
+| en:sample_1 | en | extraction failed | | | | |
+| en:sample_2 | en | 0.857 | 80.0% | 0.0% | 0.0% | 20.0% |
+| en:sample_3 | en | 0.867 | 70.0% | 0.0% | 0.0% | 30.0% |
+
+### Drafts against each other (same profiles)
+
+| Pair kind | Pairs | Mean verdict agreement |
+|---|---|---|
+| en-en | 1 | 90.0% |
+| mr-mr | 3 | 100.0% |
+| mr-en | 6 | 85.0% |
+
+en-en and mr-mr are the noise baseline: two samples of the same text.
+
+#### Pairs
+
+- en:sample_2 vs en:sample_3: 90.0% — differ on govt_employee_family_member
+- en:sample_2 vs mr:sample_1: 80.0% — differ on govt_employee_family_member, other_govt_scheme_benefit_at_threshold
+- en:sample_2 vs mr:sample_2: 80.0% — differ on govt_employee_family_member, other_govt_scheme_benefit_at_threshold
+- en:sample_2 vs mr:sample_3: 80.0% — differ on govt_employee_family_member, other_govt_scheme_benefit_at_threshold
+- en:sample_3 vs mr:sample_1: 90.0% — differ on other_govt_scheme_benefit_at_threshold
+- en:sample_3 vs mr:sample_2: 90.0% — differ on other_govt_scheme_benefit_at_threshold
+- en:sample_3 vs mr:sample_3: 90.0% — differ on other_govt_scheme_benefit_at_threshold
+- mr:sample_1 vs mr:sample_2: 100.0%
+- mr:sample_1 vs mr:sample_3: 100.0%
+- mr:sample_2 vs mr:sample_3: 100.0%
+
+### Not run
+
+- PM-KISAN (Hindi/English): pmkisan.gov.in has a 2019 scheme summary in English and in Hindi (kept locally as PM-KISAN_summary_english_2019.pdf / PM-KISAN_summary_hindi_2019.pdf). The Hindi PDF uses a legacy non-Unicode font: its extracted text is corrupted (e.g. निधि comes out as ननधध), so an extraction from it would test the PDF's font encoding, not the language. Not run; would need OCR.
+- No other gold scheme's sources include an official parallel text in two languages.
 
 ## 6. RAG: the judge with and without retrieval
 
@@ -301,7 +385,7 @@ None: official pre-amendment text was found for every listed scheme (sources in 
 
 | Language | State | Translated | Reviewed by a person | Catalogue |
 |---|---|---|---|---|
-| Hindi | machine | 72 | 0 | 300 |
+| Hindi | machine | 293 | 0 | 300 |
 | Urdu | none | 0 | 0 | 300 |
 | Marathi | none | 0 | 0 | 300 |
 | Tamil | none | 0 | 0 | 300 |

@@ -1,0 +1,223 @@
+{
+  "item": "temporal_c4",
+  "gold_tag": "gold-v2",
+  "gold_commit": "82436ac11fb53421bf44c8c68e6333e1db353442",
+  "code_commit": "068d3a6",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "config": {
+    "k": 3,
+    "temperature": 0.2,
+    "extractor": "defaults"
+  },
+  "date": "2026-10-06",
+  "created_at": "2026-10-06T00:51:47",
+  "scheme_id": "MH-LADKI-BAHIN",
+  "arm": "MH-LADKI-BAHIN__marathi_GRs_in_order",
+  "role": "post_marathi",
+  "sample": 3,
+  "source": "GRs of 28.06.2024, 03.07.2024 and 12.07.2024 in date order (data/retrieval_corpus excerpts)",
+  "source_document_sha256": "921f939029b81c54181dd799844758fd3aab018c1b34992e1cce6a6ae3d7d773",
+  "source_excerpt": "title: महाराष्ट्र राज्यात \"मुख्यमंत्री-माझी लाडकी बहीण\" योजना सुरु करण्यास मान्यता देण्याबाबत\ncitation: GR मबावि 2024/प्र.क्र.96/कार्या-2, दि.28.06.2024\n\n3. योजनेचे लाभार्थी :- महाराष्ट्र राज्यातील 21 ते 60 या वर्ष वयोगटातील विवाहित, विधवा, घटस्फोटित,\nपरित्यक्त्या आणि निराधार महिला.\n\n4. योजनेच्या लाभार्थ्यांची पात्रता:-\n(१) लाभार्थी महिला महाराष्ट्र राज्याचे रहिवाशी असणे आवश्यक आहे.\n(२) राज्यातील विवाहित, विधवा, घटस्फोटित, परित्यक्त्या आणि निराधार महिला.\n(३) किमान वयाची 21 वर्षे पूर्ण व कमाल वयाची 60 वर्ष पूर्ण होईपर्यंत.\n(४) सदर योजनेअंतर्गत लाभ घेण्यासाठी अर्ज करणाऱ्या लाभार्थ्यांचे बँक खाते असणे आवश्यक आहे.\n(५) लाभार्थी कुटुंबाचे वार्षिक उत्पन्न रक्कम रु.2.50 लाखापेक्षा जास्त नसावे.\n\n5. अपात्रता :-\n(१) ज्यांच्या कुटुंबाचे एकत्रित वार्षिक उत्पन्न रु.2.50 लाख रुपयांपेक्षा अधिक आहे.\n(२) ज्याच्या कुटुंबातील सदस्य आयकरदाता आहे.\n(३) ज्यांच्या कुटुंबातील सदस्य नियमित/कायम कर्मचारी/कंत्राटी कर्मचारी म्हणून सरकारी\nविभाग/उपक्रम/मंडळ/भारत सरकार किंवा राज्य सरकारच्या स्थानिक संस्थेमध्ये कार्यरत आहेत किंवा\nसेवानिवृत्तीनंतर निवृत्तीवेतन घेत आहेत. परंतु बाह्य यंत्रणाद्वारे कार्यरत असलेले तथा स्वयंसेवी कामगार\nआणि कर्मचारी अपात्र ठरणार नाहीत.\n(४) सदर लाभार्थी महिलेने शासनाच्या इतर विभागामार्फत राबविण्यात येणाऱ्या आर्थिक योजनेव्दारे\nरु.1,500/- पेक्षा जास्त लाभ घेतला असेल.\n(५) ज्यांच्या कुटुंबातील सदस्य विद्यमान किंवा माजी खासदार/आमदार आहे.\n(६) ज्यांच्या कुटुंबातील सदस्य भारत सरकार किंवा राज्य सरकारच्या बोर्ड/कॉर्पोरेशन/बोर्ड/उपक्रमाचे\nअध्यक्ष/उपाध्यक्ष/संचालक/सदस्य आहेत.\n(७) ज्यांच्या कुटुंबातील सदस्यांची संयुक्तपणे पाच एकरपेक्षा जास्त शेतजमीन आहे.\n(८) ज्यांच्याकडे चारचाकी वाहने (ट्रॅक्टर वगळून) त्यांच्या कुटुंबातील सदस्यांच्या नावावर नोंदणीकृत आहेत.\n\n---\n\ntitle: \"मुख्यमंत्री-माझी लाडकी बहीण\" या योजनेतील सुधारणाबाबत\ncitation: GR मबावि 2024/प्र.क्र.96/कार्या-2, दि.03.07.2024\n\nसंदर्भ:- महिला व बाल विकास विभाग, शासन निर्णय क्र.मबावि 2024/प्र.क्र.96/कार्या-2, दि.28.06.2024.\n\n\"मुख्यमंत्री-माझी लाडकी बहीण\" या योजनेच्या शासन निर्णय दि.28.06.2024 मध्ये खालीलप्रमाणे सुधारणा\nकरण्यात येत आहे:-\n\nअ.क्र. शासन निर्णय दि.२८.०६.२०२४ रोजीच्या परिच्छेद क्र.1 मधील नमूद निकष | शासन निर्णयामध्ये दुरुस्ती\n\n1. ३. योजनेचे लाभार्थी:- महाराष्ट्र राज्यातील 21 ते 60 या वर्ष वयोगटातील विवाहित, विधवा, घटस्फोटित,\nपरित्यक्त्या आणि निराधार महिला.\n-> ३. योजनेचे लाभार्थी:- महाराष्ट्र राज्यातील 21 ते 65 या वर्ष वयोगटातील विवाहित, विधवा, घटस्फोटित,\nपरित्यक्त्या आणि निराधार महिला तसेच त्या कुटुंबातील केवळ एक अविवाहित महिला.\n\n3. ४. योजनेच्या लाभार्थ्यांची पात्रता :- अ.क्र. (3) किमान वयाची 21 वर्षे पूर्ण व कमाल वयाची 60 वर्ष पूर्ण\nहोईपर्यंत.\n-> ४. योजनेच्या लाभार्थ्यांची पात्रता :- अ.क्र. (3) किमान वयाची 21 वर्षे पूर्ण व कमाल वयाची 65 वर्ष पूर्ण\nहोईपर्यंत.\n\n6. 5. अपात्रता :- अ.क्र. (७) ज्यांच्या कुटुंबातील सदस्यांची संयुक्तपणे पाच एकरपेक्षा जास्त शेतजमीन आहे.\n-> 5. अपात्रता :- अ.क्र. (७) येथिल अपात्रतेची अट वगळण्यात येत आहे.\n\nसदर शासन निर्णय दि.02.07.2024 रोजीच्या मा.मुख्यमंत्री महोदय यांच्या अध्यक्षतेखाली झालेल्या बैठकीत\nघेतलेल्या निर्णयानुसार निर्गमित करण्यात येत आहे.\n\n---\n\ntitle: \"मुख्यमंत्री-माझी लाडकी बहीण\" या योजनेच्या अंमलबजावणीमध्ये सुधारणेसह व्याप्ती वाढविणेबाबत\ncitation: GR मबावि 2024/प्र.क्र.96/कार्या-2, दि.12.07.2024\n\nकुटुंबाची व्याख्या :- सदर योजनेसाठी कुटुंबाची व्याख्या खालीलप्रमाणे राहील.\n\"कुटुंब\" याचा अर्थ पती, पत्नी व त्यांची अविवाहित मुले/मुली.\n\n2. नवविवाहित महिलेच्या बाबतीत तीचे नाव रेशनकार्डवर लगेच लावणे शक्य होत नाही. त्यामुळे विवाह\nनोंदणी प्रमाणपत्र असलेल्या अशा नवविवाहित महिलेच्या पतीचे रेशनकार्ड हे उत्पन्नाचा दाखला म्हणून\nग्राह्य धरण्यात यावा.\n\n7. केंद्र शासनाने विविध शासकीय योजनांचे लाभ PFMS-DBT प्रणालीव्दारे देण्याची प्रक्रिया कार्यान्वित\nकेली आहे. केंद्र/राज्य शासनाच्या विविध योजनांमधील (उदा.PM-KISAN, POSHAN, MGNREGS,\nPM-Svanidhi, JSY, PMMVY व अन्य तत्सम योजना) जे लाभार्थी \"मुख्यमंत्री माझी लाडकी बहीण\" या\nयोजनेच्या अटी शर्तीनुसार पात्र ठरत असतील, त्यांचा DATA माहिती व तंत्रज्ञान विभागाकडून प्राप्त\nझाल्यानंतर त्यांचे KYC व Aadhaar Authentication यापूर्वीच झालेले असल्याने सदर लाभार्थ्यांना केवळ\nऑफलाईन अर्ज भरुन घेवून \"मुख्यमंत्री माझी लाडकी बहीण\" या योजनेचा थेट लाभ द्यावा.\n\nसदर शासन निर्णय दि.11.07.2024 रोजीच्या मा.मंत्रीमंडळाच्या बैठकीत घेतलेल्या निर्णयानुसार निर्गमित\nकरण्यात येत आहे.",
+  "usage": [
+    {
+      "call": "scheme_core_extraction",
+      "prompt_tokens": 5726,
+      "completion_tokens": 1165,
+      "total_tokens": 6891
+    },
+    {
+      "call": "scheme_meta_extraction",
+      "prompt_tokens": 2326,
+      "completion_tokens": 897,
+      "total_tokens": 3223
+    }
+  ],
+  "draft_extraction": {
+    "scheme_id": "मुख्यमंत्री-माझी लाडकी बहीण",
+    "unit_of_eligibility": "individual",
+    "inclusion": {
+      "and": [
+        {
+          "field": "is_woman",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false,
+          "cat": "demographic"
+        },
+        {
+          "field": "is_maharashtra_resident",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false,
+          "cat": "demographic"
+        },
+        {
+          "field": "age",
+          "op": ">=",
+          "value": 21,
+          "ontology_proposed": false,
+          "cat": "demographic"
+        },
+        {
+          "field": "age",
+          "op": "<=",
+          "value": 65,
+          "ontology_proposed": false,
+          "cat": "demographic"
+        },
+        {
+          "field": "has_bank_account",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false,
+          "cat": "economic"
+        },
+        {
+          "field": "family_annual_income_inr",
+          "op": "<=",
+          "value": 250000,
+          "ontology_proposed": false,
+          "cat": "economic"
+        },
+        {
+          "field": "marital_status_included",
+          "op": "in",
+          "value": [
+            "married",
+            "widow",
+            "divorced",
+            "abandoned",
+            "destitute",
+            "single_only_one_in_family"
+          ],
+          "ontology_proposed": true,
+          "cat": "demographic"
+        }
+      ]
+    },
+    "exclusions": [
+      {
+        "field": "family_annual_income_inr",
+        "op": ">",
+        "value": 250000,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "paid_income_tax_last_assessment_year",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "some_family_member",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "is_regular_govt_employee_or_pensioner",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "occupation",
+        "quantifier": "some_family_member",
+        "except": {
+          "field": "is_group_d_class_iv_or_mts",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false
+        },
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "other_govt_scheme_monthly_benefit_inr",
+        "op": ">",
+        "value": 1500,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "some_family_member",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "holds_constitutional_or_political_post",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "political",
+        "quantifier": "some_family_member",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "holds_govt_board_or_corporation_post",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "political",
+        "quantifier": "some_family_member",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "family_agricultural_land_acres",
+        "op": ">",
+        "value": 5,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "owns_four_wheeler",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": {
+          "field": "owned_vehicle_is_farm_tractor_only",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false
+        },
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      }
+    ],
+    "temporal_validity": {
+      "valid_from": "2024-07-11",
+      "valid_to": null,
+      "extracted_at": "2026-10-06",
+      "supersedes": null
+    },
+    "operational_requirements": [
+      "Applicant must provide Aadhaar‑linked bank account details for direct benefit transfer.",
+      "KYC and Aadhaar authentication to be completed prior to offline application submission."
+    ],
+    "extraction_metadata": {
+      "confidence": 0.9,
+      "source_clause": "सदर शासन निर्णय दि.11.07.2024",
+      "flagged_for_review": false
+    }
+  }
+}

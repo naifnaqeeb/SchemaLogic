@@ -29,7 +29,8 @@ def test_status_marks_partial_and_unrun_experiments(monkeypatch):
     class Status:
         @staticmethod
         def progress():
-            return [("pipeline on sample 1", "7/7"), ("baseline 1", "0/7"), ("k=3 self-consistency, PMMVY", "1/3"),
+            return [("pipeline on sample 1", "7/7"), ("pipeline retry (failed judge calls)", "0/2"),
+                    ("baseline 1", "0/7"), ("k=3 self-consistency, PMMVY", "1/3"),
                     ("k=3 pmksypdmc (silver)", "0/3"), ("gate re-validation", "21/21"),
                     ("temporal C4 + Marathi C2 arm", "4/9"), ("RAG with/without retrieval", "0/4")]
 
