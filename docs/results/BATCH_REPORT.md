@@ -1,6 +1,6 @@
 # Batch report — all gold schemes
 
-*Generated 2026-10-05T14:37:10 by `scripts/run_batch_report.py` from code `14d17f9`, against frozen gold `gold-v2` (`82436ac`). Offline: no LLM calls. Regenerate rather than edit.*
+*Generated 2026-10-05T15:50:57 by `scripts/run_batch_report.py` from code `927d8f3`, against frozen gold `gold-v2` (`82436ac`). Offline: no LLM calls. Regenerate rather than edit.*
 
 ## Caveats — read first
 

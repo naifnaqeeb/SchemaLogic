@@ -1,0 +1,362 @@
+{
+  "chat.ai_checked_ok": {
+    "source": "I ran automatic rule extraction on **{scheme_name}** and it validated, so I can check your eligibility the same way as a verified scheme — just know this is AI-Checked (rules extracted automatically), not human-verified.",
+    "text": "मैंने **{scheme_name}** के नियमों को स्वचालित रूप से निकाला और वे मान्य हैं, इसलिए मैं आपकी पात्रता उसी तरह जाँच सकता हूँ जैसे सत्यापित योजना — बस ध्यान रखें कि यह AI‑Checked (स्वचालित निकाले गए नियम) है, मानव‑सत्यापित नहीं।",
+    "status": "unreviewed",
+    "translated_on": "2026-10-05",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "chat.already_checked": {
+    "source": "I already checked {scheme_id} for you above — scroll up to see the result, or search again to check a different scheme.",
+    "text": "मैंने ऊपर ही {scheme_id} की जाँच कर ली है — परिणाम देखने के लिए ऊपर स्क्रॉल करें, या किसी अन्य योजना की जाँच के लिए फिर से खोजें।",
+    "status": "unreviewed",
+    "translated_on": "2026-10-05",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "chat.checking_rules": {
+    "source": "Checking the rules for this scheme now...",
+    "text": "इस योजना के नियमों की जाँच कर रहा हूँ...",
+    "status": "unreviewed",
+    "translated_on": "2026-10-05",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "chat.declined": {
+    "source": "That's completely fine — you don't need to tell me. You may qualify for {scheme_id} under a special provision. Please check with your local office (for example your Gram Panchayat, Block office or social welfare office); they can look at it with you in confidence.",
+    "text": "यह पूरी तरह ठीक है — आपको बताना ज़रूरी नहीं। आप {scheme_id} के विशेष प्रावधान के तहत योग्य हो सकते हैं। कृपया अपने स्थानीय कार्यालय (जैसे ग्राम पंचायत, ब्लॉक कार्यालय या सामाजिक कल्याण कार्यालय) से संपर्क करें; वे आपके साथ गोपनीय रूप से इसे देख सकते हैं।",
+    "status": "unreviewed",
+    "translated_on": "2026-10-05",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "chat.evaluation_failed": {
+    "source": "I couldn't work out a result for {scheme_id}: one of the answers I have isn't in a form the scheme's rules can use (for example, words where a number was needed), and I won't guess. This is not a decision about your eligibility. You can start the check again, or ask at your local office.",
+    "text": "मैं {scheme_id} के लिए परिणाम नहीं निकाल सका: मेरे पास मौजूद किसी उत्तर का स्वरूप योजना के नियमों के लिये उपयुक्त नहीं है (जैसे शब्द जहाँ संख्या चाहिए थी), और मैं अनुमान नहीं लगाऊँगा। यह आपकी पात्रता का निर्णय नहीं है। आप फिर से जाँच शुरू कर सकते हैं, या अपने स्थानीय कार्यालय में पूछ सकते हैं।",
+    "status": "unreviewed",
+    "translated_on": "2026-10-05",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "chat.extraction_already_failed": {
+    "source": "I already tried automatic rule extraction for **{scheme_name}** earlier this session and it didn't produce reliable eligibility rules, so I won't retry — here's the description as listed.",
+    "text": "मैंने इस सत्र में पहले **{scheme_name}** की स्वचालित नियम‑निकाल कोशिश की थी और विश्वसनीय नियम नहीं मिले, इसलिए अब पुनः प्रयास नहीं करूँगा — यहाँ विवरण दिया गया है।",
+    "status": "unreviewed",
+    "translated_on": "2026-10-05",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "chat.extraction_failed": {
+    "source": "I wasn't able to reliably extract eligibility rules for this scheme automatically — here's the description as listed.",
+    "text": "मैं इस योजना के पात्रता नियमों को स्वचालित रूप से विश्वसनीय रूप से नहीं निकाल सका — यहाँ विवरण दिया गया है।",
+    "status": "unreviewed",
+    "translated_on": "2026-10-05",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "chat.extraction_unreachable": {
+    "source": "I couldn't reach the rule-extraction service just now, so I haven't checked **{scheme_name}**'s rules yet — here's the description as listed meanwhile. Selecting it again in a moment will retry the check.",
+    "text": "मैं अभी नियम‑निकाल सेवा तक नहीं पहुँच सका, इसलिए मैंने अभी तक **{scheme_name}** के नियम नहीं देखे — अभी के लिए यहाँ विवरण दिया गया है। थोड़ी देर बाद फिर से चुनें तो जाँच पुनः प्रयास होगी।",
+    "status": "unreviewed",
+    "translated_on": "2026-10-05",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "chat.finish_first": {
+    "source": "Let's finish checking {scheme_id} first — {question}",
+    "text": "पहले {scheme_id} की जाँच पूरी करें — {question}",
+    "status": "unreviewed",
+    "translated_on": "2026-10-05",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "chat.found": {
+    "source": "Here's what I found",
+    "text": "यहाँ मैंने जो पाया है",
+    "status": "unreviewed",
+    "translated_on": "2026-10-05",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "chat.found_followup": {
+    "source": "Want more detail on any of these, or should I check your eligibility for one? Just tell me, or click Select.",
+    "text": "इनमें से किसी पर और विवरण चाहिए, या मैं आपके लिए किसी एक की पात्रता जाँचूँ? बस बताइए, या “Select” पर क्लिक करें।",
+    "status": "unreviewed",
+    "translated_on": "2026-10-05",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "chat.greeting": {
+    "source": "Hey! Tell me a bit about your situation or what kind of help you're looking for, and I'll check real scheme rules for you.",
+    "text": "नमस्ते! अपनी स्थिति या आप किस प्रकार की मदद चाहते हैं, थोड़ा बताइए, मैं आपके लिए वास्तविक योजना नियम देखूँगा।",
+    "status": "unreviewed",
+    "translated_on": "2026-10-05",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "chat.greeting_pending": {
+    "source": "No rush! Whenever you're ready: {question}",
+    "text": "कोई जल्दी नहीं! जब आप तैयार हों: {question}",
+    "status": "unreviewed",
+    "translated_on": "2026-10-05",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "chat.intake_used": {
+    "source": "Starting from what you already told me — I'll only ask about what's still missing. (via {provider})",
+    "text": "आपने जो पहले बताया है, उससे शुरू कर रहा हूँ — मैं केवल उन चीज़ों के बारे में पूछूँगा जो अभी भी गायब हैं। (via {provider})",
+    "status": "unreviewed",
+    "translated_on": "2026-10-05",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "chat.lets_check": {
+    "source": "Let's check your eligibility for {scheme_id}.",
+    "text": "आइए {scheme_id} की आपकी पात्रता जाँचते हैं।",
+    "status": "unreviewed",
+    "translated_on": "2026-10-05",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "chat.machine_translated": {
+    "source": "Machine-translated from English — the original is authoritative.",
+    "text": "Machine-translated from English — the original is authoritative.",
+    "status": "unreviewed",
+    "translated_on": "2026-10-05",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "chat.nothing_matched": {
+    "source": "Nothing matched closely. Try describing it differently, or a different situation.",
+    "text": "कोई मिलती‑जुलती योजना नहीं मिली। इसे अलग तरह से वर्णन करें, या कोई अलग स्थिति बताएं।",
+    "status": "unreviewed",
+    "translated_on": "2026-10-05",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "chat.quick_reply_error": {
+    "source": "Sorry, something went wrong reading that reply — please try again.",
+    "text": "क्षमा करें, उस उत्तर को पढ़ने में कुछ गड़बड़ी हुई — कृपया फिर से कोशिश करें।",
+    "status": "unreviewed",
+    "translated_on": "2026-10-05",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "chat.rephrase": {
+    "source": "I couldn't quite understand that — could you rephrase? ",
+    "text": "मैं ठीक से समझ नहीं पाया — क्या आप इसे फिर से कह सकते हैं? ",
+    "status": "unreviewed",
+    "translated_on": "2026-10-05",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "chat.rephrase_buttons": {
+    "source": "You can also use the Yes/No buttons above.",
+    "text": "आप ऊपर दिए गए Yes/No बटन भी इस्तेमाल कर सकते हैं।",
+    "status": "unreviewed",
+    "translated_on": "2026-10-05",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "chat.scheme_gone": {
+    "source": "Sorry, I couldn't find that scheme anymore.",
+    "text": "क्षमा करें, वह योजना अब नहीं मिली।",
+    "status": "unreviewed",
+    "translated_on": "2026-10-05",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "chat.sensitive_reask": {
+    "source": "You can answer Yes, No, or “Prefer not to say” — whichever you are comfortable with.",
+    "text": "आप “Yes”, “No”, या “Prefer not to say” में से कोई भी उत्तर दे सकते हैं — जो भी आपको सहज लगे।",
+    "status": "unreviewed",
+    "translated_on": "2026-10-05",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "chat.still_unparsed": {
+    "source": "Sorry, I still couldn't quite parse that — could you try rephrasing?",
+    "text": "क्षमा करें, मैं अभी भी ठीक से समझ नहीं पाया — क्या आप इसे फिर से कह सकते हैं?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-05",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "chat.switching_away": {
+    "source": "(Switching away from {scheme_id} for now — search for it again anytime to restart that check.)",
+    "text": "(अभी {scheme_id} से हट रहा हूँ — फिर कभी खोज कर इस जाँच को पुनः शुरू कर सकते हैं।)",
+    "status": "unreviewed",
+    "translated_on": "2026-10-05",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "chat.which_scheme": {
+    "source": "Which scheme did you mean? Search for one first, or pick one from Browse all schemes.",
+    "text": "आप किस योजना की बात कर रहे थे? पहले खोजें, या सभी योजनाओं में से चुनें।",
+    "status": "unreviewed",
+    "translated_on": "2026-10-05",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "question.family_prefix": {
+    "source": "This next one is about one of your family members — {question}",
+    "text": "यह अगला प्रश्न आपके परिवार के एक सदस्य के बारे में है — {question}",
+    "status": "unreviewed",
+    "translated_on": "2026-10-05",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "question.generic_boolean": {
+    "source": "Do you meet this criterion: \"{label}\"?",
+    "text": "क्या आप इस मानदंड को पूरा करते हैं: \"{label}\"?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-05",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "question.generic_value": {
+    "source": "What is your value for \"{label}\"?",
+    "text": "\"{label}\" के लिये आपका मान क्या है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-05",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "question.household_generic_boolean": {
+    "source": "Does any one of {members} meet this: \"{label}\"?",
+    "text": "क्या {members} में से कोई यह शर्त पूरी करता है: \"{label}\"?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-05",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "question.household_generic_value": {
+    "source": "What is the highest \"{label}\" of any one of {members}?",
+    "text": "{members} में से किसी एक का सबसे अधिक \"{label}\" क्या है?",
+    "status": "unreviewed",
+    "translated_on": "2026-10-05",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "reply.decline": {
+    "source": "Prefer not to say",
+    "text": "Prefer not to say",
+    "status": "unreviewed",
+    "translated_on": "2026-10-05",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "reply.no": {
+    "source": "No",
+    "text": "No",
+    "status": "unreviewed",
+    "translated_on": "2026-10-05",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "reply.yes": {
+    "source": "Yes",
+    "text": "Yes",
+    "status": "unreviewed",
+    "translated_on": "2026-10-05",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "trace.header": {
+    "source": "What we checked to reach this result:",
+    "text": "इस परिणाम तक पहुँचने के लिये हमने जो जाँच की:",
+    "status": "unreviewed",
+    "translated_on": "2026-10-05",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "verdict.answer_eligible": {
+    "source": "Based on what you've told me, you're eligible for {scheme_id} — here's why:",
+    "text": "आपके द्वारा बताई गई जानकारी के आधार पर, आप {scheme_id} के लिए पात्र हैं — कारण इस प्रकार हैं:",
+    "status": "unreviewed",
+    "translated_on": "2026-10-05",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "verdict.answer_ineligible": {
+    "source": "Based on what you've told me, you're not eligible for {scheme_id} — here's why:",
+    "text": "आपके द्वारा बताई गई जानकारी के आधार पर, आप {scheme_id} के लिए पात्र नहीं हैं — कारण इस प्रकार हैं:",
+    "status": "unreviewed",
+    "translated_on": "2026-10-05",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "verdict.answer_undetermined": {
+    "source": "I need one more detail to be sure about your eligibility for {scheme_id} — let's continue.",
+    "text": "मैं एक और विवरण चाहिए ताकि {scheme_id} की आपकी पात्रता निश्चित कर सकूँ — चलिए आगे बढ़ते हैं।",
+    "status": "unreviewed",
+    "translated_on": "2026-10-05",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "verdict.headline_eligible": {
+    "source": "{emoji} You're eligible for {scheme_id}",
+    "text": "{emoji} आप {scheme_id} के लिए पात्र हैं",
+    "status": "unreviewed",
+    "translated_on": "2026-10-05",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "verdict.headline_ineligible": {
+    "source": "{emoji} You're not eligible for {scheme_id}",
+    "text": "{emoji} आप {scheme_id} के लिए पात्र नहीं हैं",
+    "status": "unreviewed",
+    "translated_on": "2026-10-05",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  },
+  "verdict.headline_undetermined": {
+    "source": "{emoji} One more detail needed for {scheme_id}",
+    "text": "{emoji} {scheme_id} के लिये एक और विवरण चाहिए",
+    "status": "unreviewed",
+    "translated_on": "2026-10-05",
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "gold_tag": "gold-v2"
+  }
+}

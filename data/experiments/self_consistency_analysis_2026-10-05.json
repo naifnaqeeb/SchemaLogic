@@ -2,7 +2,7 @@
   "item": "self_consistency_analysis",
   "gold_tag": "gold-v2",
   "gold_commit": "82436ac11fb53421bf44c8c68e6333e1db353442",
-  "code_commit": "14d17f9",
+  "code_commit": "927d8f3",
   "provider": "none (offline)",
   "model": "openai/gpt-oss-120b",
   "config": {
@@ -42,7 +42,7 @@
     }
   },
   "date": "2026-10-05",
-  "created_at": "2026-10-05T14:37:34",
+  "created_at": "2026-10-05T15:50:58",
   "schemes_with_samples": [
     "AB-PMJAY",
     "IGNOAPS",

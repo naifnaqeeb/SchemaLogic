@@ -54,19 +54,27 @@ budget now checks a rolling 24h total.
 
 ## Quota schedule (Groq, ~180k tokens/day)
 
-**Revised 2026-10-05 (day 2).** What is left, by queue, at measured rates (an extraction sample is
-~8.8k tokens; a judge call is estimated at 8k). The queues run unattended and wait for the rolling
-window (`scripts/run_queue.py`; logs in `data/experiments/logs/`, gitignored):
+**Revised 2026-10-05 for the review (2026-10-08 10:00).** One queue, `review`, in the order you set:
+Hindi, Urdu, Marathi, Tamil translations; full pipeline on sample 1; temporal C4 (+ Marathi C2 arm);
+then PMMVY samples 2–3, pmksypdmc, Baseline 1, gate re-validation, RAG. **No experiment call starts
+after 2026-10-07 10:00** — 24h before the review, because Groq's cap is a rolling 24h window, so the
+demo gets the whole window. Nothing restarts it until you say.
 
-| Queue | Runs | Est. tokens |
-|---|---|---|
-| day2 (running; resumes ~00:30 on 10-06) | PMMVY samples 2–3; pmksypdmc k=3; full pipeline on sample 1 (7 judge calls); Baseline 1 (7 calls) | ~146k |
-| day3 (starts when day2 exits) | gate re-validation (21 judge calls); RAG with/without retrieval (4) | ~200k |
-| day4 (after day3) | temporal C4 + Marathi C2 arm (9 extractions); catalogue translations hi, ur, mr, ta (~32 batches) | ~79k + ~110k |
-| then | one short live conversation per language | ~10k |
+How the stop is guaranteed without anyone being notified (`scripts/queue_status.py`):
+1. `Ledger.before_call` refuses every experiment call after `data/experiments/logs/stop_at.txt` or
+   while a `STOP` file exists; the queue re-checks at least every 5 minutes while waiting.
+2. Windows scheduled task `SchemeLogicQueueStop` runs `queue_status.py --stop` at 2026-10-07 10:00
+   (writes STOP, kills the process; runs on wake if the machine was asleep).
+3. The queue refuses to start past the stop time or with STOP present.
+The live chat doesn't use the Ledger, so none of this affects the demo.
 
-About 545k in all, so ~3 more rolling windows: **the runs finish around 2026-10-09, not on day 4**
-(decision D2 below).
+The queue was launched through WMI (parent `WmiPrvSE.exe`, not VS Code), so it survives closing VS
+Code or the terminal; it pauses if the machine sleeps and ends on shutdown (`--start` resumes it).
+Check it: `python scripts/queue_status.py`.
+
+Expected before the stop (~33h of window from 2026-10-06 00:30, roughly 240k tokens): translations
+(~110k), pipeline on sample 1 (~56k), most or all of temporal C4 (~79k). **Not before the review**:
+everything after it in the order above.
 
 Original estimates (2026-10-05, day 1):
 
@@ -153,11 +161,9 @@ Legend: ☐ not started · ◐ in progress · ☑ done · ⊘ dropped (with reas
 
 ## Decisions needed
 
-- **D2 (2026-10-05)** — the remaining runs need ~545k tokens, about three more rolling windows, so they
-  finish around **2026-10-09** instead of on day 4. Options: (a) let them run (recommended — they are
-  unattended and nothing else waits on quota); (b) cut to fit, e.g. gate re-validation on fewer
-  candidates or translations for fewer languages. Until you say otherwise the queues continue in the
-  order above.
+- ~~**D2 (2026-10-05)** — the remaining runs finish ~2026-10-09.~~ **Decided 2026-10-05**: review
+  2026-10-08 10:00; runs reordered (translations first) and stopped 24h before; what doesn't fit is
+  reported as still running.
 
 - ~~**D1 (2026-10-04)** — OpenRouter has 0 credit.~~ **Decided 2026-10-05**: no credit; Groq free tier
   only; k=3 instead of k=5; ~30 injected errors instead of ≥100; quota-heavy runs over 4 days at
@@ -186,7 +192,9 @@ Legend: ☐ not started · ◐ in progress · ☑ done · ⊘ dropped (with reas
 
 **Interim results (k=3, 6 schemes scored; small sample)**
 - Predicate-level calibration (212 predicates): agreement ECE **0.057** vs self-reported **0.089**. Predicates in 1/3 samples are right 17% of the time, 2/3 → 73%, 3/3 → 97%; self-reported confidence sits at 0.85–0.97 for nearly everything.
-- Scheme ranking vs structural F1 (Spearman, n=6): agreement **0.76**, self-reported **0.41**. PMAY-G: lowest agreement (0.64), lowest F1, self-reported 0.85–0.95.
+- Scheme ranking vs structural F1 (Spearman, n=6): agreement **0.89**, self-reported **0.58**. *(Corrected
+  2026-10-05: this line first said 0.76 / 0.41, figures from an earlier run of the analysis before PMMVY,
+  with one sample, was excluded; the committed report has always shown 0.886 / 0.577.)* PMAY-G: lowest agreement (0.64), lowest F1, self-reported 0.85–0.95.
 - Baseline 3 (one extraction, no judge/repair), 6 schemes: structural F1 0.707 micro, outcome agreement 68.6%.
 
 **Not done**: PMMVY samples 2–3; pmksypdmc sampling; stage 2–3; all day-2+ runs.
@@ -222,4 +230,12 @@ spent on day 1's samples. All are queued and run unattended (see the quota sched
 **Tokens / cost**: 0 today (the window was full from day 1); total 167,977, $0.00.
 
 **Needs your decision**: D2 (finish ~2026-10-09, or cut).
+
+### Day 2, addendum — 2026-10-05 evening (your review changes)
+
+- Queue reordered and merged into one `review` queue; old processes killed; relaunched detached (WMI).
+- Stop at 2026-10-07 10:00 (review 2026-10-08 10:00, 24h margin), enforced three ways (above).
+- Review pack: `docs/results/BATCH_REPORT.md` regenerated; `docs/results/REVIEW_SUMMARY.md` (one page);
+  interim `docs/results/TEMPORAL_C4.md` (current-document side only).
+- First Hindi batch done before the window filled: 40/40 entries valid.
 

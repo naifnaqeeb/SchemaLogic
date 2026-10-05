@@ -347,7 +347,8 @@ def markdown(s: dict) -> str:
         "|---|---|---|---|---|---|",
     ]
     for r in s["summary"]:
-        n = f"{r['as_expected']}/{r['valid_samples']}" + (f" (+{r['failed_samples']} failed)" if r["failed_samples"] else "")
+        n = (f"{r['as_expected']}/{r['valid_samples']}" + (f" (+{r['failed_samples']} failed)" if r["failed_samples"] else "")
+             if r["valid_samples"] or r["failed_samples"] else "*not run yet*")
         lines.append(f"| {r['scheme']} | {r['check']} | {ROLE_LABEL[r['role']]} | {r['expected']} | {n} | "
                      f"{'; '.join(r['values']) or '—'} |")
     lines += ["", "## Dropped", ""] + [f"- **{k}**: {v}" for k, v in s["dropped"].items()]
