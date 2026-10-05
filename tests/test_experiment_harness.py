@@ -175,3 +175,15 @@ def test_pipeline_on_samples_applies_only_gate_approved_findings():
     saved = json.loads((runner.OUT / "PMMVY.json").read_text(encoding="utf-8"))
     assert saved["gate_decisions"][0]["decision"] == "defer_to_review"  # quote not in the source
     assert "made_up" not in json.dumps(saved["gated_extraction"])        # so nothing was applied
+
+
+def test_seconds_until_headroom_reads_the_rolling_window():
+    from datetime import datetime, timedelta
+
+    now = datetime(2026, 10, 5, 15, 0)
+    rows = [{"ts": (now - timedelta(hours=14)).isoformat(), "total_tokens": 100_000},
+            {"ts": (now - timedelta(hours=1)).isoformat(), "total_tokens": 70_000}]
+    harness.LEDGER.write_text("\n".join(json.dumps(r) for r in rows) + "\n", encoding="utf-8")
+    assert harness.seconds_until_headroom(5_000, budget=180_000, now=now) == 0
+    wait = harness.seconds_until_headroom(20_000, budget=180_000, now=now)
+    assert abs(wait - 10 * 3600) < 1  # the 100k row leaves the window 24h after it was recorded

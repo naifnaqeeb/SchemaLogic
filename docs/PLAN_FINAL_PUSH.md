@@ -112,6 +112,20 @@ Legend: ☐ not started · ◐ in progress · ☑ done · ⊘ dropped (with reas
   before the judge sees a candidate, and the draft is sent compact (AB-PMJAY's indented draft alone
   exceeded the request ceiling).
 
+## Later ideas (not this push)
+
+- **Flag single-sample rules in AI-Checked schemes** (2026-10-05): rules that appear in only 1 of 3
+  extraction samples were right 17% of the time on gold (vs 97% for 3/3), so flagging or dropping them
+  could improve AI-Checked schemes. But it triples the cost of each live extraction (already ~9k tokens
+  against an 8k/min ceiling), so it is not for the live app yet.
+
+## Reporting rules for item 6 (2026-10-05)
+
+- Results broken down **by error type**. The types outside the judge's design (present-but-wrong
+  rules: flipped operator, wrong threshold, wrong quantifier, wrong exception scope) are reported
+  **separately** from the ones it is meant to catch (dropped predicate, fabricated supersedes). No single
+  overall catch rate mixes the two.
+
 ## Decisions needed
 
 - ~~**D1 (2026-10-04)** — OpenRouter has 0 credit.~~ **Decided 2026-10-05**: no credit; Groq free tier

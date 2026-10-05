@@ -112,6 +112,29 @@ def tokens_spent_rolling(hours: float = 24, now: datetime | None = None) -> int:
     return total
 
 
+def seconds_until_headroom(needed: int, budget: int = DAILY_BUDGET, now: datetime | None = None) -> float:
+    """How long until the rolling-24h total leaves room for `needed` more tokens under `budget`: the
+    window frees each row 24h after it was recorded."""
+    now = now or datetime.now()
+    rows = []
+    for r in _ledger_rows():
+        try:
+            ts = datetime.fromisoformat(r["ts"])
+        except (KeyError, ValueError):
+            continue
+        if 0 <= (now - ts).total_seconds() < 86400:
+            rows.append((ts, r.get("total_tokens") or 0))
+    total = sum(n for _, n in rows)
+    for ts, n in sorted(rows):
+        if total + needed <= budget:
+            break
+        total -= n
+        wait = (ts - now).total_seconds() + 86400
+        if total + needed <= budget:
+            return max(0.0, wait)
+    return 0.0 if total + needed <= budget else 86400.0
+
+
 class Ledger:
     """Records measured usage for one experiment item, enforces the daily budget, paces per minute."""
 
