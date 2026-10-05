@@ -120,3 +120,26 @@ def test_runner_stops_before_a_call_that_would_exceed_the_budget():
     ledger = _fast_ledger(5_000)
     assert runner.run(["PMMVY"], k=1, budget=5_000, extract=extract, ledger=ledger) == "budget"
     assert calls == []
+
+
+def test_gate_revalidation_runner_saves_findings_and_gate_decisions():
+    spec = importlib.util.spec_from_file_location("run_gate_revalidation", ROOT / "scripts" / "run_gate_revalidation.py")
+    runner = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(runner)
+    runner.OUT = harness.EXPERIMENTS_DIR / "gate_revalidation"
+    from schemelogic.extraction.judge_repair import JudgeReport
+
+    calls = []
+
+    def judge(scheme, doc, provider, usage_sink):
+        calls.append(scheme.scheme_id)
+        usage_sink({"call": "judge_report", "total_tokens": 100})
+        return JudgeReport(findings=[])
+
+    assert runner.run(10**9, judge=judge, ledger=_fast_ledger(10**9)) == "done"
+    assert len(calls) == 21  # 14 mutated variants + 7 clean controls
+    corpus = json.loads((runner.OUT / "corpus.json").read_text(encoding="utf-8"))
+    assert corpus["config"]["synthetic"] is True and len(corpus["candidates"]) == 21
+    saved = json.loads((runner.OUT / "PMMVY__clean.json").read_text(encoding="utf-8"))
+    assert saved["gate_decisions"] == [] and saved["gold_tag"] == "gold-v2"
+    assert runner.run(10**9, judge=judge, ledger=_fast_ledger(10**9)) == "done" and len(calls) == 21  # resumes
