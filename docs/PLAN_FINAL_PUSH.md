@@ -54,7 +54,21 @@ budget now checks a rolling 24h total.
 
 ## Quota schedule (Groq, ~180k tokens/day)
 
-Estimates, to be replaced by measured usage as runs complete:
+**Revised 2026-10-05 (day 2).** What is left, by queue, at measured rates (an extraction sample is
+~8.8k tokens; a judge call is estimated at 8k). The queues run unattended and wait for the rolling
+window (`scripts/run_queue.py`; logs in `data/experiments/logs/`, gitignored):
+
+| Queue | Runs | Est. tokens |
+|---|---|---|
+| day2 (running; resumes ~00:30 on 10-06) | PMMVY samples 2–3; pmksypdmc k=3; full pipeline on sample 1 (7 judge calls); Baseline 1 (7 calls) | ~146k |
+| day3 (starts when day2 exits) | gate re-validation (21 judge calls); RAG with/without retrieval (4) | ~200k |
+| day4 (after day3) | temporal C4 + Marathi C2 arm (9 extractions); catalogue translations hi, ur, mr, ta (~32 batches) | ~79k + ~110k |
+| then | one short live conversation per language | ~10k |
+
+About 545k in all, so ~3 more rolling windows: **the runs finish around 2026-10-09, not on day 4**
+(decision D2 below).
+
+Original estimates (2026-10-05, day 1):
 
 | Day | Quota-heavy runs | Est. tokens |
 |---|---|---|
@@ -83,18 +97,29 @@ Legend: ☐ not started · ◐ in progress · ☑ done · ⊘ dropped (with reas
 - ☑ 4. Multilingual stage 1 (understanding) (`6cac897`).
 
 ### Day 2
-- ☐ 5. Run Baseline 1.
-- ◐ 6. Corpus + runner coded (`3ccd199`, `57735f4`). Gate re-validation on a synthetic injected-error corpus of **~30** labelled mutations of frozen
+- ◐ 5. Run Baseline 1 — queued (day2 queue, last item).
+- ◐ 6. Corpus + runner coded (`3ccd199`, `57735f4`); scoring broken down by error type, the types outside
+  the judge's design kept separate (`173a739`); agreement part scored offline; judge run queued (day3). Gate re-validation on a synthetic injected-error corpus of **~30** labelled mutations of frozen
   gold (reduced from ≥100, D1 — reported explicitly as a small-sample result): false-accept /
   false-defer, precision-recall curve, ECE with the k=3 confidence.
-- ◐ 7. Fix the RAG api_error ☑ (`1700e9f`: request-too-large under the 8k ceiling); with/without-retrieval comparison ☐.
-- ☐ 8. Multilingual stage 2 (replies).
+- ◐ 7. Fix the RAG api_error ☑ (`1700e9f`: request-too-large under the 8k ceiling); with/without-retrieval
+  comparison runner ☑ (`3fc3821`), run queued (day3).
+- ☑ 8. Multilingual stage 2 (replies) (`c152bde`). The translations themselves are queued (day4); until
+  they exist every non-English string falls back to English.
 
 ### Day 3
-- ☐ 9. Temporal case study (C4).
-- ☐ 10. Cross-lingual case study (C2).
-- ☐ 11. Multilingual stage 3 (interface).
-- ☐ 12. README.md, RESULTS.md, full suite, push.
+- ◐ 9. Temporal case study (C4): runner and offline scoring ☑ (`4c14539`, `26ab49c`). **No scheme
+  dropped** — official pre-amendment text found for all five: PM-KISAN (guidelines as first issued,
+  linked on pmkisan.gov.in as "Pre-Revised Operational Guidelines"), MH-LADKI-BAHIN (GR 28.06.2024),
+  AB-PMJAY (NHA identification guidelines + SECC 2011 list; an addition, nothing retired), PMAY-G
+  (Framework 2022 edition, 13 parameters) and PMMVY (2017 guidelines); plus the stale PMAY-G
+  document. Post arms reuse the k=3 samples (no quota). 9 extractions queued (day4).
+- ◐ 10. Cross-lingual case study (C2): analysis ☑ (`26ab49c`); the Marathi arm (three GRs in order, k=3)
+  is queued with item 9. Hindi/English: PM-KISAN's 2019 summary exists in both on pmkisan.gov.in, but
+  the Hindi PDF uses a legacy non-Unicode font (extracted text is corrupted) — recorded as not run.
+- ◐ 11. Multilingual stage 3 (interface): code ☑ (`defed6e`); UI strings for ur/mr/ta and the live
+  conversation per language follow the translations.
+- ◐ 12. README.md ☑; RESULTS.md once the runs are in; full suite (976 passing on 2026-10-05).
 
 ## Design notes (recorded as found)
 
@@ -127,6 +152,12 @@ Legend: ☐ not started · ◐ in progress · ☑ done · ⊘ dropped (with reas
   overall catch rate mixes the two.
 
 ## Decisions needed
+
+- **D2 (2026-10-05)** — the remaining runs need ~545k tokens, about three more rolling windows, so they
+  finish around **2026-10-09** instead of on day 4. Options: (a) let them run (recommended — they are
+  unattended and nothing else waits on quota); (b) cut to fit, e.g. gate re-validation on fewer
+  candidates or translations for fewer languages. Until you say otherwise the queues continue in the
+  order above.
 
 - ~~**D1 (2026-10-04)** — OpenRouter has 0 credit.~~ **Decided 2026-10-05**: no credit; Groq free tier
   only; k=3 instead of k=5; ~30 injected errors instead of ≥100; quota-heavy runs over 4 days at
@@ -163,3 +194,32 @@ Legend: ☐ not started · ◐ in progress · ☑ done · ⊘ dropped (with reas
 **Tokens / cost**: 167,977 measured (38 calls), $0.00.
 
 **Needs your decision**: none blocking. FYI the gate re-validation design note above (the judge's two finding types bound what it can catch).
+
+### Day 2 — 2026-10-05
+
+**Done**
+- Item 6: gate re-validation scoring by error type; present-but-wrong types reported apart from the
+  ones the judge is meant to catch (your note). Agreement signal scored offline: all 15 present-but-wrong
+  injected rules had agreement ≤ 1/3 (recall 1.0), precision ~0.19 (PMMVY skipped, 1 sample).
+- Item 7: RAG comparison runner (fix was day 1).
+- Item 8: multilingual stage 2 — replies, questions, verdicts and explanations in the citizen's
+  language; description translation, cached and labelled; translation validator and review sheets.
+- Item 9: temporal C4 runner; all five schemes have official pre-amendment text (PM-KISAN's found
+  today on pmkisan.gov.in, so it is not dropped).
+- Item 10: C2 analysis (Marathi vs English, with a same-language noise baseline).
+- Item 11: stage 3 code — five-language menu, Urdu right-to-left, speech-recognition language.
+- Item 12: README.md.
+- Plan note: flag 1-of-3 rules in AI-Checked schemes, as a later idea (your note).
+- Already visible from the k=3 post samples (no new quota): PMAY-G's deleted refrigerator and
+  landline exclusions were dropped in 3/3 samples from the updated document (the single 2026-10-04
+  run had kept them); AB-PMJAY's 70+ branch present 3/3; MH-LADKI's age bound 65 and no land
+  exclusion 2/2 (the third sample failed validation); PMMVY's one sample has **no** child-order rule
+  at all.
+
+**Not done**: every quota run of items 5, 6, 7, 9, 10 and the translations — the rolling window was
+spent on day 1's samples. All are queued and run unattended (see the quota schedule).
+
+**Tokens / cost**: 0 today (the window was full from day 1); total 167,977, $0.00.
+
+**Needs your decision**: D2 (finish ~2026-10-09, or cut).
+
