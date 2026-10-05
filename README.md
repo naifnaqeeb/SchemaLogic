@@ -43,6 +43,7 @@ pip install -e ".[dev]"                                       # dependencies fro
 PYTHONPATH=. python -m uvicorn api.main:app --port 8000      # backend
 cd frontend && npm install && npm run dev                     # frontend, http://localhost:3000
 python -m pytest -q                                           # tests (no network)
+git config core.hooksPath .githooks                           # commits require the full suite to pass
 ```
 
 [RUNNING.md](RUNNING.md) has the details, including the Streamlit fallback UI. The first request

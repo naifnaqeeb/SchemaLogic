@@ -1,0 +1,35 @@
+#!/bin/sh
+# Pre-commit: refuse the commit unless the FULL pytest suite passes, judged by pytest's own exit status
+# (never piped through tail/grep, which would hide it). Default "fast" mode: every test, with the engine
+# fuzz tests at their small per-run case counts (SCHEMELOGIC_FUZZ_FULL / _CASES are cleared here).
+# Install once per clone:  git config core.hooksPath .githooks      (see RUNNING.md)
+
+cd "$(git rev-parse --show-toplevel)" || exit 1
+
+# The suite runs on the working tree, so the code it tests must be the code being committed. Refuse if
+# a tracked file has unstaged changes, or an untracked .py file exists -- except the paths the background
+# experiment queue writes while it runs (results, translations, generated sheets and UI strings).
+dirty=$(git diff --name-only -- . ':(exclude)data/experiments' ':(exclude)data/i18n' ':(exclude)docs' \
+  ':(exclude)frontend/lib/ui_strings.generated.json' ':(exclude)frontend/lib/ui_language_status.generated.json')
+untracked=$(git ls-files --others --exclude-standard -- '*.py')
+if [ -n "$dirty$untracked" ]; then
+  echo "pre-commit: these files differ from what is staged, so the suite would not test the commit:" >&2
+  printf '  %s\n' $dirty $untracked >&2
+  echo "Stage them, or stash/move them, and commit again." >&2
+  exit 1
+fi
+
+if command -v python >/dev/null 2>&1; then PY=python; else PY="py -3"; fi
+log="$(git rev-parse --git-dir)/pre-commit-pytest.log"
+echo "pre-commit: running the full test suite (2-3 min; output in $log) ..." >&2
+env -u SCHEMELOGIC_FUZZ_FULL -u SCHEMELOGIC_FUZZ_CASES PYTHONPATH=. PYTHONIOENCODING=utf-8 \
+  $PY -m pytest -q -p no:cacheprovider >"$log" 2>&1
+status=$?
+tail -n 1 "$log" >&2
+if [ "$status" -ne 0 ]; then
+  echo "pre-commit: test suite FAILED (pytest exit status $status); commit refused." >&2
+  grep -E '^(FAILED|ERROR) ' "$log" | head -20 >&2
+  exit 1
+fi
+echo "pre-commit: suite passed." >&2
+exit 0

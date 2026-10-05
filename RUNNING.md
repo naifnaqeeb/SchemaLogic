@@ -38,5 +38,17 @@ Open the URL Streamlit prints (defaults to http://localhost:8501).
 python -m pytest -q
 ```
 
+**Pre-commit check** (since 2026-10-05): a commit is refused unless the full suite passes, judged by
+pytest's own exit status. Enable it once per clone:
+
+```bash
+git config core.hooksPath .githooks
+```
+
+It runs the whole suite in its default (fast) mode — the engine fuzz tests at their small per-run case
+counts — which takes 2–3 minutes, and writes the output to `.git/pre-commit-pytest.log`. Because the suite
+runs on the working tree, it also refuses while a tracked file has unstaged changes or an untracked `.py`
+file exists (except the result and translation files the background experiment queue writes).
+
 Runs everything, including `tests/test_api.py` (the new FastAPI layer) alongside every existing
 test — all pass unmodified; the migration added a new layer, it didn't touch the old one.
