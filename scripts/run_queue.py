@@ -2,6 +2,7 @@
 through it. LIVE.
 
     PYTHONPATH=. python scripts/run_queue.py day2 [--budget=175000] [--max-hours=20]
+    PYTHONPATH=. python scripts/run_queue.py day3 day4      # several queues, in order
 
 Each item is one of the resumable runners; a runner that stops on the budget is resumed once the
 ledger shows enough of the window has freed (harness.seconds_until_headroom). A Groq daily-cap 429 --
@@ -51,12 +52,17 @@ def queue(name: str, budget: int):
             ("gate re-validation (judge on 21 candidates)", gate.ESTIMATE, lambda: gate.run(budget)),
             ("RAG with/without retrieval", rag.ESTIMATE, lambda: rag.run(budget)),
         ]
+    if name == "day4":
+        temporal, tc = _script("run_temporal_case_study"), _script("translate_catalogue")
+        return [("temporal C4 (+ Marathi arm of C2)", temporal.ESTIMATE_PER_SAMPLE, lambda: temporal.run(budget))] + [
+            (f"translations {lang}", tc.ESTIMATE, lambda lang=lang: tc.translate(lang, budget)) for lang in tc.messages.LANGUAGES
+        ]
     raise SystemExit(f"unknown queue {name!r}")
 
 
-def main(name: str, budget: int, max_hours: float) -> None:
+def main(names: list[str], budget: int, max_hours: float) -> None:
     deadline = time.time() + max_hours * 3600
-    for label, estimate, step in queue(name, budget):
+    for label, estimate, step in [s for name in names for s in queue(name, budget)]:
         while True:
             _log(f"{label}: start (rolling 24h {harness.tokens_spent_rolling():,})")
             reason = step()
@@ -77,4 +83,4 @@ if __name__ == "__main__":
     args = sys.argv[1:]
     budget = int(next((a.split("=", 1)[1] for a in args if a.startswith("--budget=")), 175_000))
     hours = float(next((a.split("=", 1)[1] for a in args if a.startswith("--max-hours=")), 20))
-    main(next(a for a in args if not a.startswith("-")), budget, hours)
+    main([a for a in args if not a.startswith("-")], budget, hours)
