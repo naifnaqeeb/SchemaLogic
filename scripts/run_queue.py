@@ -45,6 +45,12 @@ def queue(name: str, budget: int):
             ("pipeline on sample 1", p1.ESTIMATE, lambda: p1.run(gold, budget)),
             ("baseline 1", b1.ESTIMATE, lambda: b1.run(gold, budget)),
         ]
+    if name == "day3":
+        gate, rag = _script("run_gate_revalidation"), _script("run_rag_comparison")
+        return [
+            ("gate re-validation (judge on 21 candidates)", gate.ESTIMATE, lambda: gate.run(budget)),
+            ("RAG with/without retrieval", rag.ESTIMATE, lambda: rag.run(budget)),
+        ]
     raise SystemExit(f"unknown queue {name!r}")
 
 

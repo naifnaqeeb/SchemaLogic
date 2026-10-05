@@ -187,3 +187,29 @@ def test_seconds_until_headroom_reads_the_rolling_window():
     assert harness.seconds_until_headroom(5_000, budget=180_000, now=now) == 0
     wait = harness.seconds_until_headroom(20_000, budget=180_000, now=now)
     assert abs(wait - 10 * 3600) < 1  # the 100k row leaves the window 24h after it was recorded
+
+
+def test_rag_comparison_runs_both_arms_on_the_same_draft():
+    spec = importlib.util.spec_from_file_location("run_rag_comparison", ROOT / "scripts" / "run_rag_comparison.py")
+    runner = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(runner)
+    runner.OUT = harness.EXPERIMENTS_DIR / "rag_comparison"
+    sc = harness.EXPERIMENTS_DIR / "self_consistency"
+    for sid in runner.SCHEMES:
+        (sc / sid).mkdir(parents=True, exist_ok=True)
+        (sc / sid / "sample_1.json").write_text(json.dumps({"draft_extraction": harness.frozen_gold(sid).model_dump(mode="json", by_alias=True)}), encoding="utf-8")
+    from schemelogic.extraction.judge_repair import JudgeReport
+
+    seen = []
+
+    class Index:
+        def query(self, q, top_k):
+            return []
+
+    def judge(draft, doc, provider, usage_sink, compact_draft, retrieved_context):
+        seen.append((draft.scheme_id, retrieved_context))
+        return JudgeReport(findings=[])
+
+    assert runner.run(10**9, judge=judge, index=Index(), ledger=_fast_ledger(10**9)) == "done"
+    assert [s for s, _ in seen] == ["PM-KISAN", "PM-KISAN", "MH-LADKI-BAHIN", "MH-LADKI-BAHIN"]
+    assert {r["status"] for r in runner.summarize()["rows"]} == {"ran"}
