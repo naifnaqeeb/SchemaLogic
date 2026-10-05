@@ -9,6 +9,9 @@
   ~200k daily cap) is checked before each call, and calls are paced under Groq's 8,000 tokens/minute.
 - Stopping: a daily-cap (TPD) rate limit or an exhausted budget stops a run cleanly; a run re-started
   later skips the work it already saved.
+- Run control (2026-10-05): the live demo shares the Groq quota, so every call is also refused once the
+  stop time in data/experiments/logs/stop_at.txt has passed, or while a STOP file exists there
+  (scripts/queue_status.py sets both). Checked before every call, so it holds for every runner.
 """
 
 from __future__ import annotations
@@ -35,6 +38,31 @@ TPM_TARGET = 7_600  # pace below the limit: the estimate before a call is only a
 
 class BudgetExhausted(Exception):
     """The day's token budget would be exceeded, or the provider reported its daily cap."""
+
+
+class RunStopped(BudgetExhausted):
+    """Past the stop time, or a stop was requested. A subclass, so every runner already stops on it."""
+
+
+# --- run control ---------------------------------------------------------------------------------
+
+def control_dir() -> Path:
+    return EXPERIMENTS_DIR / "logs"  # gitignored: local machine state
+
+
+def stop_at() -> datetime | None:
+    path = control_dir() / "stop_at.txt"
+    return datetime.fromisoformat(path.read_text(encoding="utf-8").strip()) if path.exists() else None
+
+
+def stop_reason(now: datetime | None = None) -> str | None:
+    """Why no further experiment call may start, or None."""
+    if (control_dir() / "STOP").exists():
+        return "stop requested (STOP file)"
+    at = stop_at()
+    if at is not None and (now or datetime.now()) >= at:
+        return f"past the stop time {at.isoformat(timespec='minutes')}"
+    return None
 
 
 # --- frozen gold ---------------------------------------------------------------------------------
@@ -147,7 +175,11 @@ class Ledger:
 
     def before_call(self, estimate: int) -> None:
         """Raise BudgetExhausted if `estimate` more tokens would cross today's budget; otherwise wait
-        until the last minute's usage leaves room for it under Groq's per-minute limit."""
+        until the last minute's usage leaves room for it under Groq's per-minute limit. Raise RunStopped
+        past the stop time or on a stop request."""
+        reason = stop_reason()
+        if reason:
+            raise RunStopped(reason)
         spent = tokens_spent_rolling()
         if spent + estimate > self.daily_budget:
             raise BudgetExhausted(f"24h budget {self.daily_budget:,}: {spent:,} spent in the last 24h, next call ~{estimate:,}")
