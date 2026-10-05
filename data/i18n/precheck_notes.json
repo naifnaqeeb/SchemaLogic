@@ -1,0 +1,61 @@
+{
+  "_about": "Automated pre-check notes (Claude, 2026-10-05) on machine translations. NOT a review: a person must still confirm every entry. A note is shown only while the translation is the exact text it was written about.",
+  "hi": {
+    "verdict.answer_undetermined": {
+      "text": "मैं एक और विवरण चाहिए ताकि {scheme_id} की आपकी पात्रता निश्चित कर सकूँ — चलिए आगे बढ़ते हैं।",
+      "note": "Ungrammatical: 'मैं एक और विवरण चाहिए' — should be 'मुझे एक और जानकारी चाहिए ताकि {scheme_id} के लिए आपकी पात्रता तय कर सकूँ — चलिए आगे बढ़ते हैं।'"
+    },
+    "chat.rephrase_buttons": {
+      "text": "आप ऊपर दिए गए Yes/No बटन भी इस्तेमाल कर सकते हैं।",
+      "note": "Names the buttons by their English labels (Yes/No). Once reply.yes / reply.no are translated, use the same Hindi words here."
+    },
+    "chat.sensitive_reask": {
+      "text": "आप “Yes”, “No”, या “Prefer not to say” में से कोई भी उत्तर दे सकते हैं — जो भी आपको सहज लगे।",
+      "note": "Names the buttons in English (Yes / No / Prefer not to say). Use the same words as reply.yes, reply.no, reply.decline once those are translated."
+    },
+    "chat.found_followup": {
+      "text": "इनमें से किसी पर और विवरण चाहिए, या मैं आपके लिए किसी एक की पात्रता जाँचूँ? बस बताइए, या “Select” पर क्लिक करें।",
+      "note": "'Select' is the English button label; the Hindi screen shows 'चुनें' (ui.select). Use that."
+    },
+    "chat.which_scheme": {
+      "text": "आप किस योजना की बात कर रहे थे? पहले खोजें, या सभी योजनाओं में से चुनें।",
+      "note": "'Browse all schemes' became 'सभी योजनाओं में से चुनें'; the Hindi menu says 'सभी योजनाएं देखें' (ui.nav_browse). Match it so people can find the button."
+    },
+    "chat.extraction_already_failed": {
+      "text": "मैंने इस सत्र में पहले **{scheme_name}** की स्वचालित नियम‑निकाल कोशिश की थी और विश्वसनीय नियम नहीं मिले, इसलिए अब पुनः प्रयास नहीं करूँगा — यहाँ विवरण दिया गया है।",
+      "note": "'नियम‑निकाल कोशिश' reads awkwardly; suggest 'नियम निकालने की कोशिश'."
+    },
+    "chat.extraction_unreachable": {
+      "text": "मैं अभी नियम‑निकाल सेवा तक नहीं पहुँच सका, इसलिए मैंने अभी तक **{scheme_name}** के नियम नहीं देखे — अभी के लिए यहाँ विवरण दिया गया है। थोड़ी देर बाद फिर से चुनें तो जाँच पुनः प्रयास होगी।",
+      "note": "'नियम‑निकाल सेवा' reads awkwardly; suggest 'नियम निकालने वाली सेवा'."
+    },
+    "chat.ai_checked_ok": {
+      "text": "मैंने **{scheme_name}** के नियमों को स्वचालित रूप से निकाला और वे मान्य हैं, इसलिए मैं आपकी पात्रता उसी तरह जाँच सकता हूँ जैसे सत्यापित योजना — बस ध्यान रखें कि यह AI‑Checked (स्वचालित निकाले गए नियम) है, मानव‑सत्यापित नहीं।",
+      "note": "'जैसे सत्यापित योजना' → 'जैसे किसी सत्यापित योजना की'. 'AI-Checked' is the tier name shown elsewhere in English: confirm keeping it."
+    },
+    "chat.intake_used": {
+      "text": "आपने जो पहले बताया है, उससे शुरू कर रहा हूँ — मैं केवल उन चीज़ों के बारे में पूछूँगा जो अभी भी गायब हैं। (via {provider})",
+      "note": "'(via {provider})' left in English (technical note): keep, or 'के ज़रिए'."
+    },
+    "chat.lets_check": {
+      "text": "आइए {scheme_id} की आपकी पात्रता जाँचते हैं।",
+      "note": "Slightly unnatural; suggest 'आइए {scheme_id} के लिए आपकी पात्रता जाँचें।'"
+    },
+    "question.generic_value": {
+      "text": "\"{label}\" के लिये आपका मान क्या है?",
+      "note": "Uses 'के लिये'; most entries use 'के लिए'. Pick one spelling throughout."
+    },
+    "trace.header": {
+      "text": "इस परिणाम तक पहुँचने के लिये हमने जो जाँच की:",
+      "note": "Uses 'के लिये'; most entries use 'के लिए'. Pick one spelling throughout."
+    },
+    "verdict.headline_undetermined": {
+      "text": "{emoji} {scheme_id} के लिये एक और विवरण चाहिए",
+      "note": "Uses 'के लिये'; most entries use 'के लिए'. Pick one spelling throughout."
+    },
+    "chat.evaluation_failed": {
+      "text": "मैं {scheme_id} के लिए परिणाम नहीं निकाल सका: मेरे पास मौजूद किसी उत्तर का स्वरूप योजना के नियमों के लिये उपयुक्त नहीं है (जैसे शब्द जहाँ संख्या चाहिए थी), और मैं अनुमान नहीं लगाऊँगा। यह आपकी पात्रता का निर्णय नहीं है। आप फिर से जाँच शुरू कर सकते हैं, या अपने स्थानीय कार्यालय में पूछ सकते हैं।",
+      "note": "Uses 'के लिये'; most entries use 'के लिए'. Pick one spelling throughout."
+    }
+  }
+}

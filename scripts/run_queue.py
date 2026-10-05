@@ -52,11 +52,21 @@ def queue(name: str, budget: int):
     gold = harness.gold_scheme_ids()
     sc, p1, b1 = _script("run_self_consistency"), _script("run_pipeline_on_samples"), _script("run_baseline1")
     gate, rag = _script("run_gate_revalidation"), _script("run_rag_comparison")
-    temporal, tc = _script("run_temporal_case_study"), _script("translate_catalogue")
+    temporal, tc, export = _script("run_temporal_case_study"), _script("translate_catalogue"), _script("export_ui_strings")
+
+    def translate_and_publish(lang: str) -> str:
+        """Translate; once a language is done, regenerate its review sheets and the frontend's UI strings
+        and review states (offline), so they are current without anyone being notified."""
+        result = tc.translate(lang, budget)
+        if result == "done":
+            tc.write_sheet(lang)
+            export.main()
+        return result
+
     # Order set 2026-10-05 for the review: Hindi first, then the other languages, the full pipeline on
     # sample 1, the temporal case study (with the Marathi arm of C2), then everything else.
     return [
-        (f"translations {lang}", tc.ESTIMATE, lambda lang=lang: tc.translate(lang, budget)) for lang in ("hi", "ur", "mr", "ta")
+        (f"translations {lang}", tc.ESTIMATE, lambda lang=lang: translate_and_publish(lang)) for lang in ("hi", "ur", "mr", "ta")
     ] + [
         ("pipeline on sample 1", p1.ESTIMATE, lambda: p1.run(gold, budget)),
         ("temporal C4 (+ Marathi arm of C2)", temporal.ESTIMATE_PER_SAMPLE, lambda: temporal.run(budget)),

@@ -305,6 +305,198 @@
     "provider": "groq",
     "gold_tag": "gold-v2"
   },
+  "ui.ai_checked_verdict_disclaimer": {
+    "source": "These rules were extracted automatically by AI from this scheme's published text and have NOT been checked by a human reviewer. The verdict above was computed by the same deterministic rules engine used for Verified schemes, but the rules it applied may be incomplete or wrong — confirm with the official source before acting on this.",
+    "text": "ये नियम इस योजना के प्रकाशित पाठ से AI द्वारा स्वचालित रूप से निकाले गए हैं और किसी व्यक्ति द्वारा जांचे नहीं गए हैं। ऊपर का निर्णय उसी नियम-इंजन से निकला है जो सत्यापित योजनाओं के लिए उपयोग होता है, लेकिन जिन नियमों पर वह लागू हुआ वे अधूरे या गलत हो सकते हैं — इस पर कार्य करने से पहले आधिकारिक स्रोत से पुष्टि करें।",
+    "status": "unreviewed",
+    "origin": "hand-written in frontend/lib/i18n.ts"
+  },
+  "ui.ask_ai_sahayak": {
+    "source": "Ask AI Sahayak",
+    "text": "AI सहायक से पूछें",
+    "status": "unreviewed",
+    "origin": "hand-written in frontend/lib/i18n.ts"
+  },
+  "ui.browse_hint": {
+    "source": "Looking for something specific? Use **Browse all schemes** above to look through the full list directly.",
+    "text": "कुछ खास ढूंढ रहे हैं? पूरी सूची देखने के लिए ऊपर **सभी योजनाएं देखें** का उपयोग करें।",
+    "status": "unreviewed",
+    "origin": "hand-written in frontend/lib/i18n.ts"
+  },
+  "ui.browse_subtitle": {
+    "source": "Discover and apply for government welfare schemes tailored to your needs. Browse all available programs below.",
+    "text": "अपनी जरूरतों के अनुसार सरकारी कल्याण योजनाएं खोजें और आवेदन करें। नीचे सभी उपलब्ध कार्यक्रम देखें।",
+    "status": "unreviewed",
+    "origin": "hand-written in frontend/lib/i18n.ts"
+  },
+  "ui.browse_title": {
+    "source": "All Schemes",
+    "text": "सभी योजनाएं",
+    "status": "unreviewed",
+    "origin": "hand-written in frontend/lib/i18n.ts"
+  },
+  "ui.category_all": {
+    "source": "All Schemes",
+    "text": "सभी योजनाएं",
+    "status": "unreviewed",
+    "origin": "hand-written in frontend/lib/i18n.ts"
+  },
+  "ui.category_farmers": {
+    "source": "Farmers",
+    "text": "किसान",
+    "status": "unreviewed",
+    "origin": "hand-written in frontend/lib/i18n.ts"
+  },
+  "ui.category_health": {
+    "source": "Health",
+    "text": "स्वास्थ्य",
+    "status": "unreviewed",
+    "origin": "hand-written in frontend/lib/i18n.ts"
+  },
+  "ui.category_housing": {
+    "source": "Housing",
+    "text": "आवास",
+    "status": "unreviewed",
+    "origin": "hand-written in frontend/lib/i18n.ts"
+  },
+  "ui.category_students": {
+    "source": "Students",
+    "text": "छात्र",
+    "status": "unreviewed",
+    "origin": "hand-written in frontend/lib/i18n.ts"
+  },
+  "ui.category_women": {
+    "source": "Women",
+    "text": "महिलाएं",
+    "status": "unreviewed",
+    "origin": "hand-written in frontend/lib/i18n.ts"
+  },
+  "ui.chat_input_placeholder": {
+    "source": "Message SchemeLogic...",
+    "text": "SchemeLogic को संदेश भेजें...",
+    "status": "unreviewed",
+    "origin": "hand-written in frontend/lib/i18n.ts"
+  },
+  "ui.disclaimer": {
+    "source": "SchemeLogic can make mistakes. Consider verifying important scheme details on official government portals.",
+    "text": "SchemeLogic गलतियां कर सकता है। महत्वपूर्ण योजना विवरण आधिकारिक सरकारी पोर्टल पर सत्यापित करें।",
+    "status": "unreviewed",
+    "origin": "hand-written in frontend/lib/i18n.ts"
+  },
+  "ui.greeting": {
+    "source": "Namaste! 🙏 How can I help you find government schemes today? You can tell me a bit about yourself or ask about specific welfare programs.",
+    "text": "नमस्ते! 🙏 आज मैं सरकारी योजनाएं खोजने में आपकी कैसे मदद कर सकता हूं? आप अपने बारे में थोड़ा बता सकते हैं या किसी खास योजना के बारे में पूछ सकते हैं।",
+    "status": "unreviewed",
+    "origin": "hand-written in frontend/lib/i18n.ts"
+  },
+  "ui.hero_thesis": {
+    "source": "Real government scheme rules, checked the same way every time — no guessing, no ads, a clear reason for every answer.",
+    "text": "असली सरकारी योजना नियम, हर बार एक ही तरीके से जांचे गए — कोई अंदाजा नहीं, कोई विज्ञापन नहीं, हर जवाब का एक स्पष्ट कारण।",
+    "status": "unreviewed",
+    "origin": "hand-written in frontend/lib/i18n.ts"
+  },
+  "ui.lang_toggle_label": {
+    "source": "English/हिंदी",
+    "text": "हिंदी/English",
+    "status": "unreviewed",
+    "origin": "hand-written in frontend/lib/i18n.ts"
+  },
+  "ui.nav_back_to_chat": {
+    "source": "Back to chat",
+    "text": "चैट पर वापस जाएं",
+    "status": "unreviewed",
+    "origin": "hand-written in frontend/lib/i18n.ts"
+  },
+  "ui.nav_browse": {
+    "source": "Browse All Schemes",
+    "text": "सभी योजनाएं देखें",
+    "status": "unreviewed",
+    "origin": "hand-written in frontend/lib/i18n.ts"
+  },
+  "ui.schemes_shown_suffix": {
+    "source": "shown",
+    "text": "दिखाए गए",
+    "status": "unreviewed",
+    "origin": "hand-written in frontend/lib/i18n.ts"
+  },
+  "ui.seal_ai_checked": {
+    "source": "AI-Checked",
+    "text": "एआई-जांचित",
+    "status": "unreviewed",
+    "origin": "hand-written in frontend/lib/i18n.ts"
+  },
+  "ui.seal_unverified": {
+    "source": "Unverified",
+    "text": "असत्यापित",
+    "status": "unreviewed",
+    "origin": "hand-written in frontend/lib/i18n.ts"
+  },
+  "ui.seal_verified": {
+    "source": "Verified",
+    "text": "सत्यापित",
+    "status": "unreviewed",
+    "origin": "hand-written in frontend/lib/i18n.ts"
+  },
+  "ui.search_placeholder": {
+    "source": "Search schemes by name or keyword...",
+    "text": "योजना का नाम या कीवर्ड खोजें...",
+    "status": "unreviewed",
+    "origin": "hand-written in frontend/lib/i18n.ts"
+  },
+  "ui.select": {
+    "source": "Select",
+    "text": "चुनें",
+    "status": "unreviewed",
+    "origin": "hand-written in frontend/lib/i18n.ts"
+  },
+  "ui.start_over": {
+    "source": "Start over",
+    "text": "फिर से शुरू करें",
+    "status": "unreviewed",
+    "origin": "hand-written in frontend/lib/i18n.ts"
+  },
+  "ui.step_1": {
+    "source": "Ask, in your own words",
+    "text": "अपने शब्दों में पूछें",
+    "status": "unreviewed",
+    "origin": "hand-written in frontend/lib/i18n.ts"
+  },
+  "ui.step_2": {
+    "source": "We check the real rules",
+    "text": "हम असली नियम जांचते हैं",
+    "status": "unreviewed",
+    "origin": "hand-written in frontend/lib/i18n.ts"
+  },
+  "ui.step_3": {
+    "source": "A verified answer, or an honest \"not sure yet\"",
+    "text": "एक सत्यापित जवाब, या ईमानदारी से \"अभी पक्का नहीं\"",
+    "status": "unreviewed",
+    "origin": "hand-written in frontend/lib/i18n.ts"
+  },
+  "ui.translation_notice_machine": {
+    "source": "Machine-translated and not yet reviewed by a person. If anything is unclear, the English version is the authoritative one.",
+    "text": "यह अनुवाद मशीन से किया गया है और अभी किसी व्यक्ति ने इसकी समीक्षा नहीं की है। कुछ भी अस्पष्ट हो तो अंग्रेज़ी संस्करण ही मान्य है।",
+    "status": "unreviewed",
+    "origin": "hand-written in frontend/lib/i18n.ts"
+  },
+  "ui.translation_notice_none": {
+    "source": "This language is not translated yet, so most text is shown in English. Any text in this language is machine-generated and not reviewed.",
+    "text": "यह भाषा अभी अनूदित नहीं है, इसलिए ज़्यादातर पाठ अंग्रेज़ी में दिखाया गया है। इस भाषा का कोई भी पाठ मशीन से बना है और उसकी समीक्षा नहीं हुई है।",
+    "status": "unreviewed",
+    "origin": "hand-written in frontend/lib/i18n.ts"
+  },
+  "ui.try_one_of_these": {
+    "source": "Or try one of these:",
+    "text": "या इनमें से एक आज़माएं:",
+    "status": "unreviewed",
+    "origin": "hand-written in frontend/lib/i18n.ts"
+  },
+  "ui.view_details": {
+    "source": "View Details",
+    "text": "विवरण देखें",
+    "status": "unreviewed",
+    "origin": "hand-written in frontend/lib/i18n.ts"
+  },
   "verdict.answer_eligible": {
     "source": "Based on what you've told me, you're eligible for {scheme_id} — here's why:",
     "text": "आपके द्वारा बताई गई जानकारी के आधार पर, आप {scheme_id} के लिए पात्र हैं — कारण इस प्रकार हैं:",

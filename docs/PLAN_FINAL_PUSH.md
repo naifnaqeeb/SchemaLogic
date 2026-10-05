@@ -239,3 +239,30 @@ spent on day 1's samples. All are queued and run unattended (see the quota sched
   interim `docs/results/TEMPORAL_C4.md` (current-document side only).
 - First Hindi batch done before the window filled: 40/40 entries valid.
 
+
+### Translations review — 2026-10-05 evening
+
+- **Landed so far**: 40 Hindi entries (first batch). Urdu, Marathi, Tamil: none yet (the window was
+  full), so their UI strings are empty and the app shows English for them until tonight's run.
+- **Re-check** of the 40: 4 came back identical to the English (`reply.yes`, `reply.no`,
+  `reply.decline`, `chat.machine_translated` — the buttons would have stayed "Yes"/"No"); the
+  validator accepted them. It now rejects a translation identical to the English or without the
+  target script, and the run re-translates such entries (never reviewed ones). A language pre-check
+  (automated, not a review) left 14 notes for reviewers, e.g. `verdict.answer_undetermined` is
+  ungrammatical ("मैं … चाहिए" → "मुझे …"), button names left in English, के लिए / के लिये mixed.
+- **Hindi screen text** (`ui.*`) is hand-written in `frontend/lib/i18n.ts`: it is now put on the Hindi
+  sheet as shown in the app and never machine-translated (saves ~9k tokens); reviewer corrections
+  reach the frontend through `export_ui_strings.py`.
+- **Team sheets**: `docs/i18n/REVIEW_<lang>.csv` (Excel/Sheets; reviewer columns kept on
+  regeneration; translated rows first), guide `docs/i18n/HOW_TO_REVIEW.md`, applied with
+  `translate_catalogue.py --import-review`. Hindi: 72 rows to review (40 machine + 32 hand-written).
+- **Interface**: every page shows a notice under the nav bar for any language not fully reviewed —
+  "machine-translated, not yet reviewed; English is authoritative", or "not translated yet" — in the
+  language (when available) and always in English. State per language in
+  `frontend/lib/ui_language_status.generated.json`.
+- The queue now regenerates each language's sheets and the frontend strings/status as soon as that
+  language finishes (it was restarted at 17:41 to load this; same stop time and watchdog).
+- **Fixed**: `tests/test_phrasing.py` had been failing on main since `6f9269c` (committing the first
+  Hindi batch turned its English fallback into Hindi; I had run only a subset of the suite before that
+  commit). Tests are now isolated from `data/i18n/` in `conftest.py`; no test edited.
+- **Before the demo**: restart the backend after the translations land (it caches them in memory).

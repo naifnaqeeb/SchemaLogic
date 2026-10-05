@@ -139,13 +139,22 @@ def catalogue() -> dict[str, str]:
 def ui_strings_english() -> dict[str, str]:
     """The UI chrome strings (conversational/i18n.py's _STRINGS, which frontend/lib/i18n.ts copies
     byte-for-byte), read by parsing the source -- that module imports Streamlit, which nothing here needs."""
+    return _ui_strings("en")
+
+
+def ui_strings_hindi() -> dict[str, str]:
+    """The hand-written Hindi UI chrome strings that ship in the app (same source as above)."""
+    return _ui_strings("hi")
+
+
+def _ui_strings(language: str) -> dict[str, str]:
     import ast
 
     source = (ROOT / "schemelogic" / "conversational" / "i18n.py").read_text(encoding="utf-8")
     for node in ast.parse(source).body:
         target = node.target if isinstance(node, ast.AnnAssign) else (node.targets[0] if isinstance(node, ast.Assign) else None)
         if isinstance(target, ast.Name) and target.id == "_STRINGS":
-            return {k: v["en"] for k, v in ast.literal_eval(node.value).items()}
+            return {k: v[language] for k, v in ast.literal_eval(node.value).items() if v.get(language)}
     return {}
 
 
@@ -175,6 +184,18 @@ def translated(key: str, language: str, source: str) -> str | None:
     if placeholders(entry["text"]) != placeholders(source):
         return None
     return entry["text"]
+
+
+def review_status(language: str) -> dict:
+    """How much of the catalogue a person has reviewed in `language`: "reviewed" only when every entry
+    is current and reviewed; "machine" when some text is machine-translated and not all reviewed;
+    "none" when nothing is translated yet (the interface shows English)."""
+    entries = _translations(language)
+    current = {k: e for k, e in entries.items() if isinstance(e, dict) and translated(k, language, e.get("source") or "")}
+    total = len(catalogue())
+    reviewed = sum(1 for e in current.values() if e.get("status") == "reviewed")
+    state = "reviewed" if total and reviewed == total else ("machine" if current else "none")
+    return {"state": state, "translated": len(current), "reviewed": reviewed, "total": total}
 
 
 def text(key: str, language: str = "en", **fields: object) -> str:

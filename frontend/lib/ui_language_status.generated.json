@@ -1,0 +1,26 @@
+{
+  "hi": {
+    "reviewed": 0,
+    "state": "machine",
+    "total": 300,
+    "translated": 72
+  },
+  "mr": {
+    "reviewed": 0,
+    "state": "none",
+    "total": 300,
+    "translated": 0
+  },
+  "ta": {
+    "reviewed": 0,
+    "state": "none",
+    "total": 300,
+    "translated": 0
+  },
+  "ur": {
+    "reviewed": 0,
+    "state": "none",
+    "total": 300,
+    "translated": 0
+  }
+}

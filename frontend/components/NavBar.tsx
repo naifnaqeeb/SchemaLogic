@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { LANGUAGES, isLanguage } from "@/lib/i18n";
+import { TranslationNotice } from "@/components/TranslationNotice";
 
 // Matches the Figma reference: amber "Browse All Schemes" link top-left, centered wordmark,
 // language menu top-right -- five languages since multilingual stage 3, each named in its own script.
@@ -38,6 +39,7 @@ export function NavBar({ active }: { active: "chat" | "browse" }) {
           <span className="font-bold text-2xl text-sl-navy">SchemeLogic</span>
           {toggleButton}
         </div>
+        <TranslationNotice />
       </header>
     );
   }
@@ -58,6 +60,7 @@ export function NavBar({ active }: { active: "chat" | "browse" }) {
         </div>
         <div className="justify-self-end">{toggleButton}</div>
       </div>
+      <TranslationNotice />
     </header>
   );
 }

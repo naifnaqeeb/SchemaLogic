@@ -9,6 +9,7 @@
 // 3. chat_engine.py's own template strings and scraped scheme text: NOT translated, same as before.
 
 import generated from "./ui_strings.generated.json";
+import languageStatus from "./ui_language_status.generated.json";
 
 // Multilingual stage 3 (2026-10-05): Urdu, Marathi and Tamil join English and Hindi. Their strings are
 // machine translations generated from data/i18n/<lang>.json by scripts/export_ui_strings.py
@@ -84,11 +85,32 @@ export const STRINGS: Record<string, StringEntry> = {
   category_health: { en: "Health", hi: "स्वास्थ्य" },
   category_housing: { en: "Housing", hi: "आवास" },
   schemes_shown_suffix: { en: "shown", hi: "दिखाए गए" },
+  // Shown under the nav bar for any language not yet fully reviewed by a person (2026-10-05).
+  translation_notice_machine: {
+    en: "Machine-translated and not yet reviewed by a person. If anything is unclear, the English version is the authoritative one.",
+    hi: "यह अनुवाद मशीन से किया गया है और अभी किसी व्यक्ति ने इसकी समीक्षा नहीं की है। कुछ भी अस्पष्ट हो तो अंग्रेज़ी संस्करण ही मान्य है।",
+  },
+  translation_notice_none: {
+    en: "This language is not translated yet, so most text is shown in English. Any text in this language is machine-generated and not reviewed.",
+    hi: "यह भाषा अभी अनूदित नहीं है, इसलिए ज़्यादातर पाठ अंग्रेज़ी में दिखाया गया है। इस भाषा का कोई भी पाठ मशीन से बना है और उसकी समीक्षा नहीं हुई है।",
+  },
 };
+
+// Each language's review state, from data/i18n/<lang>.json (scripts/export_ui_strings.py). Anything but
+// "reviewed" -- every catalogue entry confirmed by a person -- is marked in the interface.
+export type TranslationState = "reviewed" | "machine" | "none";
+const STATUS = languageStatus as Record<string, { state: TranslationState }>;
+
+export function translationState(language: Language): TranslationState {
+  if (language === "en") return "reviewed";
+  return STATUS[language]?.state ?? "none";
+}
 
 export function translate(key: string, language: Language): string {
   const entry = STRINGS[key];
   if (!entry) return key;
-  if (language === "en" || language === "hi") return entry[language] || entry.en || key;
+  if (language === "en") return entry.en || key;
+  // Hindi: a reviewer's correction (exported from data/i18n/hi.json) wins over the hand-written text.
+  if (language === "hi") return GENERATED.hi?.[key] || entry.hi || entry.en || key;
   return GENERATED[language]?.[key] || entry.en || key;
 }

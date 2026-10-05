@@ -88,6 +88,15 @@ _STRINGS: dict[str, dict[Language, str]] = {
     "category_health": {"en": "Health", "hi": "स्वास्थ्य"},
     "category_housing": {"en": "Housing", "hi": "आवास"},
     "schemes_shown_suffix": {"en": "shown", "hi": "दिखाए गए"},
+    # Shown under the nav bar for any language not yet fully reviewed by a person (2026-10-05).
+    "translation_notice_machine": {
+        "en": "Machine-translated and not yet reviewed by a person. If anything is unclear, the English version is the authoritative one.",
+        "hi": "यह अनुवाद मशीन से किया गया है और अभी किसी व्यक्ति ने इसकी समीक्षा नहीं की है। कुछ भी अस्पष्ट हो तो अंग्रेज़ी संस्करण ही मान्य है।",
+    },
+    "translation_notice_none": {
+        "en": "This language is not translated yet, so most text is shown in English. Any text in this language is machine-generated and not reviewed.",
+        "hi": "यह भाषा अभी अनूदित नहीं है, इसलिए ज़्यादातर पाठ अंग्रेज़ी में दिखाया गया है। इस भाषा का कोई भी पाठ मशीन से बना है और उसकी समीक्षा नहीं हुई है।",
+    },
 }
 
 
