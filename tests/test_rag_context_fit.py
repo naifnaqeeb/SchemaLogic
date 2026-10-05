@@ -71,3 +71,11 @@ def test_no_room_means_no_context_rather_than_a_rejected_request():
     client = FakeClient()
     jr.run_judge(DRAFT, "document " * 2500, client=client, retrieved_context=_context(20))
     assert "RETRIEVED AMENDMENT CONTEXT" not in client.calls[0]["messages"][1]["content"]
+
+
+def test_compact_draft_is_opt_in_and_smaller():
+    default, compact = FakeClient(), FakeClient()
+    jr.run_judge(DRAFT, "doc", client=default)
+    jr.run_judge(DRAFT, "doc", client=compact, compact_draft=True)
+    d, c = default.calls[0]["messages"][1]["content"], compact.calls[0]["messages"][1]["content"]
+    assert '"scheme_id": "X"' in d and '"scheme_id":"X"' in c and len(c) < len(d)

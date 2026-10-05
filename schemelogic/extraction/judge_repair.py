@@ -195,6 +195,7 @@ def run_judge(
     retrieved_context: str | None = None,
     provider: str = "groq",
     usage_sink=None,
+    compact_draft: bool = False,
 ) -> JudgeReport | JudgeFailure:
     """Single judge pass: re-reads the source document against the draft, scoped to the two
     confirmed failure patterns. Never returns a full Scheme — only findings + proposed patches.
@@ -206,7 +207,14 @@ def run_judge(
     omitting it reproduces the exact pre-Phase-4 judge behavior, so existing callers/tests are
     unaffected. `provider` / `usage_sink`: see extractor.extract_scheme."""
     client = client or (Groq(api_key=os.environ["GROQ_API_KEY"]) if provider == "groq" else _client_for(provider))
-    draft_json = json.dumps(draft.model_dump(mode="json", by_alias=True), indent=2, ensure_ascii=False)
+    if compact_draft:
+        # Same content without indentation or default-valued keys: AB-PMJAY's 14-exception draft, indented,
+        # pushes the judge's request past Groq's 8k ceiling on its own (measured 2026-10-05). Opt-in;
+        # the default serialisation is unchanged.
+        draft_json = json.dumps(draft.model_dump(mode="json", by_alias=True, exclude_defaults=True),
+                                ensure_ascii=False, separators=(",", ":"))
+    else:
+        draft_json = json.dumps(draft.model_dump(mode="json", by_alias=True), indent=2, ensure_ascii=False)
     system_prompt = _judge_system_prompt()
     user_content = (
         f"SOURCE DOCUMENT:\n{document_text}\n\n"

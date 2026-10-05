@@ -131,7 +131,7 @@ def test_gate_revalidation_runner_saves_findings_and_gate_decisions():
 
     calls = []
 
-    def judge(scheme, doc, provider, usage_sink):
+    def judge(scheme, doc, provider, usage_sink, compact_draft):
         calls.append(scheme.scheme_id)
         usage_sink({"call": "judge_report", "total_tokens": 100})
         return JudgeReport(findings=[])

@@ -73,10 +73,11 @@ def run(budget: int, judge=judge_repair.run_judge, ledger=None) -> str:
             print(f"[stop] {exc}", flush=True)
             return "budget"
         usage: list[dict] = []
-        report = judge(Scheme.model_validate(cand["scheme"]), doc, provider=PROVIDER, usage_sink=usage.append)
+        report = judge(Scheme.model_validate(cand["scheme"]), doc, provider=PROVIDER, usage_sink=usage.append,
+                       compact_draft=True)  # AB-PMJAY's indented draft alone exceeds the 8k request ceiling
         for u in usage:
             ledger.record(u, scheme_id=cand["scheme_id"], variant=cand["variant_id"])
-        payload = {**harness.result_header(ITEM, PROVIDER, {"judge_samples": 1}), "variant_id": cand["variant_id"],
+        payload = {**harness.result_header(ITEM, PROVIDER, {"judge_samples": 1, "compact_draft": True}), "variant_id": cand["variant_id"],
                    "scheme_id": cand["scheme_id"], "source_document_sha256": sha, "usage": usage,
                    "injected_error_ids": [e["error_id"] for e in cand["errors"]]}
         if isinstance(report, judge_repair.JudgeFailure):
