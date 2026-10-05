@@ -76,6 +76,13 @@ def _isolate_disk_caches(tmp_path, monkeypatch):
     monkeypatch.setattr(
         "schemelogic.conversational.description_translation.CACHE_DIR", tmp_path / "translations"
     )
+    # The catalogue translations (data/i18n/<lang>.json) fill in as the translation run proceeds; a
+    # test must not depend on how far it has got (2026-10-05: the first Hindi batch turned an English
+    # fallback in test_phrasing into Hindi). Tests that need translations write their own.
+    from schemelogic.conversational import messages
+
+    monkeypatch.setattr(messages, "I18N_DIR", tmp_path / "i18n_empty")
+    messages.reload_translations()
 
 
 @pytest.fixture(autouse=True)
