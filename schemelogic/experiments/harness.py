@@ -91,8 +91,25 @@ def _ledger_rows() -> list[dict]:
 
 
 def tokens_spent(day: str | None = None) -> int:
+    """Tokens recorded on one calendar day (for reports)."""
     day = day or date.today().isoformat()
     return sum(r.get("total_tokens") or 0 for r in _ledger_rows() if r.get("date") == day)
+
+
+def tokens_spent_rolling(hours: float = 24, now: datetime | None = None) -> int:
+    """Tokens recorded in the last `hours` -- what the budget is checked against, because Groq's
+    daily cap is a rolling window, not a calendar day (found 2026-10-05: a run stopped on Groq's daily
+    cap after 97.6k tokens of that calendar day, with the previous evening's runs still in the window)."""
+    now = now or datetime.now()
+    total = 0
+    for r in _ledger_rows():
+        try:
+            age = (now - datetime.fromisoformat(r["ts"])).total_seconds()
+        except (KeyError, ValueError):
+            continue
+        if 0 <= age < hours * 3600:
+            total += r.get("total_tokens") or 0
+    return total
 
 
 class Ledger:
@@ -108,8 +125,9 @@ class Ledger:
     def before_call(self, estimate: int) -> None:
         """Raise BudgetExhausted if `estimate` more tokens would cross today's budget; otherwise wait
         until the last minute's usage leaves room for it under Groq's per-minute limit."""
-        if tokens_spent() + estimate > self.daily_budget:
-            raise BudgetExhausted(f"daily budget {self.daily_budget:,}: {tokens_spent():,} spent, next call ~{estimate:,}")
+        spent = tokens_spent_rolling()
+        if spent + estimate > self.daily_budget:
+            raise BudgetExhausted(f"24h budget {self.daily_budget:,}: {spent:,} spent in the last 24h, next call ~{estimate:,}")
         while True:
             now = self._clock()
             self._recent = [(t, n) for t, n in self._recent if now - t < 60]

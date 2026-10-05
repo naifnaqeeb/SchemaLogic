@@ -45,7 +45,7 @@ def run(scheme_ids: list[str], budget: int, extract=flat_baseline.extract_flat, 
         for u in usage:
             ledger.record(u, scheme_id=sid)
         if isinstance(scheme, ExtractionFailure) and (scheme.reason == "rate_limited" or harness.is_daily_cap(scheme.detail)):
-            print(f"[stop] {sid}: {scheme.reason}: {scheme.detail[:160]}", flush=True)
+            print(f"[stop] {sid}: {scheme.reason}: {scheme.detail[:600]}", flush=True)
             return "daily_cap" if harness.is_daily_cap(scheme.detail) else "rate_limited"
         payload = {**harness.result_header(ITEM, PROVIDER, {"representation": "flat list: AND(required) + self disqualifiers"}),
                    "scheme_id": sid, "source_document_sha256": sha, "usage": usage, "raw_flat": raw}

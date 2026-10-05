@@ -4,6 +4,12 @@ LIVE: 2 LLM calls per sample. Paced under Groq's per-minute limit, stops cleanly
 or Groq's daily cap, and resumes on re-run (saved samples are skipped).
 
     PYTHONPATH=. python scripts/run_self_consistency.py [--k=3] [--budget=180000] [SCHEME ...]
+    PYTHONPATH=. python scripts/run_self_consistency.py --silver=pmksypdmc    # an ungolded AI-Checked scheme
+
+`--silver=<slug>` samples a myScheme record from data/silver/schemes.jsonl the way the AI-Checked tier
+reads it (ai_checked.build_source_text), saved under self_consistency/_silver_<slug>/. There is no
+gold for it: it tests the confidence signal itself -- pmksypdmc is the scheme whose extraction
+collapsed to one predicate at a self-reported 0.95 (KNOWN_ISSUES).
 
 Each sample: data/experiments/self_consistency/<scheme>/sample_<i>.json, with the standard result
 header (gold tag, provider, model, config, date), the source document's SHA-256, the extraction (or
@@ -35,11 +41,25 @@ def sample_path(scheme_id: str, i: int) -> Path:
     return OUT / scheme_id / f"sample_{i}.json"
 
 
+def silver_document(slug: str) -> tuple[str, str]:
+    import hashlib
+
+    from schemelogic.conversational.ai_checked import build_source_text
+
+    for line in (ROOT / "data" / "silver" / "schemes.jsonl").read_text(encoding="utf-8").splitlines():
+        record = json.loads(line)
+        if record.get("slug") == slug:
+            text = build_source_text(record)
+            return text, hashlib.sha256(text.encode("utf-8")).hexdigest()
+    raise KeyError(f"no silver record {slug!r}")
+
+
 def run(scheme_ids: list[str], k: int, budget: int, extract=extractor.extract_scheme, ledger=None) -> str:
-    """Returns why it stopped: "done", "budget" or "daily_cap" / "rate_limited"."""
+    """Returns why it stopped: "done", "budget" or "daily_cap" / "rate_limited". A scheme id of the
+    form "_silver_<slug>" samples that silver record instead of a gold scheme's document."""
     ledger = ledger or harness.Ledger(ITEM, PROVIDER, daily_budget=budget)
     for sid in scheme_ids:
-        text, sha = harness.source_document(sid)
+        text, sha = silver_document(sid[len("_silver_"):]) if sid.startswith("_silver_") else harness.source_document(sid)
         for i in range(1, k + 1):
             path = sample_path(sid, i)
             if path.exists():
@@ -57,7 +77,7 @@ def run(scheme_ids: list[str], k: int, budget: int, extract=extractor.extract_sc
             if failure is not None and (failure.reason == "rate_limited" or harness.is_daily_cap(failure.detail)):
                 # not a property of the sample -- don't save it; a re-run retries it
                 reason = "daily_cap" if harness.is_daily_cap(failure.detail) else "rate_limited"
-                print(f"[stop] {sid} sample {i}: {reason}: {failure.detail[:160]}", flush=True)
+                print(f"[stop] {sid} sample {i}: {reason}: {failure.detail[:600]}", flush=True)
                 return reason
             payload = {
                 **harness.result_header(ITEM, PROVIDER, {"k": k, "temperature": 0.2, "extractor": "defaults"}),
@@ -79,6 +99,7 @@ if __name__ == "__main__":
     args = sys.argv[1:]
     k = int(next((a.split("=", 1)[1] for a in args if a.startswith("--k=")), 3))
     budget = int(next((a.split("=", 1)[1] for a in args if a.startswith("--budget=")), harness.DAILY_BUDGET))
-    schemes = [a for a in args if not a.startswith("-")] or harness.gold_scheme_ids()
+    silver = [f"_silver_{a.split('=', 1)[1]}" for a in args if a.startswith("--silver=")]
+    schemes = [a for a in args if not a.startswith("-")] + silver or harness.gold_scheme_ids()
     print(f"self-consistency: k={k}, schemes={schemes}, budget={budget:,}, today so far {harness.tokens_spent():,}", flush=True)
     print(f"stopped: {run(schemes, k, budget)}", flush=True)
