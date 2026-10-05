@@ -154,6 +154,39 @@ def _judge_system_prompt() -> str:
     )
 
 
+# Groq rejects any request whose prompt plus max_tokens exceeds the account's 8,000 tokens/minute, as
+# "request too large" -- filed under api_error. The judge's prompt is ~6-7k tokens before retrieval,
+# so the retrieved chunks (Marathi GR text, much denser in tokens per character than English) pushed
+# every with-retrieval call over: the 2026-08-18 RAG validation failed 4/4 with api_error. The context
+# is now fitted to what the request leaves, whole chunks only (diagnosed and fixed 2026-10-05).
+_REQUEST_CEILING = 8000
+_REQUEST_MARGIN = 300
+_MIN_JUDGE_COMPLETION = 1200  # gpt-oss bills its reasoning against max_tokens
+
+
+def _conservative_tokens(text: str) -> int:
+    """Token estimate that doesn't undercount non-Latin script: ~3.5 chars/token for ASCII, ~1.5 for
+    the rest (Devanagari, Tamil, Arabic script)."""
+    ascii_chars = sum(1 for c in text if ord(c) < 128)
+    return int(ascii_chars / 3.5 + (len(text) - ascii_chars) / 1.5) + 1
+
+
+def fit_retrieved_context(retrieved_context: str, fixed_prompt: str) -> tuple[str, dict]:
+    """Keep the leading retrieved chunks (blank-line separated, best first) that fit in what the request
+    leaves after `fixed_prompt` and the minimum completion. Returns (context, stats)."""
+    room = _REQUEST_CEILING - _REQUEST_MARGIN - _MIN_JUDGE_COMPLETION - _conservative_tokens(fixed_prompt)
+    chunks = [c for c in retrieved_context.split("\n\n[") if c.strip()]
+    chunks = [chunks[0]] + ["[" + c for c in chunks[1:]] if chunks else []
+    kept, used = [], 0
+    for chunk in chunks:
+        cost = _conservative_tokens(chunk) + 2
+        if used + cost > room:
+            break
+        kept.append(chunk)
+        used += cost
+    return "\n\n".join(kept), {"chunks_offered": len(chunks), "chunks_kept": len(kept), "room_tokens": room}
+
+
 def run_judge(
     draft: Scheme,
     document_text: str,
@@ -179,6 +212,9 @@ def run_judge(
         f"SOURCE DOCUMENT:\n{document_text}\n\n"
         f"DRAFT EXTRACTION (already produced from this document):\n{draft_json}"
     )
+    if retrieved_context:
+        retrieved_context, _fit = fit_retrieved_context(
+            retrieved_context, system_prompt + user_content + json.dumps(_JUDGE_JSON_SCHEMA))
     if retrieved_context:
         user_content += (
             "\n\nRETRIEVED AMENDMENT CONTEXT (external documents, already filtered to those "

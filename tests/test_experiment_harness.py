@@ -143,3 +143,11 @@ def test_gate_revalidation_runner_saves_findings_and_gate_decisions():
     saved = json.loads((runner.OUT / "PMMVY__clean.json").read_text(encoding="utf-8"))
     assert saved["gate_decisions"] == [] and saved["gold_tag"] == "gold-v2"
     assert runner.run(10**9, judge=judge, ledger=_fast_ledger(10**9)) == "done" and len(calls) == 21  # resumes
+
+
+def test_gate_candidates_hide_the_gold_annotators_reasoning():
+    spec = importlib.util.spec_from_file_location("run_gate_revalidation", ROOT / "scripts" / "run_gate_revalidation.py")
+    runner = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(runner)
+    for cand in runner.candidates():
+        assert cand["scheme"]["extraction_metadata"]["source_clause"] == runner.NEUTRAL_SOURCE_CLAUSE

@@ -33,11 +33,25 @@ PROVIDER = "groq"
 ESTIMATE = 8_000
 
 
+NEUTRAL_SOURCE_CLAUSE = "(not provided)"
+
+
+def _blind(scheme: dict) -> dict:
+    """The judge must see a candidate the way it sees a real extraction: the gold's source_clause is
+    the annotator's reasoning and audit history -- it would both leak the answers and inflate the
+    prompt past Groq's 8k-per-request ceiling -- so it is replaced, as is the gold's confidence."""
+    meta = scheme["extraction_metadata"]
+    meta["source_clause"], meta["confidence"], meta["flagged_for_review"] = NEUTRAL_SOURCE_CLAUSE, 0.8, False
+    return scheme
+
+
 def candidates() -> list[dict]:
     golds = {s: harness.frozen_gold(s) for s in harness.gold_scheme_ids()}
     variants = injected_errors.build_corpus(golds)
     controls = [{"variant_id": f"{sid}~clean", "scheme_id": sid, "errors": [],
                  "scheme": g.model_dump(mode="json", by_alias=True)} for sid, g in golds.items()]
+    for cand in variants + controls:
+        _blind(cand["scheme"])
     return variants + controls
 
 
