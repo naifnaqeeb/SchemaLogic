@@ -38,7 +38,7 @@ function getSpeechRecognitionConstructor(): SpeechRecognitionConstructor | null 
   return w.SpeechRecognition ?? w.webkitSpeechRecognition ?? null;
 }
 
-export function useSpeechRecognition(onResult: (transcript: string) => void) {
+export function useSpeechRecognition(onResult: (transcript: string) => void, lang = "en-IN") {
   const [supported, setSupported] = useState(false);
   const [listening, setListening] = useState(false);
   const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
@@ -57,7 +57,7 @@ export function useSpeechRecognition(onResult: (transcript: string) => void) {
       if (!Ctor) return; // unsupported -- no-op, typing is unaffected either way
 
       const recognition = new Ctor();
-      recognition.lang = "en-IN";
+      recognition.lang = lang; // the selected language's BCP-47 code (multilingual stage 3)
       recognition.interimResults = false;
       recognition.maxAlternatives = 1;
       recognition.onstart = () => setListening(true);
@@ -76,7 +76,7 @@ export function useSpeechRecognition(onResult: (transcript: string) => void) {
     } catch {
       // Web Speech API unavailable/blocked in this context -- silent no-op
     }
-  }, [listening, onResult]);
+  }, [listening, onResult, lang]);
 
   return { supported, listening, toggle };
 }

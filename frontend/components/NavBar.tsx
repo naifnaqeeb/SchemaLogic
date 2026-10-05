@@ -2,26 +2,29 @@
 
 import Link from "next/link";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { LANGUAGES, isLanguage } from "@/lib/i18n";
 
 // Matches the Figma reference: amber "Browse All Schemes" link top-left, centered wordmark,
-// language toggle top-right (stacked "English/हिंदी" style, via CSS line-break on the slash).
+// language menu top-right -- five languages since multilingual stage 3, each named in its own script.
 export function NavBar({ active }: { active: "chat" | "browse" }) {
-  const { t, toggle } = useLanguage();
-  const label = t("lang_toggle_label"); // "English/हिंदी" or "हिंदी/English"
-  const [first, second] = label.split("/");
+  const { t, language, setLanguage } = useLanguage();
 
   const toggleButton = (
-    <button
-      type="button"
-      onClick={toggle}
-      className="inline-flex items-center gap-2 rounded-full border border-sl-hairline bg-sl-surface px-4 py-1.5 text-sm text-sl-navy shadow-(--sl-shadow) hover:border-sl-accent transition-colors"
-    >
-      <span>🌐</span>
-      <span className="leading-tight text-center">
-        {first}/<br />
-        {second}
-      </span>
-    </button>
+    <label className="inline-flex items-center gap-2 rounded-full border border-sl-hairline bg-sl-surface px-4 py-1.5 text-sm text-sl-navy shadow-(--sl-shadow) hover:border-sl-accent transition-colors">
+      <span aria-hidden="true">🌐</span>
+      <select
+        aria-label="Language"
+        value={language}
+        onChange={(e) => isLanguage(e.target.value) && setLanguage(e.target.value)}
+        className="bg-transparent outline-none cursor-pointer"
+      >
+        {LANGUAGES.map((l) => (
+          <option key={l.code} value={l.code} lang={l.code}>
+            {l.nativeName}
+          </option>
+        ))}
+      </select>
+    </label>
   );
 
   // Layout differs slightly per page, matching the Figma reference exactly: chat page is a

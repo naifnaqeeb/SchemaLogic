@@ -8,9 +8,28 @@
 //    every /chat request body and threaded server-side into those system prompts -- see lib/api.ts.
 // 3. chat_engine.py's own template strings and scraped scheme text: NOT translated, same as before.
 
-export type Language = "en" | "hi";
+import generated from "./ui_strings.generated.json";
 
-type StringEntry = Record<Language, string>;
+// Multilingual stage 3 (2026-10-05): Urdu, Marathi and Tamil join English and Hindi. Their strings are
+// machine translations generated from data/i18n/<lang>.json by scripts/export_ui_strings.py
+// (reviewed or not -- see docs/i18n/REVIEW_<lang>.md); a key without one falls back to English.
+export type Language = "en" | "hi" | "ur" | "mr" | "ta";
+
+export const LANGUAGES: { code: Language; nativeName: string; dir: "ltr" | "rtl"; speech: string }[] = [
+  { code: "en", nativeName: "English", dir: "ltr", speech: "en-IN" },
+  { code: "hi", nativeName: "हिंदी", dir: "ltr", speech: "hi-IN" },
+  { code: "ur", nativeName: "اردو", dir: "rtl", speech: "ur-IN" },
+  { code: "mr", nativeName: "मराठी", dir: "ltr", speech: "mr-IN" },
+  { code: "ta", nativeName: "தமிழ்", dir: "ltr", speech: "ta-IN" },
+];
+
+export function isLanguage(value: string | null): value is Language {
+  return LANGUAGES.some((l) => l.code === value);
+}
+
+const GENERATED = generated as Record<string, Record<string, string>>;
+
+type StringEntry = { en: string; hi: string };
 
 export const STRINGS: Record<string, StringEntry> = {
   nav_browse: { en: "Browse All Schemes", hi: "सभी योजनाएं देखें" },
@@ -70,5 +89,6 @@ export const STRINGS: Record<string, StringEntry> = {
 export function translate(key: string, language: Language): string {
   const entry = STRINGS[key];
   if (!entry) return key;
-  return entry[language] || entry.en || key;
+  if (language === "en" || language === "hi") return entry[language] || entry.en || key;
+  return GENERATED[language]?.[key] || entry.en || key;
 }

@@ -163,3 +163,21 @@ def test_translation_validation_rejects_broken_entries():
     assert not tc.valid("Hello {name}", "नमस्ते")                                         # placeholder lost
     assert not tc.valid("**{x}** done", "{x} हो गया")                                      # bold lost
     assert not tc.valid("x", "  ")
+
+
+def test_ui_chrome_strings_are_in_the_catalogue_and_exported_only_when_valid(tmp_path):
+    import importlib.util
+    from pathlib import Path
+
+    english = messages.ui_strings_english()
+    assert "nav_browse" in english and f"ui.nav_browse" in messages.catalogue()
+    (messages.I18N_DIR / "ta.json").write_text(json.dumps({
+        "ui.nav_browse": {"source": english["nav_browse"], "text": "அனைத்து திட்டங்களும்", "status": "unreviewed"},
+        "ui.step_1": {"source": "an older English", "text": "பழையது", "status": "unreviewed"},
+    }, ensure_ascii=False), encoding="utf-8")
+    messages.reload_translations()
+    spec = importlib.util.spec_from_file_location("ex", Path(__file__).resolve().parents[1] / "scripts" / "export_ui_strings.py")
+    ex = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(ex)
+    built = ex.build()
+    assert built["ta"] == {"nav_browse": "அனைத்து திட்டங்களும்"} and built["ur"] == {} and built["mr"] == {}

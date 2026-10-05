@@ -116,6 +116,7 @@ def catalogue() -> dict[str, str]:
     from schemelogic.schema.field_ontology import _DEFAULT_SCOPE, _FIELDS, FAMILY_SCOPE
 
     out = dict(MESSAGES)
+    out.update({f"ui.{k}": v for k, v in ui_strings_english().items()})
     out["family_scope.default"] = _DEFAULT_SCOPE
     out.update({f"family_scope.{sid}": scope for sid, scope in FAMILY_SCOPE.items()})
     for spec in _FIELDS:
@@ -132,6 +133,20 @@ def catalogue() -> dict[str, str]:
             out[f"field.{spec.name}"] = spec.citizen_question
             out[f"label.{spec.name}"] = spec.display_label
     return out
+
+
+@lru_cache(maxsize=None)
+def ui_strings_english() -> dict[str, str]:
+    """The UI chrome strings (conversational/i18n.py's _STRINGS, which frontend/lib/i18n.ts copies
+    byte-for-byte), read by parsing the source -- that module imports Streamlit, which nothing here needs."""
+    import ast
+
+    source = (ROOT / "schemelogic" / "conversational" / "i18n.py").read_text(encoding="utf-8")
+    for node in ast.parse(source).body:
+        target = node.target if isinstance(node, ast.AnnAssign) else (node.targets[0] if isinstance(node, ast.Assign) else None)
+        if isinstance(target, ast.Name) and target.id == "_STRINGS":
+            return {k: v["en"] for k, v in ast.literal_eval(node.value).items()}
+    return {}
 
 
 @lru_cache(maxsize=None)

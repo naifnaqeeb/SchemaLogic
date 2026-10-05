@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { LANGUAGES } from "@/lib/i18n";
 import { useSpeechRecognition } from "@/lib/useSpeechRecognition";
 
 interface Props {
@@ -10,7 +11,8 @@ interface Props {
 }
 
 export function ChatInput({ onSend, disabled }: Props) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const speechLang = LANGUAGES.find((l) => l.code === language)?.speech ?? "en-IN";
   const [value, setValue] = useState("");
 
   const { supported, listening, toggle } = useSpeechRecognition((transcript) => {
@@ -18,7 +20,7 @@ export function ChatInput({ onSend, disabled }: Props) {
     // reviews/edits and presses Enter or the send button themselves, same as normal typed text;
     // misrecognized speech is never silently sent.
     setValue((prev) => (prev ? `${prev} ${transcript}` : transcript));
-  });
+  }, speechLang);
 
   const submit = () => {
     const trimmed = value.trim();
