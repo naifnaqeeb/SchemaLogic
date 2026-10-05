@@ -63,6 +63,8 @@ def test_detectors_tell_old_rule_from_new(runner):
                   [{**_pred("family_agricultural_land_acres", ">", 5, "economic"), "quantifier": "some_family_member"}])
     assert land(flatten_scheme(pre)) == ("present", ["exclusion: family_agricultural_land_acres > 5"])
 
+    assert runner.landholding_cap(flatten_scheme(harness.frozen_gold("PM-KISAN")))[0] == "absent"
+    assert runner.landholding_cap(flatten_scheme(_scheme("PM-KISAN", _pred("landholding_hectares", "<=", 2, "economic"))))[0] == "present"
     assert runner.age_70_branch(flatten_scheme(harness.frozen_gold("AB-PMJAY")))[0] == "present"
     pmay = flatten_scheme(harness.frozen_gold("PMAY-G"))
     assert runner.monthly_income_threshold(pmay)[0] == "15000"
@@ -91,7 +93,7 @@ def test_runner_saves_the_excerpt_resumes_and_stops_on_the_daily_cap(runner):
 
 
 def test_score_compares_each_arm_with_its_expected_value(runner):
-    pre = runner.ARMS[0]  # PMMVY pre-amendment
+    pre = next(a for a in runner.ARMS if a.scheme_id == "PMMVY")
     runner.sample_path(pre, 1).parent.mkdir(parents=True)
     runner.sample_path(pre, 1).write_text(json.dumps({"draft_extraction": _scheme(
         "PMMVY", _pred("pregnancy_child_order", "==", 1)).model_dump(mode="json", by_alias=True)}), encoding="utf-8")
@@ -104,5 +106,5 @@ def test_score_compares_each_arm_with_its_expected_value(runner):
     rows = {r["role"]: r for r in s["summary"] if r["scheme"] == "PMMVY"}
     assert rows["pre"]["as_expected"] == 1 and rows["pre"]["valid_samples"] == 1
     assert rows["post"]["as_expected"] == 1 and rows["post"]["failed_samples"] == 1
-    assert "PM-KISAN" in s["dropped"]
+    assert s["dropped"] == {}
     assert "| PMMVY | child-order rule | pre-amendment text | first child only | 1/1 |" in runner.markdown(s)

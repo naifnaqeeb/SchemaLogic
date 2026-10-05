@@ -27,7 +27,9 @@ is gitignored):
   document (Sept-2024 revision: those two deleted, Rs 15,000). Plus the stale-document arm: the 2024
   PIB-based document that lists the deleted items without saying they were deleted (GOLD_AUDIT 7.9),
   re-extracted with current code.
-- PM-KISAN: dropped (DROPPED below).
+- PM-KISAN: Operational Guidelines as first issued (2018-19; pmkisan.gov.in links them as "Pre-Revised
+  Operational Guidelines"), paras 1-3 -- small and marginal farmers, land up to 2 hectares. Post: the
+  current document (the 2-hectare limit removed from 1 June 2019).
 """
 
 from __future__ import annotations
@@ -54,15 +56,9 @@ ESTIMATE_PER_SAMPLE = 9_500
 RAW = ROOT / "data" / "raw_documents"
 CORPUS = ROOT / "data" / "retrieval_corpus"
 
-DROPPED = {
-    "PM-KISAN": (
-        "No official pre-amendment text found. The February 2019 Operational Guidelines (2-hectare "
-        "limit) were found only as an unofficial Scribd upload; the Operational Guidelines on hand "
-        "(PM-KISAN_primary.pdf) present only the amended rule; and the 1 June 2019 Cabinet decision "
-        "was never located (data/retrieval_corpus/PM-KISAN_amendment_reference.txt is a secondary "
-        "summary). Dropped as instructed rather than extracted from an unofficial or secondary text."
-    ),
-}
+# Schemes the user listed that are not run, with the reason. Empty since 2026-10-05: PM-KISAN's
+# pre-amendment text was found on pmkisan.gov.in, linked as "Pre-Revised Operational Guidelines".
+DROPPED: dict[str, str] = {}
 
 
 
@@ -75,6 +71,10 @@ class Arm(NamedTuple):
 
 
 ARMS = [
+    Arm("PM-KISAN__pre_2019_guidelines", "PM-KISAN", "pre", 1,
+        "PM-KISAN Operational Guidelines as first issued, 2018-19 (PM-KISAN_primary_pre_revised_OG.pdf, from "
+        "https://pmkisan.gov.in/Documents/OPERATIONAL%20GUIDELINES.pdf, linked there as 'Pre-Revised "
+        "Operational Guidelines'), paras 1-3"),
     Arm("PMMVY__pre_2017_guidelines", "PMMVY", "pre", 1,
         "PMMVY Scheme Implementation Guidelines, MWCD 2017 (PMMVY_primary_guidelines_2017.pdf, from "
         "https://nirdpr.org.in/crru/docs/health/PMMVY%20Scheme%20Implemetation%20Guidelines.pdf), paras 1.3, 2.2-2.4"),
@@ -128,6 +128,10 @@ def _gr(date: str) -> str:
 
 
 def document(arm: Arm) -> str:
+    if arm.name == "PM-KISAN__pre_2019_guidelines":
+        t = _pdf_text("PM-KISAN_primary_pre_revised_OG")
+        return _between(t, "“Pradhan Mantri KIsan SAmman Nidhi (PM-KISAN)” OPERATIONAL GUIDELINES",
+                        "4. Strategy for Implementation")
     if arm.name == "PMMVY__pre_2017_guidelines":
         t = re.sub(r" Chapter - \d+ \d+ ", " ", _pdf_text("PMMVY_primary_guidelines_2017"))  # page footer
         return ("Pradhan Mantri Matru Vandana Yojana (PMMVY) -- Scheme Implementation Guidelines, Ministry of "
@@ -247,6 +251,13 @@ def age_70_branch(preds) -> tuple[str, list[str]]:
     return ("present" if hits else "absent"), [_show(p) for p in hits]
 
 
+def landholding_cap(preds) -> tuple[str, list[str]]:
+    """An upper bound on land in the inclusion, or a 'more than N hectares' exclusion."""
+    hits = [p for p in _matching(preds, r"land|hectare|acre")
+            if (p.location == "inclusion" and p.op in ("<=", "<")) or (p.location == "exclusion" and p.op in (">", ">="))]
+    return ("present" if hits else "absent"), [_show(p) for p in hits]
+
+
 def monthly_income_threshold(preds) -> tuple[str, list[str]]:
     hits = [p for p in _matching(preds, r"income|earning") if "month" in p.field]
     return (", ".join(sorted({str(p.value) for p in hits})) or "none"), [_show(p) for p in hits]
@@ -254,6 +265,7 @@ def monthly_income_threshold(preds) -> tuple[str, list[str]]:
 
 # (check, detector, expected value by role); "post" is the current document's k=3 samples
 CHECKS: dict[str, list[tuple[str, Callable, dict[str, str]]]] = {
+    "PM-KISAN": [("2-hectare landholding limit (removed 1 June 2019)", landholding_cap, {"pre": "present", "post": "absent"})],
     "PMMVY": [("child-order rule", child_order_rule,
                {"pre": "first child only", "post": "first child, or second if a girl"})],
     "MH-LADKI-BAHIN": [
