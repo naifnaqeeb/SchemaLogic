@@ -55,7 +55,7 @@ def run(scheme_ids: list[str], budget: int, judge=judge_repair.run_judge, ledger
             ledger.record(u, scheme_id=sid)
         payload = {**harness.result_header(ITEM, PROVIDER, {"judge_samples": 1, "compact_draft": True,
                                                            "apply": "gate auto-accepted findings only"}),
-                   "scheme_id": sid, "source_document_sha256": sha, "from_sample": str(sample.relative_to(ROOT)),
+                   "scheme_id": sid, "source_document_sha256": sha, "from_sample": f"self_consistency/{sid}/sample_1.json",
                    "usage": usage}
         if isinstance(report, judge_repair.JudgeFailure):
             if harness.is_daily_cap(report.detail) or "rate limit" in report.detail.lower():
