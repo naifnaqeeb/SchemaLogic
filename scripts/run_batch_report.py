@@ -98,6 +98,8 @@ def _latest(pattern: str) -> Callable[[str], Path | None]:
 CONFIGURATIONS: dict[str, tuple[str, Callable[[str], Path | None]]] = {
     "phase3_pipeline": ("2026-08 Phase 3 pipeline: extraction -> judge+repair -> gate (latest stage on disk)", _phase3),
     "baseline3_extraction_only": ("Baseline 3: one extraction, no judge or repair (k=3 run, sample 1)", _sample(1)),
+    "pipeline_on_sample1": ("Full pipeline (judge -> gate -> apply approved) on the same extraction as Baseline 3",
+                           _latest("pipeline_on_sample1/{sid}.json")),
     "baseline1_flat": ("Baseline 1: flat attribute extraction, no compositional logic", _latest("baseline1/{sid}.json")),
 }
 

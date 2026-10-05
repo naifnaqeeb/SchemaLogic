@@ -151,3 +151,27 @@ def test_gate_candidates_hide_the_gold_annotators_reasoning():
     spec.loader.exec_module(runner)
     for cand in runner.candidates():
         assert cand["scheme"]["extraction_metadata"]["source_clause"] == runner.NEUTRAL_SOURCE_CLAUSE
+
+
+def test_pipeline_on_samples_applies_only_gate_approved_findings():
+    spec = importlib.util.spec_from_file_location("run_pipeline_on_samples", ROOT / "scripts" / "run_pipeline_on_samples.py")
+    runner = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(runner)
+    runner.OUT = harness.EXPERIMENTS_DIR / "pipeline_on_sample1"
+    runner.SAMPLES = harness.EXPERIMENTS_DIR / "self_consistency"
+    gold = harness.frozen_gold("PMMVY")
+    (runner.SAMPLES / "PMMVY").mkdir(parents=True)
+    (runner.SAMPLES / "PMMVY" / "sample_1.json").write_text(
+        json.dumps({"draft_extraction": gold.model_dump(mode="json", by_alias=True)}), encoding="utf-8")
+    from schemelogic.extraction.judge_repair import JudgeFinding, JudgeReport
+
+    finding = JudgeFinding(category="preambular_implied_fact", description="d", source_quote="not in the document at all",
+                           confidence=0.99, proposed_predicate={"location": "inclusion", "cat": "other", "field": "made_up", "op": "==", "value": True})
+
+    def judge(scheme, doc, provider, usage_sink, compact_draft):
+        return JudgeReport(findings=[finding])
+
+    assert runner.run(["PMMVY"], 10**9, judge=judge, ledger=_fast_ledger(10**9)) == "done"
+    saved = json.loads((runner.OUT / "PMMVY.json").read_text(encoding="utf-8"))
+    assert saved["gate_decisions"][0]["decision"] == "defer_to_review"  # quote not in the source
+    assert "made_up" not in json.dumps(saved["gated_extraction"])        # so nothing was applied
