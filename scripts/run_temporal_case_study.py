@@ -351,7 +351,8 @@ def markdown(s: dict) -> str:
              if r["valid_samples"] or r["failed_samples"] else "*not run yet*")
         lines.append(f"| {r['scheme']} | {r['check']} | {ROLE_LABEL[r['role']]} | {r['expected']} | {n} | "
                      f"{'; '.join(r['values']) or '—'} |")
-    lines += ["", "## Dropped", ""] + [f"- **{k}**: {v}" for k, v in s["dropped"].items()]
+    lines += ["", "## Dropped", ""] + ([f"- **{k}**: {v}" for k, v in s["dropped"].items()] or [
+        "None: official pre-amendment text was found for every listed scheme (sources in each arm's result file)."])
     lines += ["", "## Per sample (matched predicates)", ""]
     for r in s["rows"]:
         lines.append(f"- **{r['arm']}** {r['sample']}: {r['status']}"

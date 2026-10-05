@@ -30,6 +30,7 @@
 
 ## Dropped
 
+None: official pre-amendment text was found for every listed scheme (sources in each arm's result file).
 
 ## Per sample (matched predicates)
 

@@ -127,7 +127,9 @@ Legend: ☐ not started · ◐ in progress · ☑ done · ⊘ dropped (with reas
   the Hindi PDF uses a legacy non-Unicode font (extracted text is corrupted) — recorded as not run.
 - ◐ 11. Multilingual stage 3 (interface): code ☑ (`defed6e`); UI strings for ur/mr/ta and the live
   conversation per language follow the translations.
-- ◐ 12. README.md ☑; RESULTS.md once the runs are in; full suite (976 passing on 2026-10-05).
+- ◐ 12. README.md ☑; RESULTS.md ◐ — built by `scripts/build_results.py` (regenerates every offline report,
+  stitches them with a status table; re-run once the runs land, no quota); full suite 989 passing,
+  enforced on every commit by `.githooks/pre-commit` (2026-10-05).
 
 ## Design notes (recorded as found)
 
@@ -208,7 +210,9 @@ Legend: ☐ not started · ◐ in progress · ☑ done · ⊘ dropped (with reas
 **Done**
 - Item 6: gate re-validation scoring by error type; present-but-wrong types reported apart from the
   ones the judge is meant to catch (your note). Agreement signal scored offline: all 15 present-but-wrong
-  injected rules had agreement ≤ 1/3 (recall 1.0), precision ~0.19 (PMMVY skipped, 1 sample).
+  injected rules had agreement ≤ 1/3 (recall 1.0), precision ~0.19 (PMMVY skipped, 1 sample). *(Added
+  2026-10-05: that recall is close to guaranteed by construction — an injected rule is one no sample
+  produced; precision is the informative number.)*
 - Item 7: RAG comparison runner (fix was day 1).
 - Item 8: multilingual stage 2 — replies, questions, verdicts and explanations in the citizen's
   language; description translation, cached and labelled; translation validator and review sheets.
@@ -266,3 +270,13 @@ spent on day 1's samples. All are queued and run unattended (see the quota sched
   Hindi batch turned its English fallback into Hindi; I had run only a subset of the suite before that
   commit). Tests are now isolated from `data/i18n/` in `conftest.py`; no test edited.
 - **Before the demo**: restart the backend after the translations land (it caches them in memory).
+
+### Pre-commit check — 2026-10-05
+
+- `.githooks/pre-commit` (enabled with `git config core.hooksPath .githooks`): no commit unless the full
+  suite passes, judged by pytest's own exit status; refuses while tracked code has unstaged changes,
+  since the suite runs on the working tree. Verified to refuse a staged failing test and an unstaged
+  edit. Prompted by `6f9269c`, which went in with a failing test.
+- RESULTS.md draft built; gate report now says its agreement-signal recall is near-guaranteed by
+  construction (injected rules are ones no sample produced) — precision is the number to read.
+

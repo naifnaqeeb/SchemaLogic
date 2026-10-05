@@ -261,6 +261,11 @@ def markdown(a: dict) -> str:
           "candidate is group C; the negatives are the candidates' correct rules. "
           f"Skipped (fewer than 2 samples): {', '.join(s['schemes_skipped_fewer_than_2_samples']) or 'none'}. "
           f"ECE of agreement as P(correct), n = {s['n_present']} rules: **{s['ece']}**.", "",
+          "**Read recall with care: it is close to guaranteed here.** An injected rule is a mutation of gold that "
+          "no extraction produced, so the samples almost never contain it and it scores low agreement by "
+          "construction. A real extraction error is one the model itself made, possibly in every sample. Precision "
+          "is the informative number: most rules this signal flags are correct rules the samples did not reproduce "
+          "identically.", "",
           "| Flag a rule produced by | Flagged | True errors flagged | Precision | Recall | Recall by error type |",
           "|---|---|---|---|---|---|"]
     for row in s["pr"]:

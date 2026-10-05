@@ -2,7 +2,7 @@
   "item": "batch_report",
   "gold_tag": "gold-v2",
   "gold_commit": "82436ac11fb53421bf44c8c68e6333e1db353442",
-  "code_commit": "927d8f3",
+  "code_commit": "df7fb58",
   "provider": "none (offline)",
   "model": "openai/gpt-oss-120b",
   "config": {
@@ -14,7 +14,7 @@
     }
   },
   "date": "2026-10-05",
-  "created_at": "2026-10-05T15:50:57",
+  "created_at": "2026-10-05T18:41:02",
   "caveats": [
     "ONTOLOGY CONTAMINATION. The field ontology the extractor is constrained to was built from these same 7 gold schemes (each field lists the schemes it was made for), and the extraction prompt names those fields. Field-name agreement with gold is therefore optimistic: a structural F1 here measures extraction into a vocabulary designed around the answer, not open-world extraction. The AI-Checked tier (schemes outside the gold set) is the only evidence on unseen schemes.",
     "SYNTHETIC PROFILES. The profile suites were written by the gold annotator to exercise the rules they encoded, so outcome equivalence tests the scenarios someone already thought of. A rule nobody wrote a profile for cannot disagree.",
