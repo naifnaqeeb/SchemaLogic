@@ -59,7 +59,9 @@ def queue(name: str, budget: int):
         and review states (offline), so they are current without anyone being notified."""
         result = tc.translate(lang, budget)
         if result == "done":
-            tc.write_sheet(lang)
+            # entries that failed validation go to people, never back to the model (decided 2026-10-06
+            # for Hindi, Urdu, Marathi); mark_manual also rewrites the sheets
+            tc.mark_manual(lang, ["failed"])
             export.main()
         return result
 
@@ -70,13 +72,17 @@ def queue(name: str, budget: int):
     # presentable results (full pipeline on sample 1, temporal case study with the Marathi arm of C2),
     # then Urdu, Marathi and Tamil, then everything else. 2026-10-06: a retry of the pipeline's failed
     # judge calls (json_validate_failed) goes after the temporal study, before Urdu.
+    # 2026-10-06 evening, for tonight's quota: judge retry with reasoning_effort=low -> the PMAY-G
+    # pre-amendment arm's two extra samples (temporal C4, now k=3 for that arm) -> PMMVY samples -> the
+    # rest of Marathi -> Tamil -> everything else. Finished items are no-ops.
     return [
         translations("hi"),
         ("pipeline on sample 1", p1.ESTIMATE, lambda: p1.run(gold, budget)),
+        ("pipeline retry: failed judge calls, reasoning_effort=low", p1.ESTIMATE,
+         lambda: p1.retry_failed(gold, budget, setting="reasoning_low")),
         ("temporal C4 (+ Marathi arm of C2)", temporal.ESTIMATE_PER_SAMPLE, lambda: temporal.run(budget)),
-        ("pipeline retry: failed judge calls at max_tokens=2000", p1.ESTIMATE, lambda: p1.retry_failed(gold, budget)),
-        translations("ur"), translations("mr"), translations("ta"),
         ("k=3 self-consistency (finish)", sc.ESTIMATE_PER_SAMPLE, lambda: sc.run(gold, 3, budget)),
+        translations("ur"), translations("mr"), translations("ta"),
         ("k=3 pmksypdmc (silver)", sc.ESTIMATE_PER_SAMPLE, lambda: sc.run(["_silver_pmksypdmc"], 3, budget)),
         ("baseline 1", b1.ESTIMATE, lambda: b1.run(gold, budget)),
         ("gate re-validation (judge on 21 candidates)", gate.ESTIMATE, lambda: gate.run(budget)),

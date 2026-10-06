@@ -84,10 +84,39 @@ def _print(sid: str, payload: dict, usage: list[dict]) -> None:
               f"{sum(d['decision'] == 'auto_accept' for d in payload.get('gate_decisions', []))} applied {spent}", flush=True)
 
 
-def retry_failed(scheme_ids: list[str], budget: int, judge=judge_repair.run_judge, ledger=None) -> str:
-    """Re-run, once, every scheme whose judge call failed with json_validate_failed (gpt-oss spending
-    its completion budget on reasoning before any JSON), at RETRY_MAX_TOKENS -- the recovery Baseline 2
-    used. The failed attempt is kept in the result under `failed_attempts`."""
+# Retry settings for a judge call that failed with json_validate_failed (gpt-oss spending its whole
+# completion budget on reasoning before any JSON). Each is tried at most once per scheme, in the order
+# the queue asks for them; the result records which setting produced it.
+RETRY_SETTINGS = {
+    "max_tokens_2000": {"max_tokens": RETRY_MAX_TOKENS},  # Baseline 2's recovery (2026-10-06 14:32: failed again)
+    "reasoning_low": {"reasoning_effort": "low"},          # the extractor's truncation recovery (2026-10-06 evening)
+}
+
+
+def _request_estimate(draft: Scheme, doc: str) -> dict:
+    """The judge request's size against Groq's per-request limit (prompt + completion <= 8,000 tokens),
+    estimated as judge_repair sizes it -- a failed call returns no usage to measure."""
+    from schemelogic.extraction.extractor import _estimate_tokens
+
+    draft_json = json.dumps(draft.model_dump(mode="json", by_alias=True, exclude_defaults=True), ensure_ascii=False, separators=(",", ":"))
+    prompt = (judge_repair._judge_system_prompt() + f"SOURCE DOCUMENT:\n{doc}\n\nDRAFT EXTRACTION (already produced from this document):\n{draft_json}"
+              + json.dumps(judge_repair._JUDGE_JSON_SCHEMA))
+    return {"prompt_tokens_estimate": _estimate_tokens(prompt), "request_limit": judge_repair._REQUEST_CEILING}
+
+
+def _tried(payload: dict) -> list[str]:
+    tried = list(payload.get("retry_settings", []))
+    if payload.get("retried_with_max_tokens") and "max_tokens_2000" not in tried:  # results written before the field existed
+        tried.insert(0, "max_tokens_2000")
+    return tried
+
+
+def retry_failed(scheme_ids: list[str], budget: int, judge=judge_repair.run_judge, ledger=None,
+                 setting: str = "max_tokens_2000") -> str:
+    """Re-run every scheme whose judge call failed with json_validate_failed, once with `setting` (see
+    RETRY_SETTINGS). Every failed attempt is kept under `failed_attempts`; `judge_setting` records the
+    setting of the call this result came from, so a comparison can show it."""
+    kwargs = RETRY_SETTINGS[setting]
     ledger = ledger or harness.Ledger(ITEM, PROVIDER, daily_budget=budget)
     for sid in scheme_ids:
         path = OUT / f"{sid}.json"
@@ -95,7 +124,7 @@ def retry_failed(scheme_ids: list[str], budget: int, judge=judge_repair.run_judg
             continue
         previous = json.loads(path.read_text(encoding="utf-8"))
         failure = previous.get("judge_failure")
-        if not failure or "json_validate_failed" not in failure.get("detail", "") or previous.get("retried_with_max_tokens"):
+        if not failure or "json_validate_failed" not in failure.get("detail", "") or setting in _tried(previous):
             continue
         sample_payload = json.loads((SAMPLES / sid / "sample_1.json").read_text(encoding="utf-8"))
         draft = Scheme.model_validate(sample_payload["draft_extraction"])
@@ -106,18 +135,18 @@ def retry_failed(scheme_ids: list[str], budget: int, judge=judge_repair.run_judg
             print(f"[stop] {exc}", flush=True)
             return "budget"
         usage: list[dict] = []
-        report = judge(draft, doc, provider=PROVIDER, usage_sink=usage.append, compact_draft=True, max_tokens=RETRY_MAX_TOKENS)
+        report = judge(draft, doc, provider=PROVIDER, usage_sink=usage.append, compact_draft=True, **kwargs)
         for u in usage:
-            ledger.record(u, scheme_id=sid, retry=True)
+            ledger.record(u, scheme_id=sid, retry=setting)
         if isinstance(report, judge_repair.JudgeFailure) and (harness.is_daily_cap(report.detail) or "rate limit" in report.detail.lower()):
             print(f"[stop] {sid}: {report.detail[:600]}", flush=True)
             return "daily_cap" if harness.is_daily_cap(report.detail) else "rate_limited"
-        attempt = {k: previous[k] for k in ("created_at", "code_commit", "usage", "judge_failure") if k in previous}
+        attempt = {k: previous[k] for k in ("created_at", "code_commit", "usage", "judge_failure", "judge_setting") if k in previous}
         payload = {**harness.result_header(ITEM, PROVIDER, {"judge_samples": 1, "compact_draft": True,
-                                                           "apply": "gate auto-accepted findings only",
-                                                           "max_tokens": RETRY_MAX_TOKENS}),
+                                                           "apply": "gate auto-accepted findings only", **kwargs}),
                    "scheme_id": sid, "source_document_sha256": sha, "from_sample": previous["from_sample"],
-                   "usage": usage, "retried_with_max_tokens": RETRY_MAX_TOKENS,
+                   "usage": usage, "judge_setting": kwargs, "retry_settings": _tried(previous) + [setting],
+                   "request_estimate": _request_estimate(draft, doc),
                    "failed_attempts": previous.get("failed_attempts", []) + [attempt]}
         if isinstance(report, judge_repair.JudgeFailure):
             payload["judge_failure"] = {"reason": report.reason, "detail": report.detail[:2000]}
@@ -127,7 +156,7 @@ def retry_failed(scheme_ids: list[str], budget: int, judge=judge_repair.run_judg
             payload["gate_decisions"] = [d.to_dict() for d in decisions]
             payload["gated_extraction"] = repaired.model_dump(mode="json", by_alias=True)
         path.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-        _print(f"{sid} (retry, max_tokens={RETRY_MAX_TOKENS})", payload, usage)
+        _print(f"{sid} (retry, {setting})", payload, usage)
     return "done"
 
 

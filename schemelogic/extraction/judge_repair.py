@@ -197,6 +197,7 @@ def run_judge(
     usage_sink=None,
     compact_draft: bool = False,
     max_tokens: int | None = None,
+    reasoning_effort: str | None = None,
 ) -> JudgeReport | JudgeFailure:
     """Single judge pass: re-reads the source document against the draft, scoped to the two
     confirmed failure patterns. Never returns a full Scheme — only findings + proposed patches.
@@ -207,7 +208,8 @@ def run_judge(
     just accepts context and cites it the same way it cites document_text). Optional and additive:
     omitting it reproduces the exact pre-Phase-4 judge behavior, so existing callers/tests are
     unaffected. `provider` / `usage_sink`: see extractor.extract_scheme. `max_tokens` overrides the
-    computed completion budget (opt-in, for a retry after json_validate_failed; default unchanged)."""
+    computed completion budget and `reasoning_effort` ("low") limits gpt-oss's reasoning tokens -- both
+    opt-in, for a retry after json_validate_failed; with neither, the request is exactly as before."""
     client = client or (Groq(api_key=os.environ["GROQ_API_KEY"]) if provider == "groq" else _client_for(provider))
     if compact_draft:
         # Same content without indentation or default-valued keys: AB-PMJAY's 14-exception draft, indented,
@@ -233,10 +235,12 @@ def run_judge(
             "DOCUMENT above remains authoritative for everything else):\n" + retrieved_context
         )
 
+    extra = {"reasoning_effort": reasoning_effort} if reasoning_effort else {}
     try:
         response = client.chat.completions.create(
             model=model,
             temperature=0.1,
+            **extra,
             max_tokens=max_tokens or _completion_budget(system_prompt, user_content, _JUDGE_JSON_SCHEMA),
             messages=[
                 {"role": "system", "content": system_prompt},

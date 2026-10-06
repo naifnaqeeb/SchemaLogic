@@ -76,8 +76,9 @@ def test_queue_stops_while_waiting_once_the_stop_time_passes():
 def test_review_order_hindi_then_presentable_results_then_other_languages():
     """Order revised 2026-10-05: the demo uses English and Hindi only."""
     labels = [label for label, _, _ in _script("run_queue").queue("review", 1)]
-    assert labels[:7] == ["translations hi", "pipeline on sample 1", "temporal C4 (+ Marathi arm of C2)",
-                          "pipeline retry: failed judge calls at max_tokens=2000",  # added 2026-10-06
+    # 2026-10-06 evening: judge retry -> PMAY-G pre x2 (temporal) -> PMMVY samples -> Marathi -> Tamil
+    assert labels[:8] == ["translations hi", "pipeline on sample 1", "pipeline retry: failed judge calls, reasoning_effort=low",
+                          "temporal C4 (+ Marathi arm of C2)", "k=3 self-consistency (finish)",
                           "translations ur", "translations mr", "translations ta"]
     assert len(labels) == 12
 

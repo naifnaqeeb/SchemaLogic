@@ -1,16 +1,17 @@
-# Review summary — SchemeLogic (as of 2026-10-06, 03:00)
+# Review summary — SchemeLogic (as of 2026-10-06, 22:00)
 
 *Built only from results already on disk; no new LLM calls. Every number below is against the gold
 frozen at tag `gold-v2` and comes from a generated report (linked), so it can be regenerated.
 Model: `openai/gpt-oss-120b` on Groq (free tier). **All samples are small**; read directions, not
 decimals.*
 
-> **Done overnight:** Hindi translations (293/300; 7 to translate by hand); full pipeline on Baseline 3's
-> extraction (4 valid, 2 failed judge calls); temporal case study 6/9; the Marathi arm of the cross-lingual study.
-> **Still running (the queue stops 2026-10-07 10:00 so the demo has the full Groq quota):** the last 3
-> temporal arms (PMAY-G ×2, AB-PMJAY) → retry of the 2 failed judge calls → Urdu, Marathi, Tamil.
-> **Will not run before the review:** Baseline 1, gate re-validation on injected errors (judge part),
-> RAG with/without retrieval, PMMVY samples 2–3, the pmksypdmc test. Progress: `python scripts/queue_status.py`.
+> **Done:** Hindi (293/300) and Urdu (295/300) translations; full pipeline on Baseline 3's extraction (4 valid,
+> 2 failed judge calls, also failed on retry at `max_tokens=2000`); temporal case study, every arm once; the
+> Marathi arm of the cross-lingual study; Marathi translations 159/300.
+> **Queued tonight (the queue stops 2026-10-07 10:00 so the demo has the full Groq quota):** judge retry with
+> `reasoning_effort=low` → 2 more samples of PMAY-G's pre-amendment arm → PMMVY samples 2–3 → rest of Marathi →
+> Tamil if quota remains. **Will not run before the review:** Baseline 1, gate re-validation (judge part),
+> RAG, the pmksypdmc test. Progress: `python scripts/queue_status.py`.
 
 ## 1. The gold audit changed the headline claim — [audit](../GOLD_AUDIT_2026-10-03.md)
 
@@ -53,8 +54,11 @@ missed the housing exclusions), false "not eligible" 7.1%.
 the gate accepted added a rule on a new field (`is_destitute`, `max_one_beneficiary_per_family`,
 `is_pregnant_or_lactating`) that the test profiles don't carry, so the evaluator can't decide them.
 The pipeline caused no wrong verdicts, and the extra rules make it ask more questions. **Two of six judge calls failed**
-(AB-PMJAY, PMAY-G: `json_validate_failed`). They are reported as failed runs, excluded from the comparison, and queued for
-one retry at a higher completion cap.
+(AB-PMJAY, PMAY-G: `json_validate_failed`, also on retry at `max_tokens=2000`). Their prompt is about 6.3k
+tokens (conservative estimate) of Groq's 8k per-request limit for prompt plus answer. The model spends the
+remaining ~2k on reasoning before writing any JSON. They are reported as failed runs and excluded from the
+comparison. One more retry, with `reasoning_effort=low`, runs tonight; if it works, the comparison marks them
+as run with a different setting.
 
 ## 5. Temporal case study (amendments) — [report](TEMPORAL_C4.md)
 
@@ -67,10 +71,12 @@ the old rule and its removal.
 | MH-LADKI-BAHIN: five-acre exclusion deleted, age 60 → 65 (2024) | both old rules, 1/1 | both new, 2/2 (one sample failed) |
 | ↳ same, from the three Marathi GRs in date order | — | age 65, 3/3; **five-acre exclusion kept, 3/3** |
 | PMMVY 2.0: second child if a girl (2022) | "first child only", 1/1 | **0/1**: no child-order rule at all |
-| PMAY-G: refrigerator, landline deleted; ₹10,000 → ₹15,000 (2024) | *still running* | deleted rules absent and ₹15,000, 3/3 |
-| AB-PMJAY: 70+ branch added (2024) | *still running* | present, 3/3 |
+| PMAY-G: refrigerator, landline deleted; ₹10,000 → ₹15,000 (2024) | **0/1: the sample missed the whole 13-item exclusion list** (2 more samples tonight) | deleted rules absent and ₹15,000, 3/3 |
+| ↳ same, from the stale 2024 document (lists the deleted items, no deletion notice) | — | refrigerator and landline kept, ₹15,000, 1/1: it reads the document as written |
+| AB-PMJAY: 70+ branch added (2024) | absent, 1/1 | present, 3/3 |
 
-The extractor reads each version correctly when given that version alone. Given the original GR plus the
+Given one version alone, the extractor reads it correctly (4 of 5 pre-amendment texts; PMAY-G's sample
+missed the exclusion list entirely). Given the original GR plus the
 amending GR, it applied one amendment (age) and **kept the deleted exclusion**, even though two of
 the three samples recorded that condition as superseded. On 10-04, PMAY-G's single run did the same with the
 deleted refrigerator and landline exclusions. Retirement is the step that fails.
@@ -88,5 +94,6 @@ the amendment applied (§5).
 - No result here is on unseen schemes: the AI-Checked tier is the only evidence for those.
 - No gate-on-injected-errors judge numbers yet. The agreement signal's recall on injected errors is
   near-guaranteed by construction, so it is not claimed as a result.
-- Hindi (used in the demo) is machine-translated and not yet reviewed, and the app says so on every page.
-  Urdu, Marathi and Tamil are not translated yet.
+- Hindi (used in the demo) and Urdu are machine-translated and not yet reviewed; the app says so on every
+  page. Entries the checks rejected (Hindi 7, Urdu 5, Marathi 1) are left for people to translate. Marathi is
+  partly translated and Tamil not at all.

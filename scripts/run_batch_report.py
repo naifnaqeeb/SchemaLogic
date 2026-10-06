@@ -95,7 +95,25 @@ def _failure(path: Path) -> str | None:
         return None
     detail = f.get("detail", "")
     code = next((c for c in ("json_validate_failed", "request too large", "rate limit") if c in detail.lower()), "")
-    return f"judge call failed ({f.get('reason')}{': ' + code if code else ''})"
+    reason = f"judge call failed ({f.get('reason')}{': ' + code if code else ''})"
+    tried = payload.get("retry_settings") or (["max_tokens_2000"] if payload.get("retried_with_max_tokens") else [])
+    if tried:
+        reason += ", and again on retry with " + " and with ".join(SETTING_LABEL.get(s, s) for s in tried)
+    est = payload.get("request_estimate")
+    if est and code == "json_validate_failed":
+        reason += (f". Cause: the judge's prompt is about {est['prompt_tokens_estimate']:,} tokens (conservative estimate) of "
+                   f"Groq's {est['request_limit']:,}-token per-request limit for prompt plus answer; the answer gets only the "
+                   "remainder (about 2,000 tokens), and the model spends it on reasoning before writing any JSON")
+    return reason
+
+
+SETTING_LABEL = {"max_tokens_2000": "max_tokens=2000", "reasoning_low": "reasoning_effort=low"}
+
+
+def _setting(path: Path) -> str | None:
+    """The non-default judge setting a pipeline result came from (a retry), e.g. "reasoning_effort=low"."""
+    s = json.loads(path.read_text(encoding="utf-8")).get("judge_setting") or {}
+    return ", ".join(f"{k}={v}" for k, v in s.items()) or None
 
 
 def _applied(path: Path) -> int | None:
@@ -237,6 +255,8 @@ def build() -> dict:
             per_scheme[sid] = {"draft_file": str(path.relative_to(ROOT)), **_score(gold[sid], profiles[sid], _draft(path))}
             if _applied(path) is not None:
                 per_scheme[sid]["findings_applied"] = _applied(path)
+            if name == "pipeline_on_sample1" and _setting(path):
+                per_scheme[sid]["judge_setting"] = _setting(path)
         report["configurations"][name] = {"description": description, "absent": absent, "failed": failed,
                                           "per_scheme": per_scheme,
                                           "aggregate": _aggregate(per_scheme) if per_scheme else None}
@@ -257,6 +277,7 @@ def _paired(configs: dict) -> dict:
                 "false_not_eligible": o["false_negative_eligible_rate"], "other": o["other_mismatch_rate"]}
 
     rows = [{"scheme": s, "findings_applied": pipe["per_scheme"][s].get("findings_applied"),
+             "judge_setting": pipe["per_scheme"][s].get("judge_setting"),
              "baseline3": side(b3["per_scheme"][s]), "pipeline": side(pipe["per_scheme"][s])} for s in both]
     excluded = {**{s: v["reason"] for s, v in pipe["failed"].items()},
                 **{s: "no Baseline 3 sample (extraction failed validation)" for s in b3["absent"]},
@@ -286,7 +307,7 @@ def markdown(report: dict) -> str:
         for sid, r in cfg["per_scheme"].items():
             exc = r["f1_by_category"].get("exception_to_exclusion")
             o, s = r["outcome_equivalence"], r["scalar"]
-            lines.append(f"| {sid} | {r['structural_f1']['f1']:.3f} | {'—' if exc is None else format(exc['f1'], '.3f')} | "
+            lines.append(f"| {sid}{' *(judge: ' + r['judge_setting'] + ')*' if r.get('judge_setting') else ''} | {r['structural_f1']['f1']:.3f} | {'—' if exc is None else format(exc['f1'], '.3f')} | "
                          f"{_pct(o['agreement_rate'])} | {_pct(o['false_positive_eligible_rate'])} | "
                          f"{_pct(o['false_negative_eligible_rate'])} | {o['n_profiles']} | {s['n_matched']}/{s['n_checked']} | "
                          f"`{Path(r['draft_file']).name}` |")
@@ -314,7 +335,8 @@ def markdown(report: dict) -> str:
                       "|---|---|---|---|---|---|---|"]
             for r in pv["rows"]:
                 b, p = r["baseline3"], r["pipeline"]
-                lines.append(f"| {r['scheme']} | {r['findings_applied']} | {b['f1']:.3f} → {p['f1']:.3f} | "
+                label = r["scheme"] + (f" *(judge: {r['judge_setting']})*" if r.get("judge_setting") else "")
+                lines.append(f"| {label} | {r['findings_applied']} | {b['f1']:.3f} → {p['f1']:.3f} | "
                              f"{_pct(b['agreement'])} → {_pct(p['agreement'])} | {_pct(b['false_eligible'])} → {_pct(p['false_eligible'])} | "
                              f"{_pct(b['false_not_eligible'])} → {_pct(p['false_not_eligible'])} | {_pct(b['other'])} → {_pct(p['other'])} |")
             ab, ap = pv["aggregate"]["baseline3"], pv["aggregate"]["pipeline"]
@@ -327,6 +349,9 @@ def markdown(report: dict) -> str:
                          f"{_pct(other(ob))} → {_pct(other(op))} |")
         else:
             lines.append("*No scheme has both yet.*")
+        if any(r.get("judge_setting") for r in pv["rows"]):
+            lines += ["", "*(judge: …)* marks a scheme whose judge call used a different setting from the others: its first "
+                      "call failed (json_validate_failed) and this is its retry, so it is not an identical-conditions run."]
         if pv["excluded"]:
             lines += ["", "Excluded: " + "; ".join(f"{s} — {why}" for s, why in pv["excluded"].items()) + "."]
     lines += ["", "## Baseline 2 — direct LLM answering, re-scored against frozen gold", "",

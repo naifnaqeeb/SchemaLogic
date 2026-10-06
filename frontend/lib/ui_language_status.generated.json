@@ -7,9 +7,9 @@
   },
   "mr": {
     "reviewed": 0,
-    "state": "none",
+    "state": "machine",
     "total": 300,
-    "translated": 0
+    "translated": 159
   },
   "ta": {
     "reviewed": 0,
@@ -19,8 +19,8 @@
   },
   "ur": {
     "reviewed": 0,
-    "state": "none",
+    "state": "machine",
     "total": 300,
-    "translated": 0
+    "translated": 295
   }
 }

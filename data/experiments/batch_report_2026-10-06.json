@@ -2,7 +2,7 @@
   "item": "batch_report",
   "gold_tag": "gold-v2",
   "gold_commit": "82436ac11fb53421bf44c8c68e6333e1db353442",
-  "code_commit": "068d3a6",
+  "code_commit": "405a497",
   "provider": "none (offline)",
   "model": "openai/gpt-oss-120b",
   "config": {
@@ -14,7 +14,7 @@
     }
   },
   "date": "2026-10-06",
-  "created_at": "2026-10-06T02:55:27",
+  "created_at": "2026-10-06T21:43:23",
   "caveats": [
     "ONTOLOGY CONTAMINATION. The field ontology the extractor is constrained to was built from these same 7 gold schemes (each field lists the schemes it was made for), and the extraction prompt names those fields. Field-name agreement with gold is therefore optimistic: a structural F1 here measures extraction into a vocabulary designed around the answer, not open-world extraction. The AI-Checked tier (schemes outside the gold set) is the only evidence on unseen schemes.",
     "SYNTHETIC PROFILES. The profile suites were written by the gold annotator to exercise the rules they encoded, so outcome equivalence tests the scenarios someone already thought of. A rule nobody wrote a profile for cannot disagree.",
@@ -1253,11 +1253,11 @@
       ],
       "failed": {
         "AB-PMJAY": {
-          "reason": "judge call failed (api_error: json_validate_failed)",
+          "reason": "judge call failed (api_error: json_validate_failed), and again on retry with max_tokens=2000. Cause: the judge's prompt is about 6,295 tokens (conservative estimate) of Groq's 8,000-token per-request limit for prompt plus answer; the answer gets only the remainder (about 2,000 tokens), and the model spends it on reasoning before writing any JSON",
           "file": "data\\experiments\\pipeline_on_sample1\\AB-PMJAY.json"
         },
         "PMAY-G": {
-          "reason": "judge call failed (api_error: json_validate_failed)",
+          "reason": "judge call failed (api_error: json_validate_failed), and again on retry with max_tokens=2000. Cause: the judge's prompt is about 6,276 tokens (conservative estimate) of Groq's 8,000-token per-request limit for prompt plus answer; the answer gets only the remainder (about 2,000 tokens), and the model spends it on reasoning before writing any JSON",
           "file": "data\\experiments\\pipeline_on_sample1\\PMAY-G.json"
         }
       },
@@ -1947,6 +1947,7 @@
       {
         "scheme": "IGNOAPS",
         "findings_applied": 1,
+        "judge_setting": null,
         "baseline3": {
           "f1": 0.5,
           "agreement": 0.75,
@@ -1965,6 +1966,7 @@
       {
         "scheme": "PM-KISAN",
         "findings_applied": 1,
+        "judge_setting": null,
         "baseline3": {
           "f1": 0.9524,
           "agreement": 0.9166666666666666,
@@ -1983,6 +1985,7 @@
       {
         "scheme": "PM-UJJWALA-2.0",
         "findings_applied": 0,
+        "judge_setting": null,
         "baseline3": {
           "f1": 0.9231,
           "agreement": 1.0,
@@ -2001,6 +2004,7 @@
       {
         "scheme": "PMMVY",
         "findings_applied": 1,
+        "judge_setting": null,
         "baseline3": {
           "f1": 0.8387,
           "agreement": 0.4166666666666667,
@@ -2018,8 +2022,8 @@
       }
     ],
     "excluded": {
-      "AB-PMJAY": "judge call failed (api_error: json_validate_failed)",
-      "PMAY-G": "judge call failed (api_error: json_validate_failed)",
+      "AB-PMJAY": "judge call failed (api_error: json_validate_failed), and again on retry with max_tokens=2000. Cause: the judge's prompt is about 6,295 tokens (conservative estimate) of Groq's 8,000-token per-request limit for prompt plus answer; the answer gets only the remainder (about 2,000 tokens), and the model spends it on reasoning before writing any JSON",
+      "PMAY-G": "judge call failed (api_error: json_validate_failed), and again on retry with max_tokens=2000. Cause: the judge's prompt is about 6,276 tokens (conservative estimate) of Groq's 8,000-token per-request limit for prompt plus answer; the answer gets only the remainder (about 2,000 tokens), and the model spends it on reasoning before writing any JSON",
       "MH-LADKI-BAHIN": "no Baseline 3 sample (extraction failed validation)"
     },
     "aggregate": {

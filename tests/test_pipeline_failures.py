@@ -50,7 +50,7 @@ FAIL = JudgeFailure(reason="api_error", detail="Error code: 400 - {'code': 'json
 def test_a_failed_judge_call_is_recorded_without_a_repaired_scheme_and_retried_once(pipeline):
     seen = []
 
-    def judge(draft, doc, provider, usage_sink, compact_draft, max_tokens=None):
+    def judge(draft, doc, provider, usage_sink, compact_draft, max_tokens=None, reasoning_effort=None):
         seen.append((draft.scheme_id, max_tokens))
         return FAIL if max_tokens is None and draft.scheme_id == "PM-KISAN" else JudgeReport(findings=[])
 
@@ -67,7 +67,7 @@ def test_a_failed_judge_call_is_recorded_without_a_repaired_scheme_and_retried_o
 
 
 def test_the_batch_report_lists_failed_runs_and_leaves_them_out_of_the_comparison(pipeline, monkeypatch):
-    def judge(draft, doc, provider, usage_sink, compact_draft, max_tokens=None):
+    def judge(draft, doc, provider, usage_sink, compact_draft, max_tokens=None, reasoning_effort=None):
         return FAIL if draft.scheme_id == "PM-KISAN" else JudgeReport(findings=[])
 
     pipeline.run(["PM-KISAN", "PMMVY"], 10**9, judge=judge, ledger=_ledger())
@@ -86,3 +86,42 @@ def test_the_batch_report_lists_failed_runs_and_leaves_them_out_of_the_compariso
     assert [r["scheme"] for r in paired["rows"]] == ["PMMVY"] and "PM-KISAN" in paired["excluded"]
     md = br.markdown(report)
     assert "**failed run**" in md and "## Full pipeline vs Baseline 3, same extraction" in md
+
+
+def test_a_second_retry_uses_low_reasoning_effort_and_the_comparison_says_so(pipeline, monkeypatch):
+    calls = []
+
+    def judge(draft, doc, provider, usage_sink, compact_draft, max_tokens=None, reasoning_effort=None):
+        calls.append((max_tokens, reasoning_effort))
+        return JudgeReport(findings=[]) if reasoning_effort == "low" else FAIL
+
+    pipeline.run(["PM-KISAN"], 10**9, judge=judge, ledger=_ledger())
+    pipeline.retry_failed(["PM-KISAN"], 10**9, judge=judge, ledger=_ledger())                           # max_tokens: fails
+    pipeline.retry_failed(["PM-KISAN"], 10**9, judge=judge, ledger=_ledger(), setting="reasoning_low")  # works
+    pipeline.retry_failed(["PM-KISAN"], 10**9, judge=judge, ledger=_ledger(), setting="reasoning_low")  # not again
+    assert calls == [(None, None), (2000, None), (None, "low")]
+    result = json.loads((pipeline.OUT / "PM-KISAN.json").read_text(encoding="utf-8"))
+    assert result["judge_setting"] == {"reasoning_effort": "low"} and len(result["failed_attempts"]) == 2
+    assert result["retry_settings"] == ["max_tokens_2000", "reasoning_low"]
+
+    br = _script("run_batch_report")
+    monkeypatch.setattr(br, "EXP", harness.EXPERIMENTS_DIR)
+    monkeypatch.setattr(br, "ROOT", harness.EXPERIMENTS_DIR)
+    monkeypatch.setattr(br, "baseline2", lambda sid, gold, profiles: None)
+    monkeypatch.setattr(br, "superseded_claims", lambda: [])
+    monkeypatch.setattr(br, "CONFIGURATIONS", {k: v for k, v in br.CONFIGURATIONS.items()
+                                               if k in ("baseline3_extraction_only", "pipeline_on_sample1")})
+    md = br.markdown(br.build())
+    assert "PM-KISAN *(judge: reasoning_effort=low)*" in md and "not an identical-conditions run" in md
+
+
+def test_a_run_that_fails_every_retry_states_the_cause(pipeline):
+    def judge(draft, doc, provider, usage_sink, compact_draft, max_tokens=None, reasoning_effort=None):
+        return FAIL
+
+    pipeline.run(["PM-KISAN"], 10**9, judge=judge, ledger=_ledger())
+    pipeline.retry_failed(["PM-KISAN"], 10**9, judge=judge, ledger=_ledger())
+    pipeline.retry_failed(["PM-KISAN"], 10**9, judge=judge, ledger=_ledger(), setting="reasoning_low")
+    reason = _script("run_batch_report")._failure(pipeline.OUT / "PM-KISAN.json")
+    assert "again on retry with max_tokens=2000 and with reasoning_effort=low" in reason
+    assert "per-request limit" in reason and "8,000" in reason

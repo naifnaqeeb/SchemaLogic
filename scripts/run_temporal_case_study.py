@@ -86,7 +86,8 @@ ARMS = [
         "NHA Beneficiary Identification Guidelines (AB-PMJAY_primary_beneficiary_identification.pdf), "
         "section 1A and the covered-categories list; PIB 3 July 2015 SECC 2011 release "
         "(AB-PMJAY_primary_SECC_exclusion.pdf), the 14 exclusion parameters"),
-    Arm("PMAY-G__pre_framework_2022", "PMAY-G", "pre", 1,
+    # k=3 since 2026-10-06: its single sample missed the whole 13-parameter exclusion list
+    Arm("PMAY-G__pre_framework_2022", "PMAY-G", "pre", 3,
         "Framework for Implementation of PMAY-G, MoRD, 2022 edition (PMAY-G_primary_framework_2016.pdf, "
         "from https://rh.odisha.gov.in/guidelines/PMAY(G)_guidelines.pdf), para 4.1.1 and Annexure I"),
     Arm("PMAY-G__stale_PIB_2024", "PMAY-G", "stale", 1,
@@ -340,8 +341,9 @@ def markdown(s: dict) -> str:
         f"`{harness.MODEL}`.*",
         "",
         "**Small sample.** One extraction per pre-amendment text (k=1) and three per current document (k=3); "
-        "the Marathi arm is k=3. A single pre-amendment sample shows what the extractor *can* read from that text, "
-        "not a rate.",
+        "the Marathi arm and PMAY-G's pre-amendment arm are k=3 (the latter after its first sample missed the whole "
+        "exclusion list). A single pre-amendment sample shows what the extractor *can* read from that text, "
+        "not a rate. A valid sample that misses the rule entirely counts against \"as expected\".",
         "",
         "| Scheme | Check | Source | Expected | As expected | Values seen |",
         "|---|---|---|---|---|---|",

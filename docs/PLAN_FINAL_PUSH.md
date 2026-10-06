@@ -305,3 +305,16 @@ spent on day 1's samples. All are queued and run unattended (see the quota sched
   have to stay in English in Hindi (`messages.NATIVE_TERMS`: पक्का / कच्चा); other languages unchanged.
 - **2026-10-06 12:07**: "pucca"/"kutcha" may also be written natively in Urdu (پکا / کچا) and Marathi
   (पक्का / कच्चा); Tamil keeps them in English. Queue restarted to load it before Urdu runs; stop unchanged.
+
+### 2026-10-06, 22:00 — afternoon results and tonight's order
+
+- Ran this afternoon: last 3 temporal arms (AB-PMJAY pre ✓; stale PMAY-G reads as written; **PMAY-G pre
+  missed the whole 13-item exclusion list**), judge retry at `max_tokens=2000` (**both failed again**,
+  same `json_validate_failed`), Urdu 295/300, Marathi 159/300.
+- Reports now state the judge failure's cause: prompt ~6.3k tokens (conservative estimate) of Groq's 8k
+  per-request limit for prompt plus answer; the ~2k left is spent on reasoning before any JSON.
+- Tonight, in order (stop unchanged, 2026-10-07 10:00): judge retry with `reasoning_effort=low` (a
+  success is marked in the comparison as a different setting) → PMAY-G pre-amendment arm k=3 (scored on its
+  valid samples, the miss reported) → PMMVY samples 2–3 → rest of Marathi → Tamil if quota remains.
+- Translation failures (Hindi 7, Urdu 5, Marathi 1, and any later Marathi/Tamil ones) go to the team as
+  TRANSLATE BY HAND rows, never back to the model; Urdu and Marathi review sheets generated.

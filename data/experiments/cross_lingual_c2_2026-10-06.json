@@ -2,7 +2,7 @@
   "item": "cross_lingual_c2",
   "gold_tag": "gold-v2",
   "gold_commit": "82436ac11fb53421bf44c8c68e6333e1db353442",
-  "code_commit": "068d3a6",
+  "code_commit": "405a497",
   "provider": "none (offline)",
   "model": "openai/gpt-oss-120b",
   "config": {
@@ -13,7 +13,7 @@
     }
   },
   "date": "2026-10-06",
-  "created_at": "2026-10-06T02:55:30",
+  "created_at": "2026-10-06T21:43:26",
   "n_profiles": 10,
   "per_draft": [
     {

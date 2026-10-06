@@ -1,6 +1,6 @@
 # Self-consistency confidence (k samples) vs self-reported confidence
 
-*Generated 2026-10-06T02:55:28 by `scripts/analyze_self_consistency.py` from code `068d3a6`, against frozen gold `gold-v2`. Small sample: 6 schemes, k samples each; rank correlations over so few schemes are indicative only. Agreement is over a scheme's VALID samples (a sample that failed schema validation produced no predicates and is listed, not counted); a scheme needs at least 2 valid samples to be scored.*
+*Generated 2026-10-06T21:43:24 by `scripts/analyze_self_consistency.py` from code `405a497`, against frozen gold `gold-v2`. Small sample: 6 schemes, k samples each; rank correlations over so few schemes are indicative only. Agreement is over a scheme's VALID samples (a sample that failed schema validation produced no predicates and is listed, not counted); a scheme needs at least 2 valid samples to be scored.*
 
 | Scheme | Valid samples | Predicates per sample | Mean agreement | Unanimous | Self-reported (per sample) | Structural F1 (per sample) | Outcome agreement (mean) |
 |---|---|---|---|---|---|---|---|

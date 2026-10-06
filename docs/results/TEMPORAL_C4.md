@@ -2,7 +2,7 @@
 
 *Generated 2026-10-06 by `scripts/run_temporal_case_study.py --score` from `data/experiments/temporal_c4/` and `data/experiments/self_consistency/`. Gold tag gold-v2; extractor defaults; Groq `openai/gpt-oss-120b`.*
 
-**Small sample.** One extraction per pre-amendment text (k=1) and three per current document (k=3); the Marathi arm is k=3. A single pre-amendment sample shows what the extractor *can* read from that text, not a rate.
+**Small sample.** One extraction per pre-amendment text (k=1) and three per current document (k=3); the Marathi arm and PMAY-G's pre-amendment arm are k=3 (the latter after its first sample missed the whole exclusion list). A single pre-amendment sample shows what the extractor *can* read from that text, not a rate. A valid sample that misses the rule entirely counts against "as expected".
 
 | Scheme | Check | Source | Expected | As expected | Values seen |
 |---|---|---|---|---|---|
@@ -16,16 +16,16 @@
 | MH-LADKI-BAHIN | upper age bound (60 -> 65 on 03.07.2024) | pre-amendment text | <= 60 | 1/1 | <= 60 |
 | MH-LADKI-BAHIN | upper age bound (60 -> 65 on 03.07.2024) | current document (k=3) | <= 65 | 2/2 (+1 failed) | <= 65; <= 65 |
 | MH-LADKI-BAHIN | upper age bound (60 -> 65 on 03.07.2024) | Marathi GRs in order | <= 65 | 3/3 | <= 65; <= 65; <= 65 |
-| AB-PMJAY | 70+ branch (added 2024; nothing retired) | pre-amendment text | absent | *not run yet* | — |
+| AB-PMJAY | 70+ branch (added 2024; nothing retired) | pre-amendment text | absent | 1/1 | absent |
 | AB-PMJAY | 70+ branch (added 2024; nothing retired) | current document (k=3) | present | 3/3 | present; present; present |
-| PMAY-G | refrigerator exclusion (deleted 2024) | pre-amendment text | present | *not run yet* | — |
-| PMAY-G | refrigerator exclusion (deleted 2024) | stale document | present | *not run yet* | — |
+| PMAY-G | refrigerator exclusion (deleted 2024) | pre-amendment text | present | 0/1 | absent |
+| PMAY-G | refrigerator exclusion (deleted 2024) | stale document | present | 1/1 | present |
 | PMAY-G | refrigerator exclusion (deleted 2024) | current document (k=3) | absent | 3/3 | absent; absent; absent |
-| PMAY-G | landline exclusion (deleted 2024) | pre-amendment text | present | *not run yet* | — |
-| PMAY-G | landline exclusion (deleted 2024) | stale document | present | *not run yet* | — |
+| PMAY-G | landline exclusion (deleted 2024) | pre-amendment text | present | 0/1 | absent |
+| PMAY-G | landline exclusion (deleted 2024) | stale document | present | 1/1 | present |
 | PMAY-G | landline exclusion (deleted 2024) | current document (k=3) | absent | 3/3 | absent; absent; absent |
-| PMAY-G | monthly income threshold (10000 -> 15000) | pre-amendment text | 10000 | *not run yet* | — |
-| PMAY-G | monthly income threshold (10000 -> 15000) | stale document | 15000 | *not run yet* | — |
+| PMAY-G | monthly income threshold (10000 -> 15000) | pre-amendment text | 10000 | 0/1 | none |
+| PMAY-G | monthly income threshold (10000 -> 15000) | stale document | 15000 | 1/1 | 15000 |
 | PMAY-G | monthly income threshold (10000 -> 15000) | current document (k=3) | 15000 | 3/3 | 15000; 15000; 15000 |
 
 ## Dropped
@@ -65,12 +65,22 @@ None: official pre-amendment text was found for every listed scheme (sources in 
 - **MH-LADKI-BAHIN__post_current_document (k=3 self-consistency)** sample_3: ok
   - five-acre land exclusion (retired 03.07.2024): **absent** — no matching predicate
   - upper age bound (60 -> 65 on 03.07.2024): **<= 65** — inclusion: age <= 65
+- **AB-PMJAY__pre_2024_identification** sample_1: ok
+  - 70+ branch (added 2024; nothing retired): **absent** — no matching predicate
 - **AB-PMJAY__post_current_document (k=3 self-consistency)** sample_1: ok
   - 70+ branch (added 2024; nothing retired): **present** — inclusion: age >= 70
 - **AB-PMJAY__post_current_document (k=3 self-consistency)** sample_2: ok
   - 70+ branch (added 2024; nothing retired): **present** — inclusion: age >= 70
 - **AB-PMJAY__post_current_document (k=3 self-consistency)** sample_3: ok
   - 70+ branch (added 2024; nothing retired): **present** — inclusion: age >= 70
+- **PMAY-G__pre_framework_2022** sample_1: ok
+  - refrigerator exclusion (deleted 2024): **absent** — no matching predicate
+  - landline exclusion (deleted 2024): **absent** — no matching predicate
+  - monthly income threshold (10000 -> 15000): **none** — no matching predicate
+- **PMAY-G__stale_PIB_2024** sample_1: ok
+  - refrigerator exclusion (deleted 2024): **present** — exclusion: owns_refrigerator == True
+  - landline exclusion (deleted 2024): **present** — exclusion: owns_landline_phone == True
+  - monthly income threshold (10000 -> 15000): **15000** — exclusion: monthly_income_inr > 15000
 - **PMAY-G__post_current_document (k=3 self-consistency)** sample_1: ok
   - refrigerator exclusion (deleted 2024): **absent** — no matching predicate
   - landline exclusion (deleted 2024): **absent** — no matching predicate
