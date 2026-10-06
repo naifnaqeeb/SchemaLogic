@@ -34,8 +34,13 @@ GLOSSARY = ("BPL", "APL", "SC/ST", "SC", "ST", "OBC", "Group D", "Class IV", "MT
             "SECC", "RSBY", "Kisan Credit Card", "HIV", "AIDS")
 
 # Glossary terms that are ordinary words in a language, so a translation into it may use the native
-# word (2026-10-06: Hindi पक्का / कच्चा). Every other glossary term still stays exactly as written.
-NATIVE_TERMS: dict[str, dict[str, str]] = {"hi": {"pucca": "पक्का", "kutcha": "कच्चा"}}
+# word (2026-10-06: Hindi and Marathi पक्का / कच्चा, Urdu پکا / کچا; Tamil keeps the English terms).
+# Every other glossary term still stays exactly as written.
+NATIVE_TERMS: dict[str, dict[str, str]] = {
+    "hi": {"pucca": "पक्का", "kutcha": "कच्चा"},
+    "mr": {"pucca": "पक्का", "kutcha": "कच्चा"},
+    "ur": {"pucca": "پکا", "kutcha": "کچا"},
+}
 
 
 def glossary_for(language: str | None) -> tuple[str, ...]:

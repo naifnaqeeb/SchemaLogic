@@ -132,6 +132,8 @@ def test_review_state_is_reviewed_only_when_every_entry_is(tc):
 def test_pucca_and_kutcha_may_be_translated_into_hindi_but_stay_glossary_elsewhere(tc):
     source = "Does your family live in a kutcha house?"
     assert tc.checks(source, "क्या आपका परिवार कच्चे घर में रहता है?", "hi") == []
+    assert tc.checks(source, "उमच्या कुटुंबाचे घर कच्चे आहे का?", "mr") == []
+    assert tc.checks(source, "کیا آپ کا خاندان کچے گھر میں رہتا ہے؟", "ur") == []
     assert tc.checks(source, "உங்கள் குடும்பம் மண் வீட்டில் வசிக்கிறதா?", "ta") == ["glossary term changed: kutcha"]
     assert tc.checks("Do you hold an e-Shram card?", "क्या आपके पास ई-श्रम कार्ड है?", "hi") == ["glossary term changed: e-Shram"]
     assert "पक्का" in tc.system_prompt("hi") and "pucca" not in tc.system_prompt("hi").split("untranslated:")[1].split(".")[0]

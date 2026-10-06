@@ -303,3 +303,5 @@ spent on day 1's samples. All are queued and run unattended (see the quota sched
 - **Hindi**: the 7 entries that failed validation are handed to the team (`--mark-manual`, rows marked
   TRANSLATE BY HAND at the top of the sheet; never retried by the model). "pucca"/"kutcha" no longer
   have to stay in English in Hindi (`messages.NATIVE_TERMS`: पक्का / कच्चा); other languages unchanged.
+- **2026-10-06 12:07**: "pucca"/"kutcha" may also be written natively in Urdu (پکا / کچا) and Marathi
+  (पक्का / कच्चा); Tamil keeps them in English. Queue restarted to load it before Urdu runs; stop unchanged.

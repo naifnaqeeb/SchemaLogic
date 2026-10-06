@@ -45,9 +45,9 @@ Fill in:
    fills these in. Keep `**` (bold markers) around the same words.
 4. **Keep these terms in English as written:** BPL, APL, SC/ST, SC, ST, OBC, Group D, Class IV, MTS,
    Aadhaar, NRI, e-Shram, MGNREGA, NFSA, AAY, SECC, RSBY, Kisan Credit Card, HIV, AIDS, and scheme names
-   (PM-KISAN, AB-PMJAY, PMAY-G, PMMVY, IGNOAPS). In Hindi, "pucca" and "kutcha" are ordinary words:
-   write पक्का and कच्चा (or the right form, for example पक्की, कच्चे). In the other languages, keep them
-   as written.
+   (PM-KISAN, AB-PMJAY, PMAY-G, PMMVY, IGNOAPS). "pucca" and "kutcha" are ordinary words in Hindi and
+   Marathi (पक्का, कच्चा) and in Urdu (پکا, کچا): write them in the language, in the right form (for
+   example पक्की, कच्चे). In Tamil, keep them as written.
 5. **Be consistent.** Translate the button words "Yes", "No" and "Prefer not to say" once (rows
    `reply.yes`, `reply.no`, `reply.decline`). Then use the same words wherever a message mentions those
    buttons. Pick one spelling (for example, के लिए and not के लिये) and use it throughout.
