@@ -86,6 +86,26 @@ def spearman(xs: list[float], ys: list[float]) -> float | None:
     return round(cov / (vx * vy), 3) if vx and vy else None
 
 
+def silver() -> dict:
+    """Silver (myScheme) schemes sampled the AI-Checked way, with no gold: the question is whether
+    agreement flags an extraction that collapses the same way every time, as pmksypdmc's did at a
+    self-reported 0.95 (KNOWN_ISSUES). Reported, never pooled with the gold calibration."""
+    out = {}
+    for d in sorted(SAMPLES.glob("_silver_*")):
+        samples = load_samples(d.name)
+        valid = [s for s in samples if s["draft"] is not None]
+        keys = [Counter(p.match_key() for p in flatten_scheme(s["draft"])) for s in valid]
+        agreements = [sum(1 for other in keys if other[k] > 0) / len(keys) for c in keys for k in c.elements()]
+        out[d.name[len("_silver_"):]] = {
+            "k": len(samples), "valid": len(valid),
+            "predicates_per_sample": [sum(c.values()) for c in keys],
+            "fields_per_sample": [sorted({k[2] for k in c}) for c in keys],
+            "self_reported_by_sample": [s["draft"].extraction_metadata.confidence for s in valid],
+            "mean_agreement_confidence": round(sum(agreements) / len(agreements), 3) if agreements else None,
+        }
+    return out
+
+
 def analyze() -> dict:
     schemes = [s for s in harness.gold_scheme_ids() if (SAMPLES / s).exists()]
     per_scheme, agreement_points, self_points = {}, [], []
@@ -137,7 +157,7 @@ def analyze() -> dict:
     return {
         **harness.result_header("self_consistency_analysis", provider="none (offline)", config={"bins": {
             "agreement": agreement_bins, "self_reported": self_bins}}),
-        "schemes_with_samples": scored, "per_scheme": per_scheme,
+        "schemes_with_samples": scored, "per_scheme": per_scheme, "silver": silver(),
         "predicate_calibration": {
             "n_predicates": len(agreement_points),
             "agreement": {"ece": a_ece, "reliability": a_table},
@@ -182,6 +202,18 @@ def markdown(a: dict) -> str:
           "| | vs structural F1 | vs outcome agreement |", "|---|---|---|",
           f"| Agreement confidence | {r['agreement_vs_structural_f1']} | {r['agreement_vs_outcome_agreement']} |",
           f"| Self-reported confidence | {r['self_reported_vs_structural_f1']} | {r['self_reported_vs_outcome_agreement']} |"]
+    if a.get("silver"):
+        L += ["", "## A collapsed extraction with no gold (silver)", "",
+              "pmksypdmc's AI-Checked extraction once collapsed a ~3,900-character scheme to one predicate at a "
+              "self-reported 0.95 (KNOWN_ISSUES). Does agreement flag it when the collapse repeats?", "",
+              "| Scheme | Valid samples | Predicates per sample | Fields | Self-reported (per sample) | Mean agreement |",
+              "|---|---|---|---|---|---|"]
+        for slug, s in a["silver"].items():
+            L.append(f"| {slug} | {s['valid']}/{s['k']} | {s['predicates_per_sample']} | {s['fields_per_sample']} | "
+                     f"{s['self_reported_by_sample']} | {s['mean_agreement_confidence']} |")
+        L += ["", "A collapse that repeats gets HIGH agreement: its one rule is produced every time. Agreement measures "
+              "consistency, not completeness, so it does not catch this case. Predicate count against source length "
+              "(the AI-Checked tier's structural check) does."]
     return "\n".join(L) + "\n"
 
 

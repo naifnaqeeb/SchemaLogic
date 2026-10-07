@@ -91,7 +91,7 @@ def _status() -> str:
     progress = dict(_script("queue_status").progress())
     rows = [("Batch report: pipeline 2026-08, Baseline 3, Baseline 2", "complete", "batch report"),
             ("Full pipeline on Baseline 3's extraction", progress["pipeline on sample 1"], "batch report"),
-            ("Retry of failed judge calls (max_tokens=2000)", progress["pipeline retry (failed judge calls)"], "batch report"),
+            ("Retries of failed judge calls (max_tokens=2000, then reasoning_effort=low)", progress["pipeline retry (failed judge calls)"], "batch report"),
             ("Baseline 1 (flat attributes)", progress["baseline 1"], "batch report"),
             ("Self-consistency k=3 (PMMVY samples)", progress["k=3 self-consistency, PMMVY"], "self-consistency"),
             ("pmksypdmc confidence test", progress["k=3 pmksypdmc (silver)"], "self-consistency"),

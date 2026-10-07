@@ -1,0 +1,58 @@
+{
+  "item": "self_consistency",
+  "gold_tag": "gold-v2",
+  "gold_commit": "82436ac11fb53421bf44c8c68e6333e1db353442",
+  "code_commit": "d1a9b07",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "config": {
+    "k": 3,
+    "temperature": 0.2,
+    "extractor": "defaults"
+  },
+  "date": "2026-10-07",
+  "created_at": "2026-10-07T00:52:00",
+  "scheme_id": "_silver_pmksypdmc",
+  "sample": 1,
+  "source_document_sha256": "98efb049ec7f2e884dd5f1fa71c7fb57a466a34a67d7e5be89745ae445dd8205",
+  "usage": [
+    {
+      "call": "scheme_core_extraction",
+      "prompt_tokens": 5535,
+      "completion_tokens": 814,
+      "total_tokens": 6349
+    },
+    {
+      "call": "scheme_meta_extraction",
+      "prompt_tokens": 1498,
+      "completion_tokens": 507,
+      "total_tokens": 2005
+    }
+  ],
+  "draft_extraction": {
+    "scheme_id": "PMKSY",
+    "unit_of_eligibility": "individual",
+    "inclusion": {
+      "field": "is_indian_citizen",
+      "op": "==",
+      "value": true,
+      "ontology_proposed": false,
+      "cat": "citizenship"
+    },
+    "exclusions": [],
+    "temporal_validity": {
+      "valid_from": "2015-07-01",
+      "valid_to": null,
+      "extracted_at": "2026-10-07",
+      "supersedes": null
+    },
+    "operational_requirements": [
+      "Beneficiary must provide Aadhaar details for DBT"
+    ],
+    "extraction_metadata": {
+      "confidence": 0.95,
+      "source_clause": "Eligibility criteria paragraph stating citizenship, farmer eligibility, 5 ha ceiling, BIS-marked systems, DBT with Aadhaar",
+      "flagged_for_review": false
+    }
+  }
+}

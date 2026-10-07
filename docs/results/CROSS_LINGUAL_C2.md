@@ -1,6 +1,6 @@
 # Cross-lingual case study (C2)
 
-*Generated 2026-10-06 by `scripts/analyze_cross_lingual.py` (offline). Gold tag gold-v2; 10 frozen test profiles; Groq `openai/gpt-oss-120b` extractions.*
+*Generated 2026-10-07 by `scripts/analyze_cross_lingual.py` (offline). Gold tag gold-v2; 10 frozen test profiles; Groq `openai/gpt-oss-120b` extractions.*
 
 **Small sample** (k=3 per language, one scheme). **Not a clean translation pair**: the English input is a compilation of the GRs and official secondary sources, not a translation; the Marathi input is the original GR plus two amending GRs, so the extractor must also apply the amendment (see the temporal case study).
 

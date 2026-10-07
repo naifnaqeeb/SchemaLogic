@@ -1,6 +1,6 @@
 # Gate re-validation on injected errors
 
-*Generated 2026-10-06T21:43:25 by `scripts/analyze_gate_revalidation.py` from code `405a497`, against frozen gold `gold-v2`.*
+*Generated 2026-10-07T09:18:32 by `scripts/analyze_gate_revalidation.py` from code `d1a9b07`, against frozen gold `gold-v2`.*
 
 > **Synthetic errors, small sample.** 30 deliberate mutations of correct gold (14 mutated variants, 7 clean controls), one judge sample each. These numbers say what the judge + gate *can* catch, not how often real extractions go wrong. One error moves a type's rate by 17-25 points. Groups A, B and C are never pooled into one catch rate.
 
@@ -47,23 +47,23 @@ The gate's fabrication check, applied directly to each injected supersedes:
 
 ## The k=3 agreement signal as a deferral signal (no quota)
 
-A rule is scored by the share of the scheme's independent extraction samples that produced it identically; rules produced by few samples are flagged for review. Every injected error that leaves a wrong rule in the candidate is group C; the negatives are the candidates' correct rules. Skipped (fewer than 2 samples): PMMVY. ECE of agreement as P(correct), n = 265 rules: **0.2871**.
+A rule is scored by the share of the scheme's independent extraction samples that produced it identically; rules produced by few samples are flagged for review. Every injected error that leaves a wrong rule in the candidate is group C; the negatives are the candidates' correct rules. Skipped (fewer than 2 samples): none. ECE of agreement as P(correct), n = 314 rules: **0.3152**.
 
 **Read recall with care: it is close to guaranteed here.** An injected rule is a mutation of gold that no extraction produced, so the samples almost never contain it and it scores low agreement by construction. A real extraction error is one the model itself made, possibly in every sample. Precision is the informative number: most rules this signal flags are correct rules the samples did not reproduce identically.
 
 | Flag a rule produced by | Flagged | True errors flagged | Precision | Recall | Recall by error type |
 |---|---|---|---|---|---|
-| 0 of 3 samples | 68 | 13 | 0.191 | 0.867 | flipped_operator 4/4, wrong_exception_scope 1/1, wrong_quantifier 3/5, wrong_threshold 5/5 |
-| at most 1 of 3 samples | 81 | 15 | 0.185 | 1.0 | flipped_operator 4/4, wrong_exception_scope 1/1, wrong_quantifier 5/5, wrong_threshold 5/5 |
-| at most 2 of 3 samples | 123 | 15 | 0.122 | 1.0 | flipped_operator 4/4, wrong_exception_scope 1/1, wrong_quantifier 5/5, wrong_threshold 5/5 |
-| any number of samples | 265 | 15 | 0.057 | 1.0 | flipped_operator 4/4, wrong_exception_scope 1/1, wrong_quantifier 5/5, wrong_threshold 5/5 |
+| 0 of 3 samples | 82 | 15 | 0.183 | 0.882 | flipped_operator 6/6, wrong_exception_scope 1/1, wrong_quantifier 3/5, wrong_threshold 5/5 |
+| at most 1 of 3 samples | 95 | 17 | 0.179 | 1.0 | flipped_operator 6/6, wrong_exception_scope 1/1, wrong_quantifier 5/5, wrong_threshold 5/5 |
+| at most 2 of 3 samples | 170 | 17 | 0.1 | 1.0 | flipped_operator 6/6, wrong_exception_scope 1/1, wrong_quantifier 5/5, wrong_threshold 5/5 |
+| any number of samples | 314 | 17 | 0.054 | 1.0 | flipped_operator 6/6, wrong_exception_scope 1/1, wrong_quantifier 5/5, wrong_threshold 5/5 |
 
 The gold rule each error removed or replaced (a dropped rule or exception, or the original of a flipped / re-thresholded / re-quantified rule): did the samples produce it — would agreement point at what the candidate is missing?
 
 | Error type | Removed rules | Produced by >= 2 of 3 samples |
 |---|---|---|
-| dropped_predicate | 4 | 3 |
-| flipped_operator | 4 | 3 |
+| dropped_predicate | 6 | 5 |
+| flipped_operator | 6 | 5 |
 | wrong_exception_scope | 5 | 2 |
 | wrong_quantifier | 5 | 5 |
 | wrong_threshold | 5 | 4 |

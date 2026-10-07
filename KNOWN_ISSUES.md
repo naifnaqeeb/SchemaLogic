@@ -546,3 +546,27 @@ quote and the document in `_normalize()` before substring matching. Add a regres
 document with the same `**bold**`-spanning-a-quote-boundary shape as AB-PMJAY.md's 70+ clause.
 
 **Status**: Open, unfixed as of 2026-08-18.
+
+## Judge: a supersession finding with no retired field rejects the whole report (fix after the review)
+
+**Where**: `schemelogic/extraction/judge_repair.py` — `ProposedSupersedes.retired_field: str` (and
+`retired_op`), validated by `JudgeReport.model_validate` in `run_judge`.
+
+**What**: on the final-push retry of AB-PMJAY's pipeline run (2026-10-07, `reasoning_effort="low"`, after
+two `json_validate_failed` attempts), the judge returned a complete report, but its first finding was a
+`temporal_supersession` whose `proposed_supersedes.retired_field` and `retired_op` were `null`. The response
+schema is sent with `strict: False`, so Groq accepted it; Pydantic then rejected the WHOLE report
+(`schema_validation_failed`), discarding any valid findings alongside it. A supersession with nothing to
+retire (AB-PMJAY's 70+ change is an addition, not a retirement) has no valid encoding today.
+Record: `data/experiments/pipeline_on_sample1/AB-PMJAY.json` (all three attempts kept).
+
+**Why deferred**: decided 2026-10-07 — no re-runs before the review; AB-PMJAY stays a failed run in
+every report, with both causes stated (two attempts: prompt size against Groq's 8k per-request limit;
+the third: this).
+
+**Suggested fix**: validate findings one by one and report an invalid finding as such instead of failing
+the report (only the bad finding is lost); and/or let the schema express "addition, nothing retired"
+(e.g. a separate finding category, or a nullable `retired_*` with the gate deferring such findings). Add a
+regression test with this exact payload shape, then re-run AB-PMJAY's judge call.
+
+**Status**: Open as of 2026-10-07.

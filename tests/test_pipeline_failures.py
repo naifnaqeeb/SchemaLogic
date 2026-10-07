@@ -123,5 +123,23 @@ def test_a_run_that_fails_every_retry_states_the_cause(pipeline):
     pipeline.retry_failed(["PM-KISAN"], 10**9, judge=judge, ledger=_ledger())
     pipeline.retry_failed(["PM-KISAN"], 10**9, judge=judge, ledger=_ledger(), setting="reasoning_low")
     reason = _script("run_batch_report")._failure(pipeline.OUT / "PM-KISAN.json")
-    assert "again on retry with max_tokens=2000 and with reasoning_effort=low" in reason
+    assert "on all 3 attempts — default settings and max_tokens=2000 and reasoning_effort=low: json_validate_failed" in reason
     assert "per-request limit" in reason and "8,000" in reason
+
+
+def test_a_retry_that_fails_differently_is_reported_with_its_own_cause(pipeline):
+    from schemelogic.extraction.judge_repair import JudgeFailure as JF
+
+    schema_fail = JF(reason="schema_validation_failed", detail="2 validation errors for JudgeReport\n"
+                     "findings.0.proposed_supersedes.retired_field\n  Input should be a valid string [type=string_type]")
+
+    def judge(draft, doc, provider, usage_sink, compact_draft, max_tokens=None, reasoning_effort=None):
+        return schema_fail if reasoning_effort == "low" else FAIL
+
+    pipeline.run(["PM-KISAN"], 10**9, judge=judge, ledger=_ledger())
+    pipeline.retry_failed(["PM-KISAN"], 10**9, judge=judge, ledger=_ledger())
+    pipeline.retry_failed(["PM-KISAN"], 10**9, judge=judge, ledger=_ledger(), setting="reasoning_low")
+    reason = _script("run_batch_report")._failure(pipeline.OUT / "PM-KISAN.json")
+    assert "default settings and max_tokens=2000: json_validate_failed" in reason
+    assert "reasoning_effort=low: schema_validation_failed" in reason
+    assert "retired_field: input should be a valid string" in reason

@@ -86,25 +86,49 @@ def _sample(i: int) -> Callable[[str], Path | None]:
     return find
 
 
+def _code(failure: dict) -> str:
+    detail = failure.get("detail", "")
+    return next((c for c in ("json_validate_failed", "request too large", "rate limit") if c in detail.lower()), failure.get("reason", ""))
+
+
+def _cause(failure: dict, estimate: dict | None) -> str:
+    """One attempt's failure in words."""
+    code = _code(failure)
+    if code == "json_validate_failed":
+        size = (f"the prompt is about {estimate['prompt_tokens_estimate']:,} tokens (conservative estimate) of Groq's "
+                f"{estimate['request_limit']:,}-token per-request limit for prompt plus answer, " if estimate else "")
+        return f"json_validate_failed, no output: {size}and the model spent what was left for the answer on reasoning before any JSON"
+    if code == "schema_validation_failed":
+        lines = [ln.strip() for ln in failure.get("detail", "").splitlines()]
+        where = next((ln for ln in lines if re.match(r"\w+(\.\w+)+$", ln)), "")
+        what = next((ln.split("[")[0].strip() for ln in lines if ln.startswith("Input should")), "")
+        return ("schema_validation_failed: an answer was produced but did not match the judge's format"
+                + (f" ({where}: {what.lower()})" if where else ""))
+    return code
+
+
 def _failure(path: Path) -> str | None:
     """Why a pipeline run produced no repaired scheme (a failed judge call), or None. A failed run is a
-    failed run: never scored as if the judge had found nothing (2026-10-06)."""
+    failed run: never scored as if the judge had found nothing (2026-10-06). Every attempt is listed
+    with its setting and its own cause -- retries can fail differently from the first call."""
     payload = json.loads(path.read_text(encoding="utf-8"))
     f = payload.get("judge_failure")
     if not f:
         return None
-    detail = f.get("detail", "")
-    code = next((c for c in ("json_validate_failed", "request too large", "rate limit") if c in detail.lower()), "")
-    reason = f"judge call failed ({f.get('reason')}{': ' + code if code else ''})"
     tried = payload.get("retry_settings") or (["max_tokens_2000"] if payload.get("retried_with_max_tokens") else [])
-    if tried:
-        reason += ", and again on retry with " + " and with ".join(SETTING_LABEL.get(s, s) for s in tried)
+    attempts = [a.get("judge_failure") or {} for a in payload.get("failed_attempts", [])] + [f]
+    settings = ["default settings"] + [SETTING_LABEL.get(s, s) for s in tried]
     est = payload.get("request_estimate")
-    if est and code == "json_validate_failed":
-        reason += (f". Cause: the judge's prompt is about {est['prompt_tokens_estimate']:,} tokens (conservative estimate) of "
-                   f"Groq's {est['request_limit']:,}-token per-request limit for prompt plus answer; the answer gets only the "
-                   "remainder (about 2,000 tokens), and the model spends it on reasoning before writing any JSON")
-    return reason
+    if len(attempts) == 1:
+        return f"judge call failed ({_cause(f, est)})"
+    groups: list[tuple[list[str], str]] = []  # consecutive attempts with the same cause, merged
+    for i, a in enumerate(attempts):
+        label, cause = settings[i] if i < len(settings) else f"attempt {i + 1}", _cause(a, est)
+        if groups and groups[-1][1] == cause:
+            groups[-1][0].append(label)
+        else:
+            groups.append(([label], cause))
+    return f"judge call failed on all {len(attempts)} attempts — " + "; ".join(f"{' and '.join(ls)}: {c}" for ls, c in groups)
 
 
 SETTING_LABEL = {"max_tokens_2000": "max_tokens=2000", "reasoning_low": "reasoning_effort=low"}

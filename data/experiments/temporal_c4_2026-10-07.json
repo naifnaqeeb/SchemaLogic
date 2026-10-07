@@ -1,0 +1,971 @@
+{
+  "item": "temporal_c4_score",
+  "gold_tag": "gold-v2",
+  "gold_commit": "82436ac11fb53421bf44c8c68e6333e1db353442",
+  "code_commit": "d1a9b07",
+  "provider": "none (offline)",
+  "model": "openai/gpt-oss-120b",
+  "config": {
+    "detectors": "field-name/value patterns; see rows[].checks[].matched"
+  },
+  "date": "2026-10-07",
+  "created_at": "2026-10-07T09:18:32",
+  "dropped": {},
+  "summary": [
+    {
+      "scheme": "PM-KISAN",
+      "check": "2-hectare landholding limit (removed 1 June 2019)",
+      "role": "pre",
+      "expected": "present",
+      "as_expected": 1,
+      "valid_samples": 1,
+      "failed_samples": 0,
+      "values": [
+        "present"
+      ]
+    },
+    {
+      "scheme": "PM-KISAN",
+      "check": "2-hectare landholding limit (removed 1 June 2019)",
+      "role": "post",
+      "expected": "absent",
+      "as_expected": 3,
+      "valid_samples": 3,
+      "failed_samples": 0,
+      "values": [
+        "absent",
+        "absent",
+        "absent"
+      ]
+    },
+    {
+      "scheme": "PMMVY",
+      "check": "child-order rule",
+      "role": "pre",
+      "expected": "first child only",
+      "as_expected": 1,
+      "valid_samples": 1,
+      "failed_samples": 0,
+      "values": [
+        "first child only"
+      ]
+    },
+    {
+      "scheme": "PMMVY",
+      "check": "child-order rule",
+      "role": "post",
+      "expected": "first child, or second if a girl",
+      "as_expected": 0,
+      "valid_samples": 3,
+      "failed_samples": 0,
+      "values": [
+        "no child-order rule",
+        "no child-order rule",
+        "no child-order rule"
+      ]
+    },
+    {
+      "scheme": "MH-LADKI-BAHIN",
+      "check": "five-acre land exclusion (retired 03.07.2024)",
+      "role": "pre",
+      "expected": "present",
+      "as_expected": 1,
+      "valid_samples": 1,
+      "failed_samples": 0,
+      "values": [
+        "present"
+      ]
+    },
+    {
+      "scheme": "MH-LADKI-BAHIN",
+      "check": "five-acre land exclusion (retired 03.07.2024)",
+      "role": "post",
+      "expected": "absent",
+      "as_expected": 2,
+      "valid_samples": 2,
+      "failed_samples": 1,
+      "values": [
+        "absent",
+        "absent"
+      ]
+    },
+    {
+      "scheme": "MH-LADKI-BAHIN",
+      "check": "five-acre land exclusion (retired 03.07.2024)",
+      "role": "post_marathi",
+      "expected": "absent",
+      "as_expected": 0,
+      "valid_samples": 3,
+      "failed_samples": 0,
+      "values": [
+        "present",
+        "present",
+        "present"
+      ]
+    },
+    {
+      "scheme": "MH-LADKI-BAHIN",
+      "check": "upper age bound (60 -> 65 on 03.07.2024)",
+      "role": "pre",
+      "expected": "<= 60",
+      "as_expected": 1,
+      "valid_samples": 1,
+      "failed_samples": 0,
+      "values": [
+        "<= 60"
+      ]
+    },
+    {
+      "scheme": "MH-LADKI-BAHIN",
+      "check": "upper age bound (60 -> 65 on 03.07.2024)",
+      "role": "post",
+      "expected": "<= 65",
+      "as_expected": 2,
+      "valid_samples": 2,
+      "failed_samples": 1,
+      "values": [
+        "<= 65",
+        "<= 65"
+      ]
+    },
+    {
+      "scheme": "MH-LADKI-BAHIN",
+      "check": "upper age bound (60 -> 65 on 03.07.2024)",
+      "role": "post_marathi",
+      "expected": "<= 65",
+      "as_expected": 3,
+      "valid_samples": 3,
+      "failed_samples": 0,
+      "values": [
+        "<= 65",
+        "<= 65",
+        "<= 65"
+      ]
+    },
+    {
+      "scheme": "AB-PMJAY",
+      "check": "70+ branch (added 2024; nothing retired)",
+      "role": "pre",
+      "expected": "absent",
+      "as_expected": 1,
+      "valid_samples": 1,
+      "failed_samples": 0,
+      "values": [
+        "absent"
+      ]
+    },
+    {
+      "scheme": "AB-PMJAY",
+      "check": "70+ branch (added 2024; nothing retired)",
+      "role": "post",
+      "expected": "present",
+      "as_expected": 3,
+      "valid_samples": 3,
+      "failed_samples": 0,
+      "values": [
+        "present",
+        "present",
+        "present"
+      ]
+    },
+    {
+      "scheme": "PMAY-G",
+      "check": "refrigerator exclusion (deleted 2024)",
+      "role": "pre",
+      "expected": "present",
+      "as_expected": 2,
+      "valid_samples": 3,
+      "failed_samples": 0,
+      "values": [
+        "absent",
+        "present",
+        "present"
+      ]
+    },
+    {
+      "scheme": "PMAY-G",
+      "check": "refrigerator exclusion (deleted 2024)",
+      "role": "stale",
+      "expected": "present",
+      "as_expected": 1,
+      "valid_samples": 1,
+      "failed_samples": 0,
+      "values": [
+        "present"
+      ]
+    },
+    {
+      "scheme": "PMAY-G",
+      "check": "refrigerator exclusion (deleted 2024)",
+      "role": "post",
+      "expected": "absent",
+      "as_expected": 3,
+      "valid_samples": 3,
+      "failed_samples": 0,
+      "values": [
+        "absent",
+        "absent",
+        "absent"
+      ]
+    },
+    {
+      "scheme": "PMAY-G",
+      "check": "landline exclusion (deleted 2024)",
+      "role": "pre",
+      "expected": "present",
+      "as_expected": 2,
+      "valid_samples": 3,
+      "failed_samples": 0,
+      "values": [
+        "absent",
+        "present",
+        "present"
+      ]
+    },
+    {
+      "scheme": "PMAY-G",
+      "check": "landline exclusion (deleted 2024)",
+      "role": "stale",
+      "expected": "present",
+      "as_expected": 1,
+      "valid_samples": 1,
+      "failed_samples": 0,
+      "values": [
+        "present"
+      ]
+    },
+    {
+      "scheme": "PMAY-G",
+      "check": "landline exclusion (deleted 2024)",
+      "role": "post",
+      "expected": "absent",
+      "as_expected": 3,
+      "valid_samples": 3,
+      "failed_samples": 0,
+      "values": [
+        "absent",
+        "absent",
+        "absent"
+      ]
+    },
+    {
+      "scheme": "PMAY-G",
+      "check": "monthly income threshold (10000 -> 15000)",
+      "role": "pre",
+      "expected": "10000",
+      "as_expected": 2,
+      "valid_samples": 3,
+      "failed_samples": 0,
+      "values": [
+        "none",
+        "10000",
+        "10000"
+      ]
+    },
+    {
+      "scheme": "PMAY-G",
+      "check": "monthly income threshold (10000 -> 15000)",
+      "role": "stale",
+      "expected": "15000",
+      "as_expected": 1,
+      "valid_samples": 1,
+      "failed_samples": 0,
+      "values": [
+        "15000"
+      ]
+    },
+    {
+      "scheme": "PMAY-G",
+      "check": "monthly income threshold (10000 -> 15000)",
+      "role": "post",
+      "expected": "15000",
+      "as_expected": 3,
+      "valid_samples": 3,
+      "failed_samples": 0,
+      "values": [
+        "15000",
+        "15000",
+        "15000"
+      ]
+    }
+  ],
+  "rows": [
+    {
+      "scheme": "PM-KISAN",
+      "arm": "PM-KISAN__pre_2019_guidelines",
+      "role": "pre",
+      "sample": "sample_1",
+      "file": "temporal_c4/PM-KISAN__pre_2019_guidelines/sample_1.json",
+      "status": "ok",
+      "supersedes_recorded": null,
+      "checks": [
+        {
+          "check": "2-hectare landholding limit (removed 1 June 2019)",
+          "value": "present",
+          "expected": "present",
+          "as_expected": true,
+          "matched": [
+            "inclusion: cultivable_land_hectares <= 2"
+          ]
+        }
+      ]
+    },
+    {
+      "scheme": "PM-KISAN",
+      "arm": "PM-KISAN__post_current_document (k=3 self-consistency)",
+      "role": "post",
+      "sample": "sample_1",
+      "file": "self_consistency/PM-KISAN/sample_1.json",
+      "status": "ok",
+      "supersedes_recorded": null,
+      "checks": [
+        {
+          "check": "2-hectare landholding limit (removed 1 June 2019)",
+          "value": "absent",
+          "expected": "absent",
+          "as_expected": true,
+          "matched": []
+        }
+      ]
+    },
+    {
+      "scheme": "PM-KISAN",
+      "arm": "PM-KISAN__post_current_document (k=3 self-consistency)",
+      "role": "post",
+      "sample": "sample_2",
+      "file": "self_consistency/PM-KISAN/sample_2.json",
+      "status": "ok",
+      "supersedes_recorded": null,
+      "checks": [
+        {
+          "check": "2-hectare landholding limit (removed 1 June 2019)",
+          "value": "absent",
+          "expected": "absent",
+          "as_expected": true,
+          "matched": []
+        }
+      ]
+    },
+    {
+      "scheme": "PM-KISAN",
+      "arm": "PM-KISAN__post_current_document (k=3 self-consistency)",
+      "role": "post",
+      "sample": "sample_3",
+      "file": "self_consistency/PM-KISAN/sample_3.json",
+      "status": "ok",
+      "supersedes_recorded": null,
+      "checks": [
+        {
+          "check": "2-hectare landholding limit (removed 1 June 2019)",
+          "value": "absent",
+          "expected": "absent",
+          "as_expected": true,
+          "matched": []
+        }
+      ]
+    },
+    {
+      "scheme": "PMMVY",
+      "arm": "PMMVY__pre_2017_guidelines",
+      "role": "pre",
+      "sample": "sample_1",
+      "file": "temporal_c4/PMMVY__pre_2017_guidelines/sample_1.json",
+      "status": "ok",
+      "supersedes_recorded": null,
+      "checks": [
+        {
+          "check": "child-order rule",
+          "value": "first child only",
+          "expected": "first child only",
+          "as_expected": true,
+          "matched": [
+            "inclusion: pregnancy_child_order == 1"
+          ]
+        }
+      ]
+    },
+    {
+      "scheme": "PMMVY",
+      "arm": "PMMVY__post_current_document (k=3 self-consistency)",
+      "role": "post",
+      "sample": "sample_1",
+      "file": "self_consistency/PMMVY/sample_1.json",
+      "status": "ok",
+      "supersedes_recorded": null,
+      "checks": [
+        {
+          "check": "child-order rule",
+          "value": "no child-order rule",
+          "expected": "first child, or second if a girl",
+          "as_expected": false,
+          "matched": []
+        }
+      ]
+    },
+    {
+      "scheme": "PMMVY",
+      "arm": "PMMVY__post_current_document (k=3 self-consistency)",
+      "role": "post",
+      "sample": "sample_2",
+      "file": "self_consistency/PMMVY/sample_2.json",
+      "status": "ok",
+      "supersedes_recorded": {
+        "benefits_apply_to": "first living child only"
+      },
+      "checks": [
+        {
+          "check": "child-order rule",
+          "value": "no child-order rule",
+          "expected": "first child, or second if a girl",
+          "as_expected": false,
+          "matched": []
+        }
+      ]
+    },
+    {
+      "scheme": "PMMVY",
+      "arm": "PMMVY__post_current_document (k=3 self-consistency)",
+      "role": "post",
+      "sample": "sample_3",
+      "file": "self_consistency/PMMVY/sample_3.json",
+      "status": "ok",
+      "supersedes_recorded": null,
+      "checks": [
+        {
+          "check": "child-order rule",
+          "value": "no child-order rule",
+          "expected": "first child, or second if a girl",
+          "as_expected": false,
+          "matched": []
+        }
+      ]
+    },
+    {
+      "scheme": "MH-LADKI-BAHIN",
+      "arm": "MH-LADKI-BAHIN__pre_GR_20240628",
+      "role": "pre",
+      "sample": "sample_1",
+      "file": "temporal_c4/MH-LADKI-BAHIN__pre_GR_20240628/sample_1.json",
+      "status": "ok",
+      "supersedes_recorded": null,
+      "checks": [
+        {
+          "check": "five-acre land exclusion (retired 03.07.2024)",
+          "value": "present",
+          "expected": "present",
+          "as_expected": true,
+          "matched": [
+            "exclusion: family_agricultural_land_acres > 5"
+          ]
+        },
+        {
+          "check": "upper age bound (60 -> 65 on 03.07.2024)",
+          "value": "<= 60",
+          "expected": "<= 60",
+          "as_expected": true,
+          "matched": [
+            "inclusion: age <= 60"
+          ]
+        }
+      ]
+    },
+    {
+      "scheme": "MH-LADKI-BAHIN",
+      "arm": "MH-LADKI-BAHIN__marathi_GRs_in_order",
+      "role": "post_marathi",
+      "sample": "sample_1",
+      "file": "temporal_c4/MH-LADKI-BAHIN__marathi_GRs_in_order/sample_1.json",
+      "status": "ok",
+      "supersedes_recorded": {
+        "age_upper_limit": 60,
+        "farm_land_condition": ">5 acres"
+      },
+      "checks": [
+        {
+          "check": "five-acre land exclusion (retired 03.07.2024)",
+          "value": "present",
+          "expected": "absent",
+          "as_expected": false,
+          "matched": [
+            "exclusion: family_agricultural_land_acres > 5"
+          ]
+        },
+        {
+          "check": "upper age bound (60 -> 65 on 03.07.2024)",
+          "value": "<= 65",
+          "expected": "<= 65",
+          "as_expected": true,
+          "matched": [
+            "inclusion: age <= 65"
+          ]
+        }
+      ]
+    },
+    {
+      "scheme": "MH-LADKI-BAHIN",
+      "arm": "MH-LADKI-BAHIN__marathi_GRs_in_order",
+      "role": "post_marathi",
+      "sample": "sample_2",
+      "file": "temporal_c4/MH-LADKI-BAHIN__marathi_GRs_in_order/sample_2.json",
+      "status": "ok",
+      "supersedes_recorded": {
+        "age_upper_limit": "60 years",
+        "disqualification_condition_7": "family land >5 acres"
+      },
+      "checks": [
+        {
+          "check": "five-acre land exclusion (retired 03.07.2024)",
+          "value": "present",
+          "expected": "absent",
+          "as_expected": false,
+          "matched": [
+            "exclusion: family_agricultural_land_acres > 5"
+          ]
+        },
+        {
+          "check": "upper age bound (60 -> 65 on 03.07.2024)",
+          "value": "<= 65",
+          "expected": "<= 65",
+          "as_expected": true,
+          "matched": [
+            "inclusion: age <= 65"
+          ]
+        }
+      ]
+    },
+    {
+      "scheme": "MH-LADKI-BAHIN",
+      "arm": "MH-LADKI-BAHIN__marathi_GRs_in_order",
+      "role": "post_marathi",
+      "sample": "sample_3",
+      "file": "temporal_c4/MH-LADKI-BAHIN__marathi_GRs_in_order/sample_3.json",
+      "status": "ok",
+      "supersedes_recorded": null,
+      "checks": [
+        {
+          "check": "five-acre land exclusion (retired 03.07.2024)",
+          "value": "present",
+          "expected": "absent",
+          "as_expected": false,
+          "matched": [
+            "exclusion: family_agricultural_land_acres > 5"
+          ]
+        },
+        {
+          "check": "upper age bound (60 -> 65 on 03.07.2024)",
+          "value": "<= 65",
+          "expected": "<= 65",
+          "as_expected": true,
+          "matched": [
+            "inclusion: age <= 65"
+          ]
+        }
+      ]
+    },
+    {
+      "scheme": "MH-LADKI-BAHIN",
+      "arm": "MH-LADKI-BAHIN__post_current_document (k=3 self-consistency)",
+      "role": "post",
+      "sample": "sample_1",
+      "file": "self_consistency/MH-LADKI-BAHIN/sample_1.json",
+      "status": "extraction failed: schema_validation_failed",
+      "checks": []
+    },
+    {
+      "scheme": "MH-LADKI-BAHIN",
+      "arm": "MH-LADKI-BAHIN__post_current_document (k=3 self-consistency)",
+      "role": "post",
+      "sample": "sample_2",
+      "file": "self_consistency/MH-LADKI-BAHIN/sample_2.json",
+      "status": "ok",
+      "supersedes_recorded": {
+        "disqualification_condition": "families whose members jointly hold more than five acres of agricultural land"
+      },
+      "checks": [
+        {
+          "check": "five-acre land exclusion (retired 03.07.2024)",
+          "value": "absent",
+          "expected": "absent",
+          "as_expected": true,
+          "matched": []
+        },
+        {
+          "check": "upper age bound (60 -> 65 on 03.07.2024)",
+          "value": "<= 65",
+          "expected": "<= 65",
+          "as_expected": true,
+          "matched": [
+            "inclusion: age <= 65"
+          ]
+        }
+      ]
+    },
+    {
+      "scheme": "MH-LADKI-BAHIN",
+      "arm": "MH-LADKI-BAHIN__post_current_document (k=3 self-consistency)",
+      "role": "post",
+      "sample": "sample_3",
+      "file": "self_consistency/MH-LADKI-BAHIN/sample_3.json",
+      "status": "ok",
+      "supersedes_recorded": null,
+      "checks": [
+        {
+          "check": "five-acre land exclusion (retired 03.07.2024)",
+          "value": "absent",
+          "expected": "absent",
+          "as_expected": true,
+          "matched": []
+        },
+        {
+          "check": "upper age bound (60 -> 65 on 03.07.2024)",
+          "value": "<= 65",
+          "expected": "<= 65",
+          "as_expected": true,
+          "matched": [
+            "inclusion: age <= 65"
+          ]
+        }
+      ]
+    },
+    {
+      "scheme": "AB-PMJAY",
+      "arm": "AB-PMJAY__pre_2024_identification",
+      "role": "pre",
+      "sample": "sample_1",
+      "file": "temporal_c4/AB-PMJAY__pre_2024_identification/sample_1.json",
+      "status": "ok",
+      "supersedes_recorded": null,
+      "checks": [
+        {
+          "check": "70+ branch (added 2024; nothing retired)",
+          "value": "absent",
+          "expected": "absent",
+          "as_expected": true,
+          "matched": []
+        }
+      ]
+    },
+    {
+      "scheme": "AB-PMJAY",
+      "arm": "AB-PMJAY__post_current_document (k=3 self-consistency)",
+      "role": "post",
+      "sample": "sample_1",
+      "file": "self_consistency/AB-PMJAY/sample_1.json",
+      "status": "ok",
+      "supersedes_recorded": null,
+      "checks": [
+        {
+          "check": "70+ branch (added 2024; nothing retired)",
+          "value": "present",
+          "expected": "present",
+          "as_expected": true,
+          "matched": [
+            "inclusion: age >= 70"
+          ]
+        }
+      ]
+    },
+    {
+      "scheme": "AB-PMJAY",
+      "arm": "AB-PMJAY__post_current_document (k=3 self-consistency)",
+      "role": "post",
+      "sample": "sample_2",
+      "file": "self_consistency/AB-PMJAY/sample_2.json",
+      "status": "ok",
+      "supersedes_recorded": null,
+      "checks": [
+        {
+          "check": "70+ branch (added 2024; nothing retired)",
+          "value": "present",
+          "expected": "present",
+          "as_expected": true,
+          "matched": [
+            "inclusion: age >= 70"
+          ]
+        }
+      ]
+    },
+    {
+      "scheme": "AB-PMJAY",
+      "arm": "AB-PMJAY__post_current_document (k=3 self-consistency)",
+      "role": "post",
+      "sample": "sample_3",
+      "file": "self_consistency/AB-PMJAY/sample_3.json",
+      "status": "ok",
+      "supersedes_recorded": null,
+      "checks": [
+        {
+          "check": "70+ branch (added 2024; nothing retired)",
+          "value": "present",
+          "expected": "present",
+          "as_expected": true,
+          "matched": [
+            "inclusion: age >= 70"
+          ]
+        }
+      ]
+    },
+    {
+      "scheme": "PMAY-G",
+      "arm": "PMAY-G__pre_framework_2022",
+      "role": "pre",
+      "sample": "sample_1",
+      "file": "temporal_c4/PMAY-G__pre_framework_2022/sample_1.json",
+      "status": "ok",
+      "supersedes_recorded": null,
+      "checks": [
+        {
+          "check": "refrigerator exclusion (deleted 2024)",
+          "value": "absent",
+          "expected": "present",
+          "as_expected": false,
+          "matched": []
+        },
+        {
+          "check": "landline exclusion (deleted 2024)",
+          "value": "absent",
+          "expected": "present",
+          "as_expected": false,
+          "matched": []
+        },
+        {
+          "check": "monthly income threshold (10000 -> 15000)",
+          "value": "none",
+          "expected": "10000",
+          "as_expected": false,
+          "matched": []
+        }
+      ]
+    },
+    {
+      "scheme": "PMAY-G",
+      "arm": "PMAY-G__pre_framework_2022",
+      "role": "pre",
+      "sample": "sample_2",
+      "file": "temporal_c4/PMAY-G__pre_framework_2022/sample_2.json",
+      "status": "ok",
+      "supersedes_recorded": null,
+      "checks": [
+        {
+          "check": "refrigerator exclusion (deleted 2024)",
+          "value": "present",
+          "expected": "present",
+          "as_expected": true,
+          "matched": [
+            "exclusion: owns_refrigerator == True"
+          ]
+        },
+        {
+          "check": "landline exclusion (deleted 2024)",
+          "value": "present",
+          "expected": "present",
+          "as_expected": true,
+          "matched": [
+            "exclusion: owns_landline_phone == True"
+          ]
+        },
+        {
+          "check": "monthly income threshold (10000 -> 15000)",
+          "value": "10000",
+          "expected": "10000",
+          "as_expected": true,
+          "matched": [
+            "exclusion: monthly_income_inr > 10000"
+          ]
+        }
+      ]
+    },
+    {
+      "scheme": "PMAY-G",
+      "arm": "PMAY-G__pre_framework_2022",
+      "role": "pre",
+      "sample": "sample_3",
+      "file": "temporal_c4/PMAY-G__pre_framework_2022/sample_3.json",
+      "status": "ok",
+      "supersedes_recorded": null,
+      "checks": [
+        {
+          "check": "refrigerator exclusion (deleted 2024)",
+          "value": "present",
+          "expected": "present",
+          "as_expected": true,
+          "matched": [
+            "exclusion: owns_refrigerator == True"
+          ]
+        },
+        {
+          "check": "landline exclusion (deleted 2024)",
+          "value": "present",
+          "expected": "present",
+          "as_expected": true,
+          "matched": [
+            "exclusion: owns_landline_phone == True"
+          ]
+        },
+        {
+          "check": "monthly income threshold (10000 -> 15000)",
+          "value": "10000",
+          "expected": "10000",
+          "as_expected": true,
+          "matched": [
+            "exclusion: monthly_income_inr > 10000"
+          ]
+        }
+      ]
+    },
+    {
+      "scheme": "PMAY-G",
+      "arm": "PMAY-G__stale_PIB_2024",
+      "role": "stale",
+      "sample": "sample_1",
+      "file": "temporal_c4/PMAY-G__stale_PIB_2024/sample_1.json",
+      "status": "ok",
+      "supersedes_recorded": null,
+      "checks": [
+        {
+          "check": "refrigerator exclusion (deleted 2024)",
+          "value": "present",
+          "expected": "present",
+          "as_expected": true,
+          "matched": [
+            "exclusion: owns_refrigerator == True"
+          ]
+        },
+        {
+          "check": "landline exclusion (deleted 2024)",
+          "value": "present",
+          "expected": "present",
+          "as_expected": true,
+          "matched": [
+            "exclusion: owns_landline_phone == True"
+          ]
+        },
+        {
+          "check": "monthly income threshold (10000 -> 15000)",
+          "value": "15000",
+          "expected": "15000",
+          "as_expected": true,
+          "matched": [
+            "exclusion: monthly_income_inr > 15000"
+          ]
+        }
+      ]
+    },
+    {
+      "scheme": "PMAY-G",
+      "arm": "PMAY-G__post_current_document (k=3 self-consistency)",
+      "role": "post",
+      "sample": "sample_1",
+      "file": "self_consistency/PMAY-G/sample_1.json",
+      "status": "ok",
+      "supersedes_recorded": null,
+      "checks": [
+        {
+          "check": "refrigerator exclusion (deleted 2024)",
+          "value": "absent",
+          "expected": "absent",
+          "as_expected": true,
+          "matched": []
+        },
+        {
+          "check": "landline exclusion (deleted 2024)",
+          "value": "absent",
+          "expected": "absent",
+          "as_expected": true,
+          "matched": []
+        },
+        {
+          "check": "monthly income threshold (10000 -> 15000)",
+          "value": "15000",
+          "expected": "15000",
+          "as_expected": true,
+          "matched": [
+            "exclusion: monthly_income_inr > 15000"
+          ]
+        }
+      ]
+    },
+    {
+      "scheme": "PMAY-G",
+      "arm": "PMAY-G__post_current_document (k=3 self-consistency)",
+      "role": "post",
+      "sample": "sample_2",
+      "file": "self_consistency/PMAY-G/sample_2.json",
+      "status": "ok",
+      "supersedes_recorded": {
+        "removed_exclusions": [
+          "ownership of fishing boat",
+          "ownership of motorised two-wheeler",
+          "landline phone ownership",
+          "refrigerator ownership",
+          "mechanised two-wheeler agricultural equipment"
+        ],
+        "reduced_exclusion_parameters": 13,
+        "new_exclusion_parameters": 10
+      },
+      "checks": [
+        {
+          "check": "refrigerator exclusion (deleted 2024)",
+          "value": "absent",
+          "expected": "absent",
+          "as_expected": true,
+          "matched": []
+        },
+        {
+          "check": "landline exclusion (deleted 2024)",
+          "value": "absent",
+          "expected": "absent",
+          "as_expected": true,
+          "matched": []
+        },
+        {
+          "check": "monthly income threshold (10000 -> 15000)",
+          "value": "15000",
+          "expected": "15000",
+          "as_expected": true,
+          "matched": [
+            "exclusion: monthly_income_inr > 15000"
+          ]
+        }
+      ]
+    },
+    {
+      "scheme": "PMAY-G",
+      "arm": "PMAY-G__post_current_document (k=3 self-consistency)",
+      "role": "post",
+      "sample": "sample_3",
+      "file": "self_consistency/PMAY-G/sample_3.json",
+      "status": "ok",
+      "supersedes_recorded": {
+        "fishing_boat_exclusion": true,
+        "motorised_two_wheeler_exclusion": true,
+        "income_threshold": "Rs 10,000 per month"
+      },
+      "checks": [
+        {
+          "check": "refrigerator exclusion (deleted 2024)",
+          "value": "absent",
+          "expected": "absent",
+          "as_expected": true,
+          "matched": []
+        },
+        {
+          "check": "landline exclusion (deleted 2024)",
+          "value": "absent",
+          "expected": "absent",
+          "as_expected": true,
+          "matched": []
+        },
+        {
+          "check": "monthly income threshold (10000 -> 15000)",
+          "value": "15000",
+          "expected": "15000",
+          "as_expected": true,
+          "matched": [
+            "exclusion: monthly_income_inr > 15000"
+          ]
+        }
+      ]
+    }
+  ]
+}

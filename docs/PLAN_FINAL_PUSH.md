@@ -318,3 +318,17 @@ spent on day 1's samples. All are queued and run unattended (see the quota sched
   valid samples, the miss reported) → PMMVY samples 2–3 → rest of Marathi → Tamil if quota remains.
 - Translation failures (Hindi 7, Urdu 5, Marathi 1, and any later Marathi/Tamil ones) go to the team as
   TRANSLATE BY HAND rows, never back to the model; Urdu and Marathi review sheets generated.
+
+### 2026-10-07, 09:30 — final state for the review
+
+- Overnight: judge retry with `reasoning_effort=low` — **PMAY-G worked** (marked as a different setting in
+  the comparison); **AB-PMJAY failed a third time, differently**: an answer with a supersession whose
+  `retired_field`/`retired_op` were null (`schema_validation_failed`). Reports give both causes;
+  KNOWN_ISSUES has the fix for after the review. No re-runs before the review (decided).
+- PMAY-G pre-amendment arm 2/3 (samples 2–3 read the old rules); PMMVY samples 2–3 (self-consistency now
+  7 schemes: agreement ECE 0.081 vs 0.092; Spearman vs F1 0.82 vs 0.19); pmksypdmc 2 of 3 samples — the
+  collapse repeats and agreement does not flag it.
+- Marathi 298/300, Tamil 295/300; failures → hand rows (Marathi 2, Tamil 5); all four sheets current.
+- Skipped by decision: the per-language live check (the rehearsal after 14:30 covers English and Hindi).
+- The queue stops at 10:00 and is not restarted. Not run: Baseline 1, gate re-validation judge runs, RAG,
+  pmksypdmc sample 3.

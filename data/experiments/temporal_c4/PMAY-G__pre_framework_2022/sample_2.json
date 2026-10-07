@@ -1,0 +1,274 @@
+{
+  "item": "temporal_c4",
+  "gold_tag": "gold-v2",
+  "gold_commit": "82436ac11fb53421bf44c8c68e6333e1db353442",
+  "code_commit": "d1a9b07",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "config": {
+    "k": 3,
+    "temperature": 0.2,
+    "extractor": "defaults"
+  },
+  "date": "2026-10-07",
+  "created_at": "2026-10-07T00:35:38",
+  "scheme_id": "PMAY-G",
+  "arm": "PMAY-G__pre_framework_2022",
+  "role": "pre",
+  "sample": 2,
+  "source": "Framework for Implementation of PMAY-G, MoRD, 2022 edition (PMAY-G_primary_framework_2016.pdf, from https://rh.odisha.gov.in/guidelines/PMAY(G)_guidelines.pdf), para 4.1.1 and Annexure I",
+  "source_document_sha256": "3d211387167b5a200dab638531ad3b9cb536fcecbd1153dedf3ab6d1e4f6c993",
+  "source_excerpt": "Framework for Implementation of Pradhan Mantri Awaas Yojana - Gramin (PMAY-G), Ministry of Rural Development, 2022 edition (excerpts)\n\n4.1 Universe of Eligible Beneficiaries 4.1.1 The universe of eligible beneficiaries under PMAY-G will include all the houseless and households living in zero, one or two room with kutcha wall and kutcha roof (kutcha houses) as per SECC data subject to the exclusion process described in Annexure-I. Additional beneficiaries may be drawn from Awaas+ List.\n\nAnnexure –I EXCLUSION PROCESS Step 1: Exclusion of pucca houses - All households living in houses with pucca roof and/or pucca wall and households living in houses with more than 2 rooms are filtered out. Step 2: Automatic Exclusion – From the remaining set of households, all households fulfilling any one of the 13 parameters listed below are automatically excluded: - 1. Motorised two/three/four-wheeler/ fishing boat 2. Mechanised three/ four-wheeler agricultural equipment 3. Kisan Credit Card with credit limit of Rs.50,000 or above 4. Household with any member as a Government employee 5. Households with non-agricultural enterprises registered with the Government 6. Any member of the family earning more than Rs.10,000 per month 7. Paying income tax 8. Paying professional tax 9. Own a refrigerator 10. Own landline phone 11. Own 2.5 acres or more of irrigated land with at least one irrigation equipment 12. 5 acres or more of irrigated land for two or more crop seasons 13. Owning at least 7.5 acres of land or more with at least one irrigation equipment CRITERIA FOR AUTOMATIC INCLUSION 1. Households without shelter 2. Destitute / living on alms 3. Manual scavengers 4. Primitive Tribal Groups 5. Legally released bonded labourer",
+  "usage": [
+    {
+      "call": "scheme_core_extraction",
+      "prompt_tokens": 4557,
+      "completion_tokens": 1856,
+      "total_tokens": 6413
+    },
+    {
+      "call": "scheme_meta_extraction",
+      "prompt_tokens": 1157,
+      "completion_tokens": 519,
+      "total_tokens": 1676
+    }
+  ],
+  "draft_extraction": {
+    "scheme_id": "PMAY-G",
+    "unit_of_eligibility": "family",
+    "inclusion": {
+      "or": [
+        {
+          "field": "is_houseless",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": false,
+          "cat": "other"
+        },
+        {
+          "and": [
+            {
+              "field": "house_room_count",
+              "op": "<=",
+              "value": 2,
+              "ontology_proposed": false,
+              "cat": "other"
+            },
+            {
+              "field": "has_kutcha_wall",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": true,
+              "cat": "other"
+            },
+            {
+              "field": "has_kutcha_roof",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": true,
+              "cat": "other"
+            }
+          ]
+        },
+        {
+          "field": "is_destitute",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": true,
+          "cat": "other"
+        },
+        {
+          "field": "is_manual_scavenger",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": true,
+          "cat": "other"
+        },
+        {
+          "field": "is_primitive_tribal_group",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": true,
+          "cat": "other"
+        },
+        {
+          "field": "is_legally_released_bonded_labourer",
+          "op": "==",
+          "value": true,
+          "ontology_proposed": true,
+          "cat": "other"
+        }
+      ]
+    },
+    "exclusions": [
+      {
+        "field": "household_owns_motorised_vehicle_or_fishing_boat",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "owns_mechanized_agricultural_equipment_3_or_4_wheeler",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "kisan_credit_card_limit_inr",
+        "op": ">=",
+        "value": 50000,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "is_govt_employee",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "occupation",
+        "quantifier": "some_family_member",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "owns_non_agricultural_enterprise_registered_with_govt",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "monthly_income_inr",
+        "op": ">",
+        "value": 10000,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "some_family_member",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "paid_income_tax_last_assessment_year",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "some_family_member",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "paid_professional_tax",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "some_family_member",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "owns_refrigerator",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "owns_landline_phone",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "owns_gt_2_5_acres_irrigated_land_with_irrigation_equipment",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "owns_5_or_more_acres_irrigated_land_two_or_more_crop_seasons",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      },
+      {
+        "field": "owns_7_5_or_more_acres_land_with_irrigation_equipment",
+        "op": "==",
+        "value": true,
+        "ontology_proposed": false,
+        "cat": "economic",
+        "quantifier": "self",
+        "except": null,
+        "except_scope": "member",
+        "count_op": null,
+        "count": null
+      }
+    ],
+    "temporal_validity": {
+      "valid_from": null,
+      "valid_to": null,
+      "extracted_at": "2026-10-07",
+      "supersedes": null
+    },
+    "operational_requirements": [],
+    "extraction_metadata": {
+      "confidence": 0.6,
+      "source_clause": "4.1 Universe of Eligible Beneficiaries and Annexure‑I Exclusion Process",
+      "flagged_for_review": true
+    }
+  }
+}

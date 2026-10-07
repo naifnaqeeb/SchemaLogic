@@ -1,0 +1,639 @@
+{
+  "item": "gate_revalidation_analysis",
+  "gold_tag": "gold-v2",
+  "gold_commit": "82436ac11fb53421bf44c8c68e6333e1db353442",
+  "code_commit": "d1a9b07",
+  "provider": "none (offline)",
+  "model": "openai/gpt-oss-120b",
+  "config": {
+    "groups": {
+      "A_judge_design": [
+        "dropped_predicate"
+      ],
+      "B_gate_design": [
+        "fabricated_supersedes"
+      ],
+      "C_outside_design": [
+        "flipped_operator",
+        "wrong_threshold",
+        "wrong_quantifier",
+        "wrong_exception_scope"
+      ]
+    },
+    "synthetic": true
+  },
+  "date": "2026-10-07",
+  "created_at": "2026-10-07T09:18:32",
+  "per_error": [
+    {
+      "error_id": "AB-PMJAY#05",
+      "scheme": "AB-PMJAY",
+      "kind": "wrong_exception_scope",
+      "group": "C_outside_design",
+      "description": "kisan_credit_card_limit_inr: exception removed",
+      "outcome": "not_run"
+    },
+    {
+      "error_id": "AB-PMJAY#08",
+      "scheme": "AB-PMJAY",
+      "kind": "flipped_operator",
+      "group": "C_outside_design",
+      "description": "is_valid_rsby_beneficiary: == True -> {'value': False}",
+      "outcome": "not_run"
+    },
+    {
+      "error_id": "AB-PMJAY#11",
+      "scheme": "AB-PMJAY",
+      "kind": "wrong_exception_scope",
+      "group": "C_outside_design",
+      "description": "owns_landline_phone: exception removed",
+      "outcome": "not_run"
+    },
+    {
+      "error_id": "AB-PMJAY#18",
+      "scheme": "AB-PMJAY",
+      "kind": "fabricated_supersedes",
+      "group": "B_gate_design",
+      "description": "invented: is_secc_deprived_household == False retired by an amendment",
+      "outcome": "not_run",
+      "gate_check": {
+        "retired_value": false,
+        "literally_in_source": false,
+        "gate_would": "defer"
+      }
+    },
+    {
+      "error_id": "AB-PMJAY#28",
+      "scheme": "AB-PMJAY",
+      "kind": "wrong_exception_scope",
+      "group": "C_outside_design",
+      "description": "owns_non_agricultural_enterprise_registered_with_govt: exception removed",
+      "outcome": "not_run"
+    },
+    {
+      "error_id": "IGNOAPS#03",
+      "scheme": "IGNOAPS",
+      "kind": "wrong_threshold",
+      "group": "C_outside_design",
+      "description": "family_agricultural_land_acres: 5 -> 6",
+      "outcome": "not_run"
+    },
+    {
+      "error_id": "IGNOAPS#12",
+      "scheme": "IGNOAPS",
+      "kind": "fabricated_supersedes",
+      "group": "B_gate_design",
+      "description": "invented: owns_four_wheeler == True retired by an amendment",
+      "outcome": "not_run",
+      "gate_check": {
+        "retired_value": true,
+        "literally_in_source": false,
+        "gate_would": "defer"
+      }
+    },
+    {
+      "error_id": "IGNOAPS#21",
+      "scheme": "IGNOAPS",
+      "kind": "wrong_threshold",
+      "group": "C_outside_design",
+      "description": "age: 60 -> 90",
+      "outcome": "not_run"
+    },
+    {
+      "error_id": "IGNOAPS#30",
+      "scheme": "IGNOAPS",
+      "kind": "flipped_operator",
+      "group": "C_outside_design",
+      "description": "is_govt_employee: == False -> {'value': True}",
+      "outcome": "not_run"
+    },
+    {
+      "error_id": "MH-LADKI-BAHIN#01",
+      "scheme": "MH-LADKI-BAHIN",
+      "kind": "dropped_predicate",
+      "group": "A_judge_design",
+      "description": "removed holds_govt_board_or_corporation_post == True",
+      "outcome": "not_run"
+    },
+    {
+      "error_id": "MH-LADKI-BAHIN#09",
+      "scheme": "MH-LADKI-BAHIN",
+      "kind": "wrong_threshold",
+      "group": "C_outside_design",
+      "description": "age: 65 -> 98",
+      "outcome": "not_run"
+    },
+    {
+      "error_id": "MH-LADKI-BAHIN#19",
+      "scheme": "MH-LADKI-BAHIN",
+      "kind": "dropped_predicate",
+      "group": "A_judge_design",
+      "description": "removed family_annual_income_inr <= 250000",
+      "outcome": "not_run"
+    },
+    {
+      "error_id": "MH-LADKI-BAHIN#25",
+      "scheme": "MH-LADKI-BAHIN",
+      "kind": "flipped_operator",
+      "group": "C_outside_design",
+      "description": "is_regular_govt_employee_or_pensioner: == True -> {'value': False}",
+      "outcome": "not_run"
+    },
+    {
+      "error_id": "PM-KISAN#04",
+      "scheme": "PM-KISAN",
+      "kind": "wrong_quantifier",
+      "group": "C_outside_design",
+      "description": "monthly_pension_inr: some_family_member -> self",
+      "outcome": "not_run"
+    },
+    {
+      "error_id": "PM-KISAN#10",
+      "scheme": "PM-KISAN",
+      "kind": "wrong_quantifier",
+      "group": "C_outside_design",
+      "description": "is_practicing_registered_professional: some_family_member -> self",
+      "outcome": "not_run"
+    },
+    {
+      "error_id": "PM-KISAN#23",
+      "scheme": "PM-KISAN",
+      "kind": "wrong_exception_scope",
+      "group": "C_outside_design",
+      "description": "is_serving_or_retired_govt_employee: scope member -> applicant",
+      "outcome": "not_run"
+    },
+    {
+      "error_id": "PM-KISAN#17",
+      "scheme": "PM-KISAN",
+      "kind": "wrong_exception_scope",
+      "group": "C_outside_design",
+      "description": "monthly_pension_inr: exception removed",
+      "outcome": "not_run"
+    },
+    {
+      "error_id": "PM-UJJWALA-2.0#06",
+      "scheme": "PM-UJJWALA-2.0",
+      "kind": "fabricated_supersedes",
+      "group": "B_gate_design",
+      "description": "invented: is_most_backward_class == False retired by an amendment",
+      "outcome": "not_run",
+      "gate_check": {
+        "retired_value": false,
+        "literally_in_source": false,
+        "gate_would": "defer"
+      }
+    },
+    {
+      "error_id": "PM-UJJWALA-2.0#15",
+      "scheme": "PM-UJJWALA-2.0",
+      "kind": "wrong_threshold",
+      "group": "C_outside_design",
+      "description": "age: 18 -> 19",
+      "outcome": "not_run"
+    },
+    {
+      "error_id": "PM-UJJWALA-2.0#22",
+      "scheme": "PM-UJJWALA-2.0",
+      "kind": "wrong_quantifier",
+      "group": "C_outside_design",
+      "description": "household_has_existing_lpg_connection: self -> some_family_member",
+      "outcome": "not_run"
+    },
+    {
+      "error_id": "PM-UJJWALA-2.0#24",
+      "scheme": "PM-UJJWALA-2.0",
+      "kind": "dropped_predicate",
+      "group": "A_judge_design",
+      "description": "removed is_aay_beneficiary == True",
+      "outcome": "not_run"
+    },
+    {
+      "error_id": "PMAY-G#07",
+      "scheme": "PMAY-G",
+      "kind": "dropped_predicate",
+      "group": "A_judge_design",
+      "description": "removed is_govt_employee == True",
+      "outcome": "not_run"
+    },
+    {
+      "error_id": "PMAY-G#14",
+      "scheme": "PMAY-G",
+      "kind": "flipped_operator",
+      "group": "C_outside_design",
+      "description": "kisan_credit_card_limit_inr: >= 50000 -> {'op': '>'}",
+      "outcome": "not_run"
+    },
+    {
+      "error_id": "PMAY-G#16",
+      "scheme": "PMAY-G",
+      "kind": "wrong_quantifier",
+      "group": "C_outside_design",
+      "description": "paid_professional_tax: some_family_member -> self",
+      "outcome": "not_run"
+    },
+    {
+      "error_id": "PMAY-G#26",
+      "scheme": "PMAY-G",
+      "kind": "wrong_threshold",
+      "group": "C_outside_design",
+      "description": "house_room_count: 2 -> 3",
+      "outcome": "not_run"
+    },
+    {
+      "error_id": "PMAY-G#27",
+      "scheme": "PMAY-G",
+      "kind": "wrong_quantifier",
+      "group": "C_outside_design",
+      "description": "paid_income_tax_last_assessment_year: some_family_member -> self",
+      "outcome": "not_run"
+    },
+    {
+      "error_id": "PMMVY#02",
+      "scheme": "PMMVY",
+      "kind": "flipped_operator",
+      "group": "C_outside_design",
+      "description": "is_pm_kisan_beneficiary: == True -> {'value': False}",
+      "outcome": "not_run"
+    },
+    {
+      "error_id": "PMMVY#13",
+      "scheme": "PMMVY",
+      "kind": "dropped_predicate",
+      "group": "A_judge_design",
+      "description": "removed age <= 55",
+      "outcome": "not_run"
+    },
+    {
+      "error_id": "PMMVY#20",
+      "scheme": "PMMVY",
+      "kind": "flipped_operator",
+      "group": "C_outside_design",
+      "description": "has_active_mgnrega_job_card: == True -> {'value': False}",
+      "outcome": "not_run"
+    },
+    {
+      "error_id": "PMMVY#29",
+      "scheme": "PMMVY",
+      "kind": "dropped_predicate",
+      "group": "A_judge_design",
+      "description": "removed is_sc_st == True",
+      "outcome": "not_run"
+    }
+  ],
+  "clean_controls": [
+    {
+      "scheme": "AB-PMJAY",
+      "judge_ran": false,
+      "findings": 0,
+      "deferred": 0,
+      "auto_accepted": 0
+    },
+    {
+      "scheme": "IGNOAPS",
+      "judge_ran": false,
+      "findings": 0,
+      "deferred": 0,
+      "auto_accepted": 0
+    },
+    {
+      "scheme": "MH-LADKI-BAHIN",
+      "judge_ran": false,
+      "findings": 0,
+      "deferred": 0,
+      "auto_accepted": 0
+    },
+    {
+      "scheme": "PM-KISAN",
+      "judge_ran": false,
+      "findings": 0,
+      "deferred": 0,
+      "auto_accepted": 0
+    },
+    {
+      "scheme": "PM-UJJWALA-2.0",
+      "judge_ran": false,
+      "findings": 0,
+      "deferred": 0,
+      "auto_accepted": 0
+    },
+    {
+      "scheme": "PMAY-G",
+      "judge_ran": false,
+      "findings": 0,
+      "deferred": 0,
+      "auto_accepted": 0
+    },
+    {
+      "scheme": "PMMVY",
+      "judge_ran": false,
+      "findings": 0,
+      "deferred": 0,
+      "auto_accepted": 0
+    }
+  ],
+  "agreement_signal": {
+    "schemes_skipped_fewer_than_2_samples": [],
+    "n_present": 314,
+    "ece": 0.3152,
+    "pr": [
+      {
+        "flag_if_produced_by": "0 of 3",
+        "flagged": 82,
+        "true_errors_flagged": 15,
+        "precision": 0.183,
+        "recall": 0.882,
+        "recall_by_kind": {
+          "flipped_operator": "6/6",
+          "wrong_exception_scope": "1/1",
+          "wrong_quantifier": "3/5",
+          "wrong_threshold": "5/5"
+        }
+      },
+      {
+        "flag_if_produced_by": "at most 1 of 3",
+        "flagged": 95,
+        "true_errors_flagged": 17,
+        "precision": 0.179,
+        "recall": 1.0,
+        "recall_by_kind": {
+          "flipped_operator": "6/6",
+          "wrong_exception_scope": "1/1",
+          "wrong_quantifier": "5/5",
+          "wrong_threshold": "5/5"
+        }
+      },
+      {
+        "flag_if_produced_by": "at most 2 of 3",
+        "flagged": 170,
+        "true_errors_flagged": 17,
+        "precision": 0.1,
+        "recall": 1.0,
+        "recall_by_kind": {
+          "flipped_operator": "6/6",
+          "wrong_exception_scope": "1/1",
+          "wrong_quantifier": "5/5",
+          "wrong_threshold": "5/5"
+        }
+      },
+      {
+        "flag_if_produced_by": "any number of",
+        "flagged": 314,
+        "true_errors_flagged": 17,
+        "precision": 0.054,
+        "recall": 1.0,
+        "recall_by_kind": {
+          "flipped_operator": "6/6",
+          "wrong_exception_scope": "1/1",
+          "wrong_quantifier": "5/5",
+          "wrong_threshold": "5/5"
+        }
+      }
+    ],
+    "missing_rules": [
+      {
+        "variant": "AB-PMJAY~1",
+        "scheme": "AB-PMJAY",
+        "agreement": 1.0,
+        "error": true,
+        "kind": "flipped_operator",
+        "clean_control": false,
+        "missing": true
+      },
+      {
+        "variant": "AB-PMJAY~1",
+        "scheme": "AB-PMJAY",
+        "agreement": 0.0,
+        "error": true,
+        "kind": "wrong_exception_scope",
+        "clean_control": false,
+        "missing": true
+      },
+      {
+        "variant": "AB-PMJAY~1",
+        "scheme": "AB-PMJAY",
+        "agreement": 0.0,
+        "error": true,
+        "kind": "wrong_exception_scope",
+        "clean_control": false,
+        "missing": true
+      },
+      {
+        "variant": "AB-PMJAY~2",
+        "scheme": "AB-PMJAY",
+        "agreement": 0.0,
+        "error": true,
+        "kind": "wrong_exception_scope",
+        "clean_control": false,
+        "missing": true
+      },
+      {
+        "variant": "IGNOAPS~1",
+        "scheme": "IGNOAPS",
+        "agreement": 1.0,
+        "error": true,
+        "kind": "wrong_threshold",
+        "clean_control": false,
+        "missing": true
+      },
+      {
+        "variant": "IGNOAPS~1",
+        "scheme": "IGNOAPS",
+        "agreement": 0.0,
+        "error": true,
+        "kind": "wrong_threshold",
+        "clean_control": false,
+        "missing": true
+      },
+      {
+        "variant": "IGNOAPS~2",
+        "scheme": "IGNOAPS",
+        "agreement": 0.0,
+        "error": true,
+        "kind": "flipped_operator",
+        "clean_control": false,
+        "missing": true
+      },
+      {
+        "variant": "MH-LADKI-BAHIN~1",
+        "scheme": "MH-LADKI-BAHIN",
+        "agreement": 1.0,
+        "error": true,
+        "kind": "wrong_threshold",
+        "clean_control": false,
+        "missing": true
+      },
+      {
+        "variant": "MH-LADKI-BAHIN~1",
+        "scheme": "MH-LADKI-BAHIN",
+        "agreement": 1.0,
+        "error": true,
+        "kind": "dropped_predicate",
+        "clean_control": false,
+        "missing": true
+      },
+      {
+        "variant": "MH-LADKI-BAHIN~1",
+        "scheme": "MH-LADKI-BAHIN",
+        "agreement": 1.0,
+        "error": true,
+        "kind": "dropped_predicate",
+        "clean_control": false,
+        "missing": true
+      },
+      {
+        "variant": "MH-LADKI-BAHIN~2",
+        "scheme": "MH-LADKI-BAHIN",
+        "agreement": 1.0,
+        "error": true,
+        "kind": "flipped_operator",
+        "clean_control": false,
+        "missing": true
+      },
+      {
+        "variant": "PM-KISAN~1",
+        "scheme": "PM-KISAN",
+        "agreement": 1.0,
+        "error": true,
+        "kind": "wrong_quantifier",
+        "clean_control": false,
+        "missing": true
+      },
+      {
+        "variant": "PM-KISAN~1",
+        "scheme": "PM-KISAN",
+        "agreement": 1.0,
+        "error": true,
+        "kind": "wrong_quantifier",
+        "clean_control": false,
+        "missing": true
+      },
+      {
+        "variant": "PM-KISAN~1",
+        "scheme": "PM-KISAN",
+        "agreement": 1.0,
+        "error": true,
+        "kind": "wrong_exception_scope",
+        "clean_control": false,
+        "missing": true
+      },
+      {
+        "variant": "PM-KISAN~2",
+        "scheme": "PM-KISAN",
+        "agreement": 1.0,
+        "error": true,
+        "kind": "wrong_exception_scope",
+        "clean_control": false,
+        "missing": true
+      },
+      {
+        "variant": "PM-UJJWALA-2.0~1",
+        "scheme": "PM-UJJWALA-2.0",
+        "agreement": 1.0,
+        "error": true,
+        "kind": "wrong_threshold",
+        "clean_control": false,
+        "missing": true
+      },
+      {
+        "variant": "PM-UJJWALA-2.0~1",
+        "scheme": "PM-UJJWALA-2.0",
+        "agreement": 1.0,
+        "error": true,
+        "kind": "wrong_quantifier",
+        "clean_control": false,
+        "missing": true
+      },
+      {
+        "variant": "PM-UJJWALA-2.0~2",
+        "scheme": "PM-UJJWALA-2.0",
+        "agreement": 1.0,
+        "error": true,
+        "kind": "dropped_predicate",
+        "clean_control": false,
+        "missing": true
+      },
+      {
+        "variant": "PMAY-G~1",
+        "scheme": "PMAY-G",
+        "agreement": 1.0,
+        "error": true,
+        "kind": "flipped_operator",
+        "clean_control": false,
+        "missing": true
+      },
+      {
+        "variant": "PMAY-G~1",
+        "scheme": "PMAY-G",
+        "agreement": 0.3333333333333333,
+        "error": true,
+        "kind": "dropped_predicate",
+        "clean_control": false,
+        "missing": true
+      },
+      {
+        "variant": "PMAY-G~1",
+        "scheme": "PMAY-G",
+        "agreement": 0.6666666666666666,
+        "error": true,
+        "kind": "wrong_quantifier",
+        "clean_control": false,
+        "missing": true
+      },
+      {
+        "variant": "PMAY-G~2",
+        "scheme": "PMAY-G",
+        "agreement": 0.6666666666666666,
+        "error": true,
+        "kind": "wrong_threshold",
+        "clean_control": false,
+        "missing": true
+      },
+      {
+        "variant": "PMAY-G~2",
+        "scheme": "PMAY-G",
+        "agreement": 0.6666666666666666,
+        "error": true,
+        "kind": "wrong_quantifier",
+        "clean_control": false,
+        "missing": true
+      },
+      {
+        "variant": "PMMVY~1",
+        "scheme": "PMMVY",
+        "agreement": 1.0,
+        "error": true,
+        "kind": "dropped_predicate",
+        "clean_control": false,
+        "missing": true
+      },
+      {
+        "variant": "PMMVY~1",
+        "scheme": "PMMVY",
+        "agreement": 0.6666666666666666,
+        "error": true,
+        "kind": "flipped_operator",
+        "clean_control": false,
+        "missing": true
+      },
+      {
+        "variant": "PMMVY~1",
+        "scheme": "PMMVY",
+        "agreement": 0.6666666666666666,
+        "error": true,
+        "kind": "flipped_operator",
+        "clean_control": false,
+        "missing": true
+      },
+      {
+        "variant": "PMMVY~2",
+        "scheme": "PMMVY",
+        "agreement": 0.6666666666666666,
+        "error": true,
+        "kind": "dropped_predicate",
+        "clean_control": false,
+        "missing": true
+      }
+    ]
+  }
+}

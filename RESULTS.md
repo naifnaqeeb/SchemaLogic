@@ -1,6 +1,6 @@
 # Results — SchemeLogic final push
 
-*Built 2026-10-06 21:43 by `scripts/build_results.py` from code `405a497`, against gold frozen at `gold-v2` (`82436ac`). Model `openai/gpt-oss-120b` on Groq's free tier. Regenerate; don't edit.*
+*Built 2026-10-07 09:18 by `scripts/build_results.py` from code `d1a9b07`, against gold frozen at `gold-v2` (`82436ac`). Model `openai/gpt-oss-120b` on Groq's free tier. Regenerate; don't edit.*
 
 **Every sample here is small** (7 gold schemes, 8–14 profiles each, k=3, ~30 injected errors, k=1 per pre-amendment text). Read directions, not decimals. The caveats and the withdrawn claims are in §1. The one-page review summary is [docs/results/REVIEW_SUMMARY.md](docs/results/REVIEW_SUMMARY.md).
 
@@ -10,17 +10,17 @@
 |---|---|---|
 | Batch report: pipeline 2026-08, Baseline 3, Baseline 2 | complete | batch report |
 | Full pipeline on Baseline 3's extraction | 6/7 — **partial** | batch report |
-| Retry of failed judge calls (max_tokens=2000) | 0/2 retried with reasoning_effort=low; 2 still failed — **not run yet** | batch report |
+| Retries of failed judge calls (max_tokens=2000, then reasoning_effort=low) | 2/2 retried with reasoning_effort=low; 1 still failed — **partial** | batch report |
 | Baseline 1 (flat attributes) | 0/7 — **not run yet** | batch report |
-| Self-consistency k=3 (PMMVY samples) | 1/3 — **partial** | self-consistency |
-| pmksypdmc confidence test | 0/3 — **not run yet** | self-consistency |
+| Self-consistency k=3 (PMMVY samples) | 3/3 — complete | self-consistency |
+| pmksypdmc confidence test | 2/3 — **partial** | self-consistency |
 | Gate re-validation, judge runs | 0/21 — **not run yet** | gate re-validation |
-| Temporal C4 + Marathi arm of C2 | 9/11 — **partial** | temporal / cross-lingual |
+| Temporal C4 + Marathi arm of C2 | 11/11 — complete | temporal / cross-lingual |
 | RAG with/without retrieval | 0/4 — **not run yet** | RAG |
 
 ## 1. Extraction, pipeline and baselines against gold
 
-*Generated 2026-10-06T21:43:23 by `scripts/run_batch_report.py` from code `405a497`, against frozen gold `gold-v2` (`82436ac`). Offline: no LLM calls. Regenerate rather than edit.*
+*Generated 2026-10-07T09:18:27 by `scripts/run_batch_report.py` from code `d1a9b07`, against frozen gold `gold-v2` (`82436ac`). Offline: no LLM calls. Regenerate rather than edit.*
 
 ### Caveats — read first
 
@@ -71,10 +71,10 @@ Full pipeline (judge -> gate -> apply approved) on the same extraction as Baseli
 | IGNOAPS | 0.462 | — | 41.7% | 0.0% | 25.0% | 12 | 2/2 | `IGNOAPS.json` |
 | PM-KISAN | 0.909 | 1.000 | 66.7% | 0.0% | 0.0% | 12 | 2/2 | `PM-KISAN.json` |
 | PM-UJJWALA-2.0 | 0.923 | — | 100.0% | 0.0% | 0.0% | 9 | 2/2 | `PM-UJJWALA-2.0.json` |
+| PMAY-G *(judge: reasoning_effort=low)* | 0.286 | — | 14.3% | 0.0% | 0.0% | 14 | 1/2 | `PMAY-G.json` |
 | PMMVY | 0.812 | — | 41.7% | 0.0% | 0.0% | 12 | 2/2 | `PMMVY.json` |
-| AB-PMJAY | **failed run** — judge call failed (api_error: json_validate_failed), and again on retry with max_tokens=2000. Cause: the judge's prompt is about 6,295 tokens (conservative estimate) of Groq's 8,000-token per-request limit for prompt plus answer; the answer gets only the remainder (about 2,000 tokens), and the model spends it on reasoning before writing any JSON; excluded | | | | | | | `AB-PMJAY.json` |
-| PMAY-G | **failed run** — judge call failed (api_error: json_validate_failed), and again on retry with max_tokens=2000. Cause: the judge's prompt is about 6,276 tokens (conservative estimate) of Groq's 8,000-token per-request limit for prompt plus answer; the answer gets only the remainder (about 2,000 tokens), and the model spends it on reasoning before writing any JSON; excluded | | | | | | | `PMAY-G.json` |
-| **All (4)** | **0.817** (micro) | | **60.0%** | 0.0% | 6.7% | 45 | | |
+| AB-PMJAY | **failed run** — judge call failed on all 3 attempts — default settings and max_tokens=2000: json_validate_failed, no output: the prompt is about 6,295 tokens (conservative estimate) of Groq's 8,000-token per-request limit for prompt plus answer, and the model spent what was left for the answer on reasoning before any JSON; reasoning_effort=low: schema_validation_failed: an answer was produced but did not match the judge's format (findings.0.proposed_supersedes.retired_field: input should be a valid string); excluded | | | | | | | `AB-PMJAY.json` |
+| **All (5)** | **0.694** (micro) | | **49.2%** | 0.0% | 5.1% | 59 | | |
 
 Absent: MH-LADKI-BAHIN.
 
@@ -95,10 +95,13 @@ Each cell: Baseline 3 → pipeline. "Other" is almost always *undetermined*: a r
 | IGNOAPS | 1 | 0.500 → 0.462 | 75.0% → 41.7% | 0.0% → 0.0% | 25.0% → 25.0% | 0.0% → 33.3% |
 | PM-KISAN | 1 | 0.952 → 0.909 | 91.7% → 66.7% | 8.3% → 0.0% | 0.0% → 0.0% | 0.0% → 33.3% |
 | PM-UJJWALA-2.0 | 0 | 0.923 → 0.923 | 100.0% → 100.0% | 0.0% → 0.0% | 0.0% → 0.0% | 0.0% → 0.0% |
+| PMAY-G *(judge: reasoning_effort=low)* | 1 | 0.296 → 0.286 | 35.7% → 14.3% | 57.1% → 0.0% | 0.0% → 0.0% | 7.1% → 85.7% |
 | PMMVY | 1 | 0.839 → 0.812 | 41.7% → 41.7% | 0.0% → 0.0% | 0.0% → 0.0% | 58.3% → 58.3% |
-| **All (4)** | | **0.844 → 0.817** (micro) | **75.6% → 60.0%** (n=45) | 2.2% → 0.0% | 6.7% → 6.7% | 15.6% → 33.3% |
+| **All (5)** | | **0.718 → 0.694** (micro) | **66.1% → 49.2%** (n=59) | 15.3% → 0.0% | 5.1% → 5.1% | 13.6% → 45.8% |
 
-Excluded: AB-PMJAY — judge call failed (api_error: json_validate_failed), and again on retry with max_tokens=2000. Cause: the judge's prompt is about 6,295 tokens (conservative estimate) of Groq's 8,000-token per-request limit for prompt plus answer; the answer gets only the remainder (about 2,000 tokens), and the model spends it on reasoning before writing any JSON; PMAY-G — judge call failed (api_error: json_validate_failed), and again on retry with max_tokens=2000. Cause: the judge's prompt is about 6,276 tokens (conservative estimate) of Groq's 8,000-token per-request limit for prompt plus answer; the answer gets only the remainder (about 2,000 tokens), and the model spends it on reasoning before writing any JSON; MH-LADKI-BAHIN — no Baseline 3 sample (extraction failed validation).
+*(judge: …)* marks a scheme whose judge call used a different setting from the others: its first call failed (json_validate_failed) and this is its retry, so it is not an identical-conditions run.
+
+Excluded: AB-PMJAY — judge call failed on all 3 attempts — default settings and max_tokens=2000: json_validate_failed, no output: the prompt is about 6,295 tokens (conservative estimate) of Groq's 8,000-token per-request limit for prompt plus answer, and the model spent what was left for the answer on reasoning before any JSON; reasoning_effort=low: schema_validation_failed: an answer was produced but did not match the judge's format (findings.0.proposed_supersedes.retired_field: input should be a valid string); MH-LADKI-BAHIN — no Baseline 3 sample (extraction failed validation).
 
 ### Baseline 2 — direct LLM answering, re-scored against frozen gold
 
@@ -140,7 +143,7 @@ Excluded: AB-PMJAY — judge call failed (api_error: json_validate_failed), and 
 
 ## 2. Self-consistency confidence
 
-*Generated 2026-10-06T21:43:24 by `scripts/analyze_self_consistency.py` from code `405a497`, against frozen gold `gold-v2`. Small sample: 6 schemes, k samples each; rank correlations over so few schemes are indicative only. Agreement is over a scheme's VALID samples (a sample that failed schema validation produced no predicates and is listed, not counted); a scheme needs at least 2 valid samples to be scored.*
+*Generated 2026-10-07T09:18:29 by `scripts/analyze_self_consistency.py` from code `d1a9b07`, against frozen gold `gold-v2`. Small sample: 7 schemes, k samples each; rank correlations over so few schemes are indicative only. Agreement is over a scheme's VALID samples (a sample that failed schema validation produced no predicates and is listed, not counted); a scheme needs at least 2 valid samples to be scored.*
 
 | Scheme | Valid samples | Predicates per sample | Mean agreement | Unanimous | Self-reported (per sample) | Structural F1 (per sample) | Outcome agreement (mean) |
 |---|---|---|---|---|---|---|---|
@@ -150,35 +153,45 @@ Excluded: AB-PMJAY — judge call failed (api_error: json_validate_failed), and 
 | PM-KISAN | 3/3 | [10, 10, 10] | 1.0 | 1.0 | [0.95, 0.95, 0.95] | [0.952, 0.952, 0.952] | 0.917 |
 | PM-UJJWALA-2.0 | 3/3 | [13, 13, 13] | 0.966 | 0.923 | [0.95, 0.95, 0.95] | [0.923, 1.0, 1.0] | 1.0 |
 | PMAY-G | 3/3 | [12, 18, 13] | 0.643 | 0.279 | [0.85, 0.85, 0.95] | [0.296, 0.667, 0.929] | 0.548 |
-| PMMVY | 1/1 | — | — | — | — | — | — | *(fewer than 2 valid samples so far)*
+| PMMVY | 3/3 | [14, 5, 13] | 0.667 | 0.094 | [0.97, 0.95, 0.95] | [0.839, 0.182, 0.8] | 0.417 |
 
-### Predicate-level calibration (n = 212 predicates)
+### Predicate-level calibration (n = 244 predicates)
 
 Correct = an identical predicate exists in the frozen gold.
 
-- Agreement confidence: ECE **0.0566**
-- Self-reported confidence: ECE **0.0888**
+- Agreement confidence: ECE **0.0806**
+- Self-reported confidence: ECE **0.0923**
 
 | Signal | Bin | n | Mean confidence | Accuracy |
 |---|---|---|---|---|
-| agreement | [0.0, 0.34] | 23 | 0.333 | 0.174 |
-| agreement | [0.35, 0.67] | 40 | 0.642 | 0.725 |
-| agreement | [0.68, 1.0] | 149 | 1.0 | 0.966 |
+| agreement | [0.0, 0.34] | 26 | 0.333 | 0.154 |
+| agreement | [0.35, 0.67] | 66 | 0.652 | 0.803 |
+| agreement | [0.68, 1.0] | 152 | 1.0 | 0.967 |
 | self_reported | [0.0, 0.5] | 0 | None | None |
 | self_reported | [0.51, 0.7] | 6 | 0.6 | 0.333 |
 | self_reported | [0.71, 0.85] | 30 | 0.85 | 0.5 |
-| self_reported | [0.86, 1.0] | 176 | 0.947 | 0.909 |
+| self_reported | [0.86, 1.0] | 208 | 0.949 | 0.899 |
 
-### Scheme ranking (Spearman, n = 6)
+### Scheme ranking (Spearman, n = 7)
 
 | | vs structural F1 | vs outcome agreement |
 |---|---|---|
-| Agreement confidence | 0.886 | 0.886 |
-| Self-reported confidence | 0.577 | 0.638 |
+| Agreement confidence | 0.821 | 0.893 |
+| Self-reported confidence | 0.185 | 0.0 |
+
+### A collapsed extraction with no gold (silver)
+
+pmksypdmc's AI-Checked extraction once collapsed a ~3,900-character scheme to one predicate at a self-reported 0.95 (KNOWN_ISSUES). Does agreement flag it when the collapse repeats?
+
+| Scheme | Valid samples | Predicates per sample | Fields | Self-reported (per sample) | Mean agreement |
+|---|---|---|---|---|---|
+| pmksypdmc | 2/2 | [1, 2] | [['is_indian_citizen'], ['is_farmer', 'is_indian_citizen']] | [0.95, 0.95] | 0.833 |
+
+A collapse that repeats gets HIGH agreement: its one rule is produced every time. Agreement measures consistency, not completeness, so it does not catch this case. Predicate count against source length (the AI-Checked tier's structural check) does.
 
 ## 3. Gate re-validation on injected errors
 
-*Generated 2026-10-06T21:43:25 by `scripts/analyze_gate_revalidation.py` from code `405a497`, against frozen gold `gold-v2`.*
+*Generated 2026-10-07T09:18:32 by `scripts/analyze_gate_revalidation.py` from code `d1a9b07`, against frozen gold `gold-v2`.*
 
 > **Synthetic errors, small sample.** 30 deliberate mutations of correct gold (14 mutated variants, 7 clean controls), one judge sample each. These numbers say what the judge + gate *can* catch, not how often real extractions go wrong. One error moves a type's rate by 17-25 points. Groups A, B and C are never pooled into one catch rate.
 
@@ -225,30 +238,30 @@ The gate's fabrication check, applied directly to each injected supersedes:
 
 ### The k=3 agreement signal as a deferral signal (no quota)
 
-A rule is scored by the share of the scheme's independent extraction samples that produced it identically; rules produced by few samples are flagged for review. Every injected error that leaves a wrong rule in the candidate is group C; the negatives are the candidates' correct rules. Skipped (fewer than 2 samples): PMMVY. ECE of agreement as P(correct), n = 265 rules: **0.2871**.
+A rule is scored by the share of the scheme's independent extraction samples that produced it identically; rules produced by few samples are flagged for review. Every injected error that leaves a wrong rule in the candidate is group C; the negatives are the candidates' correct rules. Skipped (fewer than 2 samples): none. ECE of agreement as P(correct), n = 314 rules: **0.3152**.
 
 **Read recall with care: it is close to guaranteed here.** An injected rule is a mutation of gold that no extraction produced, so the samples almost never contain it and it scores low agreement by construction. A real extraction error is one the model itself made, possibly in every sample. Precision is the informative number: most rules this signal flags are correct rules the samples did not reproduce identically.
 
 | Flag a rule produced by | Flagged | True errors flagged | Precision | Recall | Recall by error type |
 |---|---|---|---|---|---|
-| 0 of 3 samples | 68 | 13 | 0.191 | 0.867 | flipped_operator 4/4, wrong_exception_scope 1/1, wrong_quantifier 3/5, wrong_threshold 5/5 |
-| at most 1 of 3 samples | 81 | 15 | 0.185 | 1.0 | flipped_operator 4/4, wrong_exception_scope 1/1, wrong_quantifier 5/5, wrong_threshold 5/5 |
-| at most 2 of 3 samples | 123 | 15 | 0.122 | 1.0 | flipped_operator 4/4, wrong_exception_scope 1/1, wrong_quantifier 5/5, wrong_threshold 5/5 |
-| any number of samples | 265 | 15 | 0.057 | 1.0 | flipped_operator 4/4, wrong_exception_scope 1/1, wrong_quantifier 5/5, wrong_threshold 5/5 |
+| 0 of 3 samples | 82 | 15 | 0.183 | 0.882 | flipped_operator 6/6, wrong_exception_scope 1/1, wrong_quantifier 3/5, wrong_threshold 5/5 |
+| at most 1 of 3 samples | 95 | 17 | 0.179 | 1.0 | flipped_operator 6/6, wrong_exception_scope 1/1, wrong_quantifier 5/5, wrong_threshold 5/5 |
+| at most 2 of 3 samples | 170 | 17 | 0.1 | 1.0 | flipped_operator 6/6, wrong_exception_scope 1/1, wrong_quantifier 5/5, wrong_threshold 5/5 |
+| any number of samples | 314 | 17 | 0.054 | 1.0 | flipped_operator 6/6, wrong_exception_scope 1/1, wrong_quantifier 5/5, wrong_threshold 5/5 |
 
 The gold rule each error removed or replaced (a dropped rule or exception, or the original of a flipped / re-thresholded / re-quantified rule): did the samples produce it — would agreement point at what the candidate is missing?
 
 | Error type | Removed rules | Produced by >= 2 of 3 samples |
 |---|---|---|
-| dropped_predicate | 4 | 3 |
-| flipped_operator | 4 | 3 |
+| dropped_predicate | 6 | 5 |
+| flipped_operator | 6 | 5 |
 | wrong_exception_scope | 5 | 2 |
 | wrong_quantifier | 5 | 5 |
 | wrong_threshold | 5 | 4 |
 
 ## 4. Temporal case study (C4)
 
-*Generated 2026-10-06 by `scripts/run_temporal_case_study.py --score` from `data/experiments/temporal_c4/` and `data/experiments/self_consistency/`. Gold tag gold-v2; extractor defaults; Groq `openai/gpt-oss-120b`.*
+*Generated 2026-10-07 by `scripts/run_temporal_case_study.py --score` from `data/experiments/temporal_c4/` and `data/experiments/self_consistency/`. Gold tag gold-v2; extractor defaults; Groq `openai/gpt-oss-120b`.*
 
 **Small sample.** One extraction per pre-amendment text (k=1) and three per current document (k=3); the Marathi arm and PMAY-G's pre-amendment arm are k=3 (the latter after its first sample missed the whole exclusion list). A single pre-amendment sample shows what the extractor *can* read from that text, not a rate. A valid sample that misses the rule entirely counts against "as expected".
 
@@ -257,7 +270,7 @@ The gold rule each error removed or replaced (a dropped rule or exception, or th
 | PM-KISAN | 2-hectare landholding limit (removed 1 June 2019) | pre-amendment text | present | 1/1 | present |
 | PM-KISAN | 2-hectare landholding limit (removed 1 June 2019) | current document (k=3) | absent | 3/3 | absent; absent; absent |
 | PMMVY | child-order rule | pre-amendment text | first child only | 1/1 | first child only |
-| PMMVY | child-order rule | current document (k=3) | first child, or second if a girl | 0/1 | no child-order rule |
+| PMMVY | child-order rule | current document (k=3) | first child, or second if a girl | 0/3 | no child-order rule; no child-order rule; no child-order rule |
 | MH-LADKI-BAHIN | five-acre land exclusion (retired 03.07.2024) | pre-amendment text | present | 1/1 | present |
 | MH-LADKI-BAHIN | five-acre land exclusion (retired 03.07.2024) | current document (k=3) | absent | 2/2 (+1 failed) | absent; absent |
 | MH-LADKI-BAHIN | five-acre land exclusion (retired 03.07.2024) | Marathi GRs in order | absent | 0/3 | present; present; present |
@@ -266,13 +279,13 @@ The gold rule each error removed or replaced (a dropped rule or exception, or th
 | MH-LADKI-BAHIN | upper age bound (60 -> 65 on 03.07.2024) | Marathi GRs in order | <= 65 | 3/3 | <= 65; <= 65; <= 65 |
 | AB-PMJAY | 70+ branch (added 2024; nothing retired) | pre-amendment text | absent | 1/1 | absent |
 | AB-PMJAY | 70+ branch (added 2024; nothing retired) | current document (k=3) | present | 3/3 | present; present; present |
-| PMAY-G | refrigerator exclusion (deleted 2024) | pre-amendment text | present | 0/1 | absent |
+| PMAY-G | refrigerator exclusion (deleted 2024) | pre-amendment text | present | 2/3 | absent; present; present |
 | PMAY-G | refrigerator exclusion (deleted 2024) | stale document | present | 1/1 | present |
 | PMAY-G | refrigerator exclusion (deleted 2024) | current document (k=3) | absent | 3/3 | absent; absent; absent |
-| PMAY-G | landline exclusion (deleted 2024) | pre-amendment text | present | 0/1 | absent |
+| PMAY-G | landline exclusion (deleted 2024) | pre-amendment text | present | 2/3 | absent; present; present |
 | PMAY-G | landline exclusion (deleted 2024) | stale document | present | 1/1 | present |
 | PMAY-G | landline exclusion (deleted 2024) | current document (k=3) | absent | 3/3 | absent; absent; absent |
-| PMAY-G | monthly income threshold (10000 -> 15000) | pre-amendment text | 10000 | 0/1 | none |
+| PMAY-G | monthly income threshold (10000 -> 15000) | pre-amendment text | 10000 | 2/3 | none; 10000; 10000 |
 | PMAY-G | monthly income threshold (10000 -> 15000) | stale document | 15000 | 1/1 | 15000 |
 | PMAY-G | monthly income threshold (10000 -> 15000) | current document (k=3) | 15000 | 3/3 | 15000; 15000; 15000 |
 
@@ -293,6 +306,10 @@ None: official pre-amendment text was found for every listed scheme (sources in 
 - **PMMVY__pre_2017_guidelines** sample_1: ok
   - child-order rule: **first child only** — inclusion: pregnancy_child_order == 1
 - **PMMVY__post_current_document (k=3 self-consistency)** sample_1: ok
+  - child-order rule: **no child-order rule** — no matching predicate
+- **PMMVY__post_current_document (k=3 self-consistency)** sample_2: ok; supersedes recorded: `{"benefits_apply_to": "first living child only"}`
+  - child-order rule: **no child-order rule** — no matching predicate
+- **PMMVY__post_current_document (k=3 self-consistency)** sample_3: ok
   - child-order rule: **no child-order rule** — no matching predicate
 - **MH-LADKI-BAHIN__pre_GR_20240628** sample_1: ok
   - five-acre land exclusion (retired 03.07.2024): **present** — exclusion: family_agricultural_land_acres > 5
@@ -325,6 +342,14 @@ None: official pre-amendment text was found for every listed scheme (sources in 
   - refrigerator exclusion (deleted 2024): **absent** — no matching predicate
   - landline exclusion (deleted 2024): **absent** — no matching predicate
   - monthly income threshold (10000 -> 15000): **none** — no matching predicate
+- **PMAY-G__pre_framework_2022** sample_2: ok
+  - refrigerator exclusion (deleted 2024): **present** — exclusion: owns_refrigerator == True
+  - landline exclusion (deleted 2024): **present** — exclusion: owns_landline_phone == True
+  - monthly income threshold (10000 -> 15000): **10000** — exclusion: monthly_income_inr > 10000
+- **PMAY-G__pre_framework_2022** sample_3: ok
+  - refrigerator exclusion (deleted 2024): **present** — exclusion: owns_refrigerator == True
+  - landline exclusion (deleted 2024): **present** — exclusion: owns_landline_phone == True
+  - monthly income threshold (10000 -> 15000): **10000** — exclusion: monthly_income_inr > 10000
 - **PMAY-G__stale_PIB_2024** sample_1: ok
   - refrigerator exclusion (deleted 2024): **present** — exclusion: owns_refrigerator == True
   - landline exclusion (deleted 2024): **present** — exclusion: owns_landline_phone == True
@@ -344,7 +369,7 @@ None: official pre-amendment text was found for every listed scheme (sources in 
 
 ## 5. Cross-lingual case study (C2)
 
-*Generated 2026-10-06 by `scripts/analyze_cross_lingual.py` (offline). Gold tag gold-v2; 10 frozen test profiles; Groq `openai/gpt-oss-120b` extractions.*
+*Generated 2026-10-07 by `scripts/analyze_cross_lingual.py` (offline). Gold tag gold-v2; 10 frozen test profiles; Groq `openai/gpt-oss-120b` extractions.*
 
 **Small sample** (k=3 per language, one scheme). **Not a clean translation pair**: the English input is a compilation of the GRs and official secondary sources, not a translation; the Marathi input is the original GR plus two amending GRs, so the extractor must also apply the amendment (see the temporal case study).
 
@@ -397,7 +422,7 @@ en-en and mr-mr are the noise baseline: two samples of the same text.
 |---|---|---|---|---|
 | Hindi | machine | 293 | 0 | 300 |
 | Urdu | machine | 295 | 0 | 300 |
-| Marathi | machine | 159 | 0 | 300 |
-| Tamil | none | 0 | 0 | 300 |
+| Marathi | machine | 298 | 0 | 300 |
+| Tamil | machine | 295 | 0 | 300 |
 
 "machine": machine-translated and not yet reviewed; the app says so on every page. Review sheets: `docs/i18n/REVIEW_<lang>.csv`.

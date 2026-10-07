@@ -1,0 +1,157 @@
+{
+  "item": "self_consistency",
+  "gold_tag": "gold-v2",
+  "gold_commit": "82436ac11fb53421bf44c8c68e6333e1db353442",
+  "code_commit": "d1a9b07",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "config": {
+    "k": 3,
+    "temperature": 0.2,
+    "extractor": "defaults"
+  },
+  "date": "2026-10-07",
+  "created_at": "2026-10-07T00:40:54",
+  "scheme_id": "PMMVY",
+  "sample": 3,
+  "source_document_sha256": "c5137cab54eff6664fe67eb3e05e89557224a44b2b125dfadcb8e760f9943fbe",
+  "usage": [
+    {
+      "call": "scheme_core_extraction",
+      "prompt_tokens": 4849,
+      "completion_tokens": 1120,
+      "total_tokens": 5969
+    },
+    {
+      "call": "scheme_meta_extraction",
+      "prompt_tokens": 1449,
+      "completion_tokens": 639,
+      "total_tokens": 2088
+    }
+  ],
+  "draft_extraction": {
+    "scheme_id": "PMMVY",
+    "unit_of_eligibility": "individual",
+    "inclusion": {
+      "and": [
+        {
+          "and": [
+            {
+              "field": "age",
+              "op": ">=",
+              "value": 18,
+              "ontology_proposed": false,
+              "cat": "demographic"
+            },
+            {
+              "field": "age",
+              "op": "<=",
+              "value": 55,
+              "ontology_proposed": false,
+              "cat": "demographic"
+            }
+          ]
+        },
+        {
+          "or": [
+            {
+              "field": "is_sc_st",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": false,
+              "cat": "demographic"
+            },
+            {
+              "field": "has_40_percent_or_more_disability",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": false,
+              "cat": "demographic"
+            },
+            {
+              "field": "is_bpl_household",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": false,
+              "cat": "economic"
+            },
+            {
+              "field": "is_ab_pmjay_beneficiary",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": false,
+              "cat": "cross_scheme"
+            },
+            {
+              "field": "is_e_shram_registered",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": false,
+              "cat": "economic"
+            },
+            {
+              "field": "is_pm_kisan_beneficiary",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": false,
+              "cat": "cross_scheme"
+            },
+            {
+              "field": "has_active_mgnrega_job_card",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": false,
+              "cat": "economic"
+            },
+            {
+              "field": "family_annual_income_inr",
+              "op": "<",
+              "value": 800000,
+              "ontology_proposed": false,
+              "cat": "economic"
+            },
+            {
+              "field": "is_frontline_worker",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": false,
+              "cat": "occupation"
+            },
+            {
+              "field": "is_nfsa_ration_card_holder",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": false,
+              "cat": "economic"
+            },
+            {
+              "field": "other_vulnerable_group",
+              "op": "==",
+              "value": true,
+              "ontology_proposed": true,
+              "cat": "other"
+            }
+          ]
+        }
+      ]
+    },
+    "exclusions": [],
+    "temporal_validity": {
+      "valid_from": "2022-04-01",
+      "valid_to": null,
+      "extracted_at": "2026-10-07",
+      "supersedes": null
+    },
+    "operational_requirements": [
+      "Applicant must possess a Mother and Child Protection (MCP) Card.",
+      "Registration is done via the PMMVYSoft MIS portal or mobile app with Aadhaar-based authentication.",
+      "Benefit is transferred directly to an Aadhaar-seeded bank or post office account.",
+      "Beneficiary must register within 270 days of childbirth."
+    ],
+    "extraction_metadata": {
+      "confidence": 0.95,
+      "source_clause": "Eligibility Criteria",
+      "flagged_for_review": false
+    }
+  }
+}

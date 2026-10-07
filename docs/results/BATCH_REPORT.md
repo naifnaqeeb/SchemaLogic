@@ -1,6 +1,6 @@
 # Batch report — all gold schemes
 
-*Generated 2026-10-06T21:43:23 by `scripts/run_batch_report.py` from code `405a497`, against frozen gold `gold-v2` (`82436ac`). Offline: no LLM calls. Regenerate rather than edit.*
+*Generated 2026-10-07T09:18:27 by `scripts/run_batch_report.py` from code `d1a9b07`, against frozen gold `gold-v2` (`82436ac`). Offline: no LLM calls. Regenerate rather than edit.*
 
 ## Caveats — read first
 
@@ -51,10 +51,10 @@ Full pipeline (judge -> gate -> apply approved) on the same extraction as Baseli
 | IGNOAPS | 0.462 | — | 41.7% | 0.0% | 25.0% | 12 | 2/2 | `IGNOAPS.json` |
 | PM-KISAN | 0.909 | 1.000 | 66.7% | 0.0% | 0.0% | 12 | 2/2 | `PM-KISAN.json` |
 | PM-UJJWALA-2.0 | 0.923 | — | 100.0% | 0.0% | 0.0% | 9 | 2/2 | `PM-UJJWALA-2.0.json` |
+| PMAY-G *(judge: reasoning_effort=low)* | 0.286 | — | 14.3% | 0.0% | 0.0% | 14 | 1/2 | `PMAY-G.json` |
 | PMMVY | 0.812 | — | 41.7% | 0.0% | 0.0% | 12 | 2/2 | `PMMVY.json` |
-| AB-PMJAY | **failed run** — judge call failed (api_error: json_validate_failed), and again on retry with max_tokens=2000. Cause: the judge's prompt is about 6,295 tokens (conservative estimate) of Groq's 8,000-token per-request limit for prompt plus answer; the answer gets only the remainder (about 2,000 tokens), and the model spends it on reasoning before writing any JSON; excluded | | | | | | | `AB-PMJAY.json` |
-| PMAY-G | **failed run** — judge call failed (api_error: json_validate_failed), and again on retry with max_tokens=2000. Cause: the judge's prompt is about 6,276 tokens (conservative estimate) of Groq's 8,000-token per-request limit for prompt plus answer; the answer gets only the remainder (about 2,000 tokens), and the model spends it on reasoning before writing any JSON; excluded | | | | | | | `PMAY-G.json` |
-| **All (4)** | **0.817** (micro) | | **60.0%** | 0.0% | 6.7% | 45 | | |
+| AB-PMJAY | **failed run** — judge call failed on all 3 attempts — default settings and max_tokens=2000: json_validate_failed, no output: the prompt is about 6,295 tokens (conservative estimate) of Groq's 8,000-token per-request limit for prompt plus answer, and the model spent what was left for the answer on reasoning before any JSON; reasoning_effort=low: schema_validation_failed: an answer was produced but did not match the judge's format (findings.0.proposed_supersedes.retired_field: input should be a valid string); excluded | | | | | | | `AB-PMJAY.json` |
+| **All (5)** | **0.694** (micro) | | **49.2%** | 0.0% | 5.1% | 59 | | |
 
 Absent: MH-LADKI-BAHIN.
 
@@ -75,10 +75,13 @@ Each cell: Baseline 3 → pipeline. "Other" is almost always *undetermined*: a r
 | IGNOAPS | 1 | 0.500 → 0.462 | 75.0% → 41.7% | 0.0% → 0.0% | 25.0% → 25.0% | 0.0% → 33.3% |
 | PM-KISAN | 1 | 0.952 → 0.909 | 91.7% → 66.7% | 8.3% → 0.0% | 0.0% → 0.0% | 0.0% → 33.3% |
 | PM-UJJWALA-2.0 | 0 | 0.923 → 0.923 | 100.0% → 100.0% | 0.0% → 0.0% | 0.0% → 0.0% | 0.0% → 0.0% |
+| PMAY-G *(judge: reasoning_effort=low)* | 1 | 0.296 → 0.286 | 35.7% → 14.3% | 57.1% → 0.0% | 0.0% → 0.0% | 7.1% → 85.7% |
 | PMMVY | 1 | 0.839 → 0.812 | 41.7% → 41.7% | 0.0% → 0.0% | 0.0% → 0.0% | 58.3% → 58.3% |
-| **All (4)** | | **0.844 → 0.817** (micro) | **75.6% → 60.0%** (n=45) | 2.2% → 0.0% | 6.7% → 6.7% | 15.6% → 33.3% |
+| **All (5)** | | **0.718 → 0.694** (micro) | **66.1% → 49.2%** (n=59) | 15.3% → 0.0% | 5.1% → 5.1% | 13.6% → 45.8% |
 
-Excluded: AB-PMJAY — judge call failed (api_error: json_validate_failed), and again on retry with max_tokens=2000. Cause: the judge's prompt is about 6,295 tokens (conservative estimate) of Groq's 8,000-token per-request limit for prompt plus answer; the answer gets only the remainder (about 2,000 tokens), and the model spends it on reasoning before writing any JSON; PMAY-G — judge call failed (api_error: json_validate_failed), and again on retry with max_tokens=2000. Cause: the judge's prompt is about 6,276 tokens (conservative estimate) of Groq's 8,000-token per-request limit for prompt plus answer; the answer gets only the remainder (about 2,000 tokens), and the model spends it on reasoning before writing any JSON; MH-LADKI-BAHIN — no Baseline 3 sample (extraction failed validation).
+*(judge: …)* marks a scheme whose judge call used a different setting from the others: its first call failed (json_validate_failed) and this is its retry, so it is not an identical-conditions run.
+
+Excluded: AB-PMJAY — judge call failed on all 3 attempts — default settings and max_tokens=2000: json_validate_failed, no output: the prompt is about 6,295 tokens (conservative estimate) of Groq's 8,000-token per-request limit for prompt plus answer, and the model spent what was left for the answer on reasoning before any JSON; reasoning_effort=low: schema_validation_failed: an answer was produced but did not match the judge's format (findings.0.proposed_supersedes.retired_field: input should be a valid string); MH-LADKI-BAHIN — no Baseline 3 sample (extraction failed validation).
 
 ## Baseline 2 — direct LLM answering, re-scored against frozen gold
 
